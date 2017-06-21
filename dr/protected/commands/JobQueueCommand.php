@@ -1,4 +1,4 @@
-<?php
+ <?php
 class JobQueueCommand extends CConsoleCommand {
 	protected $webroot;
 	
@@ -232,7 +232,8 @@ EOF;
 	}
 	
 	protected function getEmailAddress($uid) {
-		$sql = "select email from swo_user where username='".$uid."'";
+		$suffix = Yii::app()->params['envSuffix'];
+		$sql = "select email from security$suffix.sec_user where username='".$uid."'";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		return (isset($row['email']))?$row['email']:'';
 	}

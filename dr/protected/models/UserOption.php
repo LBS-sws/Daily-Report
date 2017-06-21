@@ -16,6 +16,8 @@ class UserOption extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'swo_user_otpion';
+		$suffix = Yii::app()->params['envSuffix'];		
+		return "security$suffix.sec_user_otpion";
+
 	}
 }

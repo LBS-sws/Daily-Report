@@ -1,0 +1,533 @@
+<?php
+$this->pageTitle=Yii::app()->name . ' - Service Form';
+?>
+<div class="form frame">
+<?php $form=$this->beginWidget('CActiveForm', array(
+'id'=>'service-form',
+'enableClientValidation'=>true,
+'clientOptions'=>array('validateOnSubmit'=>true,),
+)); ?>
+
+<div class="grid_14">
+	<h2 class="page-heading"><?php echo Yii::t('service','Service Form'); ?></h2>
+</div>
+<div class="grid_8 prefix_2" style="text-align:right;"><h2 class="page-heading">
+<?php 
+	if ($model->scenario!='new' && $model->scenario!='view') {
+		echo CHtml::Button(Yii::t('misc','Add Another'), array(
+			'name'=>'btnAdd','id'=>'btnAdd')
+		); 
+	}
+?>
+	<?php echo CHtml::Button(Yii::t('misc','Back'), array(
+		'submit'=>Yii::app()->createUrl('service/index'))
+	); ?>
+<?php if ($model->scenario!='view'): ?>
+	<?php echo CHtml::Button(Yii::t('misc','Save'), array(
+		'submit'=>Yii::app()->createUrl('service/save'))
+	); ?>
+<?php endif ?>
+<?php if ($model->scenario=='edit'): ?>
+	<?php echo CHtml::Button(Yii::t('misc','Delete'), array(
+		'name'=>'btnDelete','id'=>'btnDelete')
+	); ?>
+<?php endif ?>
+</div>
+<div class="clear"></div>
+
+<?php echo $form->hiddenField($model, 'id'); ?>
+<?php echo $form->hiddenField($model, 'scenario'); ?>
+<?php echo $form->hiddenField($model, 'status'); ?>
+<?php echo $form->hiddenField($model, 'backlink'); ?>
+
+<?php 
+	if ($model->status!='A') {
+		echo $form->hiddenField($model, 'b4_service');
+		echo $form->hiddenField($model, 'b4_paid_type');
+		echo $form->hiddenField($model, 'b4_amt_paid');
+	}
+
+	if ($model->status!='N') {
+		echo $form->hiddenField($model, 'equip_install_dt');
+	}
+
+	if (($model->status!='S') && ($model->status!='T')) {
+		echo $form->hiddenField($model, 'org_equip_qty');
+		echo $form->hiddenField($model, 'rtn_equip_qty');
+	}
+?>
+
+<div class="grid_24 block">
+	<fieldset>
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'status'); ?>
+		</div>
+		<div class="grid_8">
+			<?php 
+				echo $form->textField($model, 'status_desc', 
+					array('size'=>15,'readonly'=>true)
+				); 
+			?>
+		</div>
+		<div class="clear"></div>
+		<div class="grid_3">
+			<?php 
+				switch ($model->status) {
+					case 'N':
+						$dt_name = 'new_dt';
+						break;
+					case 'A':
+						$dt_name = 'amend_dt';
+						break;
+					case 'S':
+						$dt_name = 'suspend_dt';
+						break;
+					case 'R':
+						$dt_name = 'resume_dt';
+						break;
+					case 'T':
+						$dt_name = 'terminate_dt';
+						break;
+				}
+				echo $form->labelEx($model,$dt_name);
+			?>
+		</div>
+		<div class="grid_8">
+			<?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+					'model'=>$model,
+					'attribute'=>'status_dt',
+					// additional javascript options for the date picker plugin
+					'options'=>array(
+							'showAnim'=>'fold',
+							'dateFormat'=>'yy/mm/dd',
+							'gotoCurrent'=>true,
+							'flat'=>false,
+							'showOn'=>'button',
+						),
+						'htmlOptions'=>array(
+					//		'style'=>'height:20px;',
+							'size'=>'10',
+							'readonly'=>($model->scenario=='view'),
+						),
+					));
+			?>
+		</div>
+		<div class="clear"></div>
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'company_name'); ?>
+		</div>
+		<div class="grid_15">
+			<?php 
+				echo $form->hiddenField($model, 'company_id');
+				echo $form->textField($model, 'company_name', array('size'=>60,
+					'readonly'=>($model->scenario=='view'),)
+				);
+			?>
+			<?php echo CHtml::Button(Yii::t('service','Customer'),array(
+				'name'=>'btnCompany','id'=>'btnCompany')); ?>
+		</div>
+		<div class="clear"></div>
+
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'cust_type'); ?>
+		</div>
+		<div class="grid_8">
+			<?php echo $form->dropDownList($model, 'cust_type', General::getCustTypeList()); ?>
+		</div>
+		<div class="clear"></div>
+
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'nature_type'); ?>
+		</div>
+		<div class="grid_8">
+			<?php echo $form->dropDownList($model, 'nature_type', General::getNatureList()); ?>
+		</div>
+		<div class="clear"></div>
+
+<?php if ($model->status=='A') : ?>
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'b4_service'); ?>
+		</div>
+		<div class="grid_10">
+			<?php 
+				echo $form->textArea($model, 'b4_service', 
+					array('rows'=>2,'cols'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'))
+				); 
+			?>
+		</div>
+		<div class="clear"></div>
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'b4_amt_paid'); ?>
+		</div>
+		<div class="grid_8">
+			<?php
+				echo $form->dropDownList($model, 'b4_paid_type', 
+					array('M'=>Yii::t('service','Monthly'),
+						'Y'=>Yii::t('service','Yearly'),
+						'1'=>Yii::t('service','One time'),
+					)
+				);
+				echo $form->numberField($model, 'b4_amt_paid', 
+					array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'))
+				); 
+			?>
+		</div>
+		<div class="clear"></div>
+<?php endif; ?>
+
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,(($model->status=='A') ? 'af_service' : 'service')); ?>
+		</div>
+		<div class="grid_15">
+			<?php 
+				echo $form->hiddenField($model, 'product_id');
+//				echo $form->textArea($model, 'service', 
+//					array('rows'=>2,'cols'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'))
+//				); 
+				echo $form->textField($model, 'service', 
+					array('size'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'))
+				);
+			?>
+			<?php echo CHtml::Button(Yii::t('service','Service'),array(
+				'name'=>'btnService','id'=>'btnService')); ?>
+		</div>
+		<div class="clear"></div>
+
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,(($model->status=='A') ? 'af_amt_paid' : 'amt_paid')); ?>
+		</div>
+		<div class="grid_8">
+			<?php
+				echo $form->dropDownList($model, 'paid_type', 
+					array('M'=>Yii::t('service','Monthly'),
+						'Y'=>Yii::t('service','Yearly'),
+						'1'=>Yii::t('service','One time'),
+					)
+				);
+				echo $form->numberField($model, 'amt_paid', 
+					array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'))
+				); 
+			?>
+		</div>
+		<div class="clear"></div>
+
+<?php if ($model->status!='S') : ?>
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'amt_install'); ?>
+		</div>
+		<div class="grid_8">
+			<?php echo $form->numberField($model, 'amt_install', 
+				array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'))
+			); ?>
+		</div>
+		<div class="clear"></div>
+<?php endif; ?>
+
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'salesman'); ?>
+		</div>
+		<div class="grid_15">
+			<?php echo $form->textField($model, 'salesman', 
+				array('size'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'))
+			); ?>
+			<?php echo CHtml::Button(Yii::t('service','Salesman'),array(
+				'name'=>'btnSalesman','id'=>'btnSalesman')); ?>
+		</div>
+		<div class="clear"></div>
+		
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'sign_dt'); ?>
+		</div>
+		<div class="grid_8">
+			<?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+					'model'=>$model,
+					'attribute'=>'sign_dt',
+					// additional javascript options for the date picker plugin
+					'options'=>array(
+							'showAnim'=>'fold',
+							'dateFormat'=>'yy/mm/dd',
+							'gotoCurrent'=>true,
+							'flat'=>false,
+							'showOn'=>'button',
+						),
+						'htmlOptions'=>array(
+					//		'style'=>'height:20px;',
+							'size'=>'10',
+							'readonly'=>($model->scenario=='view'),
+						),
+					));
+			?>
+		</div>
+		<div class="clear"></div>
+
+<?php if ($model->status=='N' || $model->status=='R') : ?>
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'ctrt_period'); ?>
+		</div>
+		<div class="grid_8">
+			<?php echo $form->numberField($model, 'ctrt_period', 
+				array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+			); ?>
+		</div>
+		<div class="clear"></div>
+<?php endif; ?>
+
+<?php if ($model->status=='N') : ?>
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'cont_info'); ?>
+		</div>
+		<div class="grid_10">
+			<?php echo $form->textField($model, 'cont_info', 
+				array('size'=>60,'maxlength'=>500,'readonly'=>($model->scenario=='view'))
+			); ?>
+		</div>
+		<div class="clear"></div>
+<?php endif; ?>
+
+<?php if ($model->status=='N' || $model->status=='A') : ?>
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'first_dt'); ?>
+		</div>
+		<div class="grid_8">
+			<?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+					'model'=>$model,
+					'attribute'=>'first_dt',
+					// additional javascript options for the date picker plugin
+					'options'=>array(
+							'showAnim'=>'fold',
+							'dateFormat'=>'yy/mm/dd',
+							'gotoCurrent'=>true,
+							'flat'=>false,
+							'showOn'=>'button',
+						),
+						'htmlOptions'=>array(
+					//		'style'=>'height:20px;',
+							'size'=>'10',
+							'readonly'=>($model->scenario=='view'),
+						),
+					));
+			?>
+		</div>
+		<div class="clear"></div>
+<?php endif; ?>
+
+<?php if ($model->status=='N') : ?>
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'first_tech'); ?>
+		</div>
+		<div class="grid_15">
+			<?php echo $form->textField($model, 'first_tech', 
+				array('size'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'))
+			); ?>
+			<?php echo CHtml::Button(Yii::t('service','First Technician'),array(
+				'name'=>'btnFirstTech','id'=>'btnFirstTech')); ?>
+		</div>
+		<div class="clear"></div>
+<?php endif; ?>
+
+<?php if (($model->status=='S') || ($model->status=='T')) : ?>
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'reason'); ?>
+		</div>
+		<div class="grid_10">
+			<?php echo $form->textArea($model, 'reason', 
+				array('rows'=>3,'cols'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'))
+			); ?>
+		</div>
+		<div class="clear"></div>
+
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'org_equip_qty'); ?>
+		</div>
+		<div class="grid_8">
+			<?php echo $form->numberField($model, 'org_equip_qty', 
+				array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+			); ?>
+		</div>
+		<div class="clear"></div>
+
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'rtn_equip_qty'); ?>
+		</div>
+		<div class="grid_8">
+			<?php echo $form->numberField($model, 'rtn_equip_qty', 
+				array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+			); ?>
+		</div>
+		<div class="clear"></div>
+<?php endif; ?>
+
+<?php if ($model->status=='N') : ?>
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'equip_install_dt'); ?>
+		</div>
+		<div class="grid_8">
+			<?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+					'model'=>$model,
+					'attribute'=>'equip_install_dt',
+					// additional javascript options for the date picker plugin
+					'options'=>array(
+							'showAnim'=>'fold',
+							'dateFormat'=>'yy/mm/dd',
+							'gotoCurrent'=>true,
+							'flat'=>false,
+							'showOn'=>'button',
+						),
+						'htmlOptions'=>array(
+					//		'style'=>'height:20px;',
+							'size'=>'10',
+							'readonly'=>($model->scenario=='view'),
+						),
+					));
+			?>
+		</div>
+		<div class="clear"></div>
+<?php endif; ?>
+
+		<div class="grid_3">
+			<?php echo $form->labelEx($model,'remarks'); ?>
+		</div>
+		<div class="grid_10">
+			<?php echo $form->textArea($model, 'remarks', 
+				array('rows'=>3,'cols'=>60,'maxlength'=>2000,'readonly'=>($model->scenario=='view'))
+			); ?>
+		</div>
+		<div class="clear"></div>
+	</fieldset>
+</div>
+<div class="clear"></div>
+
+<div style="display: none">
+<?php
+	$this->beginWidget('zii.widgets.jui.CJuiDialog', array(
+			'id'=>'addrecdialog',
+			'options'=>array(
+				'show' => 'blind',
+				'hide' => 'fade',
+				'modal' => 'true',
+				'title' => Yii::t('misc','Add Record'),
+				'autoOpen'=>false,
+//				'buttons'=>array(
+//					Yii::t('dialog','OK')=>'js:function(){$(this).dialog("close");deletedata();}',
+//					Yii::t('dialog','Cancel')=>'js:function(){$(this).dialog("close");}',
+//				),
+		),
+	));
+
+	echo '<p>';
+	echo CHtml::Button(Yii::t('service','New Service'), array('name'=>'btnNew','id'=>'btnNew',)); 
+	echo '</p>';
+
+	echo '<p>';
+	echo CHtml::Button(Yii::t('service','Amend Service'), array('name'=>'btnAmend','id'=>'btnAmend',)); 
+	echo '</p>';
+
+	echo '<p>';
+	echo CHtml::Button(Yii::t('service','Suspend Service'), array('name'=>'btnSuspend','id'=>'btnSuspend',)); 
+	echo '</p>';
+
+	echo '<p>';
+	echo CHtml::Button(Yii::t('service','Resume Service'), array('name'=>'btnResume','id'=>'btnResume',)); 
+	echo '</p>';
+
+	echo '<p>';
+	echo CHtml::Button(Yii::t('service','Terminate Service'), array('name'=>'btnTerminate','id'=>'btnTerminate',)); 
+	echo '</p>';
+
+	$this->endWidget('zii.widgets.jui.CJuiDialog');
+?>
+
+<?php $this->renderPartial('//site/savedialog'); ?>
+<?php $this->renderPartial('//site/removedialog'); ?>
+<?php $this->renderPartial('//site/lookup'); ?>
+</div>
+
+<?php
+$js = Script::genLookupSearch();
+Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);
+
+$js = Script::genLookupButton('btnCompany', 'company', 'company_id', 'company_name');
+Yii::app()->clientScript->registerScript('lookupCompany',$js,CClientScript::POS_READY);
+
+$js = Script::genLookupButton('btnService', 'product', 'product_id', 'ServiceForm_service');
+Yii::app()->clientScript->registerScript('lookupService',$js,CClientScript::POS_READY);
+
+$js = Script::genLookupButton('btnSalesman', 'staff', '', 'salesman');
+Yii::app()->clientScript->registerScript('lookupSalesman',$js,CClientScript::POS_READY);
+
+$js = Script::genLookupButton('btnFirstTech', 'staff', '', 'first_tech');
+Yii::app()->clientScript->registerScript('lookupFirstTech',$js,CClientScript::POS_READY);
+
+$js = Script::genLookupSelect();
+Yii::app()->clientScript->registerScript('lookupSelect',$js,CClientScript::POS_READY);
+
+$js = "
+$('#btnDelete').on('click',function() {
+	$('#removedialog').dialog('open');
+});
+
+$('#btnAdd').on('click',function() {
+	$('#addrecdialog').dialog('open');
+});
+
+$('#btnNew').on('click',function() {
+	$('#addrecdialog').dialog('close');
+	redirection('N');
+});
+
+$('#btnAmend').on('click',function() {
+	$('#addrecdialog').dialog('close');
+	redirection('A');
+});
+
+$('#btnSuspend').on('click',function() {
+	$('#addrecdialog').dialog('close');
+	redirection('S');
+});
+
+$('#btnResume').on('click',function() {
+	$('#addrecdialog').dialog('close');
+	redirection('R');
+});
+
+$('#btnTerminate').on('click',function() {
+	$('#addrecdialog').dialog('close');
+	redirection('T');
+});
+
+function redirection(arg) {
+	var elm=$('#btnAdd');
+	switch (arg) {
+		case 'N':
+			jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/new')."',{});
+			break;
+		case 'A':
+			jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/amend')."',{});
+			break;
+		case 'S':
+			jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/suspend')."',{});
+			break;
+		case 'R':
+			jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/resume')."',{});
+			break;
+		case 'T':
+			jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/terminate')."',{});
+			break;
+	}
+}
+	
+function deletedata() {
+	var elm=$('#btnDelete');
+	jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/delete')."',{});
+}
+";
+Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
+
+$js = Script::genReadonlyField();
+Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
+?>
+
+<?php $this->endWidget(); ?>
+
+</div><!-- form -->
+

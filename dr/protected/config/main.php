@@ -1,12 +1,12 @@
 <?php
 
 // uncomment the following to define a path alias
-//Yii::setPathOfAlias('local','path/to/local-folder');
+// Yii::setPathOfAlias('local','path/to/local-folder');
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
 return array(
-	'id'=>'swoper',
+	'id'=>'swoperuat',
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'charset'=>'UTF-8',
 	'name'=>'LBS Daily Management - UAT',
@@ -41,9 +41,6 @@ return array(
 //			'ipFilters'=>array('192.168.1.104','::1'),
 //
 //		),
-//		'gii'=>array(
-//			'generatorPaths'=>array('bootstrap.gii'),
-//		),
 	),
 
 	// application components
@@ -73,10 +70,10 @@ return array(
 
 		// uncomment the following to use a MySQL database
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=swoper_w',
+			'connectionString' => 'mysql:host=localhost;dbname=swoperuat',
 			'emulatePrepare' => true,
 			'username' => 'swuser',
-			'password' => 'swisher168',
+			'password' => 'Swisher@168',
 			'charset' => 'utf8',
 		),
 		
@@ -93,12 +90,12 @@ return array(
 					'levels'=>'error, warning',
 				),
 				// uncomment the following to show log messages on web pages
-				array(
-					'class'=>'CWebLogRoute',
+	//			array(
+	//				'class'=>'CWebLogRoute',
 				//	'levels'=>'trace',
 				//	'categories'=>'vardump',
 				//	'showInFireBug'=>true
-				),
+	//			),
 			),
 		),
 		
@@ -106,7 +103,7 @@ return array(
 			'class'=>'CHttpSession',
 			'cookieMode'=>'allow',
 			'cookieParams'=>array(
-				'domain'=>'192.168.0.162',
+				'domain'=>'118.89.46.224',
 			),
 		),
 		
@@ -136,28 +133,28 @@ return array(
 		'concurrentLogin'=>false,
 		'noOfLoginRetry'=>5,
 		'sessionIdleTime'=>'1 hour',
-		'feedbackCcBoss'=>array('boss1','boss2'),
-		'bossEmail'=>array('kcleepercy@gmail.com','kcleepercy@yahoo.com.hk'),
-		'version'=>'1.1.0',
-		'docmanPath'=>'/docman/dev',
+		'feedbackCcBoss'=>array('flam','JoeY','DorisC'),
+		'bossEmail'=>array('dorischan@lbsgroup.com.hk'),
+		'version'=>'1.1.1',
+		'docmanPath'=>'/docman/uat',
 		'systemId'=>'drs',
-		'envSuffix'=>'dev',
+		'envSuffix'=>'uat',
 		'systemMapping'=>array(
 				'drs'=>array(
-						'webroot'=>'http://192.168.0.162/swoper-web',
+						'webroot'=>'http://118.89.46.224/dr-uat',
 						'name'=>'Daily Report',
 						'icon'=>'fa fa-pencil-square-o',
 					),	
 				'acct'=>array(
-						'webroot'=>'http://192.168.0.162/acct',
+						'webroot'=>'http://118.89.46.224/ac-uat',
 						'name'=>'Accounting',
 						'icon'=>'fa fa-money',
 					),
-				'ops'=>array(
-						'webroot'=>'http://192.168.0.162/operation',
-						'name'=>'Operation',
-						'icon'=>'fa fa-gears',
-					),
+                                'ops'=>array(
+                                                'webroot'=>'http://118.89.46.224/op-uat',
+                                                'name'=>'Operation',
+                                                'icon'=>'fa fa-gears',
+                                        ),
 			),
 	),
 );

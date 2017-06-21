@@ -46,6 +46,8 @@ class EmailQueueCommand extends CConsoleCommand {
 				
 				$mail = new YiiMailer;
 
+$mail->SMTPDebug = 4;
+$mail->Timeout = 30;
 				$mail->setView('report');
 				$data = array('message' => $message, 'description'=>$description, 'mailer'=>$mail);
 				$mail->setData($data);

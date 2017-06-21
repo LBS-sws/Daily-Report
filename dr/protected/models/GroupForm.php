@@ -203,7 +203,8 @@ class GroupForm extends CFormModel
 	
 	public function isOccupied($index) {
 		$rtn = false;
-		$sql = "select a.username from swo_user a where a.group_id=".$index." limit 1";
+		$suffix = Yii::app()->params['envSuffix'];
+		$sql = "select a.username from security$suffix.sec_user a where a.group_id=".$index." limit 1";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		foreach ($rows as $row) {
 			$rtn = true;
