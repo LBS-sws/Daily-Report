@@ -7,6 +7,7 @@ class SupplierForm extends CFormModel
 	public $type;
 	public $code;
 	public $name;
+	public $full_name;
 	public $cont_name;
 	public $cont_phone;
 	public $nature;
@@ -27,6 +28,7 @@ class SupplierForm extends CFormModel
 			'id'=>Yii::t('supplier','Record ID'),
 			'code'=>Yii::t('supplier','Code'),
 			'name'=>Yii::t('supplier','Name'),
+			'full_name'=>Yii::t('supplier','Full Name'),
 			'cont_name'=>Yii::t('supplier','Contact Name'),
 			'cont_phone'=>Yii::t('supplier','Contact Phone'),
 			'address'=>Yii::t('supplier','Address'),
@@ -41,7 +43,7 @@ class SupplierForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, cont_name, cont_phone, address, bank, acct_no','safe'),
+			array('id, full_name, cont_name, cont_phone, address, bank, acct_no','safe'),
 			array('name, code','required'),
 /*
 			array('code','unique','allowEmpty'=>true,
@@ -85,6 +87,7 @@ class SupplierForm extends CFormModel
 				$this->id = $row['id'];
 				$this->code = $row['code'];
 				$this->name = $row['name'];
+				$this->full_name = $row['full_name'];
 				$this->cont_name = $row['cont_name'];
 				$this->cont_phone = $row['cont_phone'];
 				$this->address = $row['address'];
@@ -120,10 +123,10 @@ class SupplierForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_supplier(
-							code, name, cont_name, cont_phone, address, bank, acct_no, 
+							code, name, full_name, cont_name, cont_phone, address, bank, acct_no, 
 							city, luu, lcu
 						) values (
-							:code, :name, :cont_name, :cont_phone, :address, :bank, :acct_no,
+							:code, :name, :full_name, :cont_name, :cont_phone, :address, :bank, :acct_no,
 							:city, :luu, :lcu
 						)";
 				break;
@@ -131,6 +134,7 @@ class SupplierForm extends CFormModel
 				$sql = "update swo_supplier set
 							code = :code, 
 							name = :name, 
+							full_name = :full_name, 
 							cont_name = :cont_name, 
 							cont_phone = :cont_phone, 
 							address = :address, 
@@ -150,6 +154,8 @@ class SupplierForm extends CFormModel
 			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
 		if (strpos($sql,':name')!==false)
 			$command->bindParam(':name',$this->name,PDO::PARAM_STR);
+		if (strpos($sql,':full_name')!==false)
+			$command->bindParam(':full_name',$this->full_name,PDO::PARAM_STR);
 		if (strpos($sql,':code')!==false)
 			$command->bindParam(':code',$this->code,PDO::PARAM_STR);
 		if (strpos($sql,':cont_name')!==false)

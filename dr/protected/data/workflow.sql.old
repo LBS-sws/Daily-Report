@@ -1,0 +1,95 @@
+CREATE DATABASE workflow CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON workflow.* TO 'swuser'@'localhost' IDENTIFIED BY 'swisher168';
+
+use workflow;
+
+DROP TABLE IF EXISTS wf_rule;
+CREATE TABLE wf_rule(
+	id int unsigned not null auto_increment primary key,
+	name varchar(255) not null,
+	lcu varchar(30),
+	luu varchar(30),
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS wf_step;
+CREATE TABLE wf_step(
+	id int unsigned not null auto_increment primary key,
+	rule_id int unsigned not null,
+	
+	lcu varchar(30),
+	luu varchar(30),
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS wf_process;
+CREATE TABLE wf_process(
+	id int unsigned not null auto_increment primary key,
+	name varchar(255) not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS wf_request;
+CREATE TABLE wf_request(
+	id int unsigned not null auto_increment primary key,
+	process_id int unsigned not null,
+	current_state int unsigned not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS wf_request_data;
+CREATE TABLE wf_request_data(
+	id int unsigned not null auto_increment primary key,
+	request_id int unsigned not null,
+	data_name varchar(300) not null,
+	data_value varchar(5000),
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS wf_request_note;
+CREATE TABLE wf_request_note(
+	id int unsigned not null auto_increment primary key,
+	request_id int unsigned not null,
+	note varchar(5000),
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS wf_state_type;
+CREATE TABLE wf_state_type(
+	id int unsigned not null auto_increment primary key,
+	name varchar(255) not null
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+INSERT INTO wf_state(name) VALUES
+('Start'),
+('Normal'),
+('Complete'),
+('Denied'),
+('Cancelled')
+;
+
+DROP TABLE IF EXISTS wf_state;
+CREATE TABLE wf_state(
+	id int unsigned not null auto_increment primary key,
+	state_type int unsigned not null,
+	process_id int unsigned not null
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	
+DROP TABLE IF EXISTS wf_transition;
+CREATE TABLE wf_transition(
+	id int unsigned not null auto_increment primary key,
+	request_id int unsigned not null,
+	current_step int unsigned not null,
+	next_step int unsigned not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

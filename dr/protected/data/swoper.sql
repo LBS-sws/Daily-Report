@@ -98,6 +98,7 @@ CREATE TABLE swo_service(
 	paid_type char(1) default 'M',
 	amt_paid decimal(11,2) default 0,
 	amt_install decimal(11,2) default 0,
+	need_install char(1) default 'N',
 	salesman varchar(1000),
 	sign_dt datetime,
 	ctrt_end_dt datetime,
@@ -253,6 +254,23 @@ CREATE TABLE swo_company(
 	cont_name varchar(100),
 	cont_phone varchar(30),
 	address varchar(1000),
+	city char(5) not null,
+	lcu varchar(30),
+	luu varchar(30),
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS swo_supplier;
+CREATE TABLE swo_supplier(
+	id int unsigned NOT NULL auto_increment primary key,
+	code varchar(8),
+	name varchar(1000) not null,
+	cont_name varchar(100),
+	cont_phone varchar(30),
+	address varchar(1000),
+	bank varchar(255),
+	acct_no varchar(100),
 	city char(5) not null,
 	lcu varchar(30),
 	luu varchar(30),
@@ -484,7 +502,7 @@ CREATE TABLE swo_email_queue (
 	cc_addr varchar(1000),
 	subject varchar(1000),
 	description varchar(1000),
-	message varchar(5000),
+	message text,
 	status char(1) default 'N',
 	lcu varchar(30),
 	luu varchar(30),
@@ -511,6 +529,7 @@ CREATE TABLE swo_monthly_dtl (
 	hdr_id int unsigned NOT NULL,
 	data_field char(5) NOT NULL,
 	data_value varchar(100),
+	manual_input char(1) default 'N',
 	lcu varchar(30),
 	luu varchar(30),
 	lcd timestamp default CURRENT_TIMESTAMP,

@@ -5,8 +5,9 @@ class RptFeedback extends ReportData2 {	public function fields() {		return arr
 			'feedback_dt'=>array('label'=>Yii::t('feedback','Feedback Date'),'width'=>20,'align'=>'C'),
 			'status'=>array('label'=>Yii::t('feedback','Status'),'width'=>10,'align'=>'C'),			'feedback_cat'=>array('label'=>Yii::t('feedback','Feedback Type'),'width'=>15,'align'=>'C'),			'feedback'=>array('label'=>Yii::t('feedback','Feedback'),'width'=>50,'align'=>'L'),		);	}
 	public function retrieveData() {
+		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select c.name as city_name, a.request_dt, a.feedback_dt, a.status, b.feedback_cat, b.feedback 
-				from (swo_mgr_feedback a inner join swo_city c on a.city = c.code) 
+				from (swo_mgr_feedback a inner join security$suffix.sec_city c on a.city = c.code) 
 					left outer join swo_mgr_feedback_rmk b on a.id = b.feedback_id
 				where a.id > 0 
 		";		if (isset($this->criteria)) {

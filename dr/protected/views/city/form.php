@@ -95,6 +95,18 @@ $this->pageTitle=Yii::app()->name . ' - City Form';
 					?>
 				</div>
 			</div>
+
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'currency',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-3">
+					<?php 
+						$item = Currency::getDropDownList();
+						echo $form->dropDownList($model, 'currency', $item,
+							array('disabled'=>($model->scenario=='view'))
+						); 
+					?>
+				</div>
+			</div>
 		</div>
 	</div>
 </section>

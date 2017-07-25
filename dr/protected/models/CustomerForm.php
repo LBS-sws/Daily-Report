@@ -7,6 +7,7 @@ class CustomerForm extends CFormModel
 	public $type;
 	public $code;
 	public $name;
+	public $full_name;
 	public $cont_name;
 	public $cont_phone;
 	public $nature;
@@ -25,6 +26,7 @@ class CustomerForm extends CFormModel
 			'id'=>Yii::t('customer','Record ID'),
 			'code'=>Yii::t('customer','Code'),
 			'name'=>Yii::t('customer','Name'),
+			'full_name'=>Yii::t('customer','Full Name'),
 			'cont_name'=>Yii::t('customer','Contact Name'),
 			'cont_phone'=>Yii::t('customer','Contact Phone'),
 			'address'=>Yii::t('customer','Address'),
@@ -37,7 +39,7 @@ class CustomerForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, cont_name, cont_phone, address','safe'),
+			array('id, full_name, cont_name, cont_phone, address','safe'),
 			array('name, code','required'),
 /*
 			array('code','unique','allowEmpty'=>true,
@@ -81,6 +83,7 @@ class CustomerForm extends CFormModel
 				$this->id = $row['id'];
 				$this->code = $row['code'];
 				$this->name = $row['name'];
+				$this->full_name = $row['full_name'];
 				$this->cont_name = $row['cont_name'];
 				$this->cont_phone = $row['cont_phone'];
 				$this->address = $row['address'];
@@ -114,10 +117,10 @@ class CustomerForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_company(
-							code, name, cont_name, cont_phone, address,
+							code, name, full_name, cont_name, cont_phone, address,
 							city, luu, lcu
 						) values (
-							:code, :name, :cont_name, :cont_phone, :address,
+							:code, :name, :full_name, :cont_name, :cont_phone, :address,
 							:city, :luu, :lcu
 						)";
 				break;
@@ -125,6 +128,7 @@ class CustomerForm extends CFormModel
 				$sql = "update swo_company set
 							code = :code, 
 							name = :name, 
+							full_name = :full_name, 
 							cont_name = :cont_name, 
 							cont_phone = :cont_phone, 
 							address = :address, 
@@ -142,6 +146,8 @@ class CustomerForm extends CFormModel
 			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
 		if (strpos($sql,':name')!==false)
 			$command->bindParam(':name',$this->name,PDO::PARAM_STR);
+		if (strpos($sql,':full_name')!==false)
+			$command->bindParam(':full_name',$this->full_name,PDO::PARAM_STR);
 		if (strpos($sql,':code')!==false)
 			$command->bindParam(':code',$this->code,PDO::PARAM_STR);
 		if (strpos($sql,':cont_name')!==false)

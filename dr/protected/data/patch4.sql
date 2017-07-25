@@ -1,6 +1,9 @@
 alter table swo_task
 add column task_type char(5) after description;
 
+alter table swo_city
+add column incharge varchar(30) after region;
+
 DROP TABLE IF EXISTS swo_monthly_hdr;
 CREATE TABLE swo_monthly_hdr (
 	id int unsigned auto_increment NOT NULL primary key,
@@ -42,7 +45,7 @@ CREATE TABLE swo_monthly_field (
 	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 insert into swo_monthly_field(code, name, upd_type, field_type, lcu, luu, function_name, excel_row) values
-('00001','上月生意额','M','N','admin','admin',null,3),
+('00001','上月生意额','M','N','admin','admin','CalcService::getLastMonthFigure,00002',3),
 ('00002','今月生意额','M','N','admin','admin',null,4),
 ('00003','今月IA生意额','M','N','admin','admin',null,5),
 ('00004','今月IB生意额','M','N','admin','admin',null,6),
@@ -88,7 +91,7 @@ insert into swo_monthly_field(code, name, upd_type, field_type, lcu, luu, functi
 ('00044','质检拜访平均分数最高同事','Y','S','admin','admin','CalcQc::listHighestMarkStaff',49),
 ('00045','5天成功安装机器合同数目','Y','N','admin','admin','CalcService::countInstallIn5Days',50),
 ('00046','7天成功安排首次合同数目','Y','N','admin','admin','CalcService::countFirstTimeIn7Days',51),
-('00047','车辆数目','M','N','admin','admin',null,53),
+('00047','车辆数目','M','N','admin','admin','CalcService::getLastMonthFigure,00047',53),
 ('00048','今月平均每部车用油金额','M','N','admin','admin',null,54),
 ('00049','今月应送皂液（桶）','Y','N','admin','admin','CalcLogistic::sumSoapPlanQty',55),
 ('00050','今月实际送皂液（桶）','Y','N','admin','admin','CalcLogistic::sumSoapActualQty',56),
@@ -104,7 +107,9 @@ insert into swo_monthly_field(code, name, upd_type, field_type, lcu, luu, functi
 ('00060','现有组长数目','Y','N','admin','admin','CalcStaff::countLeaderGroup',67),
 ('00061','今月销售人员数目','Y','N','admin','admin','CalcStaff::countStaffSales',68),
 ('00062','今月办公室人员数目','Y','N','admin','admin','CalcStaff::countStaffOffice',69),
-('00063','销售划分区域','M','N','admin','admin',null,70),
-('00064','销售公共区域','M','N','admin','admin',null,71)
+('00063','销售划分区域','M','N','admin','admin','CalcService::getLastMonthFigure,00063',70),
+('00064','销售公共区域','M','N','admin','admin','CalcService::getLastMonthFigure,00064',71)
 ;
 
+alter table swo_service 
+add column need_install char(1) default 'N' after amt_install;

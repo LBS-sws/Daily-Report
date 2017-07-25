@@ -19,12 +19,13 @@ class StationList extends CListPageModel
 	
 	public function retrieveDataByPage($pageNum=1)
 	{
+		$suffix = Yii::app()->params['envSuffix'];
 		$sql1 = "select a.*, b.name as city_name
-				from swo_station a, swo_city b
+				from swo_station a, security$suffix.sec_city b
 				where a.city=b.code
 			";
 		$sql2 = "select count(a.station_id)
-				from swo_station a, swo_city b
+				from swo_station a, security$suffix.sec_city b
 				where a.city=b.code
 			";
 		$clause = "";

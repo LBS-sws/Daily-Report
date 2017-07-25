@@ -7,7 +7,12 @@ class CityForm extends CFormModel
 	public $name;
 	public $region;
 	public $incharge;
+	public $currency;
 
+	protected $dynamic_fields = array(
+								'currency',
+							);
+	
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -20,6 +25,7 @@ class CityForm extends CFormModel
 			'name'=>Yii::t('code','Name'),
 			'region'=>Yii::t('code','Region'),
 			'incharge'=>Yii::t('code','In Charge'),
+			'currency'=>Yii::t('code','Currency'),
 		);
 	}
 
@@ -36,7 +42,7 @@ class CityForm extends CFormModel
 					'on'=>'new',
 				),
 			array('name,code','required'),
-			array('region,incharge','safe'),
+			array('region,incharge,currency','safe'),
 		);
 	}
 
@@ -44,16 +50,22 @@ class CityForm extends CFormModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select * from security$suffix.sec_city where code='".$index."'";
-		$rows = Yii::app()->db->createCommand($sql)->queryAll();
-		if (count($rows) > 0)
-		{
-			foreach ($rows as $row)
-			{
-				$this->code = $row['code'];
-				$this->name = $row['name'];
-				$this->region = $row['region'];
-				$this->incharge = $row['incharge'];
-				break;
+		$row = Yii::app()->db->createCommand($sql)->queryRow();
+		if ($row!==false) {
+			$this->code = $row['code'];
+			$this->name = $row['name'];
+			$this->region = $row['region'];
+			$this->incharge = $row['incharge'];
+			
+			$sql = "select * from security$suffix.sec_city_info where code='".$index."'";
+			$rows = Yii::app()->db->createCommand($sql)->queryAll();
+			if (count($rows) > 0) {
+				foreach ($rows as $row) {
+					if (in_array($row['field_id'],$this->dynamic_fields)) {
+						$fieldid = $row['field_id'];
+						$this->$fieldid = $row['field_value'];
+					}
+				}
 			}
 		}
 		return true;
@@ -65,6 +77,7 @@ class CityForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveCity($connection);
+			$this->saveCityInfo($connection);
 			$transaction->commit();
 		}
 		catch(Exception $e) {
@@ -112,6 +125,45 @@ class CityForm extends CFormModel
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		$command->execute();
+
+		return true;
+	}
+
+	protected function saveCityInfo(&$connection)
+	{
+		$suffix = Yii::app()->params['envSuffix'];
+		$sql = '';
+		switch ($this->scenario) {
+			case 'delete':
+				$sql = "delete from security$suffix.sec_city_info where code = :code";
+				break;
+			default:
+				$sql = "insert into security$suffix.sec_city_info(
+						code, field_id, field_value, lcu, luu) values (
+						:code, :field_id, :field_value, :lcu, :luu)
+						on duplicate key
+						update field_value=:field_value, luu=:luu
+					";
+				break;
+		}
+
+		$uid = Yii::app()->user->id;
+
+		foreach ($this->dynamic_fields as $field_id) {
+			$command=$connection->createCommand($sql);
+			if (strpos($sql,':code')!==false)
+				$command->bindParam(':code',$this->code,PDO::PARAM_STR);
+			if (strpos($sql,':field_id')!==false)
+				$command->bindParam(':field_id',$field_id,PDO::PARAM_STR);
+			$value = $this->$field_id;
+			if (strpos($sql,':field_value')!==false)
+				$command->bindParam(':field_value',$value,PDO::PARAM_STR);
+			if (strpos($sql,':lcu')!==false)
+				$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
+			if (strpos($sql,':luu')!==false)
+				$command->bindParam(':luu',$uid,PDO::PARAM_STR);
+			$command->execute();
+		}	
 
 		return true;
 	}

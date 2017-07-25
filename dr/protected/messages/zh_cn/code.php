@@ -44,5 +44,6 @@ return array(
 	'Other'=>'其他',
 	'Nil'=>'无',
 	'Type'=>'类别',
+	'Currency'=>'货币',
 );
 ?>

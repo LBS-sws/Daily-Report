@@ -15,6 +15,7 @@ return array(
 	'Code'=>'客戶编号',
 	'Type'=>'类别',
 	'Name'=>'名称',
+	'Full Name'=>'全称',
 	'Contact Name'=>'客户联系',
 	'Contact Phone'=>'客户电话',
 	'Nature'=>'性质',

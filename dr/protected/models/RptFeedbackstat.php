@@ -49,8 +49,9 @@ class RptFeedbackstat extends ReportData2 {
 		}
 		
 		// Initiate Data Array
+		$suffix = Yii::app()->params['envSuffix'];
 		$rptdata = array();
-		$sql = "select a.code, a.name from swo_city a left outer join swo_city b 
+		$sql = "select a.code, a.name from security$suffix.sec_city a left outer join security$suffix.sec_city b 
 				on a.code=b.region
 				where b.code is null and a.region is not null 
 				order by a.code

@@ -1,4 +1,4 @@
- <?php
+<?php
 class JobQueueCommand extends CConsoleCommand {
 	protected $webroot;
 	

@@ -34,6 +34,7 @@ class ServiceForm extends CFormModel
 	public $equip_install_dt;
 	public $org_equip_qty = 0;
 	public $rtn_equip_qty = 0;
+	public $city;
 
 	public $b4_product_id;
 	public $b4_service;
@@ -48,6 +49,10 @@ class ServiceForm extends CFormModel
 	public $files;
 	public $removeFileId = 0;
 
+	public function init() {
+		$this->city = Yii::app()->user->city();
+	}
+	
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -99,7 +104,7 @@ class ServiceForm extends CFormModel
 	{
 		return array(
 			array('id, salesman, cont_info, first_tech, reason, remarks, remarks2, paid_type, nature_type, cust_type, 
-				status, status_desc, company_id, product_id, backlink, fresh, paid_type,
+				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
 			array('company_name, service, status_dt','required'),
 			array('ctrt_period','numerical','allowEmpty'=>true,'integerOnly'=>true),
@@ -154,6 +159,7 @@ class ServiceForm extends CFormModel
 				$this->rtn_equip_qty = $row['rtn_equip_qty'];
 				$this->need_install = $row['need_install'];
 				$this->no_of_attm = $row['no_of_attm'];
+				$this->city = $row['city'];
 			
 				break;
 			}
@@ -251,7 +257,7 @@ class ServiceForm extends CFormModel
 	}
 	
 	protected function execSql(&$connection, $sql) {
-		$city = Yii::app()->user->city();
+		$city = $this->city; 	//Yii::app()->user->city();
 		$uid = Yii::app()->user->id;
 		
 		$command=$connection->createCommand($sql);

@@ -15,6 +15,7 @@ return array(
 	'Code'=>'供应商编号',
 	'Type'=>'类别',
 	'Name'=>'名称',
+	'Full Name'=>'全称',
 	'Contact Name'=>'供应商联系',
 	'Contact Phone'=>'供应商电话',
 	'Nature'=>'性质',

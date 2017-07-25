@@ -61,6 +61,10 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 	</div>
 	</div></div>
 
+<?php
+	$currcode = City::getCurrency($model->city);
+	$sign = Currency::getSign($currcode); 
+?>
 	<div class="box box-info">
 		<div class="box-body">
 			<?php echo $form->hiddenField($model, 'id'); ?>
@@ -171,7 +175,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 					<?php
 						echo $form->numberField($model, 'b4_amt_paid', 
 							array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'),
-							'prepend'=>'<span class="fa fa-cny"></span>')
+							'prepend'=>'<span class="fa '.$sign.'"></span>')
 						); 
 					?>
 				</div>
@@ -205,7 +209,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 					<?php
 						echo $form->numberField($model, 'amt_paid', 
 							array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'),
-							'prepend'=>'<span class="fa fa-cny"></span>')
+							'prepend'=>'<span class="fa '.$sign.'"></span>')
 						); 
 					?>
 				</div>
@@ -216,7 +220,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 				<div class="col-sm-2">
 					<?php echo $form->numberField($model, 'amt_install', 
 							array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'),
-							'prepend'=>'<span class="fa fa-cny"></span>')
+							'prepend'=>'<span class="fa '.$sign.'"></span>')
 					); ?>
 				</div>
 			</div>

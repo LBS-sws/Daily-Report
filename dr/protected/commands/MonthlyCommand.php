@@ -14,8 +14,9 @@ class MonthlyCommand extends CConsoleCommand {
 		$this->month = (empty($month)) ? date('m') : $month;
 		echo "YEAR: ".$this->year."\tMONTH: ".$this->month."\n";
 
+		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select a.code
-				from swo_city a left outer join swo_city b on a.code=b.region 
+				from security$suffix.sec_city a left outer join security$suffix.sec_city b on a.code=b.region 
 				where b.code is null 
 				order by a.code
 			";
@@ -165,7 +166,7 @@ class MonthlyCommand extends CConsoleCommand {
 				$sql = "update swo_monthly_dtl set data_value='$value' 
 						where data_field='$code' 
 						and hdr_id in (select id from swo_monthly_hdr where year_no=$year and month_no=$month and status='Y')
-						and manual_input <> 'Y'
+						and manual_input <> 'Y' 
 					";
 				try {
 					Yii::app()->db->createCommand($sql)->execute();

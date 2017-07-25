@@ -16,12 +16,13 @@ class RegisterList extends CListPageModel
 	
 	public function retrieveDataByPage($pageNum=1)
 	{
+		$suffix = Yii::app()->params['envSuffix'];
 		$sql1 = "select a.*, b.name as city_name
-				from swo_station_request a, swo_city b 
+				from swo_station_request a, security$suffix.sec_city b 
 				where a.city=b.code 
 			";
 		$sql2 = "select count(a.email)
-				from swo_station_request  a, swo_city b
+				from swo_station_request  a, security$suffix.sec_city b
 				where a.city=b.code 
 			";
 		$clause = "";

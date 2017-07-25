@@ -57,7 +57,7 @@ $this->pageTitle=Yii::app()->name . ' - Supplier Form';
 				<?php echo $form->labelEx($model,'code',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
 				<?php echo $form->textField($model, 'code', 
-					array('size'=>8,'maxlength'=>8,'readonly'=>($model->scenario!='new'),)); 
+					array('size'=>8,'maxlength'=>20,'readonly'=>($model->scenario!='new'),)); 
 				?>
 				</div>
 			</div>
@@ -67,6 +67,15 @@ $this->pageTitle=Yii::app()->name . ' - Supplier Form';
 				<div class="col-sm-7">
 				<?php echo $form->textField($model, 'name', 
 					array('size'=>40,'maxlength'=>250,'readonly'=>($model->scenario=='view'))
+				); ?>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'full_name',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-7">
+				<?php echo $form->textField($model, 'full_name', 
+					array('size'=>40,'maxlength'=>500,'readonly'=>($model->scenario=='view'))
 				); ?>
 				</div>
 			</div>
