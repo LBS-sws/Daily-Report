@@ -5,6 +5,7 @@
 <?php endif ?>
 	<td><?php echo $this->record['code']; ?></td>
 	<td><?php echo $this->record['name']; ?></td>
+	<td><?php echo $this->record['full_name']; ?></td>
 	<td><?php echo $this->record['cont_name']; ?></td>
 	<td><?php echo $this->record['cont_phone']; ?></td>
 </tr>

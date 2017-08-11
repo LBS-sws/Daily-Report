@@ -81,6 +81,15 @@ $this->pageTitle=Yii::app()->name . ' - Customer Form';
 			</div>
 
 			<div class="form-group">
+				<?php echo $form->labelEx($model,'tax_reg_no',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-5">
+				<?php echo $form->textField($model, 'tax_reg_no', 
+					array('maxlength'=>100,'readonly'=>($model->scenario=='view'))
+				); ?>
+				</div>
+			</div>
+
+			<div class="form-group">
 				<?php echo $form->labelEx($model,'cont_name',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
 				<?php echo $form->textField($model, 'cont_name', 

@@ -45,5 +45,7 @@ return array(
 	'Nil'=>'无',
 	'Type'=>'类别',
 	'Currency'=>'货币',
+	
+	'Taxpayer No.'=>'纳税人登记号',
 );
 ?>

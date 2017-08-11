@@ -12,6 +12,7 @@ class CustomerForm extends CFormModel
 	public $cont_phone;
 	public $nature;
 	public $address;
+	public $tax_reg_no;
 
 	public $service = array();
 	
@@ -30,6 +31,7 @@ class CustomerForm extends CFormModel
 			'cont_name'=>Yii::t('customer','Contact Name'),
 			'cont_phone'=>Yii::t('customer','Contact Phone'),
 			'address'=>Yii::t('customer','Address'),
+			'tax_reg_no'=>Yii::t('code','Taxpayer No.'),
 		);
 	}
 	
@@ -39,7 +41,7 @@ class CustomerForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, full_name, cont_name, cont_phone, address','safe'),
+			array('id, full_name, cont_name, cont_phone, address, tax_reg_no','safe'),
 			array('name, code','required'),
 /*
 			array('code','unique','allowEmpty'=>true,
@@ -87,6 +89,7 @@ class CustomerForm extends CFormModel
 				$this->cont_name = $row['cont_name'];
 				$this->cont_phone = $row['cont_phone'];
 				$this->address = $row['address'];
+				$this->tax_reg_no = $row['tax_reg_no'];
 				break;
 			}
 		}
@@ -117,10 +120,10 @@ class CustomerForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_company(
-							code, name, full_name, cont_name, cont_phone, address,
+							code, name, full_name, tax_reg_no, cont_name, cont_phone, address,
 							city, luu, lcu
 						) values (
-							:code, :name, :full_name, :cont_name, :cont_phone, :address,
+							:code, :name, :full_name, :tax_reg_no, :cont_name, :cont_phone, :address,
 							:city, :luu, :lcu
 						)";
 				break;
@@ -129,6 +132,7 @@ class CustomerForm extends CFormModel
 							code = :code, 
 							name = :name, 
 							full_name = :full_name, 
+							tax_reg_no = :tax_reg_no, 
 							cont_name = :cont_name, 
 							cont_phone = :cont_phone, 
 							address = :address, 
@@ -148,6 +152,8 @@ class CustomerForm extends CFormModel
 			$command->bindParam(':name',$this->name,PDO::PARAM_STR);
 		if (strpos($sql,':full_name')!==false)
 			$command->bindParam(':full_name',$this->full_name,PDO::PARAM_STR);
+		if (strpos($sql,':tax_reg_no')!==false)
+			$command->bindParam(':tax_reg_no',$this->tax_reg_no,PDO::PARAM_STR);
 		if (strpos($sql,':code')!==false)
 			$command->bindParam(':code',$this->code,PDO::PARAM_STR);
 		if (strpos($sql,':cont_name')!==false)

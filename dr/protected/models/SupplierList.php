@@ -13,6 +13,7 @@ class SupplierList extends CListPageModel
 			'id'=>Yii::t('supplier','ID'),
 			'code'=>Yii::t('supplier','Code'),
 			'name'=>Yii::t('supplier','Name'),
+			'full_name'=>Yii::t('supplier','Full Name'),
 			'cont_name'=>Yii::t('supplier','Contact Name'),
 			'cont_phone'=>Yii::t('supplier','Contact Phone'),
 			'city_name'=>Yii::t('misc','City'),
@@ -44,6 +45,9 @@ class SupplierList extends CListPageModel
 				case 'name':
 					$clause .= General::getSqlConditionClause('a.name',$svalue);
 					break;
+				case 'full_name':
+					$clause .= General::getSqlConditionClause('a.full_name',$svalue);
+					break;
 				case 'cont_name':
 					$clause .= General::getSqlConditionClause('a.cont_name',$svalue);
 					break;
@@ -74,6 +78,7 @@ class SupplierList extends CListPageModel
 					'id'=>$record['id'],
 					'code'=>$record['code'],
 					'name'=>$record['name'],
+					'full_name'=>$record['full_name'],
 					'cont_name'=>$record['cont_name'],
 					'cont_phone'=>$record['cont_phone'],
 					'city_name'=>$record['city_name'],
