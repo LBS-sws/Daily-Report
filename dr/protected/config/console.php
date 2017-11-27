@@ -25,7 +25,7 @@ return array(
 			'connectionString' => 'mysql:host=localhost;dbname=swoperuat',
 			'emulatePrepare' => true,
 			'username' => 'swuser',
-			'password' => 'Swisher@168',
+			'password' => 'Swisher@123',
 			'charset' => 'utf8',
 		),
 		'log'=>array(
@@ -45,5 +45,6 @@ return array(
 		'systemEmail'=>'it@lbsgroup.com.hk',
 		'webroot'=>'http://118.89.46.224/dr-uat',
 		'envSuffix'=>'uat',
+		'feedbackCcBoss'=>array('flam','JoeY','DorisC'),
 	),
 );

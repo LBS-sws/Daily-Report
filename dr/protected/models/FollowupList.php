@@ -23,15 +23,17 @@ class FollowupList extends CListPageModel
 	
 	public function retrieveDataByPage($pageNum=1)
 	{
+		$user = Yii::app()->user->id;
+		$allcond = Yii::app()->user->validFunction('CN01') ? "" : "and a.lcu='$user'";
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
 		$sql1 = "select a.*, b.name as city_name 
 				from swo_followup a, security$suffix.sec_city b
-				where a.city=b.code and a.city in ($city)  
+				where a.city=b.code and a.city in ($city) $allcond
 			";
 		$sql2 = "select count(a.id)
 				from swo_followup a, security$suffix.sec_city b
-				where a.city=b.code and a.city in ($city)  
+				where a.city=b.code and a.city in ($city) $allcond 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

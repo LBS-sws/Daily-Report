@@ -43,7 +43,11 @@ class JobQueueCommand extends CConsoleCommand {
 							$this->saveOutput($id, $ts, $out, 'C');
 							$to = $this->getEmailAddress($param['TOUSER']);
 							$cc = $this->getCcEmailAddress(json_decode($param['CCUSER']));
-							$ic = City::model()->getAncestorInChargeList($param['CITY']);
+							$bosses = Yii::app()->params['feedbackCcBoss'];
+							$ic = array();
+							foreach (City::model()->getAncestorInChargeList($param['CITY']) as $usr) {
+								if (!in_array($usr,$bosses)) $ic[] = $usr;
+							}
 							$this->updateQueueUser($id, $ic);
 							$cc2 = General::getEmailByUserIdArray($ic);
 							$cc = array_merge($cc, $cc2);

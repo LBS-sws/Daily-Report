@@ -45,7 +45,7 @@ class CalcService extends Calculation {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter 
 				from swo_service a, swo_customer_type b 
-				where year(a.first_dt)=$year and month(a.first_dt)=$month 
+				where year(a.status_dt)=$year and month(a.status_dt)=$month 
 				and a.status='N' and a.need_install='Y' 
 				and a.cust_type=b.id and b.rpt_cat <> 'INV'  
 				group by a.city
@@ -61,10 +61,10 @@ class CalcService extends Calculation {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter 
 				from swo_service a, swo_customer_type b 
-				where year(a.first_dt)=$year and month(a.first_dt)=$month 
+				where year(a.status_dt)=$year and month(a.status_dt)=$month 
 				and a.status='N' and a.equip_install_dt is not null 
 				and timestampdiff(DAY,a.status_dt,a.equip_install_dt)<=5 and a.need_install='Y' 
-				and a.cust_type=b.id and b.rpt_cat='IA'  
+				and a.cust_type=b.id and b.rpt_cat='IA' 
 				group by a.city
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
@@ -78,7 +78,7 @@ class CalcService extends Calculation {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter 
 				from swo_service a, swo_customer_type b 
-				where year(a.first_dt)=$year and month(a.first_dt)=$month 
+				where year(a.status_dt)=$year and month(a.status_dt)=$month 
 				and a.status='N' and a.first_dt is not null 
 				and timestampdiff(DAY,a.status_dt,a.first_dt)<=7 
 				and a.cust_type=b.id and b.rpt_cat in ('IA','IB')  

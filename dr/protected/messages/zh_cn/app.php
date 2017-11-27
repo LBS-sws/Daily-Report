@@ -1,14 +1,15 @@
 <?php
 return array(
 	'Daily Report System'=>'日报表系统',
-	'Daily Report System - UAT'=>'日报表系统 - 测试版(云端)',
+	'Daily Report System - UAT'=>'日报表系统 - 测试版',
 	'LBS Daily Management'=>'LBS 日常管理',
-	'LBS Daily Management - UAT'=>'LBS 日常管理 - 测试版(云端)',
+	'LBS Daily Management - UAT'=>'LBS 日常管理 - 测试版',
 
 	'System Change'=>'系统切换',
 	'Daily Report'=>'日报表系统',
 	'Accounting'=>'会计系统',
 	'Operation'=>'营运系统',
+	'Personnel'=>'人事系统',
 
 	'Data Entry'=>'数据输入',
 	'Report'=>'报表',
@@ -81,5 +82,8 @@ return array(
 	'Last Logon Time'=>'最近登录时间',
 	'Others'=>'其他',
 	'Misc'=>'其他',
+	
+	'Complaint Read All'=>'投诉全閱',
+	'QC Read All'=>'品檢全閱',
 );
 ?>

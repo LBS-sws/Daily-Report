@@ -94,8 +94,10 @@ class FollowupForm extends CFormModel
 
 	public function retrieveData($index)
 	{
+		$user = Yii::app()->user->id;
+		$allcond = Yii::app()->user->validFunction('CN01') ? "" : "and lcu='$user'";
 		$city = Yii::app()->user->city_allow();
-		$sql = "select * from swo_followup where id=$index and city in ($city)";
+		$sql = "select * from swo_followup where id=$index and city in ($city) $allcond";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0)
 		{

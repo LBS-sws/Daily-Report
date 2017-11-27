@@ -62,7 +62,7 @@ class ReportController extends Controller
 		$bosses = Yii::app()->params['feedbackCcBoss'];
 		$now = date("Y-m-d H:i:s");
 		if (empty($rpt_array)) $rpt_array = array($rpt_id=>$criteria->name);
-		$criteria->ccuser = (!empty($criteria->ccuser) && is_array($criteria->ccuser)) ? array_merge($criteria->ccuser, $bosses) : $bosses;
+//		$criteria->ccuser = (!empty($criteria->ccuser) && is_array($criteria->ccuser)) ? array_merge($criteria->ccuser, $bosses) : $bosses;
 		$data = array(
 					'RPT_ID'=>$rpt_id,
 					'RPT_NAME'=>$criteria->name,

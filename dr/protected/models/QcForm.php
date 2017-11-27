@@ -82,9 +82,11 @@ class QcForm extends CFormModel
 
 	public function retrieveData($index)
 	{
+		$user = Yii::app()->user->id;
+		$allcond = Yii::app()->user->validFunction('CN02') ? "" : "and lcu='$user'";
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
-		$sql = "select *,docman$suffix.countdoc('QC',id) as no_of_attm from swo_qc where id=$index and city in ($city)";
+		$sql = "select *,docman$suffix.countdoc('QC',id) as no_of_attm from swo_qc where id=$index and city in ($city) $allcond ";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0)
 		{
