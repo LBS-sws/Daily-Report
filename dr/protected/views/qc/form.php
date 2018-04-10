@@ -45,14 +45,12 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 		);
 	?>
 <?php endif ?>
-<?php if ($model->scenario=='edit' || $model->scenario=='view'): ?>
-	<?php 
-		$counter = ($model->no_of_attm > 0) ? ' '.TbHtml::badge($model->no_of_attm, array('class' => 'bg-blue')) : '';
+<?php 
+		$counter = ($model->no_of_attm['qc'] > 0) ? ' <span id="docqc" class="label label-info">'.$model->no_of_attm['qc'].'</span>' : ' <span id="docqc"></span>';
 		echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-			'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploaddialog',)
+			'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadqc',)
 		);
-	?>
-<?php endif ?>
+?>
 	</div>
 	</div></div>
 
@@ -60,6 +58,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 		<div class="box-body">
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
+			<?php echo $form->hiddenField($model, 'new_form'); ?>
 
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'entry_dt',array('class'=>"col-sm-2 control-label")); ?>
@@ -78,10 +77,14 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'job_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo $form->textField($model, 'job_staff', 
-						array('size'=>50,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->scenario=='view')))
-					)); ?>
+					<?php 
+//						echo $form->dropDownList($model, 'job_staff', array(), 
+//							array('class'=>'form-control select2', 'disabled'=>($model->scenario=='view')));
+						echo $form->textField($model, 'job_staff', 
+							array('size'=>50,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
+							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->scenario=='view')))
+						)); 
+					?>
 				</div>
 			</div>
 
@@ -107,10 +110,14 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'company_name',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
 					<?php echo $form->hiddenField($model, 'company_id'); ?>
-					<?php echo $form->textField($model, 'company_name', 
-						array('size'=>50,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->scenario=='view')))
-					)); ?>
+					<?php 
+//						echo $form->dropDownList($model, 'company_name', array(), 
+//							array('class'=>'form-control select2', 'disabled'=>($model->scenario=='view')));
+						echo $form->textField($model, 'company_name', 
+							array('size'=>50,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
+							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->scenario=='view')))
+						)); 
+					?>
 				</div>
 			</div>
 
@@ -183,10 +190,14 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'qc_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo $form->textField($model, 'qc_staff', 
-						array('size'=>50,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','QC Staff'),array('name'=>'btnStaffQc','id'=>'btnStaffQc','disabled'=>($model->scenario=='view')))
-					)); ?>
+					<?php 
+//						echo $form->dropDownList($model, 'qc_staff', array(), 
+//							array('class'=>'form-control select2', 'disabled'=>($model->scenario=='view')));
+						echo $form->textField($model, 'qc_staff', 
+							array('size'=>50,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
+							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','QC Staff'),array('name'=>'btnStaffQc','id'=>'btnStaffQc','disabled'=>($model->scenario=='view')))
+						)); 
+					?>
 				</div>
 			</div>
 			
@@ -212,26 +223,77 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 </section>
 
 <?php $this->renderPartial('//site/removedialog'); ?>
-<?php $this->renderPartial('//site/lookup'); ?>
-<?php $this->renderPartial('//site/fileupload',array('model'=>$model,'form'=>$form)); ?>
+<?php $this->renderPartial('//site/lookup2'); ?>
+<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+													'form'=>$form,
+													'doctype'=>'QC',
+													'header'=>Yii::t('dialog','File Attachment'),
+													'ronly'=>($model->scenario=='view'),
+													)); 
+?>
 
 <?php
-Script::genFileUpload(get_class($model),$form->id, 'qc');
+/*
+$link = Yii::app()->createAbsoluteUrl("lookup");
+$linkstaff = $link.'/staffex2';
+$js = <<<EOF
 
-$js = Script::genLookupSearch();
-Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);
+$("#QcForm_company_id").select2({
+	language: "zh-CN",
+	ajax: {
+		url: '$link'+'/companyex2',
+		dataType: 'json',
+		data: function(params) {
+			return {
+				search: params.term
+			};
+		},
+		processResults: function(data, params) {
+			return {
+				results: data
+			};
+		},
+		cache: true
+	},
+	minimumInputLength: 1,
+});
+EOF;
+Yii::app()->clientScript->registerScript('select2',$js,CClientScript::POS_READY);
+*/
+$baseUrl = Yii::app()->baseUrl;
+Yii::app()->clientScript->registerScriptFile($baseUrl.'/js/dms-lookup.js', CClientScript::POS_HEAD);
 
-$js = Script::genLookupButton('btnStaffResp', 'staff', '', 'job_staff');
-Yii::app()->clientScript->registerScript('lookupStaffResp',$js,CClientScript::POS_READY);
+$js = <<<EOF
+$('#btnStaffResp').on('click',function() {
+	opendialog('staff', '', 'job_staff', false, {}, {});
+});
 
-$js = Script::genLookupButton('btnCompany', 'company', 'company_id', 'company_name');
-Yii::app()->clientScript->registerScript('lookupCompany',$js,CClientScript::POS_READY);
+$('#btnCompany').on('click',function() {
+	opendialog('company', 'company_id', 'company_name', false, {}, {});
+});
 
-$js = Script::genLookupButton('btnStaffQc', 'staff', '', 'qc_staff');
-Yii::app()->clientScript->registerScript('lookupStaffQc',$js,CClientScript::POS_READY);
+$('#btnStaffQc').on('click',function() {
+	opendialog('staff', '', 'qc_staff', false, {}, {});
+});
+EOF;
+Yii::app()->clientScript->registerScript('lookup',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupSelect();
-Yii::app()->clientScript->registerScript('lookupSelect',$js,CClientScript::POS_READY);
+Script::genFileUpload($model,$form->id,'QC');
+
+//$js = Script::genLookupSearch();
+//Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);
+
+//$js = Script::genLookupButton('btnStaffResp', 'staff', '', 'job_staff');
+//Yii::app()->clientScript->registerScript('lookupStaffResp',$js,CClientScript::POS_READY);
+
+//$js = Script::genLookupButton('btnCompany', 'company', 'company_id', 'company_name');
+//Yii::app()->clientScript->registerScript('lookupCompany',$js,CClientScript::POS_READY);
+
+//$js = Script::genLookupButton('btnStaffQc', 'staff', '', 'qc_staff');
+//Yii::app()->clientScript->registerScript('lookupStaffQc',$js,CClientScript::POS_READY);
+
+//$js = Script::genLookupSelect();
+//Yii::app()->clientScript->registerScript('lookupSelect',$js,CClientScript::POS_READY);
 
 $js = Script::genDeleteData(Yii::app()->createUrl('qc/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);

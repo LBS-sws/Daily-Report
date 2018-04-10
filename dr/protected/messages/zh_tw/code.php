@@ -44,5 +44,15 @@ return array(
 	'Other'=>'其他',
 	'Nil'=>'無',
 	'Type'=>'類別',
+	'Currency'=>'貨幣',
+	
+	'Taxpayer No.'=>'納稅人登記號',
+	
+	'Maintenance'=>'維修',
+	'Uninstallion'=>'拆機',
+	'Relocation'=>'移位',
+	'Replacement'=>'換機',
+	'Puriscent'=>'飄盈香',
+	'Perfume'=>'香水',
 );
 ?>

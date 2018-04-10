@@ -68,6 +68,12 @@ class TaskList extends CListPageModel
 				switch($record['task_type']) {
 					case 'PAPER': $type = Yii::t('code','Paper'); break;
 					case 'SOAP': $type = Yii::t('code','Soap'); break;
+					case 'MAINT': $type = Yii::t('code','Maintenance'); break;
+					case 'UNINS': $type = Yii::t('code','Uninstallion'); break;
+					case 'RELOC': $type = Yii::t('code','Relocation'); break;
+					case 'REPLA': $type = Yii::t('code','Replacement'); break;
+					case 'PURIS': $type = Yii::t('code','Puriscent'); break;
+					case 'PERFU': $type = Yii::t('code','Perfume'); break;
 					case 'OTHER': $type = Yii::t('code','Other'); break;
 					default: $type = '';
 				}

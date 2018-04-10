@@ -51,6 +51,7 @@ class MonthlyForm extends CFormModel
 				where a.id=$index and a.city='$city'
 				and a.id=b.hdr_id and b.data_field=c.code
 				and c.status='Y'
+				order by c.excel_row
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
@@ -116,24 +117,26 @@ class MonthlyForm extends CFormModel
 		foreach ($rows as $row) {
 			$code = $row['code'];
 			$command=$connection->createCommand($sql);
-			if (strpos($sql,':id')!==false)
-				$command->bindParam(':id',$this->record[$code]['id'],PDO::PARAM_INT);
-			if (strpos($sql,':data_value')!==false)
-				$command->bindParam(':data_value',$this->record[$code]['datavalue'],PDO::PARAM_STR);
-			if (strpos($sql,':manual_input')!==false) {
-				$input = 'N';
-				if ($this->record[$code]['updtype']=='M' || $this->record[$code]['datavalueold']==$this->record[$code]['datavalue']) {
-					$input = $this->record[$code]['manualinput'];
-				} else {
-					if ($this->record[$code]['updtype']!='M') {
-						$input = (empty($this->record[$code]['datavalue']) || $this->record[$code]['datavalue']=='0') ? 'N' : 'Y';
+			if (isset($this->record[$code])) {
+				if (strpos($sql,':id')!==false)
+					$command->bindParam(':id',$this->record[$code]['id'],PDO::PARAM_INT);
+				if (strpos($sql,':data_value')!==false)
+					$command->bindParam(':data_value',$this->record[$code]['datavalue'],PDO::PARAM_STR);
+				if (strpos($sql,':manual_input')!==false) {
+					$input = 'N';
+					if ($this->record[$code]['updtype']=='M' || $this->record[$code]['datavalueold']==$this->record[$code]['datavalue']) {
+						$input = $this->record[$code]['manualinput'];
+					} else {
+						if ($this->record[$code]['updtype']!='M') {
+							$input = (empty($this->record[$code]['datavalue']) || $this->record[$code]['datavalue']=='0') ? 'N' : 'Y';
+						}
 					}
+					$command->bindParam(':manual_input',$input,PDO::PARAM_STR);
 				}
-				$command->bindParam(':manual_input',$input,PDO::PARAM_STR);
+				if (strpos($sql,':uid')!==false)
+					$command->bindParam(':uid',$uid,PDO::PARAM_STR);
+				$command->execute();
 			}
-			if (strpos($sql,':uid')!==false)
-				$command->bindParam(':uid',$uid,PDO::PARAM_STR);
-			$command->execute();
 		}
 		return true;
 	}

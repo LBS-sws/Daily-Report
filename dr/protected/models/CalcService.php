@@ -41,6 +41,22 @@ class CalcService extends Calculation {
 		return $rtn;
 	}
 
+	public static function countCaseIAWithInstall($year, $month) {
+		$rtn = array();
+		$sql = "select a.city, count(a.id) as counter 
+				from swo_service a, swo_customer_type b 
+				where year(a.first_dt)=$year and month(a.first_dt)=$month 
+				and a.cust_type=b.id and b.rpt_cat in ('IA') 
+				and a.status='N' and a.need_install='Y'  
+				group by a.city
+			";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) $rtn[$row['city']] = $row['counter'];
+		}
+		return $rtn;
+	}
+
 	public static function countInstall($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter 

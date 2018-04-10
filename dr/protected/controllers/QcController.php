@@ -67,12 +67,18 @@ class QcController extends Controller
 			if ($model->validate()) {
 				$model->saveData();
 //				$model->scenario = 'edit';
+
 				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
 				$this->redirect(Yii::app()->createUrl('qc/edit',array('index'=>$model->id)));
 			} else {
 				$message = CHtml::errorSummary($model);
 				Dialog::message(Yii::t('dialog','Validation Message'), $message);
-				$this->render('form',array('model'=>$model,));
+				switch ($model->service_type) {
+					case 'IA': $formfile = $model->new_form ? 'formia' : 'form'; break;
+					case 'IB' : $formfile = $model->new_form ? 'formib' : 'form'; break;
+					default : $formfile = 'form';
+				}
+				$this->render($formfile,array('model'=>$model,));
 			}
 		}
 	}
@@ -83,15 +89,28 @@ class QcController extends Controller
 		if (!$model->retrieveData($index)) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		} else {
-			$this->render('form',array('model'=>$model,));
+			switch ($model->service_type) {
+				case 'IA': $formfile = $model->new_form ? 'formia' : 'form'; break;
+				case 'IB' : $formfile = $model->new_form ? 'formib' : 'form'; break;
+				default : $formfile = 'form';
+			}
+			$this->render($formfile,array('model'=>$model,));
 		}
 	}
 	
-	public function actionNew()
+	public function actionNew($type='')
 	{
 		$model = new QcForm('new');
+		switch ($type) {
+			case 'IA': $formfile = 'formia'; $model->new_form = true; break;
+			case 'IB' : $formfile = 'formib'; $model->new_form = true; break;
+			default : $formfile = 'form';
+		}
+		$model->service_type = $type;
 		$model->entry_dt = date('Y/m/d');
-		$this->render('form',array('model'=>$model,));
+		$model->qc_dt = date('Y/m/d');
+		$model->initData();
+		$this->render($formfile,array('model'=>$model,));
 	}
 	
 	public function actionEdit($index)
@@ -100,7 +119,12 @@ class QcController extends Controller
 		if (!$model->retrieveData($index)) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		} else {
-			$this->render('form',array('model'=>$model,));
+			switch ($model->service_type) {
+				case 'IA': $formfile = $model->new_form ? 'formia' : 'form'; break;
+				case 'IB' : $formfile = $model->new_form ? 'formib' : 'form'; break;
+				default : $formfile = 'form';
+			}
+			$this->render($formfile,array('model'=>$model,));
 		}
 	}
 	
@@ -115,13 +139,29 @@ class QcController extends Controller
 		$this->redirect(Yii::app()->createUrl('qc/index'));
 	}
 	
-	public function actionFileupload() {
+//	public function actionFileupload() {
+//		$model = new QcForm();
+//		if (isset($_POST['QcForm'])) {
+//			$model->attributes = $_POST['QcForm'];
+//			
+//			$docman = new DocMan($model->docType,$model->id);
+//			if (isset($_FILES['attachment'])) $docman->files = $_FILES['attachment'];
+//			$docman->fileUpload();
+//			echo $docman->genTableFileList(false);
+//		} else {
+//			echo "NIL";
+//		}
+//	}
+	
+	public function actionFileupload($doctype) {
 		$model = new QcForm();
 		if (isset($_POST['QcForm'])) {
 			$model->attributes = $_POST['QcForm'];
 			
-			$docman = new DocMan($model->docType,$model->id);
-			if (isset($_FILES['attachment'])) $docman->files = $_FILES['attachment'];
+			$id = ($_POST['QcForm']['scenario']=='new') ? 0 : $model->id;
+			$docman = new DocMan($doctype,$id,get_class($model));
+			$docman->masterId = $model->docMasterId[strtolower($doctype)];
+			if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
 			$docman->fileUpload();
 			echo $docman->genTableFileList(false);
 		} else {
@@ -129,32 +169,62 @@ class QcController extends Controller
 		}
 	}
 	
-	public function actionFileRemove() {
+//	public function actionFileRemove() {
+//		$model = new QcForm();
+//		if (isset($_POST['QcForm'])) {
+//			$model->attributes = $_POST['QcForm'];
+//			
+//			$docman = new DocMan($model->docType,$model->id);
+//			$docman->fileRemove($model->removeFileId);
+//			echo $docman->genTableFileList(false);
+//		} else {
+//			echo "NIL";
+//		}
+//	}
+	
+	public function actionFileRemove($doctype) {
 		$model = new QcForm();
 		if (isset($_POST['QcForm'])) {
 			$model->attributes = $_POST['QcForm'];
-			
-			$docman = new DocMan($model->docType,$model->id);
-			$docman->fileRemove($model->removeFileId);
+			$docman = new DocMan($doctype,$model->id,get_class($model));
+			$docman->masterId = $model->docMasterId[strtolower($doctype)];
+			$docman->fileRemove($model->removeFileId[strtolower($doctype)]);
 			echo $docman->genTableFileList(false);
 		} else {
 			echo "NIL";
 		}
 	}
 	
-	public function actionFileDownload($docId, $fileId) {
+//	public function actionFileDownload($docId, $fileId) {
+//		$sql = "select city from swo_qc where id = $docId";
+//		$row = Yii::app()->db->createCommand($sql)->queryRow();
+//		if ($row!==false) {
+//			$citylist = Yii::app()->user->city_allow();
+//			if (strpos($citylist, $row['city']) !== false) {
+//				$docman = new DocMan('QC', $docId);
+//				$docman->fileDownload($fileId);
+//			} else {
+//				throw new CHttpException(404,'Access right not match.');
+//			}
+//		} else {
+//			throw new CHttpException(404,'Record not found.');
+//		}
+//	}
+
+	public function actionFileDownload($mastId, $docId, $fileId, $doctype) {
 		$sql = "select city from swo_qc where id = $docId";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		if ($row!==false) {
 			$citylist = Yii::app()->user->city_allow();
 			if (strpos($citylist, $row['city']) !== false) {
-				$docman = new DocMan('QC', $docId);
+				$docman = new DocMan($doctype,$docId,'QcForm');
+				$docman->masterId = $mastId;
 				$docman->fileDownload($fileId);
 			} else {
 				throw new CHttpException(404,'Access right not match.');
 			}
 		} else {
-			throw new CHttpException(404,'Record not found.');
+				throw new CHttpException(404,'Record not found.');
 		}
 	}
 

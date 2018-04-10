@@ -44,11 +44,18 @@ class ServiceForm extends CFormModel
 	public $status_desc;
 	public $backlink;
 	
-	public $no_of_attm = 0;
-	public $docType = 'SERVICE';
 	public $files;
-	public $removeFileId = 0;
 
+	public $docMasterId = array(
+							'service'=>0,
+						);
+	public $removeFileId = array(
+							'service'=>0,
+						);
+	public $no_of_attm = array(
+							'service'=>0,
+						);
+	
 	public function init() {
 		$this->city = Yii::app()->user->city();
 	}
@@ -103,9 +110,15 @@ class ServiceForm extends CFormModel
 	public function rules()
 	{
 		return array(
+/*
 			array('id, salesman, cont_info, first_tech, reason, remarks, remarks2, paid_type, nature_type, cust_type, 
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
+*/
+			array('id, salesman, cont_info, first_tech, reason, remarks, remarks2, paid_type, nature_type, cust_type, 
+				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
+				b4_product_id, b4_service, b4_paid_type, need_install','safe'),
+			array('files, removeFileId, docMasterId, no_of_attm','safe'), 
 			array('company_name, service, status_dt','required'),
 			array('ctrt_period','numerical','allowEmpty'=>true,'integerOnly'=>true),
 			array('amt_paid, amt_install','numerical','allowEmpty'=>true),
@@ -158,7 +171,7 @@ class ServiceForm extends CFormModel
 				$this->org_equip_qty = $row['org_equip_qty'];
 				$this->rtn_equip_qty = $row['rtn_equip_qty'];
 				$this->need_install = $row['need_install'];
-				$this->no_of_attm = $row['no_of_attm'];
+				$this->no_of_attm['service'] = $row['no_of_attm'];
 				$this->city = $row['city'];
 			
 				break;
@@ -173,6 +186,7 @@ class ServiceForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveService($connection);
+			$this->updateDocman($connection,'SERVICE');
 			$transaction->commit();
 		}
 		catch(Exception $e) {
@@ -363,13 +377,24 @@ class ServiceForm extends CFormModel
 		$command->execute();
 	}
 	
-	public function saveFiles() {
-		$docman = new DocMan();
-		foreach ($this->files as $file) {
-			$docman->save($data);
+//	public function saveFiles() {
+//		$docman = new DocMan();
+//		foreach ($this->files as $file) {
+//			$docman->save($data);
+//		}
+//	}
+	
+	protected function updateDocman(&$connection, $doctype) {
+		if ($this->scenario=='new'||$this->scenario=='renew'||$this->scenario=='amend'||$this->scenario=='suspend'||$this->scenario=='terminate'||$this->scenario=='resume') {
+			$docidx = strtolower($doctype);
+			if ($this->docMasterId[$docidx] > 0) {
+				$docman = new DocMan($doctype,$this->id,get_class($this));
+				$docman->masterId = $this->docMasterId[$docidx];
+				$docman->updateDocId($connection, $this->docMasterId[$docidx]);
+			}
 		}
 	}
-	
+
 	public function getStatusDesc() {
 		return General::getStatusDesc($this->status);
 	}

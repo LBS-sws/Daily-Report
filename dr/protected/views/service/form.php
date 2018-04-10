@@ -50,14 +50,12 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 		);
 	?>
 <?php endif ?>
-<?php if ($model->scenario=='edit' || $model->scenario=='view'): ?>
 	<?php 
-		$counter = ($model->no_of_attm > 0) ? ' '.TbHtml::badge($model->no_of_attm, array('class' => 'bg-blue')) : '';
+		$counter = ($model->no_of_attm['service'] > 0) ? ' <span id="docservice" class="label label-info">'.$model->no_of_attm['service'].'</span>' : ' <span id="docservice"></span>';
 		echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-			'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploaddialog',)
+			'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadservice',)
 		);
 	?>
-<?php endif ?>
 	</div>
 	</div></div>
 
@@ -433,10 +431,16 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 
 <?php $this->renderPartial('//site/removedialog'); ?>
 <?php $this->renderPartial('//site/lookup'); ?>
-<?php $this->renderPartial('//site/fileupload',array('model'=>$model,'form'=>$form)); ?>
+<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+													'form'=>$form,
+													'doctype'=>'SERVICE',
+													'header'=>Yii::t('dialog','File Attachment'),
+													'ronly'=>($model->scenario=='view'),
+													)); 
+?>
 
 <?php
-Script::genFileUpload(get_class($model),$form->id, 'service');
+Script::genFileUpload($model,$form->id,'SERVICE');
 
 $js = Script::genLookupSearchEx();
 Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);

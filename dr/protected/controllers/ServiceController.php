@@ -100,6 +100,11 @@ class ServiceController extends Controller
 			$model->remarks = '';
 			$model->org_equip_qty = 0;
 			$model->rtn_equip_qty = 0;
+			$model->id = 0;
+			$model->files = '';
+			$model->docMasterId['service'] = 0;
+			$model->removeFileId['service'] = 0;
+			$model->no_of_attm['service'] = 0;
 		}
 		$model->status = 'N';
 		$model->status_desc = $model->getStatusDesc();
@@ -125,6 +130,11 @@ class ServiceController extends Controller
 			$model->ctrt_end_dt = null;
 			$model->first_dt = null;
 			$model->first_tech = '';
+			$model->id = 0;
+			$model->files = '';
+			$model->docMasterId['service'] = 0;
+			$model->removeFileId['service'] = 0;
+			$model->no_of_attm['service'] = 0;
 		}
 		$model->status = 'C';
 		$model->status_desc = $model->getStatusDesc();
@@ -162,6 +172,11 @@ class ServiceController extends Controller
 			$model->equip_install_dt = null;
 			$model->org_equip_qty = 0;
 			$model->rtn_equip_qty = 0;
+			$model->id = 0;
+			$model->files = '';
+			$model->docMasterId['service'] = 0;
+			$model->removeFileId['service'] = 0;
+			$model->no_of_attm['service'] = 0;
 		}
 		$model->status = 'A';
 		$model->status_desc = $model->getStatusDesc();
@@ -187,6 +202,11 @@ class ServiceController extends Controller
 			$model->equip_install_dt = null;
 			$model->org_equip_qty = 0;
 			$model->rtn_equip_qty = 0;
+			$model->id = 0;
+			$model->files = '';
+			$model->docMasterId['service'] = 0;
+			$model->removeFileId['service'] = 0;
+			$model->no_of_attm['service'] = 0;
 		}
 		$model->status = 'R';
 		$model->status_desc = $model->getStatusDesc();
@@ -211,6 +231,11 @@ class ServiceController extends Controller
 			$model->first_tech = '';
 			$model->remarks = '';
 			$model->equip_install_dt = null;
+			$model->id = 0;
+			$model->files = '';
+			$model->docMasterId['service'] = 0;
+			$model->removeFileId['service'] = 0;
+			$model->no_of_attm['service'] = 0;
 		}
 		$model->status = 'S';
 		$model->status_desc = $model->getStatusDesc();
@@ -235,6 +260,11 @@ class ServiceController extends Controller
 			$model->first_tech = '';
 			$model->remarks = '';
 			$model->equip_install_dt = null;
+			$model->id = 0;
+			$model->files = '';
+			$model->docMasterId['service'] = 0;
+			$model->removeFileId['service'] = 0;
+			$model->no_of_attm['service'] = 0;
 		}
 		$model->status = 'T';
 		$model->status_desc = $model->getStatusDesc();
@@ -253,7 +283,7 @@ class ServiceController extends Controller
 		}
 		$this->redirect(Yii::app()->createUrl('service/index'));
 	}
-
+/*
 	public function actionFileupload() {
 		$model = new ServiceForm();
 		if (isset($_POST['ServiceForm'])) {
@@ -267,7 +297,23 @@ class ServiceController extends Controller
 			echo "NIL";
 		}
 	}
-	
+*/	
+	public function actionFileupload($doctype) {
+		$model = new ServiceForm();
+		if (isset($_POST['ServiceForm'])) {
+			$model->attributes = $_POST['ServiceForm'];
+			
+			$id = empty($model->id) ? 0 : $model->id;
+			$docman = new DocMan($doctype,$id,get_class($model));
+			$docman->masterId = $model->docMasterId[strtolower($doctype)];
+			if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
+			$docman->fileUpload();
+			echo $docman->genTableFileList(false);
+		} else {
+			echo "NIL";
+		}
+	}
+/*
 	public function actionFileRemove() {
 		$model = new ServiceForm();
 		if (isset($_POST['ServiceForm'])) {
@@ -280,7 +326,20 @@ class ServiceController extends Controller
 			echo "NIL";
 		}
 	}
-	
+*/
+	public function actionFileRemove($doctype) {
+		$model = new ServiceForm();
+		if (isset($_POST['ServiceForm'])) {
+			$model->attributes = $_POST['ServiceForm'];
+			$docman = new DocMan($doctype,$model->id,get_class($model));
+			$docman->masterId = $model->docMasterId[strtolower($doctype)];
+			$docman->fileRemove($model->removeFileId[strtolower($doctype)]);
+			echo $docman->genTableFileList(false);
+		} else {
+			echo "NIL";
+		}
+	}
+/*	
 	public function actionFileDownload($docId, $fileId) {
 		$sql = "select city from swo_service where id = $docId";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
@@ -296,7 +355,24 @@ class ServiceController extends Controller
 			throw new CHttpException(404,'Record not found.');
 		}
 	}
-
+*/
+	public function actionFileDownload($mastId, $docId, $fileId, $doctype) {
+		$sql = "select city from swo_service where id = $docId";
+		$row = Yii::app()->db->createCommand($sql)->queryRow();
+		if ($row!==false) {
+			$citylist = Yii::app()->user->city_allow();
+			if (strpos($citylist, $row['city']) !== false) {
+				$docman = new DocMan($doctype,$docId,'ServiceForm');
+				$docman->masterId = $mastId;
+				$docman->fileDownload($fileId);
+			} else {
+				throw new CHttpException(404,'Access right not match.');
+			}
+		} else {
+				throw new CHttpException(404,'Record not found.');
+		}
+	}
+	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.

@@ -69,6 +69,12 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
 									'NIL'=>Yii::t('code','Nil'),
 									'PAPER'=>Yii::t('code','Paper'),
 									'SOAP'=>Yii::t('code','Soap'),
+									'MAINT'=>Yii::t('code','Maintenance'),
+									'UNINS'=>Yii::t('code','Uninstallion'),
+									'RELOC'=>Yii::t('code','Relocation'),
+									'REPLA'=>Yii::t('code','Replacement'),
+									'PURIS'=>Yii::t('code','Puriscent'),
+									'PERFU'=>Yii::t('code','Perfume'),
 									'OTHER'=>Yii::t('code','Other'),
 								),
 								array('disabled'=>($model->scenario=='view'))

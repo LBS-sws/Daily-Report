@@ -56,7 +56,13 @@ class LogisticList extends CListPageModel
 					$clause .= General::getSqlConditionClause('b.description',$svalue);
 					break;
 				case 'pay_method':
-					$clause .= General::getSqlConditionClause('a.pay_method',$svalue);
+					$field = "(select case a.pay_method when 'MONTHLY' then '".General::getPayMethodDesc('MONTHLY')."' 
+							when 'QUARTERLY' then '".General::getPayMethodDesc('QUARTERLY')."' 
+							when 'COD' then '".General::getPayMethodDesc('COD')."' 
+							when 'CBD' then '".General::getPayMethodDesc('CBD')."' 
+							when 'FREE' then '".General::getPayMethodDesc('FREE')."' 
+						end) ";
+					$clause .= General::getSqlConditionClause($field,$svalue);
 					break;
 				case 'deadline':
 					$clause .= "and a.deadline = '" . $svalue . "' ";

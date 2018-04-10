@@ -5,7 +5,21 @@ class DocMan {
 	
 	public $docId;
 	
+	public $formId = "";
+	
+	public $masterId;
+	
 	public $files; //CUploadFile Objects
+	
+	// For View Variable
+	public $inputName = 'attachment';
+	public $tableName = 'tblFile';
+	public $listName = 'T7-log';
+	public $removeFunctionName = 'removeFile';
+	public $downloadFunctionName = 'downloadFile';
+	public $uploadButtonName = 'btnUploadFile';
+	public $closeButtonName = 'btnUploadClose';
+	public $widgetName = 'fileupload';
 	
 	protected $baseDir;
 	
@@ -60,20 +74,37 @@ class DocMan {
 			'wma' => 'audio/x-ms-wma',
 	);
 	
-	public function __construct($type, $id) {
+	public function __construct($type, $id, $form="") {
 		$this->docType = $type;
 		$this->docId = $id;
+		$this->formId = $form;
 		$this->baseDir = Yii::app()->params['docmanPath'];
+		
+		$this->inputName .= strtolower($type);
+		$this->tableName .= strtolower($type);
+		$this->listName .= strtolower($type);
+		$this->removeFunctionName .= strtolower($type);
+		$this->downloadFunctionName .= strtolower($type);
+		$this->uploadButtonName .= strtolower($type);
+		$this->closeButtonName .= strtolower($type);
+		$this->widgetName .= strtolower($type);
 	}
 	
 	protected function getMasterId($genId = true) {
+		if ($this->masterId >0) return $this->masterId;
+		
 		$suffix = Yii::app()->params['envSuffix'];
-		$code = $this->docType;
-		$id = $this->docId;
-		$sql = "select id from docman$suffix.dm_master 
-					where doc_type_code='$code' and doc_id=$id
-				";
-		$mid = Yii::app()->db->createCommand($sql)->queryScalar();
+		if ($this->docId > 0) {
+			$code = $this->docType;
+			$id = $this->docId;
+			$sql = "select id from docman$suffix.dm_master 
+						where doc_type_code='$code' and doc_id=$id and remove<>'Y' 
+					";
+			$mid = Yii::app()->db->createCommand($sql)->queryScalar();
+		} else {
+			$mid = false;
+		}
+		
 		if ($mid===false && $genId) {
 			$uid = Yii::app()->user->id;
 			$sql = "insert into docman$suffix.dm_master(doc_type_code, doc_id, lcu) 
@@ -89,14 +120,17 @@ class DocMan {
 					$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
 				$command->execute();
 			} catch(Exception $e) {
-				throw new CHttpException(404,'Cannot update.');
+				throw new CHttpException(404,'Cannot update.'.$e->getMessage());
 			}
 			$mid = Yii::app()->db->getLastInsertID();
 		}
+		$this->masterId = $mid;
 		return $mid;
 	}
 	
 	public function fileUpload() {
+		if (empty($this->files['name'][0])) return;
+
 		$mast_id = $this->getMasterId();
 		$recs = array();
 		foreach ($this->files['name'] as $idx=>$value) {
@@ -130,14 +164,14 @@ class DocMan {
 			
 		} catch(Exception $e) {
 			$transaction->rollback();
-			throw new CHttpException(404,'Cannot update.');
+			throw new CHttpException(404,'Cannot update.'.$e->getMessage());
 		}
 	}
 	
 	public function fileDownload($fileId) {
 		$mast_id = $this->getMasterId(false);
 		$file_mast_id = $this->getFileMasterId($fileId);
-		if ($mast_id === $file_mast_id) {
+		if ($mast_id == $file_mast_id) {
 			$data = $this->getFileName($fileId);
 			$path = $data['phy_path_name'];
 			$name = $data['phy_file_name'];
@@ -164,7 +198,8 @@ class DocMan {
 	public function fileRemove($fileId) {
 		$mast_id = $this->getMasterId(false);
 		$file_mast_id = $this->getFileMasterId($fileId);
-		if ($mast_id === $file_mast_id) {
+		$doc_id = $this->getDocId($file_mast_id);
+		if ($mast_id == $file_mast_id) {
 			$connection = Yii::app()->db;
 			$transaction=$connection->beginTransaction();
 			try {
@@ -186,6 +221,12 @@ class DocMan {
 	public function getFileMasterId($fileId) {
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select mast_id from docman$suffix.dm_file where id=$fileId and remove<>'Y'";
+		return Yii::app()->db->createCommand($sql)->queryScalar();
+	}
+
+	public function getDocId($masterId) {
+		$suffix = Yii::app()->params['envSuffix'];
+		$sql = "select doc_id from docman$suffix.dm_master where id=$masterId";
 		return Yii::app()->db->createCommand($sql)->queryScalar();
 	}
 
@@ -269,7 +310,8 @@ class DocMan {
 		$suffix = Yii::app()->params['envSuffix'];
 		$type = $this->docType;
 		$id = empty($this->docId) ? 0 : $this->docId;
-		if ($id==0) return $rtn;
+		$mastId = empty($this->masterId) ? 0 : $this->masterId;
+		if ($id==0 && $mastId==0) return $rtn;
 /*
 		$sql = "select
 					a.id, a.doc_type_code, a.doc_id, 
@@ -282,15 +324,25 @@ class DocMan {
 					a.doc_type_code='$type' and a.doc_id=$id and b.remove='N'
 			";
 */
-		$sql = "select
-					a.id, a.doc_type_code, a.doc_id, 
-					b.id as file_id, b.display_name, b.archive, b.lcd, b.file_type  
-				from 
-					docman$suffix.dm_master a inner join docman$suffix.dm_file b on a.id=b.mast_id 
-				where 
-					a.doc_type_code='$type' and a.doc_id=$id and b.remove='N'
-				order by b.display_name, b.lcd desc
-			";
+		$sql = ($mastId > 0)
+				? "select
+						a.id, a.doc_type_code, a.doc_id, 
+						b.id as file_id, b.display_name, b.archive, b.lcd, b.file_type  
+					from 
+						docman$suffix.dm_master a inner join docman$suffix.dm_file b on a.id=b.mast_id 
+					where 
+						a.id=$mastId and b.remove='N'
+					order by b.display_name, b.lcd desc
+				"
+				: "select
+						a.id, a.doc_type_code, a.doc_id, 
+						b.id as file_id, b.display_name, b.archive, b.lcd, b.file_type  
+					from 
+						docman$suffix.dm_master a inner join docman$suffix.dm_file b on a.id=b.mast_id 
+					where 
+						a.doc_type_code='$type' and a.doc_id=$id and b.remove='N'
+					order by b.display_name, b.lcd desc
+				";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 /*
@@ -335,29 +387,70 @@ class DocMan {
 
 	public function genTableFileList($readonly) {
 		$rtn = "";
+		$reccnt = 0;
 		$filelist = $this->retrieve();
 		if (empty($filelist)) {
 			$msg = Yii::t('dialog','No File Record');
-			$rtn = "<tr><td>&nbsp;</td><td>$msg</td></tr>";
+			$rtn = "<tr><td>&nbsp;</td><td colspan=2>$msg</td></tr>";
 		} else {
 			$title1 = Yii::t('dialog','Download');
 			$title2 = Yii::t('dialog','Remove');
-			$reccnt = 0;
+			$doctype = strtolower($this->docType);
 			foreach ($filelist as $filerec) {
+				$mid = $filerec['id'];
 				$did = $this->docId;
 				$id = $filerec['file_id'];
-				$vbutton = "<a href=\"#\" onclick=\"downloadFile($did, $id);return false;\" title=\"$title1\"><span class=\"fa fa-download\"></span></a>";
-				$dbutton = $readonly ? "" : "<a href=\"#\" onclick=\"removeFile($id);return false;\"><span class=\"fa fa-remove\" title=\"$title2\"></span></a>";
+				$x = $this->masterId;
+				$y = $this->formId;
+				$vbutton = ($this->docId==0) ? "" : "<a href=\"#\" onclick=\"downloadFile$doctype($mid, $did, $id);return false;\" title=\"$title1\"><span class=\"fa fa-download\"></span></a>";
+				$dbutton = $readonly ? "" : "<a href=\"#\" onclick=\"removeFile$doctype($id);return false;\"><span class=\"fa fa-remove\" title=\"$title2\"></span></a>";
 				$fname = $filerec['display_name'];
 				$ldate = $filerec['lcd'];
 				$rtn .= "<tr><td>$vbutton&nbsp;&nbsp;$dbutton</td><td>$fname</td><td>$ldate</td></tr>";
+				$reccnt++;
 			}
-			
+		}
+		$rtn .= "<tr><td colspan=3>";
+		$rtn .= CHtml::hiddenField($this->formId.'[docMasterId]['.strtolower($this->docType).']',$this->masterId, array('id'=>$this->formId.'_docMasterId_'.strtolower($this->docType),));
+		$rtn .= CHtml::hiddenField($this->formId.'[no_of_attm]['.strtolower($this->docType).']',$reccnt, array('id'=>$this->formId.'_no_of_attm_'.strtolower($this->docType),));
+		$rtn .= "</td></tr>";
+
+		return $rtn;
+	}
+
+	public function genFileListView() {
+		$rtn = "";
+		$filelist = $this->retrieve();
+		$reccnt = 0;
+		if (empty($filelist)) {
+			$msg = Yii::t('dialog','No File Record');
+			$rtn = "<tr><td>&nbsp;</td><td colspan=2>$msg</td></tr>";
+		} else {
+			$title1 = Yii::t('dialog','Download');
+			$doctype = strtolower($this->docType);
+			foreach ($filelist as $filerec) {
+				$mid = $filerec['id'];
+				$did = $this->docId;
+				$id = $filerec['file_id'];
+				$vbutton = "<a href=\"#\" onclick=\"downloadFile$doctype($mid, $did, $id);return false;\" title=\"$title1\"><span class=\"fa fa-download\"></span></a>";
+				$fname = $filerec['display_name'];
+				$ldate = $filerec['lcd'];
+				$rtn .= "<tr><td>$vbutton</td><td>$fname</td><td>$ldate</td></tr>";
+				$reccnt++;
+			}
 		}
 		
 		return $rtn;
 	}
 
+	public function updateDocId(&$connection, $masterId) {
+		$suffix = Yii::app()->params['envSuffix'];
+		$docId = $this->docId;
+		$sql = "update docman$suffix.dm_master set doc_id=$docId where id=$masterId";
+		var_dump($sql);
+		$connection->createCommand($sql)->execute();
+	}
+	
 	private function hashDirectory($filename) {
 		$hashcode = hash('md5',$filename);
 		$firstDir = $hashcode & 255;

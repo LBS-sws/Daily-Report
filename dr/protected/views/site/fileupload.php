@@ -1,49 +1,44 @@
 <?php
+	$doc = new DocMan($doctype,$model->id,get_class($model));
+
 	$ftrbtn = array();
-	if ($model->scenario!='view') $ftrbtn[] = TbHtml::button(Yii::t('dialog','Upload'), array('id'=>'btnUploadFile',));
-	$ftrbtn[] = TbHtml::button(Yii::t('dialog','Close'), array('id'=>'btnUploadClose','data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY));
+	if (!$ronly) $ftrbtn[] = TbHtml::button(Yii::t('dialog','Upload'), array('id'=>$doc->uploadButtonName,));
+	$ftrbtn[] = TbHtml::button(Yii::t('dialog','Close'), array('id'=>$doc->closeButtonName,'data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY));
+	
 	$this->beginWidget('bootstrap.widgets.TbModal', array(
-					'id'=>'fileuploaddialog',
-					'header'=>Yii::t('dialog','File Attachment'),
+					'id'=>$doc->widgetName,
+					'header'=>$header,
 					'footer'=>$ftrbtn,
 					'show'=>false,
 				));
 ?>
 <div class="box" id="file-list" style="max-height: 300px; overflow-y: auto;">
-	<table id="tblFile" class="table table-hover">
+	<table id="<?php echo $doc->tableName; ?>" class="table table-hover">
 		<thead>
 			<tr><th></th><th><?php echo Yii::t('dialog','File Name');?></th><th><?php echo Yii::t('dialog','Date');?></th></tr>
 		</thead>
 		<tbody>
 <?php
-	$d = new DocMan($model->docType,$model->id);
-	echo $d->genTableFileList(($model->scenario=='view'));
+	echo $doc->genTableFileList($ronly);
 ?>
 		</tbody>
 	</table>
 </div>
 <?php
-	$name = get_class($model).'_files';
-//	echo TbHtml::button(Yii::t("dialog","Browse..."), 
-//				array(
-//					"name"=>"btnBrowse",
-//					"id"=>"btnBrowse",
-//					"onclick"=>"document.getElementById('$name').click();",
-//				));
-	echo $form->hiddenField($model, 'removeFileId');
+	echo CHtml::hiddenField(get_class($model).'[removeFileId]['.strtolower($doc->docType).']',$model->removeFileId[strtolower($doc->docType)], array('id'=>get_class($model).'_removeFileId_'.strtolower($doc->docType),));
 ?>				
 <div id="inputFile">
 <?php
-if ($model->scenario!='view') {
+if (!$ronly) {
 	$this->widget('CMultiFileUpload', array(
-		'name'=>'attachment',
+		'name'=>$doc->inputName,
 		'model'=>$model,
 		'attribute'=>'files',
 		'accept'=>'jpg|gif|png|xlsx|xls|docx|doc|pdf|tif',
 		'remove'=>Yii::t('dialog','Remove'),
 		'file'=>' $file',
 		'options'=>array(
-			'list'=>'#T7-log',
+			'list'=>'#'.$doc->listName,
 //			'onFileSelect'=>'function(e, v, m){ alert("onFileSelect - "+v) }',
 //			'afterFileSelect'=>'function(e, v, m){ $("ServiceFrom_files").attr("value","00"); }',
 //        'onFileAppend'=>'function(e, v, m){ alert("onFileAppend - "+v) }',
@@ -58,7 +53,7 @@ if ($model->scenario!='view') {
 }
 ?>
 </div>
-<div id="T7-log" style="max-height: 100px; overflow-y: auto;">
+<div id="<?php echo $doc->listName; ?>" style="max-height: 100px; overflow-y: auto;">
 </div>
 
 <?php

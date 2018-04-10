@@ -28,8 +28,8 @@ $this->pageTitle=Yii::app()->name . ' - QC';
 		<?php 
 			if (Yii::app()->user->validRWFunction('A06'))
 				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Record'), array(
-					'submit'=>Yii::app()->createUrl('qc/new'), 
-				)); 
+					'name'=>'btnAdd','id'=>'btnAdd','data-toggle'=>'modal','data-target'=>'#addrecdialog',)
+				); 
 		?>
 	</div>
 	</div></div>
@@ -60,6 +60,8 @@ $this->pageTitle=Yii::app()->name . ' - QC';
 ?>
 <?php $this->endWidget(); ?>
 
+<?php $this->renderPartial('//qc/_type',array('model'=>$model)); ?>
+				
 <?php
 	$js = Script::genTableRowClick();
 	Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);

@@ -21,13 +21,18 @@ class RptFeedbackstat extends ReportData2 {
 		$month = empty($this->criteria->month) ? date('m') : $this->criteria->month;
 		$first_date = $year.'-'.$month.'-01';
 		$last_date = date('Y-m-d',strtotime(date('Y-m-d',strtotime($first_date.' +1 month')).' -1 day')); 
+		$first_date2 = date('Y-m-d',strtotime($first_date.' -1 day'));
 		
-		$sql = "select week('".$first_date."',0) as first_week, week('".$last_date."',0) as last_week";
+		$sql = "select week('".$first_date."',0) as first_week, week('".$last_date."',0) as last_week,
+				week('".$first_date2."',0) as first_week2
+			";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		if ($row!==false) {
+			$yearX = $row['first_week']==0 ? date('Y',strtotime($first_date2)): $year;
+			$weekX = $row['first_week']==0 ? $row['first_week2'] : $row['first_week'];
 			$sweek = $row['first_week'];
 			$eweek = $row['last_week'];
-			$sql = "select str_to_date('".$year.$sweek." Sunday','%X%V %W') as start_date, 
+			$sql = "select str_to_date('".$yearX.$weekX." Sunday','%X%V %W') as start_date, 
 					str_to_date('".$year.$eweek." Saturday','%X%V %W') as end_date
 			";
 			$row = Yii::app()->db->createCommand($sql)->queryRow();

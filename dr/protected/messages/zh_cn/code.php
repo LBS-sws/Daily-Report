@@ -47,5 +47,13 @@ return array(
 	'Currency'=>'货币',
 	
 	'Taxpayer No.'=>'纳税人登记号',
+	
+	'Maintenance'=>'维修',
+	'Uninstallion'=>'拆机',
+	'Relocation'=>'移位',
+	'Replacement'=>'换机',
+	'Puriscent'=>'飘盈香',
+	'Perfume'=>'香水',
+	
 );
 ?>
