@@ -10,6 +10,8 @@ return array(
 	'Accounting'=>'会计系统',
 	'Operation'=>'营运系统',
 	'Personnel'=>'人事系统',
+	'Sales'=>'销售系统',
+    'Quiz'=>'测验系统',
 
 	'Data Entry'=>'数据输入',
 	'Report'=>'报表',
@@ -17,6 +19,7 @@ return array(
 	'Security'=>'保安',
 	'Tools' => '工具',
 	'Misc'=>'其他',
+	'Management'=>'管理层',
 	
 	'Customer Info'=>'客户资料',
 	'Customer Service'=>'客户服务',
@@ -28,6 +31,7 @@ return array(
 	'Staff Info'=>'人事资料',
 	'Feedback'=>'回馈',
 	'Monthly Report Data'=>'月报表数据',
+	'LBS Customer Enquiry'=>'史伟莎客户查询',
 	
 	'All'=>'全部',
 	'All Daily Reports'=>'日报表总汇',

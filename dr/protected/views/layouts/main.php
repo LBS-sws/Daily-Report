@@ -61,6 +61,8 @@
 		</nav>
 	</header>
 
+	<?php $this->widget('ext.widgets.loading.LoadingWidget'); ?>
+	
 	<!-- Full Width Column -->
 	<div class="content-wrapper">
 		<div class="container">

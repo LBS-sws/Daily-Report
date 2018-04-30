@@ -1,337 +1,204 @@
--- MySQL dump 10.13  Distrib 5.6.26, for Linux (i686)
---
--- Host: localhost    Database: workflowdev
--- ------------------------------------------------------
--- Server version	5.6.26
+CREATE DATABASE workflow CHARACTER SET utf8 COLLATE utf8_general_ci;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+GRANT SELECT, INSERT, UPDATE, DELETE ON workflow.* TO 'swuser'@'localhost' IDENTIFIED BY 'swisher168';
 
---
--- Table structure for table `wf_action`
---
+use workflow;
 
-DROP TABLE IF EXISTS `wf_action`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `wf_action` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `proc_ver_id` int(10) unsigned NOT NULL,
-  `code` varchar(15) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `wf_action`
---
-
-LOCK TABLES `wf_action` WRITE;
-/*!40000 ALTER TABLE `wf_action` DISABLE KEYS */;
-INSERT INTO `wf_action` VALUES (1,1,'APPROVE','批准付款申请','2017-04-07 16:43:39','2017-04-07 16:43:39'),(2,1,'DENY','拒绝付款申请','2017-04-07 16:43:39','2017-04-07 16:43:39'),(3,1,'SUBMIT','提交付款申请','2017-04-07 16:43:39','2017-04-07 16:43:39'),(4,1,'CANCEL','取消付款申请','2017-04-07 16:43:39','2017-04-07 16:43:39'),(5,1,'REIMBURSE','报销单申请','2017-04-07 16:43:39','2017-04-07 16:43:39'),(6,1,'REIMAPPR','报销单审批','2017-04-07 16:43:39','2017-04-07 16:43:39'),(7,1,'REIMCANCEL','取消报销单申请','2017-04-07 16:43:39','2017-04-07 16:43:39'),(8,2,'APPROVE','批准付款申请','2017-05-29 04:26:18','2017-05-29 04:26:18'),(9,2,'DENY','拒绝付款申请','2017-05-29 04:26:18','2017-05-29 04:26:18'),(10,2,'SUBMIT','提交付款申请','2017-05-29 04:26:18','2017-05-29 04:26:18'),(11,2,'CANCEL','取消付款申请','2017-05-29 04:26:18','2017-05-29 04:26:18'),(12,2,'REIMBURSE','报销单申请','2017-05-29 04:26:18','2017-05-29 04:26:18'),(13,2,'REIMAPPR','报销单签字','2017-05-29 04:26:18','2017-05-29 04:26:18'),(14,2,'REIMCANCEL','取消报销单申请','2017-05-29 04:26:18','2017-05-29 04:26:18'),(15,2,'REQUEST','要求覆核付款申请','2017-05-29 04:26:18','2017-05-29 04:26:18'),(16,2,'CHECK','覆核并提交付款申请','2017-05-29 04:26:18','2017-05-29 04:26:18');
-/*!40000 ALTER TABLE `wf_action` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `wf_action_task`
---
-
-DROP TABLE IF EXISTS `wf_action_task`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `wf_action_task` (
-  `action_id` int(10) unsigned NOT NULL,
-  `task_id` int(10) unsigned NOT NULL,
-  `seq_no` int(10) unsigned NOT NULL,
-  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+DROP TABLE IF EXISTS wf_process;
+CREATE TABLE wf_process(
+	id int unsigned not null auto_increment primary key,
+	name varchar(255) not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `wf_action_task`
---
+DROP TABLE IF EXISTS wf_user;
+CREATE TABLE wf_user(
+	id int unsigned not null auto_increment primary key,
+	name varchar(255) not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-LOCK TABLES `wf_action_task` WRITE;
-/*!40000 ALTER TABLE `wf_action_task` DISABLE KEYS */;
-INSERT INTO `wf_action_task` VALUES (1,3,1,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(1,1,2,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(1,15,3,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(1,5,4,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(1,12,5,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(2,4,1,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(2,1,2,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(2,13,3,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(2,15,4,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(3,2,1,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(3,10,2,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(3,1,3,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(4,14,1,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(4,1,2,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(4,13,3,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(4,15,4,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(5,7,1,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(5,8,2,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(5,11,3,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(5,1,4,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(5,6,4,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(6,9,1,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(6,1,2,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(6,13,3,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(7,16,1,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(7,1,2,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(7,13,3,'2017-05-14 17:15:17','2017-05-14 17:15:17'),(8,19,1,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(8,17,2,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(8,31,3,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(8,21,4,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(8,28,5,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(9,20,1,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(9,17,2,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(9,29,3,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(9,31,4,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(10,18,3,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(10,26,4,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(10,17,5,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(11,30,1,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(11,17,2,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(11,29,3,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(11,31,4,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(12,23,1,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(12,24,2,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(12,27,3,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(12,17,4,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(12,22,4,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(13,25,1,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(13,17,2,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(13,29,3,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(14,32,1,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(14,17,2,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(14,29,3,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(15,34,1,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(15,35,2,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(16,33,1,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(16,31,2,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(16,18,3,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(16,26,4,'2017-05-29 04:28:02','2017-05-29 04:28:02'),(16,17,5,'2017-05-29 04:28:02','2017-05-29 04:28:02');
-/*!40000 ALTER TABLE `wf_action_task` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS wf_process_admin;
+CREATE TABLE wf_process_admin(
+	process_id int unsigned not null,
+	user_id int unsigned not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	
+DROP TABLE IF EXISTS wf_group;
+CREATE TABLE wf_group(
+	id int unsigned not null auto_increment primary key,
+	process_id int unsigned not null,
+	name varchar(255) not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Table structure for table `wf_process`
---
+DROP TABLE IF EXISTS wf_group_member;
+CREATE TABLE wf_group_member(
+	group_id int unsigned not null,
+	user_id int unsigned not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `wf_process`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `wf_process` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(15) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS wf_request;
+CREATE TABLE wf_request(
+	id int unsigned not null auto_increment primary key,
+	process_id int unsigned not null,
+	current_state int unsigned not null,
+	user_id int unsigned not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `wf_process`
---
+DROP TABLE IF EXISTS wf_request_data;
+CREATE TABLE wf_request_data(
+	id int unsigned not null auto_increment primary key,
+	request_id int unsigned not null,
+	data_name varchar(300) not null,
+	data_value varchar(5000),
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-LOCK TABLES `wf_process` WRITE;
-/*!40000 ALTER TABLE `wf_process` DISABLE KEYS */;
-INSERT INTO `wf_process` VALUES (1,'PAYMENT','Payment Approval Process','2017-03-31 01:51:02','2017-03-31 01:51:02');
-/*!40000 ALTER TABLE `wf_process` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS wf_request_note;
+CREATE TABLE wf_request_note(
+	id int unsigned not null auto_increment primary key,
+	request_id int unsigned not null,
+	note varchar(5000),
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Table structure for table `wf_process_version`
---
+DROP TABLE IF EXISTS wf_state_type;
+CREATE TABLE wf_state_type(
+	id int unsigned not null auto_increment primary key,
+	name varchar(255) not null
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+INSERT INTO wf_state(name) VALUES
+('Start'),
+('Normal'),
+('Complete'),
+('Denied'),
+('Cancelled')
+;
 
-DROP TABLE IF EXISTS `wf_process_version`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `wf_process_version` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `process_id` int(10) unsigned NOT NULL,
-  `start_dt` datetime NOT NULL,
-  `end_dt` datetime NOT NULL,
-  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS wf_state;
+CREATE TABLE wf_state(
+	id int unsigned not null auto_increment primary key,
+	state_type int unsigned not null,
+	process_id int unsigned not null,
+	name varchar(255),
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	
+DROP TABLE IF EXISTS wf_transition;
+CREATE TABLE wf_transition(
+	id int unsigned not null auto_increment primary key,
+	process_id int unsigned not null,
+	current_state int unsigned not null,
+	next_state int unsigned not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `wf_process_version`
---
+DROP TABLE IF EXISTS wf_action_type;
+CREATE TABLE wf_action_type(
+	id int unsigned not null auto_increment primary key,
+	name varchar(255) not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO wf_action_type(name) VALUES
+('Approve'),
+('Deny'),
+('Cancel'),
+('Restart'),
+('Resolve')
+;
 
-LOCK TABLES `wf_process_version` WRITE;
-/*!40000 ALTER TABLE `wf_process_version` DISABLE KEYS */;
-INSERT INTO `wf_process_version` VALUES (1,1,'2016-01-01 00:00:00','2017-05-26 00:00:00','2017-05-28 10:03:44','2017-05-28 10:03:44'),(2,1,'2017-05-27 00:00:00','2099-12-31 00:00:00','2017-05-28 10:03:44','2017-05-28 10:03:44');
-/*!40000 ALTER TABLE `wf_process_version` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS wf_action;
+CREATE TABLE wf_action(
+	id int unsigned not null auto_increment primary key,
+	action_type_id int unsigned not null,
+	process_id int unsigned not null,
+	name varchar(255),
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Table structure for table `wf_request`
---
+DROP TABLE IF EXISTS wf_transition_action;
+CREATE TABLE wf_transition_action(
+	transition_id int unsigned not null,
+	action_id int unsigned not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `wf_request`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `wf_request` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `proc_ver_id` int(10) unsigned NOT NULL,
-  `current_state` int(10) unsigned NOT NULL,
-  `doc_id` int(10) unsigned NOT NULL,
-  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS wf_activity_type;
+CREATE TABLE wf_activity_type(
+	id int unsigned not null auto_increment primary key,
+	name varchar(255) not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO wf_activity_type(name) VALUES
+('Add Note'),
+('Send Email'),
+('Add Stakeholders'),
+('Remove Stakeholders')
+;
 
---
--- Dumping data for table `wf_request`
---
+DROP TABLE IF EXISTS wf_activity;
+CREATE TABLE wf_activity(
+	id int unsigned not null auto_increment primary key,
+	activity_type_id int unsigned not null,
+	process_id int unsigned not null,
+	name varchar(255),
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-LOCK TABLES `wf_request` WRITE;
-/*!40000 ALTER TABLE `wf_request` DISABLE KEYS */;
-INSERT INTO `wf_request` VALUES (1,1,2,1,'2017-04-09 02:39:12','2017-04-09 02:41:08'),(2,1,2,2,'2017-04-11 02:56:01','2017-05-11 02:16:50'),(3,1,2,3,'2017-04-27 09:47:06','2017-05-11 02:14:49'),(4,1,2,12,'2017-05-04 09:38:24','2017-05-04 17:45:15'),(6,1,2,13,'2017-05-13 15:49:12','2017-05-14 16:49:16'),(7,1,4,5,'2017-05-14 14:22:26','2017-05-18 05:06:02'),(10,1,2,6,'2017-05-14 15:36:47','2017-05-14 17:18:35'),(11,1,2,7,'2017-05-14 15:44:34','2017-05-14 16:33:17'),(12,1,5,4,'2017-05-14 15:49:29','2017-05-17 04:26:32'),(13,1,2,10,'2017-05-14 15:50:31','2017-05-14 16:27:50'),(14,1,5,14,'2017-05-17 04:29:24','2017-05-17 04:30:47'),(15,1,5,15,'2017-05-18 18:56:12','2017-05-19 01:41:25');
-/*!40000 ALTER TABLE `wf_request` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS wf_target;
+CREATE TABLE wf_target(
+	id int unsigned not null auto_increment primary key,
+	name varchar(255) not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO wf_target(name) VALUES
+('Requester'),
+('Stakeholders'),
+('Group Members'),
+('Process Admins')
+;
 
---
--- Table structure for table `wf_request_data`
---
+DROP TABLE IF EXISTS wf_activity_target;
+CREATE TABLE wf_activity_target(
+	id int unsigned not null auto_increment primary key,
+	activity_type_id int unsigned not null,
+	activity_id int unsigned not null,
+	target_id int unsigned not null,
+	group_id int unsigned not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `wf_request_data`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `wf_request_data` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `request_id` int(10) unsigned NOT NULL,
-  `data_name` varchar(100) NOT NULL,
-  `data_value` varchar(5000) DEFAULT NULL,
-  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `request` (`request_id`,`data_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `wf_request_data`
---
-
-LOCK TABLES `wf_request_data` WRITE;
-/*!40000 ALTER TABLE `wf_request_data` DISABLE KEYS */;
-INSERT INTO `wf_request_data` VALUES (1,1,'CITY','SH','2017-04-09 02:39:12','2017-04-09 02:39:12'),(2,1,'REQ_USER','test','2017-04-09 02:39:12','2017-04-09 02:39:12'),(3,1,'REF_NO','SH20170409103912','2017-04-09 02:39:12','2017-04-09 02:39:12'),(4,1,'AMOUNT','800','2017-04-09 02:39:12','2017-04-09 02:39:12'),(5,2,'CITY','SH','2017-04-11 02:56:01','2017-04-11 02:56:01'),(6,2,'REQ_USER','test','2017-04-11 02:56:01','2017-04-11 02:56:01'),(7,2,'REF_NO','SH20170411105601','2017-04-11 02:56:01','2017-04-11 02:56:01'),(8,2,'AMOUNT','500','2017-04-11 02:56:01','2017-04-11 02:56:01'),(9,3,'CITY','SH','2017-04-27 09:47:06','2017-04-27 09:47:06'),(10,3,'REQ_USER','test','2017-04-27 09:47:06','2017-04-27 09:47:06'),(11,3,'REF_NO','SH20170427174706','2017-04-27 09:47:06','2017-04-27 09:47:06'),(12,3,'AMOUNT','1000','2017-04-27 09:47:06','2017-04-27 09:47:06'),(13,3,'APPROVER','director1','2017-04-27 10:36:55','2017-04-27 10:36:55'),(14,4,'CITY','SH','2017-05-04 09:38:24','2017-05-04 09:38:24'),(15,4,'REQ_USER','test','2017-05-04 09:38:24','2017-05-04 09:38:24'),(16,4,'REF_NO','SH20170504173824','2017-05-04 09:38:24','2017-05-04 09:38:24'),(17,4,'AMOUNT','1000','2017-05-04 09:38:24','2017-05-04 09:38:24'),(18,4,'APPROVER','manager','2017-05-04 09:42:47','2017-05-04 09:42:47'),(19,2,'APPROVER','manager1','2017-05-11 02:16:00','2017-05-11 02:16:00'),(20,6,'CITY','SH','2017-05-13 15:49:12','2017-05-13 15:49:12'),(21,6,'REQ_USER','test','2017-05-13 15:49:12','2017-05-13 15:49:12'),(22,6,'REF_NO','SH20170513234912','2017-05-13 15:49:12','2017-05-13 15:49:12'),(23,6,'AMOUNT','800.00','2017-05-13 15:49:12','2017-05-13 15:49:12'),(24,7,'CITY','SH','2017-05-14 14:22:26','2017-05-14 14:22:26'),(25,7,'REQ_USER','test','2017-05-14 14:22:26','2017-05-14 14:22:26'),(26,7,'REF_NO','SH20170514222226','2017-05-14 14:22:26','2017-05-14 14:22:26'),(27,7,'AMOUNT','100.00','2017-05-14 14:22:26','2017-05-14 14:22:26'),(36,10,'CITY','SH','2017-05-14 15:36:47','2017-05-14 15:36:47'),(37,10,'REQ_USER','test','2017-05-14 15:36:47','2017-05-14 15:36:47'),(38,10,'REF_NO','SH20170514233647','2017-05-14 15:36:47','2017-05-14 15:36:47'),(39,10,'AMOUNT','100.00','2017-05-14 15:36:47','2017-05-14 15:36:47'),(40,11,'CITY','SH','2017-05-14 15:44:34','2017-05-14 15:44:34'),(41,11,'REQ_USER','test','2017-05-14 15:44:34','2017-05-14 15:44:34'),(42,11,'REF_NO','SH20170514234434','2017-05-14 15:44:34','2017-05-14 15:44:34'),(43,11,'AMOUNT','100.00','2017-05-14 15:44:34','2017-05-14 15:44:34'),(44,12,'CITY','SH','2017-05-14 15:49:29','2017-05-14 15:49:29'),(45,12,'REQ_USER','test','2017-05-14 15:49:29','2017-05-14 15:49:29'),(46,12,'REF_NO','SH20170514234929','2017-05-14 15:49:29','2017-05-14 15:49:29'),(47,12,'AMOUNT','100.00','2017-05-14 15:49:29','2017-05-14 15:49:29'),(48,13,'CITY','SH','2017-05-14 15:50:31','2017-05-14 15:50:31'),(49,13,'REQ_USER','test','2017-05-14 15:50:31','2017-05-14 15:50:31'),(50,13,'REF_NO','SH20170514235031','2017-05-14 15:50:31','2017-05-14 15:50:31'),(51,13,'AMOUNT','200.00','2017-05-14 15:50:31','2017-05-14 15:50:31'),(55,13,'APPROVER','manager','2017-05-14 16:00:09','2017-05-14 16:00:09'),(56,12,'APPROVER','manager1','2017-05-17 04:25:29','2017-05-17 04:25:29'),(57,14,'CITY','SH','2017-05-17 04:29:24','2017-05-17 04:29:24'),(58,14,'REQ_USER','test','2017-05-17 04:29:24','2017-05-17 04:29:24'),(59,14,'REF_NO','SH20170517122924','2017-05-17 04:29:24','2017-05-17 04:29:24'),(60,14,'AMOUNT','500','2017-05-17 04:29:24','2017-05-17 04:29:24'),(61,14,'APPROVER','manager1','2017-05-17 04:30:01','2017-05-17 04:30:01'),(62,7,'APPROVER','manager','2017-05-18 05:06:02','2017-05-18 05:06:02'),(63,15,'CITY','SH','2017-05-18 18:56:12','2017-05-18 18:56:12'),(64,15,'REQ_USER','test','2017-05-18 18:56:12','2017-05-18 18:56:12'),(65,15,'REF_NO','SH20170519025612','2017-05-18 18:56:12','2017-05-18 18:56:12'),(66,15,'AMOUNT','1000','2017-05-18 18:56:12','2017-05-18 18:56:12'),(67,15,'APPROVER','manager','2017-05-18 18:56:45','2017-05-18 18:56:45');
-/*!40000 ALTER TABLE `wf_request_data` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `wf_request_resp_user`
---
-
-DROP TABLE IF EXISTS `wf_request_resp_user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `wf_request_resp_user` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `request_id` int(10) unsigned NOT NULL,
-  `log_id` int(10) unsigned NOT NULL,
-  `current_state` int(10) unsigned NOT NULL,
-  `username` varchar(30) NOT NULL,
-  `status` char(1) NOT NULL DEFAULT 'P',
-  `action_id` int(10) unsigned DEFAULT '0',
-  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `wf_request_resp_user`
---
-
-LOCK TABLES `wf_request_resp_user` WRITE;
-/*!40000 ALTER TABLE `wf_request_resp_user` DISABLE KEYS */;
-INSERT INTO `wf_request_resp_user` VALUES (1,1,1,3,'manager','C',1,'2017-04-09 02:39:12','2017-04-09 02:40:10'),(2,1,1,3,'manager1','T',0,'2017-04-09 02:39:12','2017-04-09 02:40:10'),(3,1,3,4,'test','C',5,'2017-04-09 02:40:10','2017-04-09 02:40:45'),(4,1,5,5,'boss','C',6,'2017-04-09 02:40:45','2017-04-09 02:41:08'),(5,2,8,3,'manager1','C',1,'2017-04-11 02:56:01','2017-05-11 02:16:00'),(6,2,8,3,'','T',0,'2017-04-11 02:56:01','2017-05-11 02:16:00'),(7,3,9,3,'boss','T',0,'2017-04-27 09:47:06','2017-04-27 10:36:56'),(8,3,9,3,'director','T',0,'2017-04-27 09:47:06','2017-04-27 10:36:56'),(9,3,9,3,'director1','C',1,'2017-04-27 09:47:06','2017-04-27 10:36:55'),(10,3,9,3,'manager','T',0,'2017-04-27 09:47:06','2017-04-27 10:36:56'),(11,3,11,4,'test','C',5,'2017-04-27 10:36:56','2017-05-02 10:20:38'),(12,3,13,5,'director1','C',6,'2017-05-02 10:20:38','2017-05-11 02:14:49'),(13,4,14,3,'boss','T',0,'2017-05-04 09:38:24','2017-05-04 09:42:47'),(14,4,14,3,'director','T',0,'2017-05-04 09:38:24','2017-05-04 09:42:47'),(15,4,14,3,'director1','T',0,'2017-05-04 09:38:24','2017-05-04 09:42:47'),(16,4,14,3,'manager','C',1,'2017-05-04 09:38:24','2017-05-04 09:42:47'),(17,4,16,4,'test','C',5,'2017-05-04 09:42:47','2017-05-04 10:51:54'),(18,4,18,5,'manager','C',6,'2017-05-04 10:51:54','2017-05-04 17:45:15'),(19,2,24,4,'test','C',5,'2017-05-11 02:16:00','2017-05-11 02:16:34'),(20,2,26,5,'manager1','C',6,'2017-05-11 02:16:34','2017-05-11 02:16:50'),(21,6,29,3,'boss','Q',0,'2017-05-13 15:49:12','2017-05-13 15:49:12'),(22,6,29,3,'director','Q',0,'2017-05-13 15:49:12','2017-05-13 15:49:12'),(23,6,29,3,'director1','Q',0,'2017-05-13 15:49:12','2017-05-13 15:49:12'),(24,6,29,3,'manager','C',2,'2017-05-13 15:49:12','2017-05-14 16:49:16'),(25,7,30,3,'boss','T',0,'2017-05-14 14:22:26','2017-05-18 05:06:02'),(26,7,30,3,'director','T',0,'2017-05-14 14:22:26','2017-05-18 05:06:02'),(27,7,30,3,'director1','T',0,'2017-05-14 14:22:26','2017-05-18 05:06:02'),(28,7,30,3,'manager','C',1,'2017-05-14 14:22:26','2017-05-18 05:06:02'),(29,7,30,3,'manager1','T',0,'2017-05-14 14:22:26','2017-05-18 05:06:02'),(30,7,30,3,'','T',0,'2017-05-14 14:22:26','2017-05-18 05:06:02'),(41,10,33,3,'boss','T',0,'2017-05-14 15:36:47','2017-05-14 17:18:35'),(42,10,33,3,'director','T',0,'2017-05-14 15:36:47','2017-05-14 17:18:35'),(43,10,33,3,'director1','T',0,'2017-05-14 15:36:47','2017-05-14 17:18:35'),(44,10,33,3,'manager','C',2,'2017-05-14 15:36:47','2017-05-14 17:18:35'),(45,10,33,3,'manager1','T',0,'2017-05-14 15:36:47','2017-05-14 17:18:35'),(46,11,34,3,'boss','T',0,'2017-05-14 15:44:34','2017-05-14 17:15:54'),(47,11,34,3,'director','T',0,'2017-05-14 15:44:34','2017-05-14 17:15:54'),(48,11,34,3,'director1','T',0,'2017-05-14 15:44:34','2017-05-14 17:15:54'),(49,11,34,3,'manager','T',0,'2017-05-14 15:44:34','2017-05-14 17:15:54'),(50,11,34,3,'manager1','C',2,'2017-05-14 15:44:34','2017-05-14 16:33:17'),(51,12,35,3,'boss','T',0,'2017-05-14 15:49:29','2017-05-17 04:25:29'),(52,12,35,3,'director','T',0,'2017-05-14 15:49:29','2017-05-17 04:25:29'),(53,12,35,3,'director1','T',0,'2017-05-14 15:49:29','2017-05-17 04:25:29'),(54,12,35,3,'manager','T',0,'2017-05-14 15:49:29','2017-05-17 04:25:29'),(55,12,35,3,'manager1','C',1,'2017-05-14 15:49:29','2017-05-17 04:25:29'),(56,13,36,3,'boss','T',0,'2017-05-14 15:50:31','2017-05-14 16:00:09'),(57,13,36,3,'director','T',0,'2017-05-14 15:50:31','2017-05-14 16:00:09'),(58,13,36,3,'director1','T',0,'2017-05-14 15:50:31','2017-05-14 16:00:09'),(59,13,36,3,'manager','C',1,'2017-05-14 15:50:31','2017-05-14 16:00:09'),(60,13,36,3,'manager1','T',0,'2017-05-14 15:50:31','2017-05-14 16:00:09'),(61,13,41,4,'test','C',5,'2017-05-14 16:00:09','2017-05-14 16:03:22'),(62,13,43,5,'manager','C',6,'2017-05-14 16:03:22','2017-05-14 16:27:50'),(63,12,55,4,'test','C',5,'2017-05-17 04:25:29','2017-05-17 04:26:32'),(64,12,57,5,'manager1','P',0,'2017-05-17 04:26:32','2017-05-17 04:26:32'),(65,14,58,3,'boss','T',0,'2017-05-17 04:29:24','2017-05-17 04:30:01'),(66,14,58,3,'director','T',0,'2017-05-17 04:29:24','2017-05-17 04:30:01'),(67,14,58,3,'director1','T',0,'2017-05-17 04:29:24','2017-05-17 04:30:01'),(68,14,58,3,'manager','T',0,'2017-05-17 04:29:24','2017-05-17 04:30:01'),(69,14,58,3,'manager1','C',1,'2017-05-17 04:29:24','2017-05-17 04:30:01'),(70,14,60,4,'test','C',5,'2017-05-17 04:30:01','2017-05-17 04:30:47'),(71,14,62,5,'manager1','P',0,'2017-05-17 04:30:47','2017-05-17 04:30:47'),(72,7,64,4,'test','P',0,'2017-05-18 05:06:02','2017-05-18 05:06:02'),(73,15,65,3,'boss','T',0,'2017-05-18 18:56:12','2017-05-18 18:56:45'),(74,15,65,3,'director','T',0,'2017-05-18 18:56:12','2017-05-18 18:56:45'),(75,15,65,3,'director1','T',0,'2017-05-18 18:56:12','2017-05-18 18:56:45'),(76,15,65,3,'manager','C',1,'2017-05-18 18:56:12','2017-05-18 18:56:45'),(77,15,67,4,'test','C',5,'2017-05-18 18:56:45','2017-05-19 01:41:25'),(78,15,69,5,'manager','P',0,'2017-05-19 01:41:25','2017-05-19 01:41:25');
-/*!40000 ALTER TABLE `wf_request_resp_user` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `wf_request_transit_log`
---
-
-DROP TABLE IF EXISTS `wf_request_transit_log`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `wf_request_transit_log` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `request_id` int(10) unsigned NOT NULL,
-  `old_state` int(10) unsigned NOT NULL,
-  `new_state` int(10) unsigned NOT NULL,
-  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `wf_request_transit_log`
---
-
-LOCK TABLES `wf_request_transit_log` WRITE;
-/*!40000 ALTER TABLE `wf_request_transit_log` DISABLE KEYS */;
-INSERT INTO `wf_request_transit_log` VALUES (1,1,1,3,'2017-04-09 02:39:12','2017-04-09 02:39:12'),(2,1,3,6,'2017-04-09 02:40:10','2017-04-09 02:40:10'),(3,1,6,4,'2017-04-09 02:40:10','2017-04-09 02:40:10'),(4,1,4,9,'2017-04-09 02:40:45','2017-04-09 02:40:45'),(5,1,9,5,'2017-04-09 02:40:45','2017-04-09 02:40:45'),(6,1,5,10,'2017-04-09 02:41:08','2017-04-09 02:41:08'),(7,1,10,2,'2017-04-09 02:41:08','2017-04-09 02:41:08'),(8,2,1,3,'2017-04-11 02:56:01','2017-04-11 02:56:01'),(9,3,1,3,'2017-04-27 09:47:06','2017-04-27 09:47:06'),(10,3,3,6,'2017-04-27 10:36:55','2017-04-27 10:36:55'),(11,3,6,4,'2017-04-27 10:36:56','2017-04-27 10:36:56'),(12,3,4,9,'2017-05-02 10:20:38','2017-05-02 10:20:38'),(13,3,9,5,'2017-05-02 10:20:38','2017-05-02 10:20:38'),(14,4,1,3,'2017-05-04 09:38:24','2017-05-04 09:38:24'),(15,4,3,6,'2017-05-04 09:42:47','2017-05-04 09:42:47'),(16,4,6,4,'2017-05-04 09:42:47','2017-05-04 09:42:47'),(17,4,4,9,'2017-05-04 10:51:54','2017-05-04 10:51:54'),(18,4,9,5,'2017-05-04 10:51:54','2017-05-04 10:51:54'),(19,4,5,10,'2017-05-04 17:45:15','2017-05-04 17:45:15'),(20,4,10,2,'2017-05-04 17:45:15','2017-05-04 17:45:15'),(21,3,5,10,'2017-05-11 02:14:49','2017-05-11 02:14:49'),(22,3,10,2,'2017-05-11 02:14:49','2017-05-11 02:14:49'),(23,2,3,6,'2017-05-11 02:16:00','2017-05-11 02:16:00'),(24,2,6,4,'2017-05-11 02:16:00','2017-05-11 02:16:00'),(25,2,4,9,'2017-05-11 02:16:34','2017-05-11 02:16:34'),(26,2,9,5,'2017-05-11 02:16:34','2017-05-11 02:16:34'),(27,2,5,10,'2017-05-11 02:16:50','2017-05-11 02:16:50'),(28,2,10,2,'2017-05-11 02:16:50','2017-05-11 02:16:50'),(29,6,1,3,'2017-05-13 15:49:12','2017-05-13 15:49:12'),(30,7,1,3,'2017-05-14 14:22:26','2017-05-14 14:22:26'),(33,10,1,3,'2017-05-14 15:36:47','2017-05-14 15:36:47'),(34,11,1,3,'2017-05-14 15:44:34','2017-05-14 15:44:34'),(35,12,1,3,'2017-05-14 15:49:29','2017-05-14 15:49:29'),(36,13,1,3,'2017-05-14 15:50:31','2017-05-14 15:50:31'),(40,13,3,6,'2017-05-14 16:00:09','2017-05-14 16:00:09'),(41,13,6,4,'2017-05-14 16:00:09','2017-05-14 16:00:09'),(42,13,4,9,'2017-05-14 16:03:22','2017-05-14 16:03:22'),(43,13,9,5,'2017-05-14 16:03:22','2017-05-14 16:03:22'),(44,13,5,10,'2017-05-14 16:27:50','2017-05-14 16:27:50'),(45,13,10,2,'2017-05-14 16:27:50','2017-05-14 16:27:50'),(46,11,3,7,'2017-05-14 16:33:17','2017-05-14 16:33:17'),(47,11,7,2,'2017-05-14 16:33:17','2017-05-14 16:33:17'),(48,6,3,7,'2017-05-14 16:49:16','2017-05-14 16:49:16'),(49,6,7,2,'2017-05-14 16:49:16','2017-05-14 16:49:16'),(52,10,3,7,'2017-05-14 17:18:35','2017-05-14 17:18:35'),(53,10,7,2,'2017-05-14 17:18:35','2017-05-14 17:18:35'),(54,12,3,6,'2017-05-17 04:25:29','2017-05-17 04:25:29'),(55,12,6,4,'2017-05-17 04:25:29','2017-05-17 04:25:29'),(56,12,4,9,'2017-05-17 04:26:32','2017-05-17 04:26:32'),(57,12,9,5,'2017-05-17 04:26:32','2017-05-17 04:26:32'),(58,14,1,3,'2017-05-17 04:29:24','2017-05-17 04:29:24'),(59,14,3,6,'2017-05-17 04:30:01','2017-05-17 04:30:01'),(60,14,6,4,'2017-05-17 04:30:01','2017-05-17 04:30:01'),(61,14,4,9,'2017-05-17 04:30:47','2017-05-17 04:30:47'),(62,14,9,5,'2017-05-17 04:30:47','2017-05-17 04:30:47'),(63,7,3,6,'2017-05-18 05:06:02','2017-05-18 05:06:02'),(64,7,6,4,'2017-05-18 05:06:02','2017-05-18 05:06:02'),(65,15,1,3,'2017-05-18 18:56:12','2017-05-18 18:56:12'),(66,15,3,6,'2017-05-18 18:56:45','2017-05-18 18:56:45'),(67,15,6,4,'2017-05-18 18:56:45','2017-05-18 18:56:45'),(68,15,4,9,'2017-05-19 01:41:25','2017-05-19 01:41:25'),(69,15,9,5,'2017-05-19 01:41:25','2017-05-19 01:41:25');
-/*!40000 ALTER TABLE `wf_request_transit_log` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `wf_state`
---
-
-DROP TABLE IF EXISTS `wf_state`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `wf_state` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `proc_ver_id` int(10) unsigned NOT NULL,
-  `code` char(2) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `wf_state`
---
-
-LOCK TABLES `wf_state` WRITE;
-/*!40000 ALTER TABLE `wf_state` DISABLE KEYS */;
-INSERT INTO `wf_state` VALUES (1,1,'ST','开始','2017-04-07 16:44:56','2017-04-07 16:44:56'),(2,1,'ED','结束','2017-04-07 16:44:56','2017-04-07 16:44:56'),(3,1,'PA','有待申请审核','2017-04-07 16:44:56','2017-04-07 16:44:56'),(4,1,'PR','有待报销单申请','2017-04-07 16:44:56','2017-04-07 16:44:56'),(5,1,'PS','有待报销单审批','2017-04-07 16:44:56','2017-04-07 16:44:56'),(6,1,'A','已批准付款申请','2017-04-07 16:44:56','2017-04-07 16:44:56'),(7,1,'D','已拒绝付款申请','2017-04-07 16:44:56','2017-04-07 16:44:56'),(8,1,'C','已取消付款申请','2017-04-07 16:44:56','2017-04-07 16:44:56'),(9,1,'RE','已申请报销单','2017-04-07 16:44:56','2017-04-07 16:44:56'),(10,1,'SI','已审批报销单','2017-04-07 16:44:56','2017-04-07 16:44:56'),(11,1,'RC','已取消报销单申请','2017-04-07 16:44:56','2017-04-07 16:44:56'),(12,2,'ST','开始','2017-05-28 10:02:34','2017-05-28 10:02:34'),(13,2,'ED','结束','2017-05-28 10:02:34','2017-05-28 10:02:34'),(14,2,'PA','有待申请审核','2017-05-28 10:02:34','2017-05-28 10:02:34'),(15,2,'PR','有待报销单申请','2017-05-28 10:02:34','2017-05-28 10:02:34'),(16,2,'PS','有待报销单审批','2017-05-28 10:02:34','2017-05-28 10:02:34'),(17,2,'A','已批准付款申请','2017-05-28 10:02:34','2017-05-28 10:02:34'),(18,2,'D','已拒绝付款申请','2017-05-28 10:02:34','2017-05-28 10:02:34'),(19,2,'C','已取消付款申请','2017-05-28 10:02:34','2017-05-28 10:02:34'),(20,2,'RE','已申请报销单','2017-05-28 10:02:34','2017-05-28 10:02:34'),(21,2,'SI','已签字报销单','2017-05-28 10:02:34','2017-05-28 10:02:34'),(22,2,'RC','已取消报销单申请','2017-05-28 10:02:34','2017-05-28 10:02:34'),(23,2,'PC','有待覆核付款申请','2017-05-28 10:02:34','2017-05-28 10:02:34'),(24,2,'CK','已覆核付款申请','2017-05-28 10:02:34','2017-05-28 10:02:34');
-/*!40000 ALTER TABLE `wf_state` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `wf_task`
---
-
-DROP TABLE IF EXISTS `wf_task`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `wf_task` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `proc_ver_id` int(10) unsigned NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `function_call` varchar(255) NOT NULL,
-  `param` varchar(1000) DEFAULT NULL,
-  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `wf_task`
---
-
-LOCK TABLES `wf_task` WRITE;
-/*!40000 ALTER TABLE `wf_task` DISABLE KEYS */;
-INSERT INTO `wf_task` VALUES (1,1,'Send Email','sendEmail','','2017-04-07 16:44:04','2017-04-07 16:44:04'),(2,1,'Status=Pending for Approval','transit','PA','2017-04-07 16:44:04','2017-04-07 16:44:04'),(3,1,'Status=Approved','transit','A','2017-04-07 16:44:04','2017-04-07 16:44:04'),(4,1,'Status=Denied','transit','D','2017-04-07 16:44:04','2017-04-07 16:44:04'),(5,1,'Status=Pending for Reimbursement','transit','PR','2017-04-07 16:44:04','2017-04-07 16:44:04'),(6,1,'Generate Transaction','generateTransaction','','2017-04-07 16:44:04','2017-04-07 16:44:04'),(7,1,'Status=Reimbursed','transit','RE','2017-04-07 16:44:04','2017-04-07 16:44:04'),(8,1,'Status=Pending for Reimbursement Approval','transit','PS','2017-04-07 16:44:04','2017-04-07 16:44:04'),(9,1,'Status=Signed','transit','SI','2017-04-07 16:44:04','2017-04-07 16:44:04'),(10,1,'Route to Approver','routeToApprover','','2017-04-07 16:44:04','2017-04-07 16:44:04'),(11,1,'Route to Signer','routeToSigner','','2017-04-07 16:44:04','2017-04-07 16:44:04'),(12,1,'Route to Requestor','routeToRequestor','','2017-04-07 16:44:04','2017-04-07 16:44:04'),(13,1,'Status=End','transit','ED','2017-04-07 16:44:04','2017-04-07 16:44:04'),(14,1,'Status=Cancel','transit','C','2017-04-07 16:44:04','2017-04-07 16:44:04'),(15,1,'Clear All Pending','clearAllPending','','2017-04-07 16:44:04','2017-04-07 16:44:04'),(16,1,'Status=Cancel','transit','RC','2017-04-07 16:44:04','2017-04-07 16:44:04'),(17,2,'Send Email','sendEmail','','2017-05-28 10:02:18','2017-05-28 10:02:18'),(18,2,'Status=Pending for Approval','transit','PA','2017-05-28 10:02:18','2017-05-28 10:02:18'),(19,2,'Status=Approved','transit','A','2017-05-28 10:02:18','2017-05-28 10:02:18'),(20,2,'Status=Denied','transit','D','2017-05-28 10:02:18','2017-05-28 10:02:18'),(21,2,'Status=Pending for Reimbursement','transit','PR','2017-05-28 10:02:18','2017-05-28 10:02:18'),(22,2,'Generate Transaction','generateTransaction','','2017-05-28 10:02:18','2017-05-28 10:02:18'),(23,2,'Status=Reimbursed','transit','RE','2017-05-28 10:02:18','2017-05-28 10:02:18'),(24,2,'Status=Pending for Reimbursement Approval','transit','PS','2017-05-28 10:02:18','2017-05-28 10:02:18'),(25,2,'Status=Signed','transit','SI','2017-05-28 10:02:18','2017-05-28 10:02:18'),(26,2,'Route to Approver','routeToApprover','','2017-05-28 10:02:18','2017-05-28 10:02:18'),(27,2,'Route to Signer','routeToSigner','','2017-05-28 10:02:18','2017-05-28 10:02:18'),(28,2,'Route to Requestor','routeToRequestor','','2017-05-28 10:02:18','2017-05-28 10:02:18'),(29,2,'Status=End','transit','ED','2017-05-28 10:02:18','2017-05-28 10:02:18'),(30,2,'Status=Cancel','transit','C','2017-05-28 10:02:18','2017-05-28 10:02:18'),(31,2,'Clear All Pending','clearAllPending','','2017-05-28 10:02:18','2017-05-28 10:02:18'),(32,2,'Status=Cancel','transit','RC','2017-05-28 10:02:18','2017-05-28 10:02:18'),(33,2,'Status=Checked','transit','CK','2017-05-28 10:02:18','2017-05-28 10:02:18'),(34,2,'Status=Pending for Checking','transit','PC','2017-05-28 10:02:18','2017-05-28 10:02:18'),(35,2,'Route to Account','routeToAccount','','2017-05-28 10:02:18','2017-05-28 10:02:18');
-/*!40000 ALTER TABLE `wf_task` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `wf_transition`
---
-
-DROP TABLE IF EXISTS `wf_transition`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `wf_transition` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `proc_ver_id` int(10) unsigned NOT NULL,
-  `current_state` int(10) unsigned NOT NULL,
-  `next_state` int(10) unsigned NOT NULL,
-  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `wf_transition`
---
-
-LOCK TABLES `wf_transition` WRITE;
-/*!40000 ALTER TABLE `wf_transition` DISABLE KEYS */;
-INSERT INTO `wf_transition` VALUES (1,1,1,3,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(2,1,3,6,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(3,1,3,7,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(4,1,6,4,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(5,1,7,2,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(6,1,4,9,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(7,1,9,5,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(8,1,5,10,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(9,1,10,2,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(10,1,3,8,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(11,1,8,2,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(12,1,4,11,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(13,1,11,2,'2017-04-07 16:45:34','2017-04-07 16:45:34'),(29,2,12,23,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(30,2,12,14,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(31,2,23,24,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(32,2,24,14,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(33,2,14,17,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(34,2,14,18,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(35,2,17,15,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(36,2,18,13,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(37,2,15,20,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(38,2,20,16,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(39,2,16,21,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(40,2,21,13,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(41,2,14,19,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(42,2,19,13,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(43,2,15,22,'2017-05-29 04:29:30','2017-05-29 04:29:30'),(44,2,22,13,'2017-05-29 04:29:30','2017-05-29 04:29:30');
-/*!40000 ALTER TABLE `wf_transition` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2017-06-01 15:37:28
+DROP TABLE IF EXISTS wf_request_action;
+CREATE TABLE wf_request_action(
+	id int unsigned not null auto_increment primary key,
+	request_id int unsigned not null,
+	action_id int unsigned not null,
+	transition_id int unsigned not null,
+	is_active tinyint unsigned not null,
+	is_complete tinyint unsigned not null,
+	lcd timestamp default CURRENT_TIMESTAMP,
+	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -8,10 +8,6 @@ return array(
 				'access'=>'A07',
 				'url'=>'/staff/index',
 			),
-			'Supplier Info'=>array(
-				'access'=>'A10',
-				'url'=>'/supplier/index',
-			),
 			'Customer Info'=>array(
 				'access'=>'A01',
 				'url'=>'/customer/index',
@@ -27,6 +23,10 @@ return array(
 			'Customer Enquiry'=>array(
 				'access'=>'A04',
 				'url'=>'/enquiry/index',
+			),
+			'Supplier Info'=>array(
+				'access'=>'A10',
+				'url'=>'/supplier/index',
 			),
 			'Product Delivery'=>array(
 				'access'=>'A05',
@@ -116,6 +116,15 @@ return array(
 			'Report Manager'=>array(
 				'access'=>'B12',
 				'url'=>'/queue/index',
+			),
+		),
+	),
+	'Management'=>array(
+		'access'=>'G',
+		'items'=>array(
+			'LBS Customer Enquiry'=>array(
+				'access'=>'G01',
+				'url'=>'/customerenq/index',
 			),
 		),
 	),

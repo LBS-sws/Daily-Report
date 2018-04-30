@@ -23,3 +23,6 @@ add column remarks varchar(1000) after repair;
 alter table swo_staff
 add column staff_type varchar(15) after position,
 add column leader varchar(15) after staff_type;
+
+alter table swo_service modify org_equip_qty smallint unsigned;
+alter table swo_service modify rtn_equip_qty smallint unsigned;

@@ -14,3 +14,6 @@ CREATE TABLE swo_email_queue (
 	lcd timestamp default CURRENT_TIMESTAMP,
 	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+alter table swo_city
+add column incharge varchar(30) after region;

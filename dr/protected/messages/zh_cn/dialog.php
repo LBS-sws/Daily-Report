@@ -38,6 +38,6 @@ return array(
 	'Remove'=>'删除',
 	'Date'=>'日期',
 	'Download'=>'下载',
-
+	'Exceeds file upload limit.'=>'超出文件上传限制。',
 );
 ?>

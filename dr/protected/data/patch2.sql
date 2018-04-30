@@ -10,7 +10,7 @@ alter table swo_enquiry
 add column nature_type int unsigned after customer,
 add column address varchar(255) after tel_no,
 add column follow_result varchar(1000) after follow_dt,
-add column record_by varchar(100) after remarks
+add column record_by varchar(100) after remarks,
 add column source_code char(5) after address;
 
 update swo_service 

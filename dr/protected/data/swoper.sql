@@ -510,6 +510,13 @@ CREATE TABLE swo_email_queue (
 	lud timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS swo_email_queue_attm;
+CREATE TABLE swo_email_queue_attm (
+	queue_id int unsigned NOT NULL,
+	name varchar(255) NOT NULL,
+	content longblob
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS swo_monthly_hdr;
 CREATE TABLE swo_monthly_hdr (
 	id int unsigned auto_increment NOT NULL primary key,

@@ -22,11 +22,16 @@ class UserForm extends CFormModel
 
 	public $info_fields = array(
 							'signature'=>'blob',
-							'signature_file_type'=>'value'
+							'signature_file_type'=>'value',
+							'staff_id'=>'value',
+							'staff_name'=>'value',
 						);
 	public $signature;
 	public $signature_file_type;
-		
+	
+	public $staff_id;
+	public $staff_name;
+	
 	private $systems;
 	private $localelabels;
 
@@ -49,6 +54,7 @@ class UserForm extends CFormModel
 			'lock'=>Yii::t('user','Lock'),
 			'email'=>Yii::t('user','Email'),
 			'signature'=>Yii::t('user','Signature'),
+			'staff_id'=>Yii::t('user','Staff Code'),
 		);
 	}
 
@@ -68,7 +74,7 @@ class UserForm extends CFormModel
 				),
 			array('status','in','range'=>array('A','I'),'allowEmpty'=>false),
 			array('logon_time, logoff_time, fail_count, lock, rights','safe'), 
-			array('signature_file_type','safe'), 
+			array('signature_file_type, staff_id, staff_name','safe'), 
 			array('password','required','on'=>'new'),
 			array('password','safe','on'=>'edit, delete'),
 			array('email','email','allowEmpty'=>true,),
@@ -186,11 +192,13 @@ class UserForm extends CFormModel
 				foreach ($dtls as $dtl) {
 					$sid = $dtl['system_id'];
 					$idx = array_search($sid, $a_sys);
-					foreach($this->rights[$idx] as $key=>$value) {
-						$this->rights[$idx][$key] = (strpos($dtl['a_read_write'],$key)!==false) ? 'RW' :
-													((strpos($dtl['a_read_only'],$key)!==false) ? 'RO' :
-													((strpos($dtl['a_control'],$key)!==false) ? 'CN' : 'NA'
-													));
+					if ($idx!==false) {
+						foreach($this->rights[$idx] as $key=>$value) {
+							$this->rights[$idx][$key] = (strpos($dtl['a_read_write'],$key)!==false) ? 'RW' :
+														((strpos($dtl['a_read_only'],$key)!==false) ? 'RO' :
+														((strpos($dtl['a_control'],$key)!==false) ? 'CN' : 'NA'
+														));
+						}
 					}
 				}
 			}
@@ -205,6 +213,8 @@ class UserForm extends CFormModel
 					switch ($rec['field_id']) {
 						case 'signature': $this->signature = $rec['field_blob']; break;
 						case 'signature_file_type': $this->signature_file_type = $rec['field_value']; break;
+						case 'staff_id': $this->staff_id = $rec['field_value']; break;
+						case 'staff_name': $this->staff_name = $rec['field_value']; break;
 					}
 				}
 			}
@@ -351,7 +361,7 @@ class UserForm extends CFormModel
 
 		$uid = Yii::app()->user->id;
 		foreach($this->info_fields as $fldid=>$fldtype) {
-			if (($fldid!='signature' && $fldid!='signature_file_type') || !empty($this->$fldid)) {
+//			if (($fldid!='signature' && $fldid!='signature_file_type') || !empty($this->$fldid)) {
 				$value = ($fldtype=='value') ? $this->$fldid : '';
 				$blob = ($fldtype=='blob') ? $this->$fldid : '';
 			
@@ -364,7 +374,7 @@ class UserForm extends CFormModel
 				$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 				$command->execute();
 			}
-		}
+//		}
 	}
 	
 	public function getSignatureString() {

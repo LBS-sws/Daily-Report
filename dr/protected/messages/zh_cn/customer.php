@@ -27,5 +27,18 @@ return array(
 	'Contract Period'=>'合同年限',
 	'Status' => '状态',
 	'Address'=>'客户地址',
+	
+	'Customer Code'=>'客户编号',
+	'Customer Name'=>'客户名字',
+	'Date'=>'日期',
+	'Type'=>'类型',
+	'Product'=>'服务',
+	'First Date'=>'首次日期',
+	'Amount'=>'金额',
+	
+	'Active'=>'生效中',
+	'Terminated'=>'停止服务',
+	'Unknown'=>'不明',
+	'All'=>'全部',
 );
 ?>

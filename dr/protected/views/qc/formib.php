@@ -72,11 +72,25 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<?php echo $form->hiddenField($model, 'service_type'); ?>
 			<?php echo $form->hiddenField($model, 'entry_dt'); ?>
 			<?php echo $form->hiddenField($model, 'team'); ?>
-			<?php echo $form->hiddenField($model, 'qc_staff'); ?>
 			<?php echo $form->hiddenField($model, 'month'); ?>
 			<?php echo $form->hiddenField($model, 'new_form'); ?>
 			<?php echo TbHtml::hiddenField('QcForm[info][sign_cust]', $model->info['sign_cust']); ?>
 			<?php echo TbHtml::hiddenField('QcForm[info][sign_tech]', $model->info['sign_tech']); ?>
+
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'qc_staff',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-7">
+					<?php 
+						echo $form->textField($model, 'qc_staff', 
+							array('size'=>50,'maxlength'=>500,'readonly'=>($model->readonlySP()),
+							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','QC Staff'),
+											array('name'=>'btnStaffQc','id'=>'btnStaffQc',
+												'disabled'=>($model->readonlySP())
+											))
+						)); 
+					?>
+				</div>
+			</div>
 
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'company_name',array('class'=>"col-sm-2 control-label")); ?>
@@ -594,6 +608,10 @@ $('#btnStaffResp').on('click',function() {
 
 $('#btnCompany').on('click',function() {
 	opendialog('company', 'company_id', 'company_name', false, {}, {});
+});
+
+$('#btnStaffQc').on('click',function() {
+	opendialog('staff', '', 'qc_staff', false, {}, {});
 });
 EOF;
 Yii::app()->clientScript->registerScript('lookup',$js,CClientScript::POS_READY);
