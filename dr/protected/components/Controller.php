@@ -72,8 +72,8 @@ class Controller extends CController
 		else {
 			Yii::app()->user->logout();
 //			Dialog::message('Warning Message', Yii::t('misc',"User ID has been logged in more than one station."));
-			$this->redirect(Yii::app()->createUrl('site/login'));
-//			throw new CHttpException(999,Yii::t('misc',"User ID has been logged in more than one station.")); 
+//			$this->redirect(Yii::app()->createUrl('site/login'));
+			throw new CHttpException(999,Yii::t('misc',"User ID has been logged in more than one station.")); 
 		}
 	}
 
@@ -97,8 +97,8 @@ class Controller extends CController
 			$returl = Yii::app()->user->returnUrl;
 			Yii::app()->user->logout();
 //			Dialog::message('Warning Message', Yii::t('misc',"Session expired."));
-			$this->redirect(Yii::app()->createUrl('site/login'));
-//			throw new CHttpException(999,Yii::t('misc',"Session expired.")); 
+//			$this->redirect(Yii::app()->createUrl('site/login'));
+			throw new CHttpException(999,Yii::t('misc',"Session expired.")); 
 		}
 	}
 }

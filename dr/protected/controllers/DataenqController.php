@@ -1,6 +1,6 @@
 <?php
 
-class CustomerenqController extends Controller 
+class DataenqController extends Controller 
 {
 	public function filters()
 	{
@@ -21,15 +21,9 @@ class CustomerenqController extends Controller
 	public function accessRules()
 	{
 		return array(
-/*		
-			array('allow', 
-				'actions'=>array('new','edit','delete','save'),
-				'expression'=>array('CustomerController','allowReadWrite'),
-			),
-*/
 			array('allow', 
 				'actions'=>array('index'),
-				'expression'=>array('CustomerenqController','allowReadOnly'),
+				'expression'=>array('DataenqController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -37,11 +31,11 @@ class CustomerenqController extends Controller
 		);
 	}
 
-	public function actionIndex($pageNum=1,$show=1) 
+	public function actionIndex() 
 	{
-		$model = new CustomerEnqList;
-		if (isset($_POST['CustomerEnqList'])) {
-			$model->attributes = $_POST['CustomerEnqList'];
+		$model = new DataEnqList;
+		if (isset($_POST['DataEnqList'])) {
+			$model->attributes = $_POST['DataEnqList'];
 		} else {
 			$session = Yii::app()->session;
 			if (isset($session[$model->criteriaName()]) && !empty($session[$model->criteriaName()])) {
@@ -49,19 +43,15 @@ class CustomerenqController extends Controller
 				$model->setCriteria($criteria);
 			}
 		}
-		$model->show = $show;
-		if ($show!=0) {
-			$model->determinePageNum($pageNum);
-			$model->retrieveDataByPage($model->pageNum);
-		}
+		$model->retrieveData();
 		$this->render('index',array('model'=>$model));
 	}
 
 	public static function allowReadWrite() {
-		return Yii::app()->user->validRWFunction('G01');
+		return Yii::app()->user->validRWFunction('G02');
 	}
 	
 	public static function allowReadOnly() {
-		return Yii::app()->user->validFunction('G01');
+		return Yii::app()->user->validFunction('G02');
 	}
 }

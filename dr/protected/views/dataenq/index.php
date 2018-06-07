@@ -1,5 +1,5 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
+$this->pageTitle=Yii::app()->name . ' - Data Analysis';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
@@ -12,7 +12,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('app','LBS Customer Enquiry'); ?></strong>
+		<strong><?php echo Yii::t('app','Data Analysis'); ?></strong>
 	</h1>
 </section>
 
@@ -20,33 +20,51 @@ $this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
 <section class="content">
 	<div class="box"><div class="box-body">
 		<div class="form-group">
-			<?php echo $form->labelEx($model,'company_code',array('class'=>"col-sm-2 control-label")); ?>
+			<?php echo $form->labelEx($model,'data_type',array('class'=>"col-sm-2 control-label")); ?>
 			<div class="col-sm-2">
-				<?php echo $form->textField($model, 'company_code', array('maxlength'=>20)); ?>
-			</div>
-
-			<?php echo $form->labelEx($model,'company_name',array('class'=>"col-sm-2 control-label")); ?>
-			<div class="col-sm-5">
-				<?php echo $form->textField($model, 'company_name', array('maxlength'=>250)); ?>
+				<?php 
+					$list = $model->getDataTypeList();
+					echo $form->dropDownList($model, 'data_type', $list); 
+				?>
 			</div>
 		</div>
 
 		<div class="form-group">
-			<?php echo $form->labelEx($model,'company_status',array('class'=>"col-sm-2 control-label")); ?>
+			<?php echo $form->labelEx($model,'year_from',array('class'=>"col-sm-2 control-label")); ?>
 			<div class="col-sm-2">
 				<?php 
-					$list = array(''=>Yii::t('customer','All'), 'A'=>Yii::t('customer','Active'), 'T'=>Yii::t('customer','Terminated'), 'U'=>Yii::t('customer','Unknown'));
-					echo $form->dropDownList($model, 'company_status', $list); 
+					$item = array();
+					for ($i=2017;$i<=2027;$i++) {$item[$i] = $i; }
+					echo $form->dropDownList($model, 'year_from', $item); 
 				?>
 			</div>
 
-			<?php echo $form->labelEx($model,'company_type_list',array('class'=>"col-sm-2 control-label")); ?>
-			<div class="col-sm-5">
-				<?php
-						$list = General::getCustTypeList();
-						echo $form->dropDownList($model, 'company_type_list', $list,
-								array('class'=>'select2','multiple'=>'multiple')
-							); 
+			<?php echo $form->labelEx($model,'month_from',array('class'=>"col-sm-2 control-label")); ?>
+			<div class="col-sm-3">
+				<?php 
+					$item = array();
+					for ($i=1;$i<=12;$i++) {$item[$i] = $i; }
+					echo $form->dropDownList($model, 'month_from', $item); 
+				?>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<?php echo $form->labelEx($model,'year_to',array('class'=>"col-sm-2 control-label")); ?>
+			<div class="col-sm-2">
+				<?php 
+					$item = array();
+					for ($i=2017;$i<=2027;$i++) {$item[$i] = $i; }
+					echo $form->dropDownList($model, 'year_to', $item); 
+				?>
+			</div>
+
+			<?php echo $form->labelEx($model,'month_to',array('class'=>"col-sm-2 control-label")); ?>
+			<div class="col-sm-2">
+				<?php 
+					$item = array();
+					for ($i=1;$i<=12;$i++) {$item[$i] = $i; }
+					echo $form->dropDownList($model, 'month_to', $item); 
 				?>
 			</div>
 		</div>
@@ -76,11 +94,13 @@ $this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
 	<?php 
 	if ($model->show!=0) {
 		$this->widget('ext.layout.ListPageWidget', array(
-			'title'=>Yii::t('customer','Customer List'),
+			'title'=>Yii::t('report','Result List'),
 			'model'=>$model,
-				'viewhdr'=>'//customerenq/_listhdr',
-				'viewdtl'=>'//customerenq/_listdtl',
+				'viewhdr'=>'//dataenq/_listhdr',
+				'viewdtl'=>'//dataenq/_listdtl',
 				'hasSearchBar'=>false,
+				'hasNavBar'=>false,
+				'hasPageBar'=>false,
 		));
 	}
 	?>
@@ -116,20 +136,6 @@ $('#CustomerEnqList_city_list').on('select2:opening select2:closing', function( 
     var searchfield = $(this).parent().find('.select2-search__field');
     searchfield.prop('disabled', true);
 });
-$('#CustomerEnqList_company_type_list').select2({
-	tags: false,
-	multiple: true,
-	maximumInputLength: 0,
-	maximumSelectionLength: 200,
-	allowClear: true,
-	language: '$lang',
-	disabled: false
-});
-
-$('#CustomerEnqList_company_type_list').on('select2:opening select2:closing', function( event ) {
-    var searchfield = $(this).parent().find('.select2-search__field');
-    searchfield.prop('disabled', true);
-});
 EOF;
 Yii::app()->clientScript->registerScript('select2',$js,CClientScript::POS_READY);
 
@@ -147,14 +153,14 @@ function showdetail(id) {
 EOF;
 Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_HEAD);
 
-$url = Yii::app()->createUrl('customerenq/index', array('pageNum'=>1));
+$url = Yii::app()->createUrl('dataenq/index');
 $js = <<<EOF
 $('#btnSubmit').on('click', function() {
 	Loading.show();
 	jQuery.yii.submitForm(this,'$url',{});
 });
 EOF;
-Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
+Yii::app()->clientScript->registerScript('searchRec',$js,CClientScript::POS_READY);
 
 //$js = Script::genTableRowClick();
 //Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);

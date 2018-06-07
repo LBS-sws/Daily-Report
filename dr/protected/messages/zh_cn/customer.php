@@ -30,6 +30,7 @@ return array(
 	
 	'Customer Code'=>'客户编号',
 	'Customer Name'=>'客户名字',
+	'Customer Type'=>'客户类型',
 	'Date'=>'日期',
 	'Type'=>'类型',
 	'Product'=>'服务',

@@ -2,10 +2,10 @@
 class RptLogistic extends ReportData2 {	public function fields() {		return array(			'seq'=>array('label'=>Yii::t('logistic','No.'),'width'=>10,'align'=>'C'),
 			'company_name'=>array('label'=>Yii::t('logistic','Customer'),'width'=>30,'align'=>'L'),			'address'=>array('label'=>Yii::t('logistic','Address'),'width'=>30,'align'=>'L'),
 			'log_dt'=>array('label'=>Yii::t('logistic','Date'),'width'=>18,'align'=>'C'),
-			'follow_staff'=>array('label'=>Yii::t('logistic','Resp. Staff'),'width'=>22,'align'=>'L'),			'pay_method'=>array('label'=>Yii::t('logistic','Payment Method'),'width'=>20,'align'=>'L'),
+			'follow_staff'=>array('label'=>Yii::t('logistic','Resp. Staff'),'width'=>20,'align'=>'L'),			'pay_method'=>array('label'=>Yii::t('logistic','Payment Method'),'width'=>20,'align'=>'L'),
 			'location'=>array('label'=>Yii::t('logistic','Location'),'width'=>30,'align'=>'L'),
 			'task'=>array('label'=>Yii::t('logistic','Task'),'width'=>30,'align'=>'L'),			'qty'=>array('label'=>Yii::t('logistic','Quantity'),'width'=>15,'align'=>'C'),			'finish'=>array('label'=>Yii::t('logistic','Finished'),'width'=>8,'align'=>'C'),
-			'deadline'=>array('label'=>Yii::t('logistic','Deadline'),'width'=>18,'align'=>'C'),
+			'deadline'=>array('label'=>Yii::t('logistic','Deadline'),'width'=>20,'align'=>'C'),
 			'repair'=>array('label'=>Yii::t('logistic','Repair Items'),'width'=>30,'align'=>'L'),
 			'reason'=>array('label'=>Yii::t('logistic','Job Status'),'width'=>30,'align'=>'L'),
 			'remarks'=>array('label'=>Yii::t('logistic','Remarks'),'width'=>30,'align'=>'L'),
@@ -28,9 +28,9 @@ class RptLogistic extends ReportData2 {	public function fields() {		return arr
 			array(
 				'task',
 				'qty',
-				'finish',
-				'deadline',
 			),
+			'finish',
+			'deadline',
 			'repair',
 			'reason',
 			'remarks',
@@ -49,7 +49,7 @@ class RptLogistic extends ReportData2 {	public function fields() {		return arr
 				$temp['follow_staff'] = $row['follow_staff'];				$temp['company_name'] = $row['company_name'];				$temp['pay_method'] =  General::getPayMethodDesc($row['pay_method']);
 				$temp['location'] = '['.$row['location_name'].'] '.$row['location_dtl'];
 				$temp['finish'] = $row['finish']=='Y' ? Yii::t('misc','Yes') : Yii::t('misc','No');
-				$temp['deadline'] = General::isDate($row['deadline']) ? General::toDate($row['deadline']) : $row['deadline'];
+				$temp['deadline'] = $row['deadline'];
 				$temp['reason'] = $row['reason'];
 				$temp['address'] = $row['address'];
 				$temp['repair'] = $row['repair'];
@@ -64,28 +64,17 @@ class RptLogistic extends ReportData2 {	public function fields() {		return arr
 					$tempd = array();
 					$tempd['task'] = '';
 					$tempd['qty'] = '';
-					$tempd['finish'] = '';
-					$tempd['deadline'] = '';
 					$detail[] = $tempd;
 				} else {
 					foreach ($drows as $drow) {
 						$tempd = array();
 						$tempd['task'] = $drow['task_name'];
 						$tempd['qty'] = $drow['qty'];
-//						$tempd['finish'] = (empty($drow['finish'])) ? $temp['finish'] : ($drow['finish']=='Y' ? Yii::t('misc','Yes') : Yii::t('misc','No'));
-						$tempd['finish'] = (empty($drow['finish'])) ? '' : ($drow['finish']=='Y' ? Yii::t('misc','Yes') : Yii::t('misc','No'));
-//						$tempd['deadline'] = (empty($drow['deadline'])) ? $temp['deadline'] : General::toDate($drow['deadline']);
-						$tempd['deadline'] = (empty($drow['deadline'])) ? '' : General::toDate($drow['deadline']);
 						$detail[] = $tempd;
 					}
 				}
 				$temp['detail'] = $detail; 
 
 				$this->data[] = $temp;			}		}		return true;	}
-
-	public function getReportName() {
-		$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';
-		return parent::getReportName().$city_name;
-	}
 }
 ?>

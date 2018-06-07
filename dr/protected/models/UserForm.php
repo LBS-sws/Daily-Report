@@ -302,7 +302,7 @@ class UserForm extends CFormModel
 
 		switch ($this->scenario) {
 			case 'delete':
-				$sql = "delete from security$suffix.sec_user_access where username = :username and system_id :system_id";
+				$sql = "delete from security$suffix.sec_user_access where username = :username and system_id=:system_id";
 				break;
 			case 'new':
 			case 'edit':
@@ -329,13 +329,20 @@ class UserForm extends CFormModel
 			}
 			$sid = $a_sys[$idx];
 			$command=$connection->createCommand($sql);
-			$command->bindParam(':username',$this->username,PDO::PARAM_STR);
-			$command->bindParam(':system_id',$sid,PDO::PARAM_STR);
-			$command->bindParam(':a_read_only',$ro,PDO::PARAM_STR);
-			$command->bindParam(':a_read_write',$rw,PDO::PARAM_STR);
-			$command->bindParam(':a_control',$cn,PDO::PARAM_STR);
-			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
-			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
+			if (strpos($sql,':username')!==false)
+				$command->bindParam(':username',$this->username,PDO::PARAM_STR);
+			if (strpos($sql,':system_id')!==false)
+				$command->bindParam(':system_id',$sid,PDO::PARAM_STR);
+			if (strpos($sql,':a_read_only')!==false)
+				$command->bindParam(':a_read_only',$ro,PDO::PARAM_STR);
+			if (strpos($sql,':a_read_write')!==false)
+				$command->bindParam(':a_read_write',$rw,PDO::PARAM_STR);
+			if (strpos($sql,':a_control')!==false)
+				$command->bindParam(':a_control',$cn,PDO::PARAM_STR);
+			if (strpos($sql,':lcu')!==false)
+				$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
+			if (strpos($sql,':luu')!==false)
+				$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 			$command->execute();
 		}
 	}
@@ -361,20 +368,26 @@ class UserForm extends CFormModel
 
 		$uid = Yii::app()->user->id;
 		foreach($this->info_fields as $fldid=>$fldtype) {
-//			if (($fldid!='signature' && $fldid!='signature_file_type') || !empty($this->$fldid)) {
+			if (($fldid!='signature' && $fldid!='signature_file_type') || !empty($this->$fldid) || $this->scenario=='delete') {
 				$value = ($fldtype=='value') ? $this->$fldid : '';
 				$blob = ($fldtype=='blob') ? $this->$fldid : '';
 			
 				$command=$connection->createCommand($sql);
-				$command->bindParam(':username',$this->username,PDO::PARAM_STR);
-				$command->bindParam(':field_id',$fldid,PDO::PARAM_STR);
-				$command->bindParam(':field_value',$value,PDO::PARAM_STR);
-				$command->bindParam(':field_blob',$blob,PDO::PARAM_LOB);
-				$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
-				$command->bindParam(':luu',$uid,PDO::PARAM_STR);
+				if (strpos($sql,':username')!==false)
+					$command->bindParam(':username',$this->username,PDO::PARAM_STR);
+				if (strpos($sql,':field_id')!==false)
+					$command->bindParam(':field_id',$fldid,PDO::PARAM_STR);
+				if (strpos($sql,':field_value')!==false)
+					$command->bindParam(':field_value',$value,PDO::PARAM_STR);
+				if (strpos($sql,':field_blob')!==false)
+					$command->bindParam(':field_blob',$blob,PDO::PARAM_LOB);
+				if (strpos($sql,':lcu')!==false)
+					$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
+				if (strpos($sql,':luu')!==false)
+					$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 				$command->execute();
 			}
-//		}
+		}
 	}
 	
 	public function getSignatureString() {

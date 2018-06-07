@@ -65,8 +65,8 @@ class RptLogistic extends ReportData2 {	public function fields() {		return arr
 				if (empty($drows) ) {
 					$tempd = array();
 					$tempd['task'] = '';
-					$tempd['qty'] = '';
 					$tempd['task_type'] = '';
+					$tempd['qty'] = '';
 					$tempd['finish'] = '';
 					$tempd['deadline'] = '';
 					$detail[] = $tempd;

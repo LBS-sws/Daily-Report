@@ -36,7 +36,7 @@ class RptCustrenew extends ReportData2 {	public function fields() {		return ar
 				$period = empty($row['ctrt_period'])?0:($row['ctrt_period']<12?$row['ctrt_period']:12);				$temp['amt_year'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:
 										($row['paid_type']=='M'?$row['amt_paid']*$period:$row['amt_paid']))
 									,2,'.','');
-				$temp['amt_install'] = number_format($row['amt_install'],2,'.','');				$temp['need_install'] = ($row['need_install']=='Y') ? Yii::t('misc','Yes') : Yii::t('misc','No');
+				$temp['amt_install'] = number_format($row['amt_install'],2,'.','');				$temp['need_install'] = ($row['amt_install']=='Y') ? Yii::t('misc','Yes') : Yii::t('misc','No');
 				$temp['salesman'] = $row['salesman'];
 				$temp['sign_dt'] = General::toDate($row['sign_dt']);
 				$temp['ctrt_period'] = $row['ctrt_period'];

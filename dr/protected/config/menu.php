@@ -124,7 +124,7 @@ return array(
 		'items'=>array(
 			'LBS Customer Enquiry'=>array(
 				'access'=>'G01',
-				'url'=>'/customerenq/index',
+				'url'=>'/customerenq/index?show=0',
 			),
 		),
 	),

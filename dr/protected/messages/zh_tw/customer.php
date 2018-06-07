@@ -15,6 +15,7 @@ return array(
 'Code'=>'客戶編號',
 'Type'=>'類別',
 'Name'=>'名稱',
+'Full Name'=>'全稱',
 'Contact Name'=>'客戶聯繫',
 'Contact Phone'=>'客戶電話',
 'Nature'=>'性質',
@@ -25,6 +26,20 @@ return array(
 'Sign Date'=>'簽約日期',
 'Contract Period'=>'合同年限',
 'Status' => '狀態',
-'Address'=>'客户地址',
+'Address'=>'客戶地址',
+
+'Customer Code'=>'客戶編號',
+'Customer Name'=>'客戶名字',
+'Customer Type'=>'客戶類型',
+'Date'=>'日期',
+'Type'=>'類型',
+'Product'=>'服務',
+'First Date'=>'首次日期',
+'Amount'=>'金額',
+
+'Active'=>'生效中',
+'Terminated'=>'停止服務',
+'Unknown'=>'不明',
+'All'=>'全部',
 );
 ?>

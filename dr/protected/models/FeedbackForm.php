@@ -276,7 +276,7 @@ class FeedbackForm extends CFormModel
 			$connection = Yii::app()->db;
 			$command=$connection->createCommand($sql);
 			if (strpos($sql,':from_addr')!==false) {
-				$from_addr = Yii::app()->params['adminEmail'];		//Yii::app()->user->email();
+				$from_addr = Yii::app()->user->email();
 				$command->bindParam(':from_addr',$from_addr,PDO::PARAM_STR);
 			}
 			if (strpos($sql,':to_addr')!==false) {

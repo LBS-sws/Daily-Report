@@ -72,12 +72,11 @@ $this->pageTitle=Yii::app()->name . ' - Template Form';
 							echo $form->dropDownList($model, 'system_id', $option);
 						}
 						else { 
-							echo $form->hiddenField($model, 'system_id', $option);
+							echo $form->hiddenField($model, 'system_id');
 							echo TbHtml::textField('system_name', $option[$model->system_id],
 								array('maxlength'=>100,'readonly'=>true)						
 							);
 						}
-
 					?>
 				</div>
 			</div>

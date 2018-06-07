@@ -8,7 +8,7 @@ class Calculation {
 		$rtn = array();
 		$sql = "select a.city, b.data_value from swo_monthly_hdr a, swo_monthly_dtl b 
 				where a.id=b.hdr_id and b.data_field='$index' and a.year_no=$ly and a.month_no=$lm 
-				group by a.city
+				order by a.city
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {

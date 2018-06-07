@@ -1,49 +1,65 @@
 <?php
 
-class CustomerEnqList extends CListPageModel
+class DataEnqList extends CListPageModel
 {
-	public $company_code;
-	public $company_name;
-	public $company_status;
 	public $city_list;
-	public $company_type_list;
-	public $show;
-
+	public $year_from;
+	public $year_to;
+	public $month_from;
+	public $month_to;
+	public $data_type;
 	
+	public $data_list = array();
+	
+	public function init() {
+		$now = strtotime(date("Y-m-d"));
+		$lastm = strtotime("-1 month", $now);
+		
+		$this->year_from = date("Y", $now);
+		$this->month_from = date("m", '1');
+		
+		$this->year_to = date("Y", $lastm);
+		$this->month_to = date("m", $lastm);
+
+		$this->data_list = array();
+							'DataTurnoverGrowth'=>array(
+													'name'=>Yii::t('report','Turnover Growth'),
+												),
+						);
+	}
+
 	public function attributeLabels()
 	{
-		return array(	
-			'company_code'=>Yii::t('customer','Customer Code'),
-			'company_name'=>Yii::t('customer','Customer Name'),
-			'company_type_list'=>Yii::t('customer','Customer Type'),
-			'company_status'=>Yii::t('customer','Status'),
-			'full_name'=>Yii::t('customer','Full Name'),
-			'cont_name'=>Yii::t('customer','Contact Name'),
-			'cont_phone'=>Yii::t('customer','Contact Phone'),
-			'city_name'=>Yii::t('misc','City'),
+		$label_1 = array(	
+			'data_type'=>Yii::t('misc','Type'),
 			'city_list'=>Yii::t('misc','City'),
-			'status_dt'=>Yii::t('customer','Date'),
-			'status'=>Yii::t('customer','Status'),
-			'cust_type_desc'=>Yii::t('customer','Type'),
-			'product_desc'=>Yii::t('customer','Product'),
-			'first_dt'=>Yii::t('customer','First Date'),
-			'amt_paid'=>Yii::t('customer','Amount'),
+			'year_from'=>Yii::t('misc','Year From'),
+			'year_to'=>Yii::t('misc','Year To'),
+			'month_from'=>Yii::t('misc','Month From'),
+			'month_to'=>Yii::t('misc','Month To'),
 		);
+		$label_2 = empty($this->data) ? array() : $this->data->attributeLabels();
+		return array_merge($label_1, $label_2);
 	}
 	
-	public function rules()
-	{	$rtn1 = parent::rules();
-		$rtn2 =  array(
-			array('company_code, company_name, company_type_list, company_status, city_list, show','safe',),
+	public function rules() {	
+		return array(
+				array('year_from, year_to, month_from, month_to, data_type','required',),
+				array('city_list','safe',),
 			);
-		return array_merge($rtn1, $rtn2);
 	}
 
-	public function retrieveDataByPage($pageNum=1)
-	{
+	public function retrieveData() {
+		$start_dt = $this->year_from.'-'.$this->month_from.'-1';
+		$tmp_dt = strtotime($this->year_to.'-'.$this->month_to.'-1');
+		$end_dt = date("Y-m-d", strtotime('-1 day',strtotime("+1 month", $tmp_dt)));
+		
+		$modelname = $this->data_type;
+		$model = new $modelname;
+		
 		$suffix = Yii::app()->params['envSuffix'];
 //		$city = Yii::app()->user->city_allow();
-		$sql1 = "select a.*, c.name as city_name, b.status, b.type_list  
+		$sql1 = "select a.*, c.name as city_name, b.status 
 				from swo_company a
 				inner join security$suffix.sec_city c on a.city=c.code
 				left outer join swo_company_status b on a.id=b.id
@@ -76,13 +92,6 @@ class CustomerEnqList extends CListPageModel
 					$clause .= (empty($clause) ? '' : ' and ')."(b.status='U' or b.status is null)";
 					break;
 			}
-		}
-		if (!empty($this->company_type_list)) {
-			$svalue = '';
-			foreach ($this->company_type_list as $item) {
-				$svalue .= ($svalue=='' ? '' : ' or ')."position('/$item/' in b.type_list)>0";
-			}
-			$clause .= (empty($clause) ? '' : ' and ')."($svalue)";
 		}
 		if (!empty($this->city_list)) {
 			$svalue = '';
@@ -166,16 +175,15 @@ class CustomerEnqList extends CListPageModel
 					'company_name'=>$this->company_name,
 					'company_status'=>$this->company_status,
 					'city_list'=>$this->city_list,
-					'company_type_list'=>$this->company_type_list,
 				);
 		return array_merge($rtn1, $rtn2);
 	}
 	
-	public function statusDesc($invalue) {
-		switch($invalue) {
-			case 'A': return Yii::t('customer','Active'); break;
-			case 'T': return Yii::t('customer','Terminated'); break;
-			default: return Yii::t('customer','Unknown');
-		};
+	public function getDataTypeList() {
+		$rtn = array();
+		foreach ($this->data_list as $key=>$items) {
+			$rtn[$key] = $items['name'];
+		}
+		return $rtn;
 	}
 }

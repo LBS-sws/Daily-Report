@@ -81,7 +81,7 @@ class RptCustamend extends ReportData2 {	public function fields() {		return ar
 				$temp['service'] = $row['service'];
 				$temp['amt_month'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:($row['paid_type']=='M'?$row['amt_paid']:round($row['amt_paid']/($row['ctrt_period']>0?$row['ctrt_period']:1),2))),2,'.','');
 				$temp['amt_install'] = $row['amt_install'];
-				$temp['need_install'] = ($row['need_install']=='Y') ? Yii::t('misc','Yes') : Yii::t('misc','No');
+				$temp['need_install'] = ($row['amt_install']=='Y') ? Yii::t('misc','Yes') : Yii::t('misc','No');
 				$temp['diff_amt_month'] = number_format(($temp['amt_month']-$temp['b4_amt_month']),2,'.','');
 //				$temp['diff_amt_year'] = number_format((($temp['amt_month']-$temp['b4_amt_month'])*($row['paid_type']=='1'?1:($row['paid_type']=='M'?($row['ctrt_period']<12?$row['ctrt_period']:12):$row['ctrt_period']))),2,'.','');
 				$temp['diff_amt_year'] = number_format((

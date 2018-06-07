@@ -377,7 +377,8 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 <?php else: ?>
 					<?php 
 						echo $form->labelEx($model,'sign_cust');
-						echo TbHtml::image($model->info['sign_cust'],'QcForm_info_sign_cust_img',array('id'=>'QcForm_info_sign_cust_img','width'=>200,'height'=>100,)); 
+						if (!empty($model->info['sign_cust']))
+							echo TbHtml::image($model->info['sign_cust'],'QcForm_info_sign_cust_img',array('id'=>'QcForm_info_sign_cust_img','width'=>200,'height'=>100,)); 
 					?>
 <?php endif ?>
 					</div>
@@ -390,7 +391,8 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 <?php else: ?>
 					<?php 
 						echo $form->labelEx($model,'sign_tech');
-						echo TbHtml::image($model->info['sign_tech'],'QcForm_info_sign_tech_img',array('id'=>'QcForm_info_sign_tech_img','width'=>200,'height'=>100,)); 
+						if (!empty($model->info['sign_tech']))
+							echo TbHtml::image($model->info['sign_tech'],'QcForm_info_sign_tech_img',array('id'=>'QcForm_info_sign_tech_img','width'=>200,'height'=>100,)); 
 					?>
 <?php endif ?>
 					</div>
@@ -403,7 +405,8 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 <?php else: ?>
 					<?php 
 						echo $form->labelEx($model,'sign_qc');
-						echo TbHtml::image($model->info['sign_qc'],'QcForm_info_sign_qc_img',array('id'=>'QcForm_info_sign_qc_img','width'=>200,'height'=>100,)); 
+						if (!empty($model->info['sign_qc']))
+							echo TbHtml::image($model->info['sign_qc'],'QcForm_info_sign_qc_img',array('id'=>'QcForm_info_sign_qc_img','width'=>200,'height'=>100,)); 
 					?>
 <?php endif ?>
 					</div>

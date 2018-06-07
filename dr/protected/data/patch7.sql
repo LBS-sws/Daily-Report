@@ -53,11 +53,49 @@ DELIMITER ;
 
  create index idx_service_1 on swo_service(company_name(100));
  create index idx_service_2 on swo_service(city, status_dt);
-DROP TABLE IF EXISTS swo_company_status;
+
+ DROP TABLE IF EXISTS swo_company_status;
 CREATE TABLE swo_company_status (
 	id int unsigned NOT NULL auto_increment primary key,
 	status char(1) NOT NULL,
+	type_list varchar(255),
 	ts timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-insert into swo_company_status(id, status) select a.id, CustomerStatus(a.id, a.code, a.name, a.city) from swo_company a on duplicate key update status=CustomerStatus(a.id, a.code, a.name, a.city);
+DELIMITER //
+DROP FUNCTION IF EXISTS CustomerType //
+CREATE FUNCTION CustomerType(p_id int unsigned, p_code varchar(20), p_name varchar(1000), p_city char(5)) RETURNS varchar(255)
+BEGIN
+DECLARE done int default false;
+DECLARE custtype varchar(10);
+DECLARE list varchar(255);
+
+DECLARE cur1 CURSOR FOR
+select distinct cast(a.cust_type as char(10))
+from swo_service a
+where a.city=p_city
+and (a.company_id=p_id or a.company_name like concat(p_code,'%') 
+or a.company_name like concat('%',p_name));
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = true;
+
+SET list = '';
+
+OPEN cur1;
+read_loop: LOOP
+FETCH cur1 INTO custtype;
+IF done THEN
+LEAVE read_loop;
+END IF;
+SET list = concat(list,'/',custtype,'/,');
+END LOOP;
+CLOSE cur1;
+RETURN list;
+
+END //
+DELIMITER ;
+
+insert into swo_company_status(id, status, type_list) 
+select a.id, CustomerStatus(a.id, a.code, a.name, a.city), CustomerType(a.id, a.code, a.name, a.city) from swo_company a 
+on duplicate key update status=CustomerStatus(a.id, a.code, a.name, a.city),
+type_list=CustomerType(a.id, a.code, a.name, a.city);
+

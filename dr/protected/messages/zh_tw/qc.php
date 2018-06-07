@@ -18,11 +18,151 @@ return array(
 'Input Date'=>'輸入日期',
 'Service Score'=>'服務評分',
 'Customer Score'=>'客戶評分',
-'Customer Comment'=>'客戶回饋',
+'Customer Comment'=>'客戶意見',
+'QC Comment'=>'質檢員意見',
 'QC Result'=>'質檢成績',
 'Env. Grade'=>'現場質檢環境',
+'Signatures'=>'簽名',
 'Signature'=>'客戶簽名',
 'QC Staff'=>'質檢部同事編號及名稱',
 'Remarks'=>'備註',
+'Service Type'=>'服務類別',
+'Machine Score'=>'機器評分',
+'Toilet Score'=>'潔具評分',
+'Sink Score'=>'洗手盆評分',
+'Toilet Sticker'=>'潔具貼',
+'Machine Sticker'=>'機器貼',
+'Large Sticker'=>'大標貼',
+'According to customer request on hand-washing/flushing sticker'=>'洗手貼/沖廁貼，根據客戶要求',
+'Sticker Request No.'=>'場內應貼有',
+'Sticker Actual No.'=>'場內只貼有',
+'Sticker Score'=>'標貼評分',
+'Enzyme Score'=>'除菌液、酵素評分',
+'Blue Card Score'=>'常用瓶、藍卡評分',
+'Need to Improve'=>'需改善地方',
+'Praise'=>'有讚揚地方',
+'Customer Signature'=>'客戶簽名',
+'Technician Signature'=>'技術員簽名',
+'QC Signature'=>'質檢員簽名',
+'Missing'=>'欠',
+'Broken'=>'殘',
+'Service Date'=>'服務日期',
+'Normal'=>'正常場所',
+'Poor'=>'較差場所',
+'Worst'=>'惡劣場所',
+'Invalid Value'=>'數值不正確',
+'is not between 0 and '=>'不能小於0或大於',
+
+'Personal Image'=>'個人形象',
+'Uniform'=>'著裝規範',
+'Equipment'=>'裝備齊全',
+'Communication Skill'=>'溝通技巧',
+'Greeting'=>'進門打招呼',
+'On-site Communication'=>'現場溝通',
+'Rat'=>'鼠防治',
+'Rat Freq.'=>'鼠密度',
+'Rat Checking'=>'現場檢查',
+'Rat Disposal'=>'死鼠清理',
+'Sticky Board'=>'粘板布放',
+'Hole Closure'=>'鼠洞封堵',
+'Warning Label'=>'警示標籤',
+'Drug (Rat)'=>'鼠藥投放',
+'Cockroach'=>'蟑螂防治',
+'Cockroach Freq.'=>'蟑螂密度',
+'Cockroach Checking'=>'現場檢查',
+'Drug (Cockroach)'=>'膠餌點施',
+'Expired Drug'=>'失效膠餌的處理',
+'Toxin'=>'撒施毒餌',
+'Fly'=>'飛蟲防治',
+'Fly Freq.'=>'飛蟲密度',
+'Fly Cup'=>'蚊滋杯',
+'Fly Lamp'=>'滅蚊蠅燈',
+'Fly Control'=>'滋生地處理',
+'Spray'=>'化學劑噴灑',
+'Safety'=>'安全',
+'Safety Score'=>'安全評分',
+'High'=>'高',
+'Medium'=>'中',
+'Low'=>'低',
+'Photo Attachment'=>'照片附件',
+'Photo with Cust.'=>'客戶合照',
+'QC Score'=>'質檢評分',
+'(60% of Total Score)'=>'(質檢評分佔總分60%)',
+'(40% of Total Score)'=>'(服務評分佔總分40%)',
+'Total Score'=>'總分',
+'Effect Score'=>'工作後效果',
+
+
+'desc101'=>'A場：正常場所(有水+無塞)<br>
+B場：較差場所 (無水+無塞)<br>
+C場：惡劣場所 (無水+堵塞)
+',
+'desc108'=>'風扇/水性/定時/TC機 (滿分為9分)<br>
+- 薄塵 (得分8分)<br>
+- 厚塵，污漬，香精不足1/2，無紙芯 (得7分)<br>
+- 無換，香精，水劑，香芯，氣罐 (得0分)<br>
+<br>
+紙機 (滿分為2分)<br>
+中抽/M·F/自動-抹手紙機/廁紙機<br>
+- 薄塵 (得1分)<br>
+- 厚塵，污漬 (得0分)<br>
+<br>
+皂液機/泡沫/普通/波浪 (滿分為3分)<br>
+- 薄塵 (得2分)<br>
+- 厚塵，污漬 (得1分)<br>
+- 無加皂液，無換機泵．按鈕 (得0分)
+',
+'desc105'=>'洗手盆-污漬（6）<br>
+(盆面 內角邊 去水圈 溢水口 內壁 龍頭邊 外圍 盆底 下水隔離器)<br>
+- 1項得4分<br>
+- 2至3項得3分<br>
+- 4至6項得2分<br>
+- 7至9項得0分<br>
+*如單項污漬嚴重會得0分
+',
+'desc106'=>'潔具<br>
+1. 坐廁/蹲廁（25）<br>
+(水箱 廁板 鉸位 外圍 內圍 出水孔 內坑邊 去水口 柱腳後面)<br>
+- 污漬 評級:無 (得25分)<br>
+- 少少石 評級:低 (得15分)<br>
+- 少石 評級:中 (得10分)<br>
+- 多石 評級:高 (得5分)<br>
+- 多多石 評級:嚴重 (得0分)<br>
+<br>
+2. 尿缸（25）<br>
+(外圍 內圍 出水孔 尿缸隔離器 下水口 下水口管道 尿缸墊 尿缸底部)<br>
+- 污漬 評級:無 (得25分)<br>
+- 少少石 評級:低 (得20分)<br>
+- 少石 評級:中 (得15分)<br>
+- 多石 評級:高 (得10分)<br>
+- 多多石 評級:嚴重 (得5分)
+',
+'desc201'=>'儀容整潔合理（穿著整潔的工作服）',
+'desc202'=>'攜帶的工具，藥物等齊全',
+'desc203'=>'技術員到達現場後需要到現場負責人處報到',
+'desc204'=>'技術員在服務時和現場人員的詢問與溝通',
+'desc205'=>'現場的檢查按照程序和順序,無遺漏',
+'desc206'=>'死鼠是否及時發現並清理',
+'desc207'=>'粘鼠板布放是否合理到位，及時更換失效粘板',
+'desc208'=>'對能夠封堵的鼠洞進行全面封堵，無遺漏',
+'desc209'=>'老鼠控制的場所是否貼有警示標籤',
+'desc210'=>'鼠藥的擺放是否全面，及時添加',
+'desc211'=>'現場的檢查按照程序和順序，無遺漏',
+'desc212'=>'膠餌的點施全面、合理',
+'desc213'=>'更換陳舊、失效的膠餌',
+'desc214'=>'毒餌的撒施合理、全面',
+'desc215'=>'蚊滋杯的製作是否規範,是否貼警示標籤,並定期更換',
+'desc216'=>'是否及時更換粘紙，粘蠅紙布放合理',
+'desc217'=>'對滋生地的控制是否合理',
+'desc218'=>'做滯留噴灑時是否做到標準流程',
+'desc219'=>'總分10分（違反此項全部扣除）<br>
+藥物投放是否安全（使用鼠餌盒、藥物不可接觸食物）
+',
+'desc220'=>'非常滿意 （10 ）<br>
+基本滿意 （ 8 ）<br>
+一般 （ 5 ）<br>
+不太滿意 （ 3 ）<br>
+很不滿意 （ 0 ）
+',
 );
 ?>

@@ -4,7 +4,7 @@
 // Any writable CConsoleApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'LBS Daily Management - UAT',
+	'name'=>'Daily Report System - UAT',
 	'timeZone'=>'Asia/Hong_Kong',
 	'sourceLanguage'=> 'en',
 	'language'=>'zh_cn',
@@ -22,10 +22,10 @@ return array(
 	// application components
 	'components'=>array(
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=swoperuat',
+			'connectionString' => 'mysql:host=localhost;dbname=swoper_w',
 			'emulatePrepare' => true,
 			'username' => 'swuser',
-			'password' => 'Swisher@123',
+			'password' => 'swisher168',
 			'charset' => 'utf8',
 		),
 		'log'=>array(
@@ -42,9 +42,10 @@ return array(
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
 	'params'=>array(
+		'systemId'=>'drs',
+		'envSuffix'=>'dev',
+		'feedbackCcBoss'=>array('boss'),
 		'systemEmail'=>'it@lbsgroup.com.hk',
-		'webroot'=>'http://118.89.46.224/dr-uat',
-		'envSuffix'=>'uat',
-		'feedbackCcBoss'=>array('flam','JoeY','DorisC'),
+		'webroot'=>'http://192.168.0.162/swoper-web',
 	),
 );

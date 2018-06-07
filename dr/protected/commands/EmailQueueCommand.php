@@ -29,14 +29,14 @@ class EmailQueueCommand extends CConsoleCommand {
 				} elseif (strpos($row['to_addr'],',')!==false) {
 					$to_addr = explode(',', $row['to_addr']);
 				} else {
-					$to_addr = array($row['to_addr']);
+					$to_addr = array(str_replace('"','',$row['to_addr']));
 				}
 				if (strpos($row['cc_addr'],'[')!==false) {
 					$cc_addr = json_decode($row['cc_addr']);
 				} elseif (strpos($row['cc_addr'],',')!==false) {
 					$cc_addr = explode(',', $row['cc_addr']);
 				} else {
-					$cc_addr = array($row['cc_addr']);
+					$cc_addr = array(str_replace('"','',$row['cc_addr']));
 				}
 				$subject = $row['subject'];
 				$description = $row['description'];

@@ -42,6 +42,7 @@ return array(
 'Download'=>'下載',
 'Submit'=>'提交',
 'Copy'=>'複製',
+'About'=>'關於',
 'City'=>'地區',
 'Attachment'=>'附件',
 
@@ -51,6 +52,9 @@ return array(
 'Message'=>'訊息',
 'All rights reserved'=>'版權所有',
 'Copyright'=>'版權',
+'**Please use Firefox web browser in order to use LBS Daily Management System for best result'
+=>'**為求使用史偉莎日常管理系統達至最佳效果，請使用火狐瀏覽器',
+
 );
 
 ?>
