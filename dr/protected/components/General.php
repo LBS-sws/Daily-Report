@@ -513,28 +513,23 @@ class General {
 		foreach ($systems as $key=>$value) {
 			$rtn[$key] = array('name'=>$value['name'], 'item'=>array());
 			$pathid = end(explode('/',$systems[$key]['webroot']));
-			if (isset($value['external']) && $value['external']) {
-				$rtn[$key]['item']['zzexternal']['XX01']['name'] = 'System Use';
-				$rtn[$key]['item']['zzexternal']['XX01']['tag'] = '';
-			} else {
-				$confFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath).'/config/menu.php';
-				$menuitems = require($confFile);
-				foreach ($menuitems as $group=>$items) {
-					foreach ($items['items'] as $k=>$v){
-						$aid = $v['access'];
-						$rtn[$key]['item'][$group][$aid]['name'] = $k;
-						$rtn[$key]['item'][$group][$aid]['tag'] = isset($v['tag']) ? $v['tag'] : '';
-					}
+			$confFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath).'/config/menu.php';
+			$menuitems = require($confFile);
+			foreach ($menuitems as $group=>$items) {
+				foreach ($items['items'] as $k=>$v){
+					$aid = $v['access'];
+					$rtn[$key]['item'][$group][$aid]['name'] = $k;
+					$rtn[$key]['item'][$group][$aid]['tag'] = isset($v['tag']) ? $v['tag'] : '';
 				}
+			}
 			
-				$confFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath).'/config/control.php';
-				if (file_exists($confFile)) {
-					$cntitems = require($confFile);
-					foreach ($cntitems as $name=>$items) {
-						$aid = $items['access'];
-						$rtn[$key]['item']['zzcontrol'][$aid]['name'] = $name;
-						$rtn[$key]['item']['zzcontrol'][$aid]['tag'] = '';
-					}
+			$confFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath).'/config/control.php';
+			if (file_exists($confFile)) {
+				$cntitems = require($confFile);
+				foreach ($cntitems as $name=>$items) {
+					$aid = $items['access'];
+					$rtn[$key]['item']['zzcontrol'][$aid]['name'] = $name;
+					$rtn[$key]['item']['zzcontrol'][$aid]['tag'] = '';
 				}
 			}
 		}
@@ -550,14 +545,11 @@ class General {
 			$systems = Yii::app()->params['systemMapping'];
 			$cpathid = end(explode('/',$systems[$sysid]['webroot']));
 			foreach ($systems as $key=>$value) {
-				if (isset($value['external']) && $value['external']) {
-				} else {
-					$pathid = end(explode('/',$systems[$key]['webroot']));
-					$msgFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath)
-						.'/messages/'.$lang.'/app.php';
-					$tmp = require($msgFile);
-					$rtn = array_merge($rtn, $tmp);
-				}
+				$pathid = end(explode('/',$systems[$key]['webroot']));
+				$msgFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath)
+					.'/messages/'.$lang.'/app.php';
+				$tmp = require($msgFile);
+				$rtn = array_merge($rtn, $tmp);
 			}
 		}
 		return $rtn;

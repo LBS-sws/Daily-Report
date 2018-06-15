@@ -56,7 +56,7 @@ class QcForm extends CFormModel
 						);
 	
 	public $ib_fields = array(
-							'score_uniform','score_tools','score_greet','score_comm',
+							'score_uniform','score_tools','score_greet','score_comm','sign_qc',
 							'score_ratcheck','score_ratdispose','score_ratboard','score_rathole','score_ratwarn','score_ratdrug',
 							'score_roachcheck','score_roachdrug','score_roachexdrug','score_roachtoxin',
 							'score_flycup','score_flylamp','score_flycntl','score_flyspray','score_afterwork',
@@ -206,7 +206,8 @@ class QcForm extends CFormModel
 			'score_flycntl'=>Yii::t('qc','desc217'),
 			'score_flyspray'=>Yii::t('qc','desc218'),
 			'score_safety'=>Yii::t('qc','desc219'),
-			'cust_score'=>Yii::t('qc','desc220'),
+            'cust_score'=>Yii::t('qc','desc220'),
+            'score_afterwork'=>Yii::t('qc','desc221'),
 		);
 	}
 
@@ -541,8 +542,8 @@ class QcForm extends CFormModel
 
 	public function readonly() {
 		if ($this->scenario!='new' && ($this->service_type=='IA' || $this->service_type=='IB')) {
-			$flag = (isset($this->info['sign_cust']) && !empty($this->info['sign_cust'])) ||
-					(isset($this->info['sign_tech']) && !empty($this->info['sign_tech'])) ||
+			$flag = (isset($this->info['sign_cust']) && !empty($this->info['sign_cust'])) &&
+					(isset($this->info['sign_tech']) && !empty($this->info['sign_tech'])) &&
 					(isset($this->info['sign_qc']) && !empty($this->info['sign_qc']));
 			return ($this->scenario=='view' || $flag);
 		} else {

@@ -23,7 +23,6 @@ return array(
 // 'Status' => '狀態',
 'Status' => '記錄類別',
 'Status Date'=>'記錄日期',
-'Installation'=>'需安裝',
 
 'Service (Before)'=>'服務內容(更改前)',
 'Paid Amt (Before)'=>'服務金額(更改前)',
@@ -86,6 +85,7 @@ return array(
 'Invalid Date'=>'日期不正確',
 'Detail'=>'投訴內容',
 'Content'=>'投訴內容',
+'Installation'=>'需安装',
 
 'Code'=>'代碼',
 

@@ -69,11 +69,31 @@ class QcList extends CListPageModel
 		$sql = $sql1.$clause.$order;
 		$sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
-		
+
 		$list = array();
 		$this->attr = array();
+
+
+        $sqls="select a.id from swo_qc a
+left outer join swo_qc_info b on a.id=b.qc_id and b.field_id='sign_cust'
+left outer join swo_qc_info c on a.id=c.qc_id and c.field_id='sign_qc'
+left outer join swo_qc_info d on a.id=d.qc_id and d.field_id='sign_cust'
+where b.field_blob='' or c.field_blob='' or d.field_blob='' and a.id=''";
+        $nook = Yii::app()->db->createCommand($sqls)->queryAll();
+
+        $arr = array();
+        if(count($nook) > 0){
+            foreach ($nook as $nooks) {
+                $arr[] = $nooks['id'];
+/*                $this->attrs[] = array(
+                    'ids'=>$nooks['id'],
+                );*/
+            }
+        }
+
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
+			    $bool = in_array($record['id'],$arr);
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'entry_dt'=>General::toDate($record['entry_dt']),
@@ -84,9 +104,11 @@ class QcList extends CListPageModel
 					'qc_staff'=>$record['qc_staff'],
 					'city_name'=>$record['city_name'],
 					'no_of_attm'=>$record['no_of_attm'],
+					'bool'=>$bool,
 				);
 			}
 		}
+//        $this->attr=array_merge_recursive($this->attr,$this->attrs);
 		$session = Yii::app()->session;
 		$session['criteria_a06'] = $this->getCriteria();
 		return true;

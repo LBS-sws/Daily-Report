@@ -8,7 +8,7 @@ class RptStaff extends ReportData2 {	public function fields() {		return array(
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
-		$sql = "select * from swo_staff_v ";		$where = "where city='".$city."'";
+		$sql = "select * from swo_staff ";		$where = "where city='".$city."'";
 		if (isset($this->criteria)) {
 			$where_leave_dt = '';
 			$where_start_dt = '';			if (isset($this->criteria->start_dt)) {

@@ -73,7 +73,7 @@ return array(
 
 		// uncomment the following to use a MySQL database
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=swoper_w',
+			'connectionString' => 'mysql:host=localhost;dbname=swoper',
 			'emulatePrepare' => true,
 			'username' => 'swuser',
 			'password' => 'swisher168',
@@ -106,7 +106,7 @@ return array(
 			'class'=>'CHttpSession',
 			'cookieMode'=>'allow',
 			'cookieParams'=>array(
-				'domain'=>'192.168.0.162',
+				'domain'=>'192.168.3.209',
 			),
 		),
 		
@@ -144,27 +144,27 @@ return array(
 		'envSuffix'=>'dev',
 		'systemMapping'=>array(
 				'drs'=>array(
-						'webroot'=>'http://192.168.0.162/swoper-web',
+						'webroot'=>'http://192.168.3.209/dr',
 						'name'=>'Daily Report',
 						'icon'=>'fa fa-pencil-square-o',
 					),	
 				'acct'=>array(
-						'webroot'=>'http://192.168.0.162/acct',
+						'webroot'=>'http://192.168.3.209/acct',
 						'name'=>'Accounting',
 						'icon'=>'fa fa-money',
 					),
 				'ops'=>array(
-						'webroot'=>'http://192.168.0.162/operation',
+						'webroot'=>'http://192.168.3.209/operation',
 						'name'=>'Operation',
 						'icon'=>'fa fa-gears',
 					),
 				'hr'=>array(
-						'webroot'=>'http://192.168.0.162/hr',
+						'webroot'=>'http://192.168.3.209/hr',
 						'name'=>'Personnel',
 						'icon'=>'fa fa-users',
 					),
 				'sal'=>array(
-						'webroot'=>'http://192.168.0.162/sales',
+						'webroot'=>'http://192.168.3.209/sales',
 						'name'=>'Sales',
 						'icon'=>'fa fa-users',
 					),

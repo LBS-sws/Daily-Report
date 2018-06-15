@@ -21,7 +21,8 @@ class ListPageWidget extends CWidget
 	public function run()
 	{
 		$modelName = get_class($this->model);
-		
+//		print_r("<pre>");
+//		print_r($this->model);
 		$layout = '<div class="box">';
 		$layout .= '<div class="box-header"><h3 class="box-title"><strong>'.$this->title.'</strong></h3>';
 		$layout .= '</div>';

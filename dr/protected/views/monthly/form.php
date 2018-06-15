@@ -70,7 +70,7 @@ $this->pageTitle=Yii::app()->name . ' - Monthly Report Form';
 		echo '</div>';
 		echo '<div class="col-sm-3">';
 		echo TbHtml::textField($name_prefix.'[datavalue]',$data['datavalue'],
-				array('size'=>40,'maxlength'=>100,'readonly'=>($model->scenario=='view'||$data['updtype']!='M'))
+				array('size'=>40,'maxlength'=>100,'class'=>($data['updtype']!='M' ? 'bg-gray' : ''),'readonly'=>($model->scenario=='view'||$data['updtype']!='M'))
 			);		
 		echo TbHtml::hiddenField($name_prefix.'[id]',$data['id']);
 		echo TbHtml::hiddenField($name_prefix.'[code]',$data['code']);

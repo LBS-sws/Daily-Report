@@ -6,7 +6,6 @@ class Currency
 			array('code'=>'RMB','name'=>Yii::t('currency','RMB'),'sign'=>'fa-cny'),
 			array('code'=>'RM','name'=>Yii::t('currency','RM'),'sign'=>'fa-dollar'),
 			array('code'=>'HKD','name'=>Yii::t('currency','HKD'),'sign'=>'fa-dollar'),
-			array('code'=>'NTD','name'=>Yii::t('currency','NTD'),'sign'=>'fa-dollar'),
 			array('code'=>'USD','name'=>Yii::t('currency','USD'),'sign'=>'fa-dollar'),
 		);
 	}

@@ -15,7 +15,6 @@ return array(
 'Code'=>'供應商編號',
 'Type'=>'類別',
 'Name'=>'名稱',
-'Full Name'=>'全稱',
 'Contact Name'=>'供應商聯繫',
 'Contact Phone'=>'供應商電話',
 'Nature'=>'性質',
@@ -27,7 +26,5 @@ return array(
 'Contract Period'=>'合同年限',
 'Status' => '狀態',
 'Address'=>'供應商地址',
-'Bank'=>'開行戶',
-'Account No'=>'賬戶號碼',
 );
 ?>

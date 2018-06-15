@@ -144,7 +144,7 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 	foreach($model->installedSystem() as $sid=>$sname) {
 		$content = TbHtml::button(Yii::t('user','Apply Template'),array('name'=>'btnTemp_'.$sid,'id'=>'btnTemp_'.$sid,'class'=>'pull-right'));
 		foreach($model->installedSystemGroup($sid) as $gname) {
-			$groupname = ($gname=='zzcontrol' || $gname=='zzexternal') ? Yii::t('app','Misc') : $model->functionLabels($gname);
+			$groupname = ($gname=='zzcontrol') ? Yii::t('app','Misc') : $model->functionLabels($gname);
 			$content .= "<legend>".$groupname."</legend>";
 			$cnt = 0;
 			$out = '';
@@ -159,7 +159,7 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 				$out .= TbHtml::label($model->functionLabels($fname), $fieldid);
 				$out .= '</div>';
 				$out .= '<div class="col-sm-2">';
-				$option = ($gname=='zzcontrol' || $gname=='zzexternal') 
+				$option = ($gname=='zzcontrol') 
 						? array('CN'=>Yii::t('misc','On'),
 								'NA'=>Yii::t('misc','Off'),
 							)
@@ -199,26 +199,13 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 		$idx++;
 	}
 
-	
 // Misc Tab
 	$label1 = $form->labelEx($model, 'signature', array('class'=>"col-sm-2 control-label"));
 	$input1 = $form->fileField($model, 'signature');
 	$image1 = (empty($model->signature)) ? '&nbsp;' : CHtml::image($model->getSignatureString(),'Signature',array('width'=>100,'height'=>100));
-	
-	$label2 = $form->labelEx($model, 'staff_id', array('class'=>"col-sm-2 control-label"));
-	$hidden2 = $form->hiddenField($model, 'staff_id');
-	$input2 = $form->textField($model, 'staff_name', 
-							array('readonly'=>true,
-							'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('user','Staff Code'),array('name'=>'btnStaff','id'=>'btnStaff')),
-						));
-	
 	$content = " 
 <div class='box'>
 	<div class='box-body'>
-		<div class='form-group'>
-			$label2 $hidden2
-			<div class='col-sm-4'>$input2</div>
-		</div>
 		<div class='form-group'>
 			$label1
 			<div class='col-sm-4'>$input1</div>
@@ -268,8 +255,6 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 					'show'=>false,
 				));
 ?>
-
-<?php $this->renderPartial('//site/lookup'); ?>
 
 <?php
 	$mesg = Yii::t('dialog','No Record Found');
@@ -333,6 +318,7 @@ $('#btnApply').on('click',function(){
 	";
 Yii::app()->clientScript->registerScript('lookupTemplate',$js,CClientScript::POS_READY);
 
+
 $js = Script::genDeleteData(Yii::app()->createUrl('user/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
@@ -346,15 +332,6 @@ $('#btnUnlock').on('click',function() {
 	";
 }
 Yii::app()->clientScript->registerScript('unlockRecord',$js,CClientScript::POS_READY);
-
-$js = Script::genLookupSearchEx();
-Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);
-
-$js = Script::genLookupButtonEx('btnStaff', 'userstaff', 'staff_id', 'staff_name');
-Yii::app()->clientScript->registerScript('lookupStaff',$js,CClientScript::POS_READY);
-
-$js = Script::genLookupSelect();
-Yii::app()->clientScript->registerScript('lookupSelect',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);

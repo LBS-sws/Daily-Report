@@ -33,6 +33,7 @@ $this->pageTitle=Yii::app()->name . ' - QC';
 		?>
 	</div>
 	</div></div>
+
 	<?php 
 		$search = array(
 						'company_name',
@@ -51,7 +52,9 @@ $this->pageTitle=Yii::app()->name . ' - QC';
 				'search'=>$search,
 		));
 	?>
+
 </section>
+
 <?php
 	echo $form->hiddenField($model,'pageNum');
 	echo $form->hiddenField($model,'totalRow');

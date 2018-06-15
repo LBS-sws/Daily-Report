@@ -3,6 +3,8 @@
 class CListPageModel extends CFormModel
 {
 	public $attr = array();
+
+    public $attrs = array();
 	
 	public $pageNum = 0;
 	

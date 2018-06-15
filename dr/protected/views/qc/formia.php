@@ -50,6 +50,9 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 <?php endif ?>
 	</div>
 	<div class="btn-group pull-right" role="group">
+        <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','xiazai'), array(
+            'submit'=>Yii::app()->createUrl('qc/downs')));
+        ?>
 <?php 
 		$counter = ($model->no_of_attm['qc'] > 0) ? ' <span id="docqc" class="label label-info">'.$model->no_of_attm['qc'].'</span>' : ' <span id="docqc"></span>';
 		echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
@@ -107,7 +110,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'job_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo $form->textField($model, 'job_staff', 
+					<?php echo $form->textField($model, 'job_staff',
 						array('maxlength'=>500,'readonly'=>($model->readonly()),
 						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->readonly())))
 					)); ?>
@@ -350,7 +353,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'improve',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo TbHtml::textArea('QcForm[info][improve]',$model->info['improve'], 
+					<?php echo TbHtml::textArea('QcForm[info][improve]',$model->info['improve'],
 						array('rows'=>3,'cols'=>50,'maxlength'=>1000,'readonly'=>($model->readonly()))
 					); ?>
 				</div>
@@ -359,7 +362,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'praise',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo TbHtml::textArea('QcForm[info][praise]',$model->info['praise'], 
+					<?php echo TbHtml::textArea('QcForm[info][praise]',$model->info['praise'],
 						array('rows'=>3,'cols'=>50,'maxlength'=>1000,'readonly'=>($model->readonly()))
 					); ?>
 				</div>
@@ -368,6 +371,8 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'signature',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-8">
+
+
 					<div class="col-sm-7">
 <?php if (empty($model->info['sign_cust']) && $model->scenario!='view'): ?>
 					<?php 
@@ -377,11 +382,14 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 <?php else: ?>
 					<?php 
 						echo $form->labelEx($model,'sign_cust');
-						if (!empty($model->info['sign_cust']))
-							echo TbHtml::image($model->info['sign_cust'],'QcForm_info_sign_cust_img',array('id'=>'QcForm_info_sign_cust_img','width'=>200,'height'=>100,)); 
+						echo TbHtml::image($model->info['sign_cust'],'QcForm_info_sign_cust_img',array('id'=>'QcForm_info_sign_cust_img','width'=>200,'height'=>100,)); 
 					?>
 <?php endif ?>
 					</div>
+
+
+
+
 					<div class="col-sm-7">
 <?php if (empty($model->info['sign_tech']) && $model->scenario!='view'): ?>
 					<?php 
@@ -391,25 +399,28 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 <?php else: ?>
 					<?php 
 						echo $form->labelEx($model,'sign_tech');
-						if (!empty($model->info['sign_tech']))
-							echo TbHtml::image($model->info['sign_tech'],'QcForm_info_sign_tech_img',array('id'=>'QcForm_info_sign_tech_img','width'=>200,'height'=>100,)); 
+						echo TbHtml::image($model->info['sign_tech'],'QcForm_info_sign_tech_img',array('id'=>'QcForm_info_sign_tech_img','width'=>200,'height'=>100,)); 
 					?>
 <?php endif ?>
 					</div>
+
+
+
 					<div class="col-sm-7">
 <?php if (empty($model->info['sign_qc']) && $model->scenario!='view'): ?>
-					<?php 
+					<?php
 						echo TbHtml::button(Yii::t('qc','QC Signature'), array('name'=>'btnSignQc','id'=>'btnSignQc',));
-						echo TbHtml::image($model->info['sign_qc'],'QcForm_info_sign_qc_img',array('id'=>'QcForm_info_sign_qc_img','width'=>200,'height'=>100,'style'=>'display:none')); 
+						echo TbHtml::image($model->info['sign_qc'],'QcForm_info_sign_qc_img',array('id'=>'QcForm_info_sign_qc_img','width'=>200,'height'=>100,'style'=>'display:none'));
 					?>
 <?php else: ?>
-					<?php 
+					<?php
 						echo $form->labelEx($model,'sign_qc');
-						if (!empty($model->info['sign_qc']))
-							echo TbHtml::image($model->info['sign_qc'],'QcForm_info_sign_qc_img',array('id'=>'QcForm_info_sign_qc_img','width'=>200,'height'=>100,)); 
+						echo TbHtml::image($model->info['sign_qc'],'QcForm_info_sign_qc_img',array('id'=>'QcForm_info_sign_qc_img','width'=>200,'height'=>100,));
 					?>
 <?php endif ?>
 					</div>
+
+
 				</div>
 			</div>
 		</div>

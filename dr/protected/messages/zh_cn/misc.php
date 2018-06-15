@@ -21,6 +21,7 @@ return array(
 	'Search'=>'搜寻',
 	'Back'=>'返回',
 	'Delete'=>'删除',
+	'xiazai'=>'下载',
 	'Yes'=>'是',
 	'No'=>'否',
 	'Login' => '登录',

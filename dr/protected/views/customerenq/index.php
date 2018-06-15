@@ -40,18 +40,6 @@ $this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
 				?>
 			</div>
 
-			<?php echo $form->labelEx($model,'company_type_list',array('class'=>"col-sm-2 control-label")); ?>
-			<div class="col-sm-5">
-				<?php
-						$list = General::getCustTypeList();
-						echo $form->dropDownList($model, 'company_type_list', $list,
-								array('class'=>'select2','multiple'=>'multiple')
-							); 
-				?>
-			</div>
-		</div>
-
-		<div class="form-group">
 			<?php echo $form->labelEx($model,'city_list',array('class'=>"col-sm-2 control-label")); ?>
 			<div class="col-sm-5">
 				<?php
@@ -62,7 +50,6 @@ $this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
 				?>
 			</div>
 		</div>
-
 		<div class="btn-group" role="group">
 			<?php 
 				echo TbHtml::button('dummyButton', array('style'=>'display:none','disabled'=>true,'submit'=>'#',));
@@ -74,7 +61,6 @@ $this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
 	</div></div>
 
 	<?php 
-	if ($model->show!=0) {
 		$this->widget('ext.layout.ListPageWidget', array(
 			'title'=>Yii::t('customer','Customer List'),
 			'model'=>$model,
@@ -82,7 +68,6 @@ $this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
 				'viewdtl'=>'//customerenq/_listdtl',
 				'hasSearchBar'=>false,
 		));
-	}
 	?>
 </section>
 <?php
@@ -90,7 +75,6 @@ $this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
 	echo $form->hiddenField($model,'totalRow');
 	echo $form->hiddenField($model,'orderField');
 	echo $form->hiddenField($model,'orderType');
-	echo $form->hiddenField($model,'show');
 ?>
 <?php $this->endWidget(); ?>
 
@@ -113,20 +97,6 @@ $('#CustomerEnqList_city_list').select2({
 });
 
 $('#CustomerEnqList_city_list').on('select2:opening select2:closing', function( event ) {
-    var searchfield = $(this).parent().find('.select2-search__field');
-    searchfield.prop('disabled', true);
-});
-$('#CustomerEnqList_company_type_list').select2({
-	tags: false,
-	multiple: true,
-	maximumInputLength: 0,
-	maximumSelectionLength: 200,
-	allowClear: true,
-	language: '$lang',
-	disabled: false
-});
-
-$('#CustomerEnqList_company_type_list').on('select2:opening select2:closing', function( event ) {
     var searchfield = $(this).parent().find('.select2-search__field');
     searchfield.prop('disabled', true);
 });
