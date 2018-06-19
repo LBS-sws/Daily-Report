@@ -38,14 +38,14 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				'submit'=>Yii::app()->createUrl('qc/index'))); 
 		?>
 <?php if ($model->scenario!='view'): ?>
-			<?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
-				'submit'=>Yii::app()->createUrl('qc/save'))); 
+			<?php if($model->readonly()){} else{echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
+                'submit'=>Yii::app()->createUrl('qc/save'))); }
 			?>
 <?php endif ?>
 <?php if ($model->scenario=='edit'): ?>
-	<?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
-			'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
-		);
+	<?php if($model->readonly()){}else{echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                    'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+            );}
 	?>
 <?php endif ?>
 	</div>
@@ -84,17 +84,18 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'qc_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php 
-						echo $form->textField($model, 'qc_staff', 
-							array('size'=>50,'maxlength'=>500,'readonly'=>($model->readonlySP()),
+					<?php
+						echo $form->textField($model, 'qc_staff',
+							array('size'=>50,'maxlength'=>500,'readonly'=>($model->readonly()),
 							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','QC Staff'),
 											array('name'=>'btnStaffQc','id'=>'btnStaffQc',
-												'disabled'=>($model->readonlySP())
+												'disabled'=>($model->readonly())
 											))
-						)); 
+						));
 					?>
 				</div>
 			</div>
+
 
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'company_name',array('class'=>"col-sm-2 control-label")); ?>

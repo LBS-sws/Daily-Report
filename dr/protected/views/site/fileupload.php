@@ -3,7 +3,7 @@
 	if (isset($model->uploadMaxSize) && $model->uploadMaxSize > 0) $doc->docMaxSize = $model->uploadMaxSize;
 
 	$ftrbtn = array();
-	if (!$ronly) $ftrbtn[] = TbHtml::button(Yii::t('dialog','Upload'), array('id'=>$doc->uploadButtonName,));
+	if (!$model->readonly()) {$ftrbtn[] = TbHtml::button(Yii::t('dialog','Upload'), array('id'=>$doc->uploadButtonName,));}
 	$ftrbtn[] = TbHtml::button(Yii::t('dialog','Close'), array('id'=>$doc->closeButtonName,'data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY));
 	
 	$this->beginWidget('bootstrap.widgets.TbModal', array(
@@ -20,7 +20,7 @@
 		</thead>
 		<tbody>
 <?php
-	echo $doc->genTableFileList($ronly);
+	echo $doc->genTableFileList($model->readonly());
 ?>
 		</tbody>
 	</table>
@@ -30,7 +30,7 @@
 ?>				
 <div id="inputFile">
 <?php
-if (!$ronly) {
+if (!$model->readonly()) {
 	$warning = Yii::t('dialog','Exceeds file upload limit.');
 	$this->widget('CMultiFileUpload', array(
 		'name'=>$doc->inputName,

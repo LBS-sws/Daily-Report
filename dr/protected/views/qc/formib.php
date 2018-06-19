@@ -38,14 +38,14 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				'submit'=>Yii::app()->createUrl('qc/index'))); 
 		?>
 <?php if ($model->scenario!='view'): ?>
-			<?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
-				'submit'=>Yii::app()->createUrl('qc/save'))); 
+			<?php if($model->readonly()){}else{echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
+                'submit'=>Yii::app()->createUrl('qc/save'))); }
 			?>
 <?php endif ?>
 <?php if ($model->scenario=='edit'): ?>
-	<?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
-			'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
-		);
+	<?php if($model->readonly()){} else{echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                    'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+            );}
 	?>
 <?php endif ?>
 	</div>
@@ -503,22 +503,22 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				</div>
 			</div>
 			<div class="form-group">
-				<div class="col-sm-5">
-					<h4>
-                        <label class="col-sm-2 control-label" data-toggle="tooltip" data-placement="bottom" data-html="1" title="" for="QcForm_score_afterwork" data-original-title="
-	化学剂喷洒（做滞留喷洒时是否做到标准流程）扣分(30)<br>
-非常满意（10）<br> 基本满意（8）<br> 一般（5）<br> 不太满意（3）<br> 很不满意（0）
-
-	">客戶評分（10）</label>
-					</h4>
-					
-				</div>
-				<div class="col-sm-1">
-					<?php echo $form->numberField($model, 'cust_score', 
-						array('min'=>0,'max'=>10,'readonly'=>($model->readonly()))
-					); ?>
-				</div>
-			</div>
+<!--				<div class="col-sm-5">-->
+<!--					<h4>-->
+<!--                        <label class="col-sm-2 control-label" data-toggle="tooltip" data-placement="bottom" data-html="1" title="" for="QcForm_score_afterwork" data-original-title="-->
+<!--	化学剂喷洒（做滞留喷洒时是否做到标准流程）扣分(30)<br>-->
+<!--非常满意（10）<br> 基本满意（8）<br> 一般（5）<br> 不太满意（3）<br> 很不满意（0）-->
+<!---->
+<!--	">客戶評分（10）</label>-->
+<!--					</h4>-->
+<!--					-->
+<!--				</div>-->
+<!--				<div class="col-sm-1">-->
+<!--					--><?php //echo $form->numberField($model, 'cust_score',
+//						array('min'=>0,'max'=>10,'readonly'=>($model->readonly()))
+//					); ?>
+<!--				</div>-->
+<!--			</div>-->
 
 			<legend></legend>
 			<div class="form-group">
