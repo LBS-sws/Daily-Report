@@ -140,7 +140,7 @@ class QcController extends Controller
 //$url = "/uploads/".$log["attachment"];
         Header('location:http://'.$pdf);
     }
-
+//IB
     public function actionDown()
     {
         $model = new QcForm($_POST['QcForm']['scenario']);
@@ -441,7 +441,7 @@ EOD;
         $outstring =$pdf->Output('', 'D');
         return $outstring;
     }
-
+//IA
     public function actionDowns()
     {
         $model = new QcForm($_POST['QcForm']['scenario']);
@@ -466,17 +466,17 @@ EOD;
         $b_margin=5;
         $pdf->SetAutoPageBreak(TRUE, $b_margin);
         // add a page
-        if($model->info['sticker_cltype']==1){
+        if($model->info['sticker_cltype']==1||$model->info['sticker_cltype']=="欠"){
             $model->info['sticker_cltype']="欠";
         }else{
             $model->info['sticker_cltype']="残";
         }
-        if($model->info['sticker_matype']==1){
+        if($model->info['sticker_matype']==1||$model->info['sticker_matype']=="欠"){
             $model->info['sticker_matype']="欠";
         }else{
             $model->info['sticker_matype']="残";
         }
-        if($model->info['sticker_bgtype']==1){
+        if($model->info['sticker_bgtype']==1||$model->info['sticker_bgtype']=="欠"){
             $model->info['sticker_bgtype']="欠";
         }else{
             $model->info['sticker_bgtype']="残";
@@ -502,6 +502,8 @@ EOD;
         $arr['score_bluecard']=$model->info['score_bluecard'];
         $arr['improve']=$model->info['improve'] ;
         $arr['praise']=$model->info['praise'];
+//        echo $arr['sign_qc'];
+//        exit();
         $arr = (object)$arr;
         $image=array();
         $image['sign_cust']=TbHtml::image($model->info['sign_cust'],'QcForm_info_sign_cust_img',array('id'=>'QcForm_info_sign_cust_img','width'=>200,'height'=>40,));

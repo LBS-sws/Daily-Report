@@ -219,10 +219,19 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'sticker_clno',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
-					<?php 
-						$listtype = array('1'=>Yii::t('qc','Missing'), '2'=>Yii::t('qc','Broken'));
-						echo TbHtml::dropDownList('QcForm[info][sticker_cltype]',$model->info['sticker_cltype'], $listtype,array('disabled'=>($model->readonly()))); 
-					?>
+<!--					--><?php //
+//						$listtype = array('1'=>Yii::t('qc','Missing'), '2'=>Yii::t('qc','Broken'));
+//						echo TbHtml::dropDownList('QcForm[info][sticker_cltype]',$model->info['sticker_cltype'], $listtype,array('disabled'=>($model->readonly())));
+//					?>
+                    <?php
+                    $listtype = array('1'=>Yii::t('qc','Missing'), '2'=>Yii::t('qc','Broken'));
+                    if ($model->readonly()) {
+                        echo TbHtml::hiddenField('QcForm[info][sticker_cltype]',$model->info['sticker_cltype'], array('id'=>'QcForm_info_sticker_cltype'));
+                        echo TbHtml::textField('QcForm[info][sticker_cltype]', $listtype[$model->info['sticker_cltype']], array('readonly'=>true,'id'=>'QcForm_info_sticker_cltype'));
+                    } else {
+                        echo TbHtml::dropDownList('QcForm[info][sticker_cltype]',$model->info['sticker_cltype'], $listtype,array('disabled'=>($model->readonly())));
+                    }
+                    ?>
 				</div>
 				<div class="col-sm-1">
 					<?php 
@@ -234,8 +243,14 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 
 				<?php echo $form->labelEx($model,'sticker_mano',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
-					<?php 
-						echo TbHtml::dropDownList('QcForm[info][sticker_matype]',$model->info['sticker_matype'], $listtype,array('disabled'=>($model->readonly()))); 
+					<?php
+                    if ($model->readonly()) {
+                        echo TbHtml::hiddenField('QcForm[info][sticker_matype]',$model->info['sticker_matype'], array('id'=>'QcForm_info_sticker_matype'));
+                        echo TbHtml::textField('QcForm[info][sticker_matype]', $listtype[$model->info['sticker_matype']], array('readonly'=>true,'id'=>'QcForm_info_sticker_matype'));
+                    } else {
+                        echo TbHtml::dropDownList('QcForm[info][sticker_matype]',$model->info['sticker_matype'], $listtype,array('disabled'=>($model->readonly())));
+                    }
+
 					?>
 				</div>
 				<div class="col-sm-1">
@@ -250,8 +265,13 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'sticker_bgno',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
-					<?php 
-						echo TbHtml::dropDownList('QcForm[info][sticker_bgtype]',$model->info['sticker_bgtype'], $listtype,array('disabled'=>($model->readonly()))); 
+					<?php
+                    if ($model->readonly()) {
+                        echo TbHtml::hiddenField('QcForm[info][sticker_bgtype]',$model->info['sticker_bgtype'], array('id'=>'QcForm_info_sticker_bgtype'));
+                        echo TbHtml::textField('QcForm[info][sticker_bgtype]', $listtype[$model->info['sticker_bgtype']], array('readonly'=>true,'id'=>'QcForm_info_sticker_bgtype'));
+                    } else {
+                        echo TbHtml::dropDownList('QcForm[info][sticker_bgtype]',$model->info['sticker_bgtype'], $listtype,array('disabled'=>($model->readonly())));
+                    }
 					?>
 				</div>
 				<div class="col-sm-1">
