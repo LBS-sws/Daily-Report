@@ -455,14 +455,14 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 													'form'=>$form,
 													'doctype'=>'QC',
 													'header'=>Yii::t('dialog','File Attachment'),
-													'ronly'=>($model->scenario=='view'),
+													'ronly'=>($model->readonly()),
 													)); 
 ?>
 <?php $this->renderPartial('//site/fileupload',array('model'=>$model,
 													'form'=>$form,
 													'doctype'=>'QCPHOTO',
 													'header'=>Yii::t('qc','Photo Attachment'),
-													'ronly'=>($model->scenario=='view'),
+													'ronly'=>($model->readonly()),
 													)); 
 ?>
 <?php $this->renderPartial('//qc/_type',array('model'=>$model)); ?>
