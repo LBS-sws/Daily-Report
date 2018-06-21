@@ -52,6 +52,7 @@ class QcForm extends CFormModel
 			'qc_result'=>Yii::t('qc','QC Result'),
 			'env_grade'=>Yii::t('qc','Env. Grade').' ABC',
 			'qc_dt'=>Yii::t('qc','QC Date').' '.Yii::t('misc','(Y/M/D)'),
+
 			'cust_sign'=>Yii::t('qc','Signature'),
 			'qc_staff'=>Yii::t('qc','QC Staff'),
 			'remarks'=>Yii::t('qc','Remarks'),

@@ -53,7 +53,9 @@ class QcController extends Controller
 				$model->setCriteria($criteria);
 			}
 		}
+
 		$model->determinePageNum($pageNum);
+
 		$model->retrieveDataByPage($model->pageNum);
 
 		$this->render('index',array('model'=>$model));
@@ -409,7 +411,7 @@ class QcController extends Controller
         </td>
         </tr>
         <tr>          
-            <td style="font-size: 15px;"><b>总分 : </b> 23</td>
+            <td style="font-size: 15px;"><b>总分 : </b>$model->qc_result</td>
            <td colspan="3">
            </td>
         </tr>
@@ -513,7 +515,7 @@ EOD;
         $pdf->AddPage();
         $tbl=<<<EOD
         
-	<div style="text-align: center;font-size:15px;margin: auto;line-height: 50px;" ><img width="90" height="55" src="images/image000.png" >史伟莎灭虫服务质检报告</div>
+	<div style="text-align: center;font-size:15px;margin: auto;line-height: 50px;" ><img width="90" height="55" src="images/image000.png" >史伟莎清洁服务质检报告</div>
        
 <table align="left" border="0" cellpadding="4" cellspacing="1" width="600" >
 				  <tr>
@@ -586,12 +588,11 @@ EOD;
                 </tr>
 				<tr class="tit1">
 					<td style="font-size: 14px" width="120px"><b>服务评分（共计）</b></td>
-					<td colspan='2'  style="font-size: 14px" width="100">得分:$model->service_score</td>
+					<td colspan='1'  style="font-size: 14px" width="120">得分:$model->service_score</td>
+					<td style="font-size: 14px" width="120px"><b>客户评分（10分）</b></td>
+					<td colspan='1'  style="font-size: 14px">得分:$model->cust_score</td>
 				</tr>
-				<tr class="tit1">
-					<td style="font-size: 14px"><b>客户评分（10分）</b></td>
-					<td colspan='2'  style="font-size: 14px">得分:$model->cust_score</td>
-				</tr>   
+				   
 				<tr>
 				<td colspan="4"></td>
                 </tr>

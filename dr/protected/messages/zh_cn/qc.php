@@ -10,6 +10,7 @@ return array(
 	'Staff-Job'=>'外勤',
 	'QC Date'=>'质检日期',
 	'Staff-QC'=>'质检部同事',
+    'QC Result'=>'总分',
 
 	'Entry Date'=>'输入日期',
 	'Team'=>'小组',

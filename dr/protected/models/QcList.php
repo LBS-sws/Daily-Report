@@ -99,6 +99,7 @@ where b.field_blob='' or c.field_blob='' or d.field_blob='' and a.id=''";
 					'entry_dt'=>General::toDate($record['entry_dt']),
 					'company_name'=>$record['company_name'],
 					'team'=>$record['team'],
+					'qc_result'=>$record['qc_result'],
 					'job_staff'=>$record['job_staff'],
 					'qc_dt'=>General::toDate($record['qc_dt']),
 					'qc_staff'=>$record['qc_staff'],
@@ -108,6 +109,8 @@ where b.field_blob='' or c.field_blob='' or d.field_blob='' and a.id=''";
 				);
 			}
 		}
+//        print_r("<pre/>");
+//        print_r($records);
 //        $this->attr=array_merge_recursive($this->attr,$this->attrs);
 		$session = Yii::app()->session;
 		$session['criteria_a06'] = $this->getCriteria();

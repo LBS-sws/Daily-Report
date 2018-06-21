@@ -50,7 +50,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 <?php endif ?>
 	</div>
 	<div class="btn-group pull-right" role="group">
-        <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','xiazai'), array(
+        <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('misc','xiazai'), array(
             'submit'=>Yii::app()->createUrl('qc/downs')));
         ?>
 <?php 
@@ -491,6 +491,10 @@ $('#btnCompany').on('click',function() {
 
 $('#btnStaffQc').on('click',function() {
 	opendialog('staff', '', 'qc_staff', false, {}, {});
+});
+
+$('#yt1').on('click',function(){
+document.getElementById('yt1').removeAttribute("style");
 });
 EOF;
 Yii::app()->clientScript->registerScript('lookup',$js,CClientScript::POS_READY);

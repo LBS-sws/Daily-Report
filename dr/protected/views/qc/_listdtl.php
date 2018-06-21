@@ -9,6 +9,7 @@
 <?php endif ?>
 	<td><?php echo $this->record['entry_dt']; ?></td>
 	<td><?php echo $this->record['company_name']; ?></td>
+    <td><?php echo $this->record['qc_result']; ?></td>
 	<td><?php echo $this->record['job_staff']; ?></td>
 	<td><?php echo $this->record['team']; ?></td>
 	<td><?php echo $this->record['qc_dt']; ?></td>

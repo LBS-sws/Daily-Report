@@ -18,10 +18,15 @@
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('job_staff').$this->drawOrderArrow('job_staff'),'#',$this->createOrderLink('qc-list','job_staff'))
+		<?php echo TbHtml::link($this->getLabelName('总分').$this->drawOrderArrow('qc_result'),'#',$this->createOrderLink('qc-list','qc_result'))
 			;
 		?>
 	</th>
+    <th>
+        <?php echo TbHtml::link($this->getLabelName('job_staff').$this->drawOrderArrow('job_staff'),'#',$this->createOrderLink('qc-list','job_staff'))
+        ;
+        ?>
+    </th>
 	<th>
 		<?php echo TbHtml::link($this->getLabelName('team').$this->drawOrderArrow('team'),'#',$this->createOrderLink('qc-list','team'))
 			;
