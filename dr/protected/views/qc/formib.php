@@ -51,7 +51,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 	</div>
 	<div class="btn-group pull-right" role="group">
         <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('misc','xiazai'), array(
-            'submit'=>Yii::app()->createUrl('qc/down')));
+            'data-href'=>Yii::app()->createUrl('qc/down'),'id'=>'sssss'));
         ?>
 <?php 
 		$counter = ($model->no_of_attm['qc'] > 0) ? ' <span id="docqc" class="label label-info">'.$model->no_of_attm['qc'].'</span>' : ' <span id="docqc"></span>';
@@ -639,9 +639,7 @@ $('#btnCompany').on('click',function() {
 $('#btnStaffQc').on('click',function() {
 	opendialog('staff', '', 'qc_staff', false, {}, {});
 });
-$('#yt1').on('click',function(){
-document.getElementById('yt1').removeAttribute("style");
-});
+
 EOF;
 Yii::app()->clientScript->registerScript('lookup',$js,CClientScript::POS_READY);
 
@@ -717,6 +715,13 @@ $('[id^="QcForm_info_score_"]').focusout(function() {
 	$('#QcForm_service_score').val(svcscore.toFixed(2));
 	$('#QcForm_qc_result').val(total.toFixed(2));
 });
+
+	
+	$('#sssss').on('click',function(){
+	    var href = $(this).data('href');
+	    $('#qc-form').attr('action',href).submit();
+	});
+
 EOF;
 Yii::app()->clientScript->registerScript('calculate',$js,CClientScript::POS_READY);
 

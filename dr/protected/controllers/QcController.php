@@ -588,16 +588,16 @@ EOD;
                 </tr>
 				<tr class="tit1">
 					<td style="font-size: 14px" width="120px"><b>服务评分（共计）</b></td>
-					<td colspan='1'  style="font-size: 14px" width="120">得分:$model->service_score</td>
+					<td colspan='1'  style="font-size: 14px" width="120">得分  :  $model->service_score</td>
 					<td style="font-size: 14px" width="120px"><b>客户评分（10分）</b></td>
-					<td colspan='1'  style="font-size: 14px">得分:$model->cust_score</td>
+					<td colspan='1'  style="font-size: 14px">得分  :  $model->cust_score</td>
 				</tr>
 				   
 				<tr>
 				<td colspan="4"></td>
                 </tr>
 				<tr class="tit1">
-					<td style="font-size: 16px"><b>质检成绩</b></td>
+					<td style="font-size: 16px"><b>质检成绩  &nbsp;: </b></td>
 					<td colspan='2' style="font-size: 16px">$model->qc_result</td>
 				</tr>
 				<tr>
@@ -620,7 +620,7 @@ EOD;
 						<td colspan="3" style="font-size: 12px">$arr->praise</td>
 				</tr>
 				<tr>
-					<td valign="top" colspan='2' height="50px" width="200px" style="font-size: 12px ">客户签名：$image->sign_cust</td>
+					<td valign="top" colspan='2' height="100px" width="200px" style="font-size: 12px ">客户签名：$image->sign_cust</td>
 					<td width="200px" style="font-size: 12px">质检员签名：$image->sign_tech</td>
 					<td width="200px" style="font-size: 12px">技术员签名：$image->sign_qc</td>
 				</tr>
