@@ -106,7 +106,7 @@ return array(
 			'class'=>'CHttpSession',
 			'cookieMode'=>'allow',
 			'cookieParams'=>array(
-				'domain'=>'192.168.3.227',
+				'domain'=>'192.168.3.245',
 			),
 		),
 		
@@ -144,27 +144,27 @@ return array(
 		'envSuffix'=>'dev',
 		'systemMapping'=>array(
 				'drs'=>array(
-						'webroot'=>'http://192.168.3.227/dr',
+						'webroot'=>'http://192.168.3.245/dr',
 						'name'=>'Daily Report',
 						'icon'=>'fa fa-pencil-square-o',
 					),	
 				'acct'=>array(
-						'webroot'=>'http://192.168.3.227/acct',
+						'webroot'=>'http://192.168.3.245/acct',
 						'name'=>'Accounting',
 						'icon'=>'fa fa-money',
 					),
 				'ops'=>array(
-						'webroot'=>'http://192.168.3.227/operation',
+						'webroot'=>'http://192.168.3.245/operation',
 						'name'=>'Operation',
 						'icon'=>'fa fa-gears',
 					),
 				'hr'=>array(
-						'webroot'=>'http://192.168.3.227/hr',
+						'webroot'=>'http://192.168.3.245/hr',
 						'name'=>'Personnel',
 						'icon'=>'fa fa-users',
 					),
 				'sal'=>array(
-						'webroot'=>'http://192.168.3.227/sales',
+						'webroot'=>'http://192.168.3.245/sales',
 						'name'=>'Sales',
 						'icon'=>'fa fa-users',
 					),
