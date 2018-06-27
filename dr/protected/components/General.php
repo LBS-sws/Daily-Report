@@ -506,14 +506,15 @@ class General {
 
 	public function getInstalledSystemFunctions() {
 		$rtn = array();
-		$sysid = Yii::app()->user->system();
+		//$sysid = Yii::app()->user->system();
+		$sysid = Yii::app()->params['systemId'];
 		$basePath = Yii::app()->basePath;
 		$systems = Yii::app()->params['systemMapping'];
 		$cpathid = end(explode('/',$systems[$sysid]['webroot']));
 		foreach ($systems as $key=>$value) {
 			$rtn[$key] = array('name'=>$value['name'], 'item'=>array());
 			$pathid = end(explode('/',$systems[$key]['webroot']));
-			$confFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath).'/config/menu.php';
+			$confFile = ((strpos($basePath, '\\'.$pathid.'\\')===false) ? str_replace("\\$cpathid\\","\\$pathid\\",$basePath) : $basePath).'/config/menu.php';
 			$menuitems = require($confFile);
 			foreach ($menuitems as $group=>$items) {
 				foreach ($items['items'] as $k=>$v){

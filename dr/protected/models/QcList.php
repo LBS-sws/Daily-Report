@@ -58,15 +58,19 @@ class QcList extends CListPageModel
 		}
 		
 		$order = "";
+
 		if (!empty($this->orderField)) {
 			$order .= " order by ".$this->orderField." ";
-			if ($this->orderType=='D') $order .= "desc ";
+			if ($this->orderType=='D') $order .= "desc";
 		}
 
 		$sql = $sql2.$clause;
 		$this->totalRow = Yii::app()->db->createCommand($sql)->queryScalar();
-		
+		if($order==""){
+		    $order="order by entry_dt desc";
+        }
 		$sql = $sql1.$clause.$order;
+
 		$sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
 

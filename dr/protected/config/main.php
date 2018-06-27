@@ -153,7 +153,7 @@ return array(
 						'name'=>'Accounting',
 						'icon'=>'fa fa-money',
 					),
-				'ops'=>array(
+/*				'ops'=>array(
 						'webroot'=>'http://192.168.3.245/operation',
 						'name'=>'Operation',
 						'icon'=>'fa fa-gears',
@@ -174,7 +174,7 @@ return array(
 						'name'=>'Test System',
 						'icon'=>'fa fa-users',
 						'external'=>true,
-					),
+					),*/
 			),
 	),
 );
