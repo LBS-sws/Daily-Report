@@ -7,6 +7,7 @@
 		?>
 	</th>
 <?php endif ?>
+
 	<th>
 		<?php echo TbHtml::link($this->getLabelName('entry_dt').$this->drawOrderArrow('entry_dt'),'#',$this->createOrderLink('qc-list','entry_dt'))
 			;
