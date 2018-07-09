@@ -249,6 +249,7 @@ EOF;
 	public function getLabelName($attribute)
 	{
 		$labels = $this->model->attributeLabels();
+
 		return (array_key_exists($attribute, $labels)) ? $labels[$attribute] : $attribute;
 	}
 	
@@ -261,6 +262,7 @@ EOF;
 	public function createOrderLink($form, $attribute)
 	{
 		$modelName = get_class($this->model);
+
 		$link = array(
 					'ajax'=>array(
 						'type'=>'POST',
@@ -269,6 +271,7 @@ EOF;
 							var oldfield = $("#'.$modelName.'_orderField").val();
 							if (oldfield != "'.$attribute.'")
 								$("#'.$modelName.'_orderType").val("A");
+								
 							else
 							{
 								var oldtype = $("#'.$modelName.'_orderType").val();
@@ -282,6 +285,7 @@ EOF;
 						}',
 					),
 				);
+
 		return $link;
 	}
 	
@@ -312,6 +316,7 @@ EOF;
 		{
 			$arrow = ' <span class="fa '.(($this->model->orderType == 'D') ? 'fa-sort-amount-desc' : 'fa-sort-amount-asc').'"></span>';
 		}
+
 		return $arrow;
 	}
 	

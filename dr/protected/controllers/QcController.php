@@ -620,9 +620,13 @@ EOD;
 						<td colspan="3" style="font-size: 12px">$arr->praise</td>
 				</tr>
 				<tr>
-					<td valign="top" colspan='2' height="100px" width="200px" style="font-size: 12px ">客户签名：$image->sign_cust</td>
-					<td width="200px" style="font-size: 12px">质检员签名：$image->sign_tech</td>
-					<td width="200px" style="font-size: 12px">技术员签名：$image->sign_qc</td>
+
+					<td width="60px" style="font-size: 12px">客户签名:</td>
+					<td width="100px" style="font-size: 12px">$image->sign_cust</td>
+					<td width="72px" style="font-size: 12px">技术员签名:</td>
+					<td width="100px" style="font-size: 12px">$image->sign_tech</td>
+					<td width="72px" style="font-size: 12px">质检员签名:</td>
+					<td width="100px" style="font-size: 12px">$image->sign_qc</td>
 				</tr>
 			</table>
 EOD;

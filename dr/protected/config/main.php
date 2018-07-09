@@ -79,6 +79,13 @@ return array(
 			'password' => 'swisher168',
 			'charset' => 'utf8',
 		),
+        'dbs'=>array(
+            'connectionString' => 'mysql:host=localhost;dbname=account',
+            'emulatePrepare' => true,
+            'username' => 'swuser',
+            'password' => 'swisher168',
+            'charset' => 'utf8',
+        ),
 		
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
@@ -106,7 +113,7 @@ return array(
 			'class'=>'CHttpSession',
 			'cookieMode'=>'allow',
 			'cookieParams'=>array(
-				'domain'=>'192.168.3.245',
+				'domain'=>'192.168.3.210',
 			),
 		),
 		
@@ -144,27 +151,27 @@ return array(
 		'envSuffix'=>'dev',
 		'systemMapping'=>array(
 				'drs'=>array(
-						'webroot'=>'http://192.168.3.245/dr',
+						'webroot'=>'http://192.168.3.210/dr',
 						'name'=>'Daily Report',
 						'icon'=>'fa fa-pencil-square-o',
 					),	
 				'acct'=>array(
-						'webroot'=>'http://192.168.3.245/acct',
+						'webroot'=>'http://192.168.3.210/acct',
 						'name'=>'Accounting',
 						'icon'=>'fa fa-money',
 					),
 /*				'ops'=>array(
-						'webroot'=>'http://192.168.3.245/operation',
+						'webroot'=>'http://192.168.3.210/operation',
 						'name'=>'Operation',
 						'icon'=>'fa fa-gears',
 					),
 				'hr'=>array(
-						'webroot'=>'http://192.168.3.245/hr',
+						'webroot'=>'http://192.168.3.210/hr',
 						'name'=>'Personnel',
 						'icon'=>'fa fa-users',
 					),
 				'sal'=>array(
-						'webroot'=>'http://192.168.3.245/sales',
+						'webroot'=>'http://192.168.3.210/sales',
 						'name'=>'Sales',
 						'icon'=>'fa fa-users',
 					),

@@ -23,7 +23,7 @@ $this->pageTitle=Yii::app()->name . ' - Supplier';
 </section>
 
 
-<section class="content">
+<section class="content" >
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
 		<?php 
@@ -33,7 +33,15 @@ $this->pageTitle=Yii::app()->name . ' - Supplier';
 				)); 
 		?>
 	</div>
-	</div></div>
+	</div>
+
+    </div>
+<!--    <div class="btn-group">-->
+<!--        <button id="hide" type="button" class="btn btn-default" style="width: 555px;font-size: 16px">基本资料</button>-->
+<!--        <button id="show" type="button" class="btn btn-default" style="width: 555px;font-size: 16px"">付款记录</button>-->
+<!--    </div>-->
+
+<div  id="p">
 	<?php 
 		$search = array(
 						'code',
@@ -51,7 +59,31 @@ $this->pageTitle=Yii::app()->name . ' - Supplier';
 				'search'=>$search,
 		));
 	?>
+
+</div>
+
 </section>
+
+<!--<div class="content" id="s" style="z-index: 20;margin-top:-137px;display: none">-->
+<!--    --><?php
+//    $search = array(
+//        'code',
+//        'name',
+//        'cont_name',
+//        'cont_phone',
+//    );
+//    $this->widget('ext.layout.ListPageWidget', array(
+//        'title'=>Yii::t('supplier','Supplier Pay'),
+//        'model'=>$models,
+//        'viewhdr'=>'//supplier/_payhdr',
+//        'viewdtl'=>'//supplier/_paydtl',
+//        'gridsize'=>'24',
+//        'height'=>'600',
+//        'search'=>$search,
+//    ));
+//    ?>
+<!--</div>-->
+
 <?php
 	echo $form->hiddenField($model,'pageNum');
 	echo $form->hiddenField($model,'totalRow');
@@ -59,9 +91,26 @@ $this->pageTitle=Yii::app()->name . ' - Supplier';
 	echo $form->hiddenField($model,'orderType');
 ?>
 <?php $this->endWidget(); ?>
-
 <?php
+//$js = <<<EOF
+//$(document).ready(function(){
+//  $("#hide").click(function(){
+// document.getElementById('p').style.display = 'block';
+// document.getElementById('s').style.display = 'none';
+//  });
+//  $("#show").click(function(){
+//
+// document.getElementById('p').style.display = 'none';
+// document.getElementById('s').style.display = 'block';
+//  });
+//});
+//
+//EOF;
+//?>
+<?php
+
 	$js = Script::genTableRowClick();
+
 	Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 ?>
 

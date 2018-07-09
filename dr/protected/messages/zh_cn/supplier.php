@@ -3,6 +3,7 @@ return array(
 	'Supplier'=>'供应商',
 	'Supplier Form'=>'供应商表单',
 	'Supplier List'=>'供应商列表',
+    'Supplier Pay'=>'供应商付款记录',
 
 	'AI'=>'IA 供应商',
 	'BI'=>'IB 供应商',
@@ -29,5 +30,12 @@ return array(
 	'Address'=>'供应商地址',
 	'Bank'=>'开行户',
 	'Account No'=>'账户号码',
+    'req_dt'=>'申请日期',
+    'ref_no'=>'会计参考编号',
+    'trans_type_desc'=>'交易类别',
+    'bank'=>'付款账户',
+    'amount'=>'金额',
+    'item_desc'=>'择要',
+
 );
 ?>

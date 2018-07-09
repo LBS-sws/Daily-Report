@@ -28,7 +28,7 @@ class SupplierController extends Controller
 			),
 */
 			array('allow', 
-				'actions'=>array('new','edit','delete','save'),
+				'actions'=>array('new','edit','delete','save','edits'),
 				'expression'=>array('SupplierController','allowReadWrite'),
 			),
 			array('allow', 
@@ -55,8 +55,27 @@ class SupplierController extends Controller
 		}
 		$model->determinePageNum($pageNum);
 		$model->retrieveDataByPage($model->pageNum);
+//        print_r("<pre>");
+//        print_r($model);
 		$this->render('index',array('model'=>$model));
 	}
+
+//	public function actionIndexs($pageNum=0)
+//    {
+//        $models = new SupplierList;
+//        if (isset($_POST['SupplierList'])) {
+//            $models->attributes = $_POST['SupplierList'];
+//        } else {
+//            $session = Yii::app()->session;
+//            if (isset($session['criteria_a10']) && !empty($session['criteria_a10'])) {
+//                $criteria = $session['criteria_a10'];
+//                $models->setCriteria($criteria);
+//            }
+//        }
+//        $models->determinePageNum($pageNum);
+//        $models->retrieveDataByPages($models->pageNum);
+//        $this->render('index',array('models'=>$models));
+//    }
 
 
 	public function actionSave()
@@ -81,11 +100,14 @@ class SupplierController extends Controller
 	public function actionView($index)
 	{
 		$model = new SupplierForm('view');
+
 		if (!$model->retrieveData($index)) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		} else {
+
 			$this->render('form',array('model'=>$model,));
 		}
+
 	}
 	
 	public function actionNew()
@@ -103,6 +125,17 @@ class SupplierController extends Controller
 			$this->render('form',array('model'=>$model,));
 		}
 	}
+    public function actionEdits($index)
+    {
+        $model = new SupplierForm('edit');
+
+        if (!$model->retrieveDatas($index)) {
+            throw new CHttpException(404,'The requested page does not exist.');
+        } else {
+           // print_r($model);
+            $this->render('edits',array('model'=>$model,));
+        }
+    }
 	
 	public function actionDelete()
 	{
