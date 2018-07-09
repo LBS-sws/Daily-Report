@@ -428,12 +428,12 @@ class QcController extends Controller
         <tr>
             <td  height="25px" width="75px" style="font-size: 12px"><b>质检员意见：</b> </td>
            <td>$model->remarks</td>
-            <td style="font-size: 12px"><b>质检员签名:</b> </td>
+            <td style="font-size: 12px"><b>技术员签名:</b> </td>
             <td>$image->sign_tech</td>
         </tr>
         <tr>
         <td colspan="2" height="40px"></td>
-        <td  style="font-size: 12px" ><b>技术员签名：</b></td>
+        <td  style="font-size: 12px" ><b>质检员签名：</b></td>
           <td>$image->sign_qc</td>
         </tr>
     </table>
