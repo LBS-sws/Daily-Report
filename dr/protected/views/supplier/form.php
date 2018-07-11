@@ -161,6 +161,7 @@ $this->pageTitle=Yii::app()->name . ' - Supplier Form';
             'gridsize'=>'24',
             'height'=>'600',
             'search'=>$search,
+            'searchlinkparam'=>array('index'=>$model->id),
         ));
         ?>
 

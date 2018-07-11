@@ -53,6 +53,7 @@ class SupplierController extends Controller
 				$model->setCriteria($criteria);
 			}
 		}
+
 		$model->determinePageNum($pageNum);
 		$model->retrieveDataByPage($model->pageNum);
 //        print_r("<pre>");
@@ -115,16 +116,29 @@ class SupplierController extends Controller
 		$model = new SupplierForm('new');
 		$this->render('form',array('model'=>$model,));
 	}
-	
-	public function actionEdit($index)
+
+
+	public function actionEdit($index,$pageNum=0)
 	{
 		$model = new SupplierForm('edit');
-		if (!$model->retrieveData($index)) {
+        $session = Yii::app()->session;
+
+        if (isset($session['criteria_a14']) && !empty($session['criteria_a14'])) {
+            $criteria = $session['criteria_a14'];
+            $model->setCriteria($criteria);
+        }
+        $model->determinePageNum($pageNum);
+//$model->retrieveDataByPage($model->pageNum);
+		if (!$model->retrieveData($index,$model->pageNum)) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		} else {
+            print_r($session['criteria_xa14']);
 			$this->render('form',array('model'=>$model,));
 		}
 	}
+
+
+
     public function actionEdits($index)
     {
         $model = new SupplierForm('edit');

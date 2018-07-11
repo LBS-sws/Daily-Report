@@ -88,18 +88,30 @@ class SupplierForm extends CListPageModel
 	 */
 	public function rules()
 	{
-		return array(
-			array('id, full_name, tax_reg_no, cont_name, cont_phone, address, bank, acct_no','safe'),
-			array('name, code','required'),
-/*
-			array('code','unique','allowEmpty'=>true,
+//		return array(
+//			array('id, full_name, tax_reg_no, cont_name, cont_phone, address, bank, acct_no','safe'),
+//			array('name, code','required'),
+///*
+//			array('code','unique','allowEmpty'=>true,
+//					'attributeName'=>'code',
+//					'caseSensitive'=>false,
+//					'className'=>'Supplier',
+//				),
+//*/
+//			array('code','validateCode'),
+//		);
+        $a=parent::rules();
+        $b=array(
+            array('id, full_name, tax_reg_no, cont_name, cont_phone, address, bank, acct_no','safe'),
+            array('name, code','required'),
+            array('code','unique','allowEmpty'=>true,
 					'attributeName'=>'code',
 					'caseSensitive'=>false,
 					'className'=>'Supplier',
 				),
-*/
-			array('code','validateCode'),
-		);
+
+        );
+        return array_merge($a,$b);
 	}
 
 	public function validateCode($attribute, $params) {
@@ -193,7 +205,7 @@ class SupplierForm extends CListPageModel
 					left outer join account.acc_request_info f on a.id=f.req_id and f.field_id='ref_no'
 					left outer join account.acc_request_info g on a.id=g.req_id and g.field_id='int_fee'
 				where ((a.city in ($city) and workflow$suffix.RequestStatus('PAYMENT',a.id,a.req_dt)<>'') or a.req_user='$user')
-				and e.trans_cat='OUT' 
+				and e.trans_cat='OUT' and a.payee_id=".$row['id']." and a.payee_type='S'    
 			";
         $clause = "";
         if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -278,10 +290,10 @@ class SupplierForm extends CListPageModel
 //                }
             }
         }
-        //print_r($records);
 
-
-
+        $session = Yii::app()->session;
+        $session['criteria_xa14'] = $this->getCriteria();
+        //print_r( $session['criteria_xa14']);
 		return true;
 	}
 

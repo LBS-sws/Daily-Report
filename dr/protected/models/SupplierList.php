@@ -98,6 +98,7 @@ class SupplierList extends CListPageModel
 
 		$session = Yii::app()->session;
 		$session['criteria_a10'] = $this->getCriteria();
+
 		return true;
 	}
 
