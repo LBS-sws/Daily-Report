@@ -182,7 +182,7 @@ class SupplierForm extends CListPageModel
 
         $sql1 = "select a.id, a.req_dt, e.trans_type_desc, a.item_desc, a.payee_name,a.payee_type,f.field_value,
 					b.name as city_name, a.amount, a.status, f.field_value as ref_no, a.req_user, 
-					g.field_value as int_fee,
+					g.field_value as int_fee,t.acct_name,
 					(select case workflow$suffix.RequestStatus('PAYMENT',a.id,a.req_dt)
 							when '' then '0DF' 
 							when 'PC' then '1PC' 
@@ -192,18 +192,22 @@ class SupplierForm extends CListPageModel
 							when 'ED' then '5ED' 
 					end) as wfstatus,
 					workflow$suffix.RequestStatusDesc('PAYMENT',a.id,a.req_dt) as wfstatusdesc
-				from account.acc_request a inner join security$suffix.sec_city b on a.city=b.code
-					inner join account.acc_trans_type e on a.trans_type_code=e.trans_type_code 
-					left outer join account.acc_request_info f on a.id=f.req_id and f.field_id='ref_no'
-					left outer join account.acc_request_info g on a.id=g.req_id and g.field_id='int_fee'
+				from account$suffix.acc_request a inner join security$suffix.sec_city b on a.city=b.code
+					inner join account$suffix.acc_trans_type e on a.trans_type_code=e.trans_type_code 
+					left outer join account$suffix.acc_request_info f on a.id=f.req_id and f.field_id='ref_no'
+					left outer join account$suffix.acc_request_info g on a.id=g.req_id and g.field_id='int_fee'
+				    left outer join account$suffix.acc_request_info h on a.id=h.req_id and h.field_id='acct_id' 
+				    left outer join account$suffix.acc_account t on t.id=h.field_value
 				where a.city in ($city) 
-				and e.trans_cat='OUT' and a.payee_id=".$row['id']." and a.payee_type='S' 
+				and e.trans_cat='OUT' and a.payee_id=".$row['id']." and a.payee_type='S'  
 			";
         $sql2 = "select count(a.id)
-				from account.acc_request a inner join security$suffix.sec_city b on a.city=b.code
-					inner join account.acc_trans_type e on a.trans_type_code=e.trans_type_code 
-					left outer join account.acc_request_info f on a.id=f.req_id and f.field_id='ref_no'
-					left outer join account.acc_request_info g on a.id=g.req_id and g.field_id='int_fee'
+				from account$suffix.acc_request a inner join security$suffix.sec_city b on a.city=b.code
+					inner join account$suffix.acc_trans_type e on a.trans_type_code=e.trans_type_code 
+					left outer join account$suffix.acc_request_info f on a.id=f.req_id and f.field_id='ref_no'
+					left outer join account$suffix.acc_request_info g on a.id=g.req_id and g.field_id='int_fee'
+				    left outer join account$suffix.acc_request_info h on a.id=h.req_id and h.field_id='acct_id' 
+				    left outer join account$suffix.acc_account t on t.id=h.field_value
 				where ((a.city in ($city) and workflow$suffix.RequestStatus('PAYMENT',a.id,a.req_dt)<>'') or a.req_user='$user')
 				and e.trans_cat='OUT' and a.payee_id=".$row['id']." and a.payee_type='S'    
 			";
@@ -215,13 +219,13 @@ class SupplierForm extends CListPageModel
                     $clause .= General::getSqlConditionClause('a.req_dt',$svalue);
                     break;
                 case 'ref_no':
-                    $clause .= General::getSqlConditionClause('a.ref_no',$svalue);
+                    $clause .= General::getSqlConditionClause('f.field_value',$svalue);
                     break;
                 case 'trans_type_desc':
                     $clause .= General::getSqlConditionClause('e.trans_type_desc',$svalue);
                     break;
-                case 'payee_name':
-                    $clause .= General::getSqlConditionClause('a.payee_name',$svalue);
+                case 'acct_name':
+                    $clause .= General::getSqlConditionClause('t.acct_name',$svalue);
                     break;
                 case 'amount':
                     $clause .= General::getSqlConditionClause('a.amount',$svalue);
@@ -247,7 +251,7 @@ class SupplierForm extends CListPageModel
 //                case 'city_name': $orderf = 'b.name'; break;
                 case 'req_dt': $orderf = 'a.req_dt'; break;
                 case 'trans_type_desc': $orderf = 'e.trans_type_desc'; break;
-                case 'payee_name': $orderf = 'a.payee_name'; break;
+                case 'bank': $orderf = 't.acct_name'; break;
                 case 'item_desc': $orderf = 'a.item_desc'; break;
                 case 'ref_no': $orderf = 'f.field_value'; break;
                 case 'int_fee': $orderf = 'g.field_value'; break;
@@ -264,16 +268,18 @@ class SupplierForm extends CListPageModel
         $sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
         $records = Yii::app()->db->createCommand($sql)->queryAll();
         $this->attr = array();
+        //print_r($sql);
+
         if (count($records) > 0) {
             foreach ($records as $k=>$record) {
-                $sql2="select * from account.acc_account WHERE id = (SELECT field_value from account.acc_request_info WHERE field_id = 'acct_id' AND req_id = ".$record['id'].")";
-                $recordes = Yii::app()->db->createCommand($sql2)->queryAll();
-                //print_r($recordes[0]['acct_name']);
+               // $sql2="select * from account.acc_account WHERE id = (SELECT field_value from account.acc_request_info WHERE field_id = 'acct_id' AND req_id = ".$record['id'].")";
+                //$recordes = Yii::app()->db->createCommand($sql2)->queryAll();
+
                 $wfstatus = (empty($record['wfstatus'])?'0DF':$record['wfstatus']);
 //                if (($wfstatus=='0DF' && $record['req_user']==$user) || $wfstatus!='0DF') {
                     $this->attr[] = array(
                         'id'=>$record['id'],
-                        'bank'=>$recordes[0]['acct_name'],
+                        'bank'=>$record['acct_name'],
                         'req_dt'=>General::toDate($record['req_dt']),
                         'trans_type_desc'=>$record['trans_type_desc'],
                         'payee_name'=>$record['payee_name'],
@@ -293,7 +299,7 @@ class SupplierForm extends CListPageModel
 
         $session = Yii::app()->session;
         $session['criteria_xa14'] = $this->getCriteria();
-        //print_r( $session['criteria_xa14']);
+        //print_r( $records);
 		return true;
 	}
 

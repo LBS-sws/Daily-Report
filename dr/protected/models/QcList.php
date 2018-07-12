@@ -84,7 +84,6 @@ left outer join swo_qc_info c on a.id=c.qc_id and c.field_id='sign_qc'
 left outer join swo_qc_info d on a.id=d.qc_id and d.field_id='sign_cust'
 where b.field_blob='' or c.field_blob='' or d.field_blob='' and a.id=''";
         $nook = Yii::app()->db->createCommand($sqls)->queryAll();
-
         $arr = array();
         if(count($nook) > 0){
             foreach ($nook as $nooks) {

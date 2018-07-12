@@ -13,13 +13,15 @@
     </section>
     <section class="content">
         <div class="box"><div class="box-body">
-                <div class="btn-group" role="group">
-                    <button class="btn btn-default" name="yt0" type="button" id="yt0" onclick="javascript:history.back(-1);"><span class="fa fa-reply"></span> 返回</button>
-                </div>
+<!--                <div class="btn-group" role="group">-->
+<!--                    <button class="btn btn-default" name="yt0" type="button" id="yt0" onclick="javascript:history.back(-1);"><span class="fa fa-reply"></span> 返回</button>-->
+<!--                </div>-->
+                <?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
+                    'submit'=>Yii::app()->createUrl('supplier/edit?index='.$model['payee_id'])));
+                ?>
 
             </div>
         </div>
-
         <div class="box box-info">
             <div class="box-body">
                 <input name="PayReqForm[scenario]" id="PayReqForm_scenario" type="hidden" value="edit">			<input name="PayReqForm[id]" id="PayReqForm_id" type="hidden" value="106">			<input name="PayReqForm[status]" id="PayReqForm_status" type="hidden" value="Y">			<input name="PayReqForm[wfstatus]" id="PayReqForm_wfstatus" type="hidden" value="ED">			<input name="PayReqForm[req_user]" id="PayReqForm_req_user" type="hidden" value="amy.sh">
@@ -27,7 +29,6 @@
                     <label class="col-sm-2 control-label" for="PayReqForm_ref_no">参考编号</label>				<div class="col-sm-3">
                         <input readonly="readonly" name="PayReqForm[ref_no]" id="PayReqForm_ref_no" class="form-control readonly" type="text" value="<?php echo $model['ref_no']; ?>">				</div>
                 </div>
-
                 <div class="form-group">
                     <label class="col-sm-2 control-label required" for="PayReqForm_req_dt">申请日期 <span class="required">*</span></label>				<div class="col-sm-3">
                         <div class="input-group date">
@@ -37,7 +38,6 @@
                             <input class="form-control pull-right readonly" readonly="readonly" name="PayReqForm[req_dt]" id="PayReqForm_req_dt" type="text" value="<?php echo $model['req_dt']; ?>">					</div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="col-sm-2 control-label required" for="PayReqForm_trans_type_code">交易类别 <span class="required">*</span></label>				<div class="col-sm-7">
                         <input name="PayReqForm[trans_type_code]" id="PayReqForm_trans_type_code" type="hidden" value="BANKOUT">					<input readonly="readonly" class="form-control readonly" type="text" value="<?php echo $model['trans_type_code']; ?>" name="trans_type_desc" id="trans_type_desc">				</div>
@@ -80,10 +80,4 @@
             </div>
         </div>
     </section>
-
-
-
-
-
-
 </form>
