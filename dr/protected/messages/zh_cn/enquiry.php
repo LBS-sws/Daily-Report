@@ -11,6 +11,9 @@ return array(
 	'Resp. Staff'=>'跟进销售同事',
 	'Follow-up Date'=>'跟进日期',
 	'Remarks'=>'备注',
+
+	'Bool'=>'状态',
+
 	'Result'=>'跟进结果',
 	'Contact Person'=>'客户联络人',
 	'Contact Phone'=>'客户电话',

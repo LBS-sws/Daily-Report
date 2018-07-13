@@ -428,14 +428,10 @@ class QcController extends Controller
         <tr>
             <td  height="25px" width="75px" style="font-size: 12px"><b>质检员意见：</b> </td>
            <td>$model->remarks</td>
-            <td style="font-size: 12px"><b>技术员签名:</b> </td>
-            <td>$image->sign_tech</td>
+            <td style="font-size: 12px"><b>质检员签名:</b> </td>
+            <td>$image->sign_qc</td>
         </tr>
-        <tr>
-        <td colspan="2" height="40px"></td>
-        <td  style="font-size: 12px" ><b>质检员签名：</b></td>
-          <td>$image->sign_qc</td>
-        </tr>
+    
     </table>
     </div>
 EOD;
@@ -623,8 +619,7 @@ EOD;
 
 					<td width="60px" style="font-size: 12px">客户签名:</td>
 					<td width="100px" style="font-size: 12px">$image->sign_cust</td>
-					<td width="72px" style="font-size: 12px">技术员签名:</td>
-					<td width="100px" style="font-size: 12px">$image->sign_tech</td>
+					<td width="150px"></td>
 					<td width="72px" style="font-size: 12px">质检员签名:</td>
 					<td width="100px" style="font-size: 12px">$image->sign_qc</td>
 				</tr>

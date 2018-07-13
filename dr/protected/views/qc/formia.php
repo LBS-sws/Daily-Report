@@ -411,19 +411,19 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 
 
 
-					<div class="col-sm-7">
-<?php if (empty($model->info['sign_tech']) && $model->scenario!='view'): ?>
-					<?php 
-						echo TbHtml::button(Yii::t('qc','Technician Signature'), array('name'=>'btnSignTech','id'=>'btnSignTech',));
-						echo TbHtml::image($model->info['sign_tech'],'QcForm_info_sign_tech_img',array('id'=>'QcForm_info_sign_tech_img','width'=>200,'height'=>100,'style'=>'display:none')); 
-					?>
-<?php else: ?>
-					<?php 
-						echo $form->labelEx($model,'sign_tech');
-						echo TbHtml::image($model->info['sign_tech'],'QcForm_info_sign_tech_img',array('id'=>'QcForm_info_sign_tech_img','width'=>200,'height'=>100,)); 
-					?>
-<?php endif ?>
-					</div>
+<!--					<div class="col-sm-7">-->
+<?php //if (empty($model->info['sign_tech']) && $model->scenario!='view'): ?>
+<!--					--><?php //
+//						echo TbHtml::button(Yii::t('qc','Technician Signature'), array('name'=>'btnSignTech','id'=>'btnSignTech',));
+//						echo TbHtml::image($model->info['sign_tech'],'QcForm_info_sign_tech_img',array('id'=>'QcForm_info_sign_tech_img','width'=>200,'height'=>100,'style'=>'display:none'));
+//					?>
+<?php //else: ?>
+<!--					--><?php //
+//						echo $form->labelEx($model,'sign_tech');
+//						echo TbHtml::image($model->info['sign_tech'],'QcForm_info_sign_tech_img',array('id'=>'QcForm_info_sign_tech_img','width'=>200,'height'=>100,));
+//					?>
+<?php //endif ?>
+<!--					</div>-->
 
 
 

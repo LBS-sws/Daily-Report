@@ -83,7 +83,6 @@ class ReportController extends Controller
 					'MONTH'=>$criteria->month,
 				);
 		if (!empty($criteria->type)) $data['TYPE'] = (is_array($criteria->type) ? json_encode($criteria->type) : $criteria->type);
-		
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
