@@ -120,18 +120,18 @@ class SupplierList extends CListPageModel
 							when 'ED' then '5ED' 
 					end) as wfstatus,
 					workflow$suffix.RequestStatusDesc('PAYMENT',a.id,a.req_dt) as wfstatusdesc
-				from account.acc_request a inner join security$suffix.sec_city b on a.city=b.code
-					inner join account.acc_trans_type e on a.trans_type_code=e.trans_type_code 
-					left outer join account.acc_request_info f on a.id=f.req_id and f.field_id='ref_no'
-					left outer join account.acc_request_info g on a.id=g.req_id and g.field_id='int_fee'
+				from account$suffix.acc_request a inner join security$suffix.sec_city b on a.city=b.code
+					inner join account$suffix.acc_trans_type e on a.trans_type_code=e.trans_type_code 
+					left outer join account$suffix.acc_request_info f on a.id=f.req_id and f.field_id='ref_no'
+					left outer join account$suffix.acc_request_info g on a.id=g.req_id and g.field_id='int_fee'
 				where a.city in ($city) 
 				and e.trans_cat='OUT' and a.payee_type='S'
 			";
         $sql2 = "select count(a.id)
 				from account.acc_request a inner join security$suffix.sec_city b on a.city=b.code
 					inner join account.acc_trans_type e on a.trans_type_code=e.trans_type_code 
-					left outer join account.acc_request_info f on a.id=f.req_id and f.field_id='ref_no'
-					left outer join account.acc_request_info g on a.id=g.req_id and g.field_id='int_fee'
+					left outer join account$suffix.acc_request_info f on a.id=f.req_id and f.field_id='ref_no'
+					left outer join account$suffix.acc_request_info g on a.id=g.req_id and g.field_id='int_fee'
 				where ((a.city in ($city) and workflow$suffix.RequestStatus('PAYMENT',a.id,a.req_dt)<>'') or a.req_user='$user')
 				and e.trans_cat='OUT' and a.payee_type='S'
 			";

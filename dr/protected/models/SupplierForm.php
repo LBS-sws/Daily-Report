@@ -313,7 +313,7 @@ class SupplierForm extends CListPageModel
 				workflow$suffix.RequestStatusDesc('PAYMENT',id,req_dt) as wfstatusdesc,
 				docman$suffix.countdoc('payreq',id) as payreqcountdoc,
 				docman$suffix.countdoc('tax',id) as taxcountdoc
-				from account.acc_request where id=$index 
+				from account$suffix.acc_request where id=$index 
 				and ((city in ($city) and req_user<>'$user') or req_user='$user') 
 			";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
