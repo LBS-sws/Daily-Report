@@ -11091,3 +11091,163 @@ HTTP_REFERER=http://192.168.3.210/dr/supplier/edit?index=4
 in D:\xampp\htdocs\dr\protected\controllers\SupplierController.php (125)
 in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
 in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/12 17:58:36 [warning] [application] Failed to set unsafe attribute "scenario" of "SupplierForm".
+in D:\xampp\htdocs\dr\protected\controllers\SupplierController.php (125)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/12 17:58:38 [warning] [application] Failed to set unsafe attribute "scenario" of "SupplierForm".
+in D:\xampp\htdocs\dr\protected\controllers\SupplierController.php (125)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 15:02:44 [error] [exception.CHttpException.404] exception 'CHttpException' with message '系统无法找到请求的 "views" 动作.' in D:\xampp\htdocs\yii\framework\web\CController.php:484
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(271): CController->missingAction('views')
+#1 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('views')
+#2 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('supplier/views')
+#3 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#4 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/dr/supplier/views?index=107
+HTTP_REFERER=http://192.168.3.210/dr/supplier/edit?index=4
+---
+2018/07/13 15:02:47 [error] [exception.CHttpException.404] exception 'CHttpException' with message '系统无法找到请求的 "views" 动作.' in D:\xampp\htdocs\yii\framework\web\CController.php:484
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(271): CController->missingAction('views')
+#1 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('views')
+#2 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('supplier/views')
+#3 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#4 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/dr/supplier/views?index=107
+HTTP_REFERER=http://192.168.3.210/dr/supplier/edit?index=4
+---
+2018/07/13 15:02:51 [error] [exception.CHttpException.404] exception 'CHttpException' with message '系统无法找到请求的 "views" 动作.' in D:\xampp\htdocs\yii\framework\web\CController.php:484
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(271): CController->missingAction('views')
+#1 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('views')
+#2 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('supplier/views')
+#3 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#4 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/dr/supplier/views?index=107
+HTTP_REFERER=http://192.168.3.210/dr/supplier/edit?index=4
+---
+2018/07/13 15:03:09 [error] [exception.CHttpException.404] exception 'CHttpException' with message '系统无法找到请求的 "views" 动作.' in D:\xampp\htdocs\yii\framework\web\CController.php:484
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(271): CController->missingAction('views')
+#1 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('views')
+#2 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('supplier/views')
+#3 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#4 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/dr/supplier/views?index=107
+HTTP_REFERER=http://192.168.3.210/dr/supplier/edit?index=4
+---
+2018/07/13 17:07:45 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:08:48 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:10:11 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:10:21 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:10:26 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (689)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:10:50 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:11:00 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:11:10 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (689)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:27:38 [error] [php] Object of class ReportForm could not be converted to string (D:\xampp\htdocs\dr\protected\controllers\ReportController.php:86)
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\actions\CInlineAction.php(50): ReportController->actionGenerate()
+#1 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams()
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): ReportController->runAction()
+#3 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#4 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CAccessControlFilter->filter()
+#5 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): ReportController->filterAccessControl()
+#6 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#7 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#8 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): ReportController->filterEnforceNoConcurrentLogin()
+#9 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#10 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#11 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): ReportController->filterEnforceSessionExpiration()
+#12 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#13 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#14 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): ReportController->filterEnforceRegisteredStation()
+#15 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#17 D:\xampp\htdocs\yii\framework\web\CController.php(266): ReportController->runActionWithFilters()
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): ReportController->run()
+#19 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController()
+#20 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#21 D:\xampp\htdocs\dr\index.php(13): CWebApplication->run()
+REQUEST_URI=/dr/report/generate
+in D:\xampp\htdocs\dr\protected\controllers\ReportController.php (86)
+in D:\xampp\htdocs\dr\protected\controllers\ReportController.php (350)
+in D:\xampp\htdocs\dr\protected\controllers\ReportController.php (485)
+2018/07/13 17:40:30 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (149)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:40:48 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (149)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:41:23 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (149)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:41:47 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (149)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:42:08 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (149)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:43:08 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (446)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:43:24 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (446)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:43:40 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (446)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:44:07 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (446)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:44:17 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (446)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:45:02 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (446)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/07/13 17:45:47 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (446)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)

@@ -317,22 +317,22 @@ class SupplierForm extends CListPageModel
 				and ((city in ($city) and req_user<>'$user') or req_user='$user') 
 			";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
-        $sql1="select * from account.acc_account WHERE id = (SELECT field_value from account.acc_request_info WHERE field_id = 'acct_id' AND req_id = ".$rows[0]['id'].")";
+        $sql1="select * from account$suffix.acc_account WHERE id = (SELECT field_value from account$suffix.acc_request_info WHERE field_id = 'acct_id' AND req_id = ".$rows[0]['id'].")";
         $acct_code_desc = Yii::app()->db->createCommand($sql1)->queryAll();
         $this->acct_code_desc = $acct_code_desc[0]['acct_name'].$acct_code_desc[0]['acct_no']."(".$acct_code_desc[0]['bank_name'].")";
-        $sql2="select trans_type_desc from account.acc_trans_type where trans_type_code = '".$rows[0]['trans_type_code']."' and trans_cat = 'OUT'";
+        $sql2="select trans_type_desc from account$suffix.acc_trans_type where trans_type_code = '".$rows[0]['trans_type_code']."' and trans_cat = 'OUT'";
         $trans_type_code = Yii::app()->db->createCommand($sql2)->queryAll();
         $this->trans_type_code =  $trans_type_code[0]['trans_type_desc'];
 
-        $sql3="select name from account.acc_account_item where code = (select field_value from account.acc_request_info where req_id = '".$rows[0]['id']."' and field_id = 'item_code')";
+        $sql3="select name from account$suffix.acc_account_item where code = (select field_value from account$suffix.acc_request_info where req_id = '".$rows[0]['id']."' and field_id = 'item_code')";
         $item_code = Yii::app()->db->createCommand($sql3)->queryAll();
         $this->item_name = $item_code[0]['name'];
 
-        $sql4="select name from account.acc_account_code where code = (select field_value from account.acc_request_info where req_id = '".$rows[0]['id']."' and field_id = 'acct_code')";
+        $sql4="select name from account$suffix.acc_account_code where code = (select field_value from account$suffix.acc_request_info where req_id = '".$rows[0]['id']."' and field_id = 'acct_code')";
         $acct_code = Yii::app()->db->createCommand($sql4)->queryAll();
         $this->acct_name = $acct_code[0]['name'];
 
-        $sql5="select field_value from account.acc_request_info where req_id = '".$rows[0]['id']."' and field_id = 'int_fee'";
+        $sql5="select field_value from account$suffix.acc_request_info where req_id = '".$rows[0]['id']."' and field_id = 'int_fee'";
         $int_fee = Yii::app()->db->createCommand($sql5)->queryAll();
         if($int_fee==""){
             $this->int_fee="";
@@ -365,7 +365,7 @@ class SupplierForm extends CListPageModel
                 break;
             }
             //print_r($rows);
-            $sql = "select * from account.acc_request_info where req_id=$index";
+            $sql = "select * from account$suffix.acc_request_info where req_id=$index";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             if (count($rows) > 0) {
                 foreach ($rows as $row) {
