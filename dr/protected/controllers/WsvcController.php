@@ -27,8 +27,8 @@ class WsvcController extends CController
 	* @param string key
 	* @param string session
 	* @param integer roster id 
-	* @param string customer code
-	* @param string customer name
+	* @param string report code
+	* @param string report name
 	* @param string contact name
 	* @param string contact phone
 	* @param string city

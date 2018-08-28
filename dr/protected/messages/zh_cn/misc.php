@@ -22,6 +22,7 @@ return array(
 	'Back'=>'返回',
 	'Delete'=>'删除',
 	'xiazai'=>'下载',
+	'fenxi'=>'月报总结',
 	'Yes'=>'是',
 	'No'=>'否',
 	'Login' => '登录',

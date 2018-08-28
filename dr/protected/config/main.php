@@ -160,11 +160,11 @@ return array(
 						'name'=>'Accounting',
 						'icon'=>'fa fa-money',
 					),
-/*				'ops'=>array(
-						'webroot'=>'http://192.168.3.210/operation',
-						'name'=>'Operation',
-						'icon'=>'fa fa-gears',
-					),
+//				'ops'=>array(
+//						'webroot'=>'http://192.168.3.210/operation',
+//						'name'=>'Operation',
+//						'icon'=>'fa fa-gears',
+//					),
 				'hr'=>array(
 						'webroot'=>'http://192.168.3.210/hr',
 						'name'=>'Personnel',
@@ -175,13 +175,13 @@ return array(
 						'name'=>'Sales',
 						'icon'=>'fa fa-users',
 					),
-				'twapp'=>array(
-						'webroot'=>'https://app.lbsgroup.com.tw/web',
-						'script'=>'remoteLoginTwApp',
-						'name'=>'Test System',
-						'icon'=>'fa fa-users',
-						'external'=>true,
-					),*/
+//				'twapp'=>array(
+//						'webroot'=>'https://app.lbsgroup.com.tw/web',
+//						'script'=>'remoteLoginTwApp',
+//						'name'=>'Test System',
+//						'icon'=>'fa fa-users',
+//						'external'=>true,
+//					),
 			),
 	),
 );

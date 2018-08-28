@@ -2,6 +2,7 @@
 	$flow = 'service/view';
 	$lnk=Yii::app()->createUrl($flow,array('index'=>$this->record['id']));
 ?>
+
 <tr>
 	<td width=25% class='widget-leftalign'>
 		<?php echo CHtml::link($this->record['service'],$lnk); ?>

@@ -3,7 +3,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'customer-enq',
+'id'=>'report-enq',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 //'layout'=>TbHtml::FORM_LAYOUT_INLINE,

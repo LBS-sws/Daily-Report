@@ -1,9 +1,9 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - Customer';
+$this->pageTitle=Yii::app()->name . ' - Month Report';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'report-list',
+'id'=>'monthly-list',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_INLINE,
@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('customer','Customer'); ?></strong>
+		<strong><?php echo Yii::t('monthly','Monthly Report Data'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -22,33 +22,18 @@ $this->pageTitle=Yii::app()->name . ' - Customer';
 -->
 </section>
 
-
 <section class="content">
-	<div class="box"><div class="box-body">
-	<div class="btn-group" role="group">
-		<?php 
-			if (Yii::app()->user->validRWFunction('A01'))
-				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Record'), array(
-					'submit'=>Yii::app()->createUrl('report/new'),
-				)); 
-		?>
-	</div>
-	</div></div>
-	<?php 
-		$search = array(
-						'code',
-						'name',
-						'cont_name',
-						'cont_phone',
-					);
-		$this->widget('ext.layout.ListPageWidget', array(
-			'title'=>Yii::t('customer','Customer List'),
+	<?php $this->widget('ext.layout.ListPageWidget', array(
+			'title'=>Yii::t('monthly','Monthly Report Data List'),
 			'model'=>$model,
-				'viewhdr'=>'//report/_listhdr',
-				'viewdtl'=>'//report/_listdtl',
+				'viewhdr'=>'//month/_listhdr',
+				'viewdtl'=>'//month/_listdtl',
 				'gridsize'=>'24',
 				'height'=>'600',
-				'search'=>$search,
+				'search'=>array(
+							'year_no',
+							'month_no',
+						),
 		));
 	?>
 </section>

@@ -34,7 +34,7 @@ return array(
 	'Toilet Sticker'=>'洁具贴',
 	'Machine Sticker'=>'机器贴',
 	'Large Sticker'=>'大标贴',
-	'According to customer request on hand-washing/flushing sticker'=>'洗手贴/冲厕贴，根据客户要求',
+	'According to report request on hand-washing/flushing sticker'=>'洗手贴/冲厕贴，根据客户要求',
 	'Sticker Request No.'=>'场内应贴有',
 	'Sticker Actual No.'=>'场内只贴有',
 	'Sticker Score'=>'标贴评分',

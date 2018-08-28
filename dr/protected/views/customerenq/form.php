@@ -3,7 +3,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer Form';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'customer-form',
+'id'=>'report-form',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
@@ -28,15 +28,15 @@ $this->pageTitle=Yii::app()->name . ' - Customer Form';
 		<?php 
 			if ($model->scenario!='new' && $model->scenario!='view') {
 				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Another'), array(
-					'submit'=>Yii::app()->createUrl('customer/new')));
+					'submit'=>Yii::app()->createUrl('report/new')));
 			}
 		?>
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('customer/index'))); 
+				'submit'=>Yii::app()->createUrl('report/index')));
 		?>
 <?php if ($model->scenario!='view'): ?>
 			<?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
-				'submit'=>Yii::app()->createUrl('customer/save'))); 
+				'submit'=>Yii::app()->createUrl('report/save')));
 			?>
 <?php endif ?>
 <?php if ($model->scenario=='edit'): ?>
@@ -123,7 +123,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer Form';
 <?php $this->renderPartial('//site/removedialog'); ?>
 
 <?php
-$js = Script::genDeleteData(Yii::app()->createUrl('customer/delete'));
+$js = Script::genDeleteData(Yii::app()->createUrl('report/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();

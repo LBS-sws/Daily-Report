@@ -10,7 +10,7 @@ return array(
 			),
 			'Customer Info'=>array(
 				'access'=>'A01',
-				'url'=>'/customer/index',
+				'url'=>'/report/index',
 			),
 			'Customer Service'=>array(
 				'access'=>'A02',
@@ -109,10 +109,10 @@ return array(
 				'access'=>'B17',
 				'url'=>'/report/feedback',
 			),
-			'Monthly Report'=>array(
-				'access'=>'B14',
-				'url'=>'/report/monthly',
-			),
+//			'Monthly Report'=>array(
+//				'access'=>'B14',
+//				'url'=>'/report/monthly',
+//			),
 			'Report Manager'=>array(
 				'access'=>'B12',
 				'url'=>'/queue/index',
@@ -128,6 +128,15 @@ return array(
 			),
 		),
 	),
+    'Data View'=>array(
+        'access'=>'H',
+        'items'=>array(
+            'Monthly Report Data'=>array(
+                'access'=>'H01',
+                'url'=>'/month/index',
+            ),
+        ),
+    ),
 	'System Setting'=>array(
 		'access'=>'C',
 		'items'=>array(

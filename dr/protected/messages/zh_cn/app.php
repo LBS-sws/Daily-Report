@@ -20,6 +20,7 @@ return array(
 	'Tools' => '工具',
 	'Misc'=>'其他',
 	'Management'=>'管理层',
+    'Data View'=>'数据查看',
 	
 	'Customer Info'=>'客户资料',
 	'Customer Service'=>'客户服务',

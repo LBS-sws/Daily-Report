@@ -56,7 +56,7 @@ class EnquiryForm extends CFormModel
 	{
 		return array(
 			array('id, follow_staff, type, source, remarks, contact, tel_no, address, nature_type, follow_result, record_by, source_code','safe'),
-			array('customer, contact_dt','required'),
+			array('report, contact_dt','required'),
 			array('contact_dt','date','allowEmpty'=>false,
 				'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
 			),
@@ -119,17 +119,17 @@ class EnquiryForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_enquiry(
-							contact_dt, customer, type, source_code, source, follow_staff, follow_dt, follow_result,
+							contact_dt, report, type, source_code, source, follow_staff, follow_dt, follow_result,
 							contact, tel_no, remarks, nature_type, address, record_by, city, luu, lcu
 						) values (
-							:contact_dt, :customer, :type, :source_code, :source, :follow_staff, :follow_dt, :follow_result,
+							:contact_dt, :report, :type, :source_code, :source, :follow_staff, :follow_dt, :follow_result,
 							:contact, :tel_no, :remarks, :nature_type, :address, :record_by, :city, :luu, :lcu
 						)";
 				break;
 			case 'edit':
 				$sql = "update swo_enquiry set
 							contact_dt = :contact_dt,
-							customer = :customer, 
+							report = :report, 
 							nature_type = :nature_type,
 							type = :type,
 							source_code = :source_code, 
@@ -158,8 +158,8 @@ class EnquiryForm extends CFormModel
 			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
 		if (strpos($sql,':contact_dt')!==false)
 			$command->bindParam(':contact_dt',$ctntdt,PDO::PARAM_STR);
-		if (strpos($sql,':customer')!==false)
-			$command->bindParam(':customer',$this->customer,PDO::PARAM_STR);
+		if (strpos($sql,':report')!==false)
+			$command->bindParam(':report',$this->customer,PDO::PARAM_STR);
 		if (strpos($sql,':nature_type')!==false)
 			$command->bindParam(':nature_type',$this->nature_type,PDO::PARAM_INT);
 		if (strpos($sql,':type')!==false)
