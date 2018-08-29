@@ -74,7 +74,7 @@ class MonthForm extends CFormModel
                     and c.status='Y'
                     order by c.excel_row ";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
-        $sql="select * from swo_monthly_hdr where id=$index";
+        $sql="select * from swo_monthly_comment where hdr_id=$index";
         $ros = Yii::app()->db->createCommand($sql)->queryAll();
 
         $b3=intval($rows[0]['data_value']);
@@ -346,12 +346,14 @@ class MonthForm extends CFormModel
 					$this->id = $hid;
 					$this->year_no = $rowa['year_no'];
 					$this->month_no = $rowa['month_no'];
-                    $this->market = $ros[0]['market'];
-                    $this->legwork = $ros[0]['legwork'];
-                    $this->service = $ros[0]['service'];
-                    $this->personnel = $ros[0]['personnel'];
-                    $this->finance = $ros[0]['finance'];
-                    $this->other = $ros[0]['other'];
+					if(count($ros)>0){
+                        $this->market = $ros[0]['market'];
+                        $this->legwork = $ros[0]['legwork'];
+                        $this->service = $ros[0]['service'];
+                        $this->personnel = $ros[0]['personnel'];
+                        $this->finance = $ros[0]['finance'];
+                        $this->other = $ros[0]['other'];
+                    }
 				}
 				$temp = array();
 				$temp['id'] = $rowa['id'];
@@ -371,6 +373,9 @@ class MonthForm extends CFormModel
 		return true;
 	}
 
+	public function retrieveDataa(){
+
+    }
 	public function sendDate($model){
         $city = Yii::app()->user->city();
         $market=$model['market'];
@@ -381,8 +386,8 @@ class MonthForm extends CFormModel
         $other=$model['other'];
         $index=$model['id'];
         $time=$model['year_no'].'/'.$model['month_no'];
-        $in="UPDATE swo_monthly_hdr SET market = '".$market."',legwork = '".$legwork."',service = '".$service."',personnel = '".$personnel."',finance = '".$finance."',other = '".$other."'
-WHERE id = '".$model['id']."'";
+        $in="UPDATE swo_monthly_comment SET market = '".$market."',legwork = '".$legwork."',service = '".$service."',personnel = '".$personnel."',finance = '".$finance."',other = '".$other."'
+WHERE hdr_id = '".$model['id']."'";
         $int = Yii::app()->db->createCommand($in)->execute();
         $suffix = Yii::app()->params['envSuffix'];
         $sql = "select approver_type, username from account.acc_approver where city='$city'";
@@ -469,7 +474,7 @@ WHERE id = '".$model['id']."'";
         $msg_url = str_replace('{url}',$url, Yii::t('report',"Please click <a href=\"{url}\" onClick=\"return popup(this,'Daily Report');\">here</a> to download the report."));
         $message .= "<p>&nbsp;</p><p>$msg_url</p>";
         $lcu = "admin";
-        $aaa = Yii::app()->db->createCommand()->insert("swoper$suffix.swo_email_queue", array(
+        $aaa = Yii::app()->db->createCommand()->insert("swoper.swo_email_queue", array(
             'request_dt' => date('Y-m-d H:i:s'),
             'from_addr' => $from_addr,
             'to_addr' => $to_addr,
@@ -534,18 +539,20 @@ WHERE id = '".$model['id']."'";
 	}
 
 	protected function saveMonthly(&$connection) {
+        $user = Yii::app()->user->id;
 		$sql = '';
 		switch ($this->scenario) {
 			case 'edit':
-				$sql = "update swo_monthly_hdr set
-							market = :market,
-							legwork = :legwork,
-							finance = :finance ,
-							service = :service ,
-							personnel = :personnel ,
-							other = :other 
-						where id = :id
-					";
+//                $sql="insert into swo_monthly_comment(hdr_id,market,legwork,finance,service,personnel,other,luu,lcu) values(:hdr_id,:market,:legwork,:finance,:service,:personnel,:other,:luu,:lcu)
+//on duplicate key update market = :market, legwork = :legwork, finance = :finance , service = :service , personnel = :personnel , other = :other , luu= :luu)";
+                $sqla="select * from swo_monthly_comment where hdr_id=$this->id";
+                $ros = Yii::app()->db->createCommand($sqla)->queryAll();
+                if(empty($ros)){
+                    $sql="insert into swo_monthly_comment(hdr_id,market,legwork,finance,service,personnel,other,luu,lcu) values(:hdr_id,:market,:legwork,:finance,:service,:personnel,:other,:luu,:lcu)";
+                }else{
+                    $sql="UPDATE swo_monthly_comment SET market =:market,legwork = :legwork,service = :service,personnel = :personnel,finance =:finance,other = :other,luu=:luu
+WHERE hdr_id = :hdr_id";
+                }
 				break;
 		}
 		if (empty($sql)) return false;
@@ -559,12 +566,12 @@ WHERE id = '".$model['id']."'";
 //
 			$command=$connection->createCommand($sql);
 //			print_r('<pre>');
-//            print_r($this->legwork);
+//            print_r($user);
 //            print_r($this);
 //            exit();
 			if (isset($this)) {
-				if (strpos($sql,':id')!==false)
-					$command->bindParam(':id',$this->id,PDO::PARAM_INT);
+				if (strpos($sql,':hdr_id')!==false)
+					$command->bindParam(':hdr_id',$this->id,PDO::PARAM_INT);
 				if (strpos($sql,':market')!==false)
 					$command->bindParam(':market',$this->market,PDO::PARAM_STR);
                 if (strpos($sql,':legwork')!==false)
@@ -577,6 +584,10 @@ WHERE id = '".$model['id']."'";
                     $command->bindParam(':personnel',$this->personnel,PDO::PARAM_STR);
                 if (strpos($sql,':other')!==false)
                     $command->bindParam(':other',$this->other,PDO::PARAM_STR);
+                if (strpos($sql,':luu')!==false)
+                    $command->bindParam(':luu',$user,PDO::PARAM_STR);
+                if (strpos($sql,':lcu')!==false)
+                    $command->bindParam(':lcu',$user,PDO::PARAM_STR);
 				$command->execute();
 			}
 
