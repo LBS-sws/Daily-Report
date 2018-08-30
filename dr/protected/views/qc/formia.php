@@ -285,7 +285,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			</div>
 
 			<div class="form-group">
-				<?php echo TbHtml::label(Yii::t('qc','According to report request on hand-washing/flushing sticker'),false,array('class'=>'col-sm-4',)); ?>
+				<?php echo TbHtml::label(Yii::t('qc','According to customer request on hand-washing/flushing sticker'),false,array('class'=>'col-sm-4',)); ?>
 			</div>
 
 			<div class="form-group">

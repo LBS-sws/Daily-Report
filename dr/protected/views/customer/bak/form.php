@@ -3,7 +3,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer Form';
 ?>
 <div class="form frame">
 <?php $form=$this->beginWidget('CActiveForm', array(
-'id'=>'report-form',
+'id'=>'customer-form',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 )); ?>
@@ -13,11 +13,11 @@ $this->pageTitle=Yii::app()->name . ' - Customer Form';
 </div>
 <div class="grid_6 prefix_2" style="text-align:right;"><h2 class="page-heading">
 	<?php echo CHtml::Button(Yii::t('misc','Back'), array(
-		'submit'=>Yii::app()->createUrl('report/index'))
+		'submit'=>Yii::app()->createUrl('customer/index'))
 	); ?>
 <?php if ($model->scenario!='view'): ?>
 	<?php echo CHtml::Button(Yii::t('misc','Save'), array(
-		'submit'=>Yii::app()->createUrl('report/save'))
+		'submit'=>Yii::app()->createUrl('customer/save'))
 	); ?>
 <?php endif ?>
 <?php if ($model->scenario=='edit'): ?>
@@ -101,8 +101,8 @@ $this->pageTitle=Yii::app()->name . ' - Customer Form';
 		<?php $this->widget('ext.layout.TableView2Widget', array(
 				'model'=>$model,
 				'attribute'=>'service',
-				'viewhdr'=>'//report/_formhdr',
-				'viewdtl'=>'//report/_formdtl',
+				'viewhdr'=>'//customer/_formhdr',
+				'viewdtl'=>'//customer/_formdtl',
 				'gridsize'=>'24',
 				'height'=>'200',
 			));
@@ -123,7 +123,7 @@ $('#btnDelete').on('click',function() {
 
 function deletedata() {
 	var elm=$('#btnDelete');
-	jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('report/delete')."',{});
+	jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('customer/delete')."',{});
 }
 ";
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);

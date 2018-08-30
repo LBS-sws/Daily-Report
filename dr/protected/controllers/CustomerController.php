@@ -68,7 +68,7 @@ class CustomerController extends Controller
 				$model->saveData();
 //				$model->scenario = 'edit';
 				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-				$this->redirect(Yii::app()->createUrl('report/edit',array('index'=>$model->id)));
+				$this->redirect(Yii::app()->createUrl('customer/edit',array('index'=>$model->id)));
 			} else {
 				$message = CHtml::errorSummary($model);
 				Dialog::message(Yii::t('dialog','Validation Message'), $message);
@@ -113,7 +113,7 @@ class CustomerController extends Controller
 			Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
 		}
 //		$this->actionIndex();
-		$this->redirect(Yii::app()->createUrl('report/index'));
+		$this->redirect(Yii::app()->createUrl('customer/index'));
 	}
 	
 	/**
@@ -122,7 +122,7 @@ class CustomerController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='report-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='customer-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

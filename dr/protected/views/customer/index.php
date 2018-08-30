@@ -3,7 +3,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'report-list',
+'id'=>'customer-list',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_INLINE,
@@ -29,7 +29,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer';
 		<?php 
 			if (Yii::app()->user->validRWFunction('A01'))
 				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Record'), array(
-					'submit'=>Yii::app()->createUrl('report/new'),
+					'submit'=>Yii::app()->createUrl('customer/new'),
 				)); 
 		?>
 	</div>
@@ -44,8 +44,8 @@ $this->pageTitle=Yii::app()->name . ' - Customer';
 		$this->widget('ext.layout.ListPageWidget', array(
 			'title'=>Yii::t('customer','Customer List'),
 			'model'=>$model,
-				'viewhdr'=>'//report/_listhdr',
-				'viewdtl'=>'//report/_listdtl',
+				'viewhdr'=>'//customer/_listhdr',
+				'viewdtl'=>'//customer/_listdtl',
 				'gridsize'=>'24',
 				'height'=>'600',
 				'search'=>$search,

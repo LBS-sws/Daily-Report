@@ -10,7 +10,7 @@ return array(
 			),
 			'Customer Info'=>array(
 				'access'=>'A01',
-				'url'=>'/report/index',
+				'url'=>'/customer/index',
 			),
 			'Customer Service'=>array(
 				'access'=>'A02',
@@ -134,6 +134,10 @@ return array(
             'Monthly Report Data'=>array(
                 'access'=>'H01',
                 'url'=>'/month/index',
+            ),
+            '月报表分析'=>array(
+                'access'=>'H02',
+                'url'=>'/mfx/index',
             ),
         ),
     ),

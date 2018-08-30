@@ -12,7 +12,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('report',$model->name); ?></strong>
+		<strong><?php echo Yii::t('report','月报表数据分析 '); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -27,18 +27,18 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
 		<?php echo TbHtml::button(Yii::t('misc','Submit'), array(
-				'submit'=>Yii::app()->createUrl('report/generate'))); 
+				'submit'=>Yii::app()->createUrl('report/generate')));
 		?>
 	</div>
 	</div></div>
 	<div class="box box-info">
 		<div class="box-body">
-			<?php echo $form->hiddenField($model, 'id'); ?>
-			<?php echo $form->hiddenField($model, 'name'); ?>
-			<?php echo $form->hiddenField($model, 'fields'); ?>
-			<?php echo $form->hiddenField($model, 'form'); ?>
+<!--			--><?php //echo $form->hiddenField($model, 'id'); ?>
+<!--			--><?php //echo $form->hiddenField($model, 'name'); ?>
+<!--			--><?php //echo $form->hiddenField($model, 'fields'); ?>
+<!--			--><?php //echo $form->hiddenField($model, 'form'); ?>
 
-		<?php if ($model->showField('city') && !Yii::app()->user->isSingleCity()): ?>
+<!--		--><?php //if ($model->showField('city') && !Yii::app()->user->isSingleCity()): ?>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
@@ -47,9 +47,9 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 					); ?>
 				</div>
 			</div>
-		<?php else: ?>
-			<?php echo $form->hiddenField($model, 'city'); ?>
-		<?php endif ?>
+<!--		--><?php //else: ?>
+<!--			--><?php //echo $form->hiddenField($model, 'city'); ?>
+<!--		--><?php //endif ?>
 
 		<?php if ($model->showField('start_dt')): ?>
 			<div class="form-group">
@@ -59,8 +59,8 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 						<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 						</div>
-						<?php echo $form->textField($model, 'start_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),)); 
+						<?php echo $form->textField($model, 'start_dt',
+							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
 						?>
 					</div>
 				</div>
@@ -68,7 +68,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 		<?php else: ?>
 			<?php echo $form->hiddenField($model, 'start_dt'); ?>
 		<?php endif ?>
-		
+
 		<?php if ($model->showField('end_dt')): ?>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'end_dt',array('class'=>"col-sm-2 control-label")); ?>
@@ -77,8 +77,8 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 						<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 						</div>
-						<?php echo $form->textField($model, 'end_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),)); 
+						<?php echo $form->textField($model, 'end_dt',
+							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
 						?>
 					</div>
 				</div>
@@ -95,8 +95,8 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 						<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 						</div>
-						<?php echo $form->textField($model, 'target_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),)); 
+						<?php echo $form->textField($model, 'target_dt',
+							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
 						?>
 					</div>
 				</div>
@@ -109,10 +109,10 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'year',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php 
+					<?php
 						$item = array();
 						for ($i=2015;$i<=2025;$i++) {$item[$i] = $i; }
-						echo $form->dropDownList($model, 'year', $item); 
+						echo $form->dropDownList($model, 'year', $item);
 					?>
 				</div>
 			</div>
@@ -120,15 +120,15 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 			<?php echo $form->hiddenField($model, 'year'); ?>
 		<?php endif ?>
 
-		
+
 		<?php if ($model->showField('month')): ?>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'month',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php 
+					<?php
 						$item = array();
 						for ($i=1;$i<=12;$i++) {$item[$i] = $i; }
-						echo $form->dropDownList($model, 'month', $item); 
+						echo $form->dropDownList($model, 'month', $item);
 					?>
 				</div>
 			</div>
@@ -140,12 +140,12 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'format',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php 
+					<?php
 						$item = array('EXCEL'=>'Excel','PDF'=>'PDF');
 						if ($model->showField('format_e')) $item = array('EXCEL'=>'Excel','PDF'=>'PDF','EMAIL'=>Yii::t('report','Email'));
-						echo $form->dropDownList($model, 'format', 
+						echo $form->dropDownList($model, 'format',
 							$item, array('disabled'=>($model->scenario=='view'))
-						); 
+						);
 					?>
 				</div>
 			</div>
@@ -157,7 +157,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 				<div class="form-group">
 					<?php echo $form->labelEx($model,'email',array('class'=>"col-sm-2 control-label")); ?>
 					<div class="col-sm-5">
-						<?php echo $form->emailField($model, 'email', 
+						<?php echo $form->emailField($model, 'email',
 							array('size'=>40,'maxlength'=>250)
 						); ?>
 					</div>

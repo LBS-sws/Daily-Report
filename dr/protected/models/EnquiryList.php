@@ -40,7 +40,7 @@ class EnquiryList extends CListPageModel
 					$clause .= General::getSqlConditionClause('c.name',$svalue);
 					break;
 				case 'customer':
-					$clause .= General::getSqlConditionClause('a.report', $svalue);
+					$clause .= General::getSqlConditionClause('a.customer', $svalue);
 					break;
 				case 'type':
 					$clause .= General::getSqlConditionClause('b.description', $svalue);

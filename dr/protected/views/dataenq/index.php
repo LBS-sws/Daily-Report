@@ -3,7 +3,7 @@ $this->pageTitle=Yii::app()->name . ' - Data Analysis';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'report-enq',
+'id'=>'customer-enq',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 //'layout'=>TbHtml::FORM_LAYOUT_INLINE,
