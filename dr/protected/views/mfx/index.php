@@ -4,7 +4,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
 'id'=>'report-form',
-'action'=>Yii::app()->createUrl('report/generate'),
+'action'=>Yii::app()->createUrl('mfx/view'),
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
@@ -27,7 +27,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
 		<?php echo TbHtml::button(Yii::t('misc','Submit'), array(
-				'submit'=>Yii::app()->createUrl('report/generate')));
+				'submit'=>Yii::app()->createUrl('mfx/view')));
 		?>
 	</div>
 	</div></div>

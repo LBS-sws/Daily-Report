@@ -176,13 +176,13 @@ $this->pageTitle=Yii::app()->name . ' - Month Report Form';
         </style>
         <table class="tftable4" border="1">
             <tr><td style="width: 10%">人事部</td><td colspan="4"></td><td><?php echo $model->excel['f116'];?></td></tr>
-            <tr><td>整体情况</td><td>所有同事劳动合同进展 (超过一个月没有签署劳动合同同事数目（张））</td><td style="width: 10%"><?php echo $model->excel['c117'];?></td><td style="width: 10%">Row:2 Cell:4</td><td style="width: 10%"><?php echo $model->excel['e117'];?></td><td style="width: 12%"></td></tr>
-            <tr><td rowspan="2">销售人员情况</td><td>销售人员流失率 （工作满一个月的）（离职销售人员/当月所有销售人员）</td><td><?php echo $model->excel['c118'];?></td><td>Row:3 Cell:4</td><td><?php echo $model->excel['e118'];?></td><td></td></tr>
-            <tr><td>销售区域空置率（公共区域/销售划分区域）</td><td><?php echo $model->excel['c119'];?></td><td>Row:3 Cell:4</td><td><?php echo $model->excel['e119'];?></td><td></td></tr>
-            <tr><td rowspan="3">外勤人员情况</td><td>离职技术员（工作满一个月的）人数% （当月离职技术人员/整体外勤技术人员）/td><td><?php echo $model->excel['c120'];?></td><td>Row:3 Cell:4</td><td><?php echo $model->excel['e120'];?></td><td></td></tr>
-            <tr><td>队长数目跟标准比例 （最多每5个技术员，就要有一个队长的设置)<br/>(技术员数目/6=标准队长数目， 比例 = 队长数目/标准队长数目）</td><td><?php echo $model->excel['c121'];?></td><td>Row:3 Cell:4</td><td><?php echo $model->excel['e121'];?></td><td></td></tr>
-            <tr><td>组长数目跟标准比例 （最多每30个技术员，就要有一个组长的设置)<br/>(技术员数目/30=标准组长数目， 比例 = 组长数目/标准数目）</td><td><?php echo $model->excel['c122'];?></td><td>Row:3 Cell:4</td><td><?php echo $model->excel['e122'];?></td><td></td></tr>
-            <tr><td>办公室人员情况</td><td>离职办公室（工作满一个月的）人数% （当月离职办公室人员/整体办公室人员）</td><td><?php echo $model->excel['c124'];?></td><td>Row:3 Cell:4</td><td><?php echo $model->excel['e124'];?></td><td></td></tr>
+            <tr><td>整体情况</td><td>所有同事劳动合同进展 (超过一个月没有签署劳动合同同事数目（张））</td><td style="width: 10%"><?php echo $model->excel['c117'];?></td><td style="width: 10%">0 : 5<br/>1 - 3 : 4<br/>3 - 5 : 3<br/>>5 : 0</td><td style="width: 10%"><?php echo $model->excel['e117'];?></td><td style="width: 12%"></td></tr>
+            <tr><td rowspan="2">销售人员情况</td><td>销售人员流失率 （工作满一个月的）（离职销售人员/当月所有销售人员）</td><td><?php echo $model->excel['c118'];?></td><td>0% - 10% : 5<br/>10% - 20% : 3<br/>20% - 30% : 1<br/>>30% : 0</td><td><?php echo $model->excel['e118'];?></td><td></td></tr>
+            <tr><td>销售区域空置率（公共区域/销售划分区域）</td><td><?php echo $model->excel['c119'];?></td><td>0% - 20%     :  5<br/>20% - 60%   :  3<br/>60%  - 100% :  1</td><td><?php echo $model->excel['e119'];?></td><td></td></tr>
+            <tr><td rowspan="3">外勤人员情况</td><td>离职技术员（工作满一个月的）人数% （当月离职技术人员/整体外勤技术人员）/td><td><?php echo $model->excel['c120'];?></td><td>0% - 5% : 5<br/>5% - 10% : 3<br/>10% - 15% : 1<br/>>15% : 0</td><td><?php echo $model->excel['e120'];?></td><td></td></tr>
+            <tr><td>队长数目跟标准比例 （最多每5个技术员，就要有一个队长的设置)<br/>(技术员数目/6=标准队长数目， 比例 = 队长数目/标准队长数目）</td><td><?php echo $model->excel['c121'];?></td><td>>100% : 5<br/>80% - 100% : 3<br/><= 80% : 1</td><td><?php echo $model->excel['e121'];?></td><td></td></tr>
+            <tr><td>组长数目跟标准比例 （最多每30个技术员，就要有一个组长的设置)<br/>(技术员数目/30=标准组长数目， 比例 = 组长数目/标准数目）</td><td><?php echo $model->excel['c122'];?></td><td>>100% : 5<br/>80% - 100% : 3<br/><= 80% : 1</td><td><?php echo $model->excel['e122'];?></td><td></td></tr>
+            <tr><td>办公室人员情况</td><td>离职办公室（工作满一个月的）人数% （当月离职办公室人员/整体办公室人员）</td><td><?php echo $model->excel['c124'];?></td><td>0% - 10% : 5<br/>10% - 20% : 3<br/>20% - 30% : 1<br/>>30% : 0</td><td><?php echo $model->excel['e124'];?></td><td></td></tr>
         </table>
     </div>
 
