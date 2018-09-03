@@ -88,6 +88,8 @@ class MonthController extends Controller
         $model->attributes = $_POST['MonthForm'];
         $model->retrieveDatas($model);
     }
+
+
 	public function actionEdit($index)
 	{
 		$model = new MonthForm('edit');
@@ -113,6 +115,7 @@ class MonthController extends Controller
         $model->sendDate($model);
 //        print_r('<pre/>');
 //        print_r($model);
+        $this->render('summarize',array('model'=>$model,));
     }
 
 	protected function performAjaxValidation($model)

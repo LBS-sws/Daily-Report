@@ -51,36 +51,84 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 <!--			--><?php //echo $form->hiddenField($model, 'city'); ?>
 <!--		--><?php //endif ?>
 
-		<?php if ($model->showField('start_dt')): ?>
-			<div class="form-group">
-				<?php echo $form->labelEx($model,'start_dt',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-3">
-					<div class="input-group date">
-						<div class="input-group-addon">
-							<i class="fa fa-calendar"></i>
-						</div>
-						<?php echo $form->textField($model, 'start_dt',
-							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
-						?>
-					</div>
-				</div>
-			</div>
-		<?php else: ?>
-			<?php echo $form->hiddenField($model, 'start_dt'); ?>
-		<?php endif ?>
 
 		<?php if ($model->showField('end_dt')): ?>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'end_dt',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-3">
-					<div class="input-group date">
-						<div class="input-group-addon">
-							<i class="fa fa-calendar"></i>
-						</div>
-						<?php echo $form->textField($model, 'end_dt',
-							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
-						?>
-					</div>
+				<div >
+                    <select id="city" class="select" name="ReportH02Form[start_dt]">
+                        <option value="2010">2010年</option>
+                        <option value="2011">2011年</option>
+                        <option value="2012">2012年</option>
+                        <option value="2013">2013年</option>
+                        <option value="2014">2014年</option>
+                        <option value="2015">2015年</option>
+                        <option value="2016">2016年</option>
+                        <option value="2017">2017年</option>
+                        <option value="2018">2018年</option>
+                        <option value="2019">2019年</option>
+                        <option value="2020">2020年</option>
+                        <option value="2021">2021年</option>
+                        <option value="2022">2022年</option>
+                        <option value="2023">2023年</option>
+                        <option value="2024">2024年</option>
+                        <option value="2025">2025年</option>
+                        <option value="2026">2026年</option>
+                        <option value="2027">2027年</option>
+                        <option value="2028">2028年</option>
+                        <option value="2029">2029年</option>
+                    </select>
+                                <select id="city" class="select" name="ReportH02Form[start_dt1]">
+                                    <option value="1">1月</option>
+                                    <option value="2">2月</option>
+                                    <option value="3">3月</option>
+                                    <option value="4">4月</option>
+                                    <option value="5">5月</option>
+                                    <option value="6">6月</option>
+                                    <option value="7">7月</option>
+                                    <option value="8">8月</option>
+                                    <option value="9">9月</option>
+                                    <option value="10">10月</option>
+                                    <option value="11">11月</option>
+                                    <option value="12">12月</option>
+                                </select> --至--
+                    <select id="city" class="select" name="ReportH02Form[end_dt]">
+                        <option value="2010">2010年</option>
+                        <option value="2011">2011年</option>
+                        <option value="2012">2012年</option>
+                        <option value="2013">2013年</option>
+                        <option value="2014">2014年</option>
+                        <option value="2015">2015年</option>
+                        <option value="2016">2016年</option>
+                        <option value="2017">2017年</option>
+                        <option value="2018">2018年</option>
+                        <option value="2019">2019年</option>
+                        <option value="2020">2020年</option>
+                        <option value="2021">2021年</option>
+                        <option value="2022">2022年</option>
+                        <option value="2023">2023年</option>
+                        <option value="2024">2024年</option>
+                        <option value="2025">2025年</option>
+                        <option value="2026">2026年</option>
+                        <option value="2027">2027年</option>
+                        <option value="2028">2028年</option>
+                        <option value="2029">2029年</option>
+                    </select>
+                    <select id="city" class="select" name="ReportH02Form[end_dt1]">
+                        <option value="1">1月</option>
+                        <option value="2">2月</option>
+                        <option value="3">3月</option>
+                        <option value="4">4月</option>
+                        <option value="5">5月</option>
+                        <option value="6">6月</option>
+                        <option value="7">7月</option>
+                        <option value="8">8月</option>
+                        <option value="9">9月</option>
+                        <option value="10">10月</option>
+                        <option value="11">11月</option>
+                        <option value="12">12月</option>
+                    </select>
+
 				</div>
 			</div>
 		<?php else: ?>

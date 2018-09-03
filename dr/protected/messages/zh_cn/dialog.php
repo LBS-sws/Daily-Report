@@ -39,8 +39,8 @@ return array(
 	'Date'=>'日期',
 	'Download'=>'下载',
 	'Exceeds file upload limit.'=>'超出文件上传限制。',
-    'Tijiao'=>'提交记录',
-    'Ti'=>'确认要提交？',
+    'TiJiao'=>'提交记录',
+    'Confirmation Ti'=>'确认要提交？',
 
 );
 ?>

@@ -377,6 +377,7 @@ class MonthForm extends CFormModel
 
     }
 	public function sendDate($model){
+        $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $market=$model['market'];
         $legwork=$model['legwork'];
@@ -450,22 +451,22 @@ WHERE hdr_id = '".$model['id']."'";
         $aa = Yii::app()->db->createCommand($sqlb)->execute();
         $from_addr = "it@lbsgroup.com.hk";
         if(count($a)==1){
-            $to_addr = "[" . $a[0]. "]";
+            $to_addr = "[\"" . $a[0]. "\"]";
         }
         if(count($a)==2){
-            $to_addr = "[".$a[0].",".$a[1]."]";
+            $to_addr = "[\"".$a[0]."\",\"".$a[1]."\"]";
         }
         if(count($a)==3){
-            $to_addr = "[".$a[0].",".$a[1].",".$a[2]."]";
+            $to_addr = "[\"".$a[0]."\",\"".$a[1]."\",\"".$a[2]."\"]";
         }
         if(count($a)==4){
-            $to_addr = "[".$a[0].",".$a[1].",".$a[2].",".$a[3]."]";
+            $to_addr = "[\"".$a[0]."\",\"".$a[1]."\",\"".$a[2]."\",\"".$a[3]."\"]";
         }
         if(count($a)==5){
-            $to_addr = "[".$a[0].",".$a[1].",".$a[2].",".$a[3].",".$a[4]."]";
+            $to_addr = "[\"".$a[0]."\",\"".$a[1]."\",\"".$a[2]."\",\"".$a[3]."\",\"".$a[4]."\"]";
         }
         if(count($a)==6){
-            $to_addr = "[".$a[0].",".$a[1].",".$a[2].",".$a[3].",".$a[4].",".$a[5]."]";
+            $to_addr = "[\"".$a[0]."\",\"".$a[1]."\",\"".$a[2]."\",\"".$a[3]."\",\"".$a[4]."\",\"".$a[5]."\"]";
         }
         $subject = "月报表总汇-" .$time;
         $description = "内容分析";
@@ -474,7 +475,7 @@ WHERE hdr_id = '".$model['id']."'";
         $msg_url = str_replace('{url}',$url, Yii::t('report',"Please click <a href=\"{url}\" onClick=\"return popup(this,'Daily Report');\">here</a> to download the report."));
         $message .= "<p>&nbsp;</p><p>$msg_url</p>";
         $lcu = "admin";
-        $aaa = Yii::app()->db->createCommand()->insert("swoper.swo_email_queue", array(
+        $aaa = Yii::app()->db->createCommand()->insert("swoper$suffix.swo_email_queue", array(
             'request_dt' => date('Y-m-d H:i:s'),
             'from_addr' => $from_addr,
             'to_addr' => $to_addr,
@@ -485,8 +486,8 @@ WHERE hdr_id = '".$model['id']."'";
             'lcu' => $lcu,
             'lcd' => date('Y-m-d H:i:s'),
         ));
-        print_r('<pre/>');
-        print_r($msg_url);
+//        print_r('<pre/>');
+//        print_r($msg_url);
     }
 
     public function getOutput($rowss){
