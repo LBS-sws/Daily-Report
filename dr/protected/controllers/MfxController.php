@@ -58,7 +58,7 @@ class MfxController extends Controller
 //			$model->attributes = $_POST['QcList'];
 //		} else {
 //			$session = Yii::app()->session;
-//			if (isset($session['criteria_a06']) && !empty($session['criteria_a06'])) {
+//			if (isset($session['criteria_a06']) && !empty($session['criteria_a06'])) {0
 //				$criteria = $session['criteria_a06'];
 //				$model->setCriteria($criteria);
 //			}
@@ -108,10 +108,10 @@ class MfxController extends Controller
 
 	
 	public static function allowReadWrite() {
-		return Yii::app()->user->validRWFunction('A06');
+		return Yii::app()->user->validRWFunction('H02');
 	}
 	
 	public static function allowReadOnly() {
-		return Yii::app()->user->validFunction('A06');
+		return Yii::app()->user->validFunction('H02');
 	}
 }
