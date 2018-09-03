@@ -11,9 +11,10 @@ class MonthList extends CListPageModel
 
 	public function retrieveDataByPage($pageNum=1)
 	{
+        $suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
 		$sql1 = "select *,b.name as cityname
-				from swo_monthly_hdr a,swo_city b			
+				from swo_monthly_hdr a,security$suffix.sec_city b			
 				where a.city='$city' and a.city=b.code
 			";
 		$sql2 = "select count(id)
