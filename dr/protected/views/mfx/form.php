@@ -21,7 +21,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
 	</ol>
 -->
 </section>
-
+<?php if(!empty($model->five)){?>
 <section class="content">
 <!--	--><?php //$this->widget('ext.layout.ListPageWidget', array(
 //			'title'=>Yii::t('monthly','Monthly Report Data List'),
@@ -136,6 +136,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
         <tr><td>办公室人员情况</td><td>离职办公室（工作满一个月的）人数% （当月离职办公室人员/整体办公室人员）</td><td></td><td></td><td></td><td>0% - 10% : 5<br/>10% - 20% : 3<br/>20% - 30% : 1<br/>>30% : 0</td></tr>
     </table>
 </section>
+<?php }else{echo "<br/><h1>暂无数据</h1>";}?>
 <?php
 //	echo $form->hiddenField($model,'pageNum');
 //	echo $form->hiddenField($model,'totalRow');

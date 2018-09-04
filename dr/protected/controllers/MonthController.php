@@ -128,10 +128,10 @@ class MonthController extends Controller
 	}
 	
 	public static function allowReadWrite() {
-		return Yii::app()->user->validRWFunction('A09');
+		return Yii::app()->user->validRWFunction('H01');
 	}
 	
 	public static function allowReadOnly() {
-		return Yii::app()->user->validFunction('A09');
+		return Yii::app()->user->validFunction('H01');
 	}
 }
