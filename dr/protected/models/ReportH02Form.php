@@ -115,6 +115,9 @@ class ReportH02Form extends CReportForm
 				order by b.month_no, c.excel_row
 			";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
+            if(empty($rows)){
+              $arr="";
+            }
             if(!empty($rows)){
                 $arr[]=$rows;
                 $b3=intval($rows[0]['data_value']);

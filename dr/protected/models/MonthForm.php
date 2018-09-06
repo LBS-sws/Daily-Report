@@ -510,34 +510,22 @@ WHERE hdr_id = '".$model['id']."'";
         $objPHPExcel = new PHPExcel;
         $objReader  = PHPExcel_IOFactory::createReader('Excel2007');
         $objPHPExcel = $objReader->load("protected/commands/template/m_template_one.xlsx");
-//        print_r('<pre/>');
-//print_r($model->record);
+        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
         foreach ($model->record as $arr ){
             $objPHPExcel->getActiveSheet()->setCellValue('B'.$arr['excel_row'], $arr['datavalueold']) ;
         }
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-        ob_start();
-        $objWriter->save('php://output');
-        $output = ob_get_clean();
-        spl_autoload_register(array('YiiBase','autoload'));
         $time=time();
         $str="templates/month_".$time.".xlsx";
-
-        header("Content-type:application/vnd.ms-excel"); //for pdf or excel file
-        //header('Content-Type:text/plain; charset=ISO-8859-15');
-        header('Content-Disposition: attachment; filename="'.$str.'"');
-        header('Content-Length: ' . strlen($arr['datavalueold']));
-        echo $arr['datavalueold'];
-        Yii::app()->end();
-
-
-//        $str= mb_convert_encoding("out/month_".$model['year_no'].'_'.$model['month_no'].".xls","gb2312","UTF-8");
-//
-//        $objWriter->save($str);
-//      //让访问浏览器直接下载文件流
-//       $url=$_SERVER['HTTP_HOST']."/dr/templates/month_".$time.".xlsx";
-//       Header('location:http://'.$url);
-
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
+        header("Content-Type:application/force-download");
+        header("Content-Type:application/vnd.ms-execl");
+        header("Content-Type:application/octet-stream");
+        header("Content-Type:application/download");;
+        header('Content-Disposition:attachment;filename="'.$str.'.xls"');
+        header("Content-Transfer-Encoding:binary");
+        $objWriter->save('php://output');
     }
 	
 	public function saveData()
