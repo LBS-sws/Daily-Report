@@ -391,19 +391,19 @@ class MonthForm extends CFormModel
 WHERE hdr_id = '".$model['id']."'";
         $int = Yii::app()->db->createCommand($in)->execute();
         $suffix = Yii::app()->params['envSuffix'];
-        $sql = "select approver_type, username from account.acc_approver where city='$city'";
+        $sql = "select approver_type, username from account$suffix.acc_approver where city='$city'";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
-        $sql1 = "SELECT email FROM securitydev.sec_user WHERE username='".$rows[0]['username']."'";
+        $sql1 = "SELECT email FROM security$suffix.sec_user WHERE username='".$rows[0]['username']."'";
         $a1 = Yii::app()->db->createCommand($sql1)->queryAll();
-        $sql2 = "SELECT email FROM securitydev.sec_user WHERE username='".$rows[1]['username']."'";
+        $sql2 = "SELECT email FROM security$suffix.sec_user WHERE username='".$rows[1]['username']."'";
         $a2 = Yii::app()->db->createCommand($sql2)->queryAll();
-        $sql3 = "SELECT email FROM securitydev.sec_user WHERE username='".$rows[2]['username']."'";
+        $sql3 = "SELECT email FROM security$suffix.sec_user WHERE username='".$rows[2]['username']."'";
         $a3 = Yii::app()->db->createCommand($sql3)->queryAll();
-        $sql4 = "SELECT email FROM securitydev.sec_user WHERE username='".$rows[3]['username']."'";
+        $sql4 = "SELECT email FROM security$suffix.sec_user WHERE username='".$rows[3]['username']."'";
         $a4 = Yii::app()->db->createCommand($sql4)->queryAll();
-        $sql5 = "SELECT email FROM securitydev.sec_user WHERE username='".$rows[4]['username']."'";
+        $sql5 = "SELECT email FROM security$suffix.sec_user WHERE username='".$rows[4]['username']."'";
         $a5 = Yii::app()->db->createCommand($sql5)->queryAll();
-        $sql6 = "SELECT email FROM securitydev.sec_user WHERE username='".$rows[5]['username']."'";
+        $sql6 = "SELECT email FROM security$suffix.sec_user WHERE username='".$rows[5]['username']."'";
         $a6 = Yii::app()->db->createCommand($sql6)->queryAll();
         $a=array($a1[0]['email'],$a2[0]['email'],$a3[0]['email'],$a4[0]['email'],$a5[0]['email']);
         $a=General::dedupToEmailList($a);
@@ -504,7 +504,9 @@ WHERE hdr_id = '".$model['id']."'";
 
 	public function retrieveDatas($model){
         Yii::$enableIncludePath = false;
-        Yii::import('application.extensions.PHPExcel.PHPExcel', 1);
+        $phpExcelPath = Yii::getPathOfAlias('ext.phpexcel');
+        spl_autoload_unregister(array('YiiBase','autoload'));
+        include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
         $objPHPExcel = new PHPExcel;
         $objReader  = PHPExcel_IOFactory::createReader('Excel2007');
         $objPHPExcel = $objReader->load("protected/commands/template/m_template_one.xlsx");

@@ -31,7 +31,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report Form';
 			<?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('misc','xiazai'), array(
 				'submit'=>Yii::app()->createUrl('month/xiazai')));
 			?>
-        <?php echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','fenxi'), array(
+        <?php echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','ZongJie'), array(
             'submit'=>Yii::app()->createUrl('month/summarize',array('index'=> $model->id))));
         ?>
 	</div>

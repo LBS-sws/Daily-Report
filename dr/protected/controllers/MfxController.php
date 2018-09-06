@@ -51,24 +51,10 @@ class MfxController extends Controller
 	public function actionIndex($pageNum=0) 
 	{
         $model = new ReportH02Form;
+        $model->retrieveDatas($model);
+//        print_r('<pre>');
 //        print_r($model);
         $this->render('index',array('model'=>$model));
-//		$model = new QcList;
-//		if (isset($_POST['QcList'])) {
-//			$model->attributes = $_POST['QcList'];
-//		} else {
-//			$session = Yii::app()->session;
-//			if (isset($session['criteria_a06']) && !empty($session['criteria_a06'])) {0
-//				$criteria = $session['criteria_a06'];
-//				$model->setCriteria($criteria);
-//			}
-//		}
-//
-//		$model->determinePageNum($pageNum);
-//
-//		$model->retrieveDataByPage($model->pageNum);
-
-//		$this->render('index');
 	}
 
 
