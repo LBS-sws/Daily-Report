@@ -515,15 +515,28 @@ WHERE hdr_id = '".$model['id']."'";
         foreach ($model->record as $arr ){
             $objPHPExcel->getActiveSheet()->setCellValue('B'.$arr['excel_row'], $arr['datavalueold']) ;
         }
-
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        ob_start();
+        $objWriter->save('php://output');
+        $output = ob_get_clean();
+        spl_autoload_register(array('YiiBase','autoload'));
         $time=time();
-        $str= mb_convert_encoding("out/month_".$model['year_no'].'_'.$model['month_no'].".xls","gb2312","UTF-8");
         $str="templates/month_".$time.".xlsx";
-        $objWriter->save($str);
-      //让访问浏览器直接下载文件流
-       $url=$_SERVER['HTTP_HOST']."/dr/templates/month_".$time.".xlsx";
-       Header('location:http://'.$url);
+
+        header("Content-type:application/vnd.ms-excel"); //for pdf or excel file
+        //header('Content-Type:text/plain; charset=ISO-8859-15');
+        header('Content-Disposition: attachment; filename="'.$str.'"');
+        header('Content-Length: ' . strlen($arr['datavalueold']));
+        echo $arr['datavalueold'];
+        Yii::app()->end();
+
+
+//        $str= mb_convert_encoding("out/month_".$model['year_no'].'_'.$model['month_no'].".xls","gb2312","UTF-8");
+//
+//        $objWriter->save($str);
+//      //让访问浏览器直接下载文件流
+//       $url=$_SERVER['HTTP_HOST']."/dr/templates/month_".$time.".xlsx";
+//       Header('location:http://'.$url);
 
     }
 	
