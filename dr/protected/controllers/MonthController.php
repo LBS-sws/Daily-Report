@@ -115,6 +115,7 @@ class MonthController extends Controller
         $model->sendDate($model);
 //        print_r('<pre/>');
 //        print_r($model);
+        Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Ok'));
         $this->render('summarize',array('model'=>$model,));
     }
 

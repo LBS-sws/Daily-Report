@@ -387,11 +387,19 @@ class MonthForm extends CFormModel
         $other=$model['other'];
         $index=$model['id'];
         $time=$model['year_no'].'/'.$model['month_no'];
+        $user = Yii::app()->user->id;
+        $id=$model['id'];
+        $sqla="select * from swo_monthly_comment where hdr_id='".$id."'";
+        $ros = Yii::app()->db->createCommand($sqla)->queryAll();
+        if(empty($ros)){
+            $in="insert into swo_monthly_comment(hdr_id,market,legwork,finance,service,personnel,other,luu,lcu) values('".$id."','".$market."','".$legwork."','".$finance."','".$service."','".$personnel."','".$other."','".$user."','".$user."')";
+        }else{
         $in="UPDATE swo_monthly_comment SET market = '".$market."',legwork = '".$legwork."',service = '".$service."',personnel = '".$personnel."',finance = '".$finance."',other = '".$other."'
 WHERE hdr_id = '".$model['id']."'";
+        }
         $int = Yii::app()->db->createCommand($in)->execute();
         $suffix = Yii::app()->params['envSuffix'];
-        $sql = "select approver_type, username from account.acc_approver where city='$city'";
+        $sql = "select approver_type, username from account$suffix.acc_approver where city='$city'";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         $sql1 = "SELECT email FROM security$suffix.sec_user WHERE username='".$rows[0]['username']."'";
         $a1 = Yii::app()->db->createCommand($sql1)->queryAll();
@@ -430,98 +438,28 @@ WHERE hdr_id = '".$model['id']."'";
         $aa = Yii::app()->db->createCommand($sqlb)->execute();
         $b=array($rows[0]['username'],$rows[1]['username'],$rows[2]['username'],$rows[3]['username'],$rows[4]['username'],$rows[5]['username']);
         $b=General::dedupToEmailList($b);
-     //   $c=json_encode($b);
+        //   $c=json_encode($b);
         if(count($b)==1){
-            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username)";
-            $aaa = Yii::app()->db->createCommand($sqlb);
-            if (strpos($sqlb,':username')!==false)
-                $aaa->bindParam(':username',json_encode($b[0]),PDO::PARAM_STR);
+            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."')";
         }
         if(count($b)==2){
-            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username),(:queue_id,:usernamea)";
-            $aaa = Yii::app()->db->createCommand($sqlb);
-            if (strpos($sqlb,':username')!==false)
-                $aaa->bindParam(':username',json_encode($b[0]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernamea')!==false)
-                $aaa->bindParam(':usernamea',json_encode($b[1]),PDO::PARAM_STR);
+            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."'),('".$qid."','".$b[1]."')";
         }
         if(count($b)==3){
-            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username),(:queue_id,:usernamea),(:queue_id,:usernameb)";
-            $aaa = Yii::app()->db->createCommand($sqlb);
-            if (strpos($sqlb,':username')!==false)
-                $aaa->bindParam(':username',json_encode($b[0]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernamea')!==false)
-                $aaa->bindParam(':usernamea',json_encode($b[1]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernameb')!==false)
-                $aaa->bindParam(':usernameb',json_encode($b[2]),PDO::PARAM_STR);
+            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."'),('".$qid."','".$b[1]."'),('".$qid."','".$b[2]."')";
         }
         if(count($b)==4){
-            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username),(:queue_id,:usernamea),(:queue_id,:usernameb),(:queue_id,:usernamec)";
-            $aaa = Yii::app()->db->createCommand($sqlb);
-            if (strpos($sqlb,':username')!==false)
-                $aaa->bindParam(':username',json_encode($b[0]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernamea')!==false)
-                $aaa->bindParam(':usernamea',json_encode($b[1]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernameb')!==false)
-                $aaa->bindParam(':usernameb',json_encode($b[2]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernamec')!==false)
-                $aaa->bindParam(':usernamec',json_encode($b[3]),PDO::PARAM_STR);
+            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."'),('".$qid."','".$b[1]."'),('".$qid."','".$b[2]."'),('".$qid."','".$b[3]."')";
         }
         if(count($b)==5){
-            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username),(:queue_id,:usernamea),(:queue_id,:usernameb),(:queue_id,:usernamec),(:queue_id,:usernamed)";
-            $aaa = Yii::app()->db->createCommand($sqlb);
-            if (strpos($sqlb,':username')!==false)
-                $aaa->bindParam(':username',json_encode($b[0]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernamea')!==false)
-                $aaa->bindParam(':usernamea',json_encode($b[1]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernameb')!==false)
-                $aaa->bindParam(':usernameb',json_encode($b[2]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernamec')!==false)
-                $aaa->bindParam(':usernamec',json_encode($b[3]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernamed')!==false)
-                $aaa->bindParam(':usernamed',json_encode($b[4]),PDO::PARAM_STR);
+            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."'),('".$qid."','".$b[1]."'),('".$qid."','".$b[2]."'),('".$qid."','".$b[3]."'),('".$qid."','".$b[4]."')";
         }
         if(count($b)==6){
-            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username),(:queue_id,:usernamea),(:queue_id,:usernameb),(:queue_id,:usernamec),(:queue_id,:usernamed),(:queue_id,:usernamee)";
-            $aaa = Yii::app()->db->createCommand($sqlb);
-            if (strpos($sqlb,':username')!==false)
-                $aaa->bindParam(':username',json_encode($b[0]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernamea')!==false)
-                $aaa->bindParam(':usernamea',json_encode($b[1]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernameb')!==false)
-                $aaa->bindParam(':usernameb',json_encode($b[2]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernamec')!==false)
-                $aaa->bindParam(':usernamec',json_encode($b[3]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernamed')!==false)
-                $aaa->bindParam(':usernamed',json_encode($b[4]),PDO::PARAM_STR);
-            if (strpos($sqlb,':usernamee')!==false)
-                $aaa->bindParam(':usernamee',json_encode($b[5]),PDO::PARAM_STR);
+            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."'),('".$qid."','".$b[1]."'),('".$qid."','".$b[2]."'),('".$qid."','".$b[3]."'),('".$qid."','".$b[4]."'),('".$qid."','".$b[5]."')";
         }
-//        if(count($b)==6){
-//            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username),(:queue_id,'".$b[1]."'),('".$qid."','".$b[2]."'),('".$qid."','".$b[3]."'),('".$qid."','".$b[4]."'),('".$qid."','".$b[5]."')";
-//        }
-        if (strpos($sqlb,':queue_id')!==false)
-            $aaa->bindParam(':queue_id',$qid,PDO::PARAM_INT);
-        $cnt = $aaa->execute();
+        $aa = Yii::app()->db->createCommand($sqlb)->execute();
         $from_addr = "it@lbsgroup.com.hk";
-        if(count($a)==1){
-            $to_addr = "[\"" . $a[0]. "\"]";
-        }
-        if(count($a)==2){
-            $to_addr = "[\"".$a[0]."\",\"".$a[1]."\"]";
-        }
-        if(count($a)==3){
-            $to_addr = "[\"".$a[0]."\",\"".$a[1]."\",\"".$a[2]."\"]";
-        }
-        if(count($a)==4){
-            $to_addr = "[\"".$a[0]."\",\"".$a[1]."\",\"".$a[2]."\",\"".$a[3]."\"]";
-        }
-        if(count($a)==5){
-            $to_addr = "[\"".$a[0]."\",\"".$a[1]."\",\"".$a[2]."\",\"".$a[3]."\",\"".$a[4]."\"]";
-        }
-        if(count($a)==6){
-            $to_addr = "[\"".$a[0]."\",\"".$a[1]."\",\"".$a[2]."\",\"".$a[3]."\",\"".$a[4]."\",\"".$a[5]."\"]";
-        }
+        $to_addr=json_encode($a);
         $subject = "月报表总汇-" .$time;
         $description = "内容分析";
         $message = "销售：<br/>" . $market . "<br/>外勤：<br/>" .$legwork ."<br/>财务：<br/>" . $service ."<br/>营运：<br/>" .$personnel ."<br/>人事：<br/>" .$finance ."<br/>其他：<br/>" .$other ;
@@ -529,7 +467,7 @@ WHERE hdr_id = '".$model['id']."'";
         $msg_url = str_replace('{url}',$url, Yii::t('report',"Please click <a href=\"{url}\" onClick=\"return popup(this,'Daily Report');\">here</a> to download the report."));
         $message .= "<p>&nbsp;</p><p>$msg_url</p>";
         $lcu = "admin";
-        $aaa = Yii::app()->db->createCommand()->insert("swoper$suffix.swo_email_queue", array(
+        $aaa = Yii::app()->db->createCommand()->insert("swo_email_queue", array(
             'request_dt' => date('Y-m-d H:i:s'),
             'from_addr' => $from_addr,
             'to_addr' => $to_addr,
