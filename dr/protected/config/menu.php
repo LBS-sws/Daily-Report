@@ -128,7 +128,7 @@ return array(
 			),
 		),
 	),
-    'Data View'=>array(
+    '月报表'=>array(
         'access'=>'H',
         'items'=>array(
             'Monthly Report Data'=>array(

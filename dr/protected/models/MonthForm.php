@@ -2,71 +2,71 @@
 
 class MonthForm extends CFormModel
 {
-	public $id;
-	public $year_no;
-	public $month_no;
-	public $record = array();
-	public $excel=array();
-	public $market;
+    public $id;
+    public $year_no;
+    public $month_no;
+    public $record = array();
+    public $excel=array();
+    public $market;
     public $legwork;
     public $service;
     public $personnel;
     public $finance;
     public $other;
 
-	public function attributeLabels()
-	{
-		return array(
-			'year_no'=>Yii::t('report','Year'),
-			'month_no'=>Yii::t('report','Month'),
-		);
-	}
+    public function attributeLabels()
+    {
+        return array(
+            'year_no'=>Yii::t('report','Year'),
+            'month_no'=>Yii::t('report','Month'),
+        );
+    }
 
-	/**
-	 * Declares the validation rules.
-	 */
-	public function rules()
-	{
-		return array(
-			array('id, year_no, month_no,market,legwork,service,personnel,finance,other','safe'),
-			array('record','validateRecord'),
-		);
-	}
+    /**
+     * Declares the validation rules.
+     */
+    public function rules()
+    {
+        return array(
+            array('id, year_no, month_no,market,legwork,service,personnel,finance,other','safe'),
+            array('record','validateRecord'),
+        );
+    }
 
-	public function validateRecord($attribute, $params){
-		$message = '';
-		foreach ($this->record as $data) {
-			if (isset($data['updtype']) && $data['updtype']=='M') {
-				if (isset($data['fieldtype'])) {
-					switch($data['fieldtype']) {
-						case 'N':
-							if (isset($data['datavalue']) && !empty($data['datavalue']) && !is_numeric($data['datavalue'])) {
-								$message = $data['name'].Yii::t('monthly',' is invalid');
-								$this->addError($attribute,$message);
-							}
-						break;
-					}
-				}
-			}
-		}
-	}
+    public function validateRecord($attribute, $params){
+        $message = '';
+        foreach ($this->record as $data) {
+            if (isset($data['updtype']) && $data['updtype']=='M') {
+                if (isset($data['fieldtype'])) {
+                    switch($data['fieldtype']) {
+                        case 'N':
+                            if (isset($data['datavalue']) && !empty($data['datavalue']) && !is_numeric($data['datavalue'])) {
+                                $message = $data['name'].Yii::t('monthly',' is invalid');
+                                $this->addError($attribute,$message);
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+    }
     public function  retrieveZong($index){
 
 
 
     }
-	public function retrieveData($index) {
-		$city = Yii::app()->user->city();
-		$sql = "select a.year_no, a.month_no, b.id, b.hdr_id, b.data_field, b.data_value, c.name, c.upd_type, c.field_type, b.manual_input , c.excel_row  
+    public function retrieveData($index) {
+        $city = Yii::app()->user->city();
+        $sql = "select a.year_no, a.month_no, b.id, b.hdr_id, b.data_field, b.data_value, c.name, c.upd_type, c.field_type, b.manual_input , c.excel_row  
 				from swo_monthly_hdr a, swo_monthly_dtl b, swo_monthly_field c 
 				where a.id=$index and a.city='$city'
 				and a.id=b.hdr_id and b.data_field=c.code
 				and c.status='Y'
 				order by c.excel_row
 			";
-		$rowss = Yii::app()->db->createCommand($sql)->queryAll();
+        $rowss = Yii::app()->db->createCommand($sql)->queryAll();
 
-            $sql="select b.month_no, c.excel_row, a.data_value, c.field_type ,c.name
+        $sql="select b.month_no, c.excel_row, a.data_value, c.field_type ,c.name
                     from 
                         swo_monthly_dtl a, swo_monthly_hdr b, swo_monthly_field c  				  
                     where b.id='$index' and b.city='$city'
@@ -338,15 +338,15 @@ class MonthForm extends CFormModel
         $this->excel['f116']=$f116;
         $this->excel['f75']=$f75;
 
-		if (count($rowss) > 0) {
-			$hid = 0;
-			foreach ($rowss as $rowa) {
-				if ($hid!=$rowa['hdr_id']) {
-					$hid = $rowa['hdr_id'];
-					$this->id = $hid;
-					$this->year_no = $rowa['year_no'];
-					$this->month_no = $rowa['month_no'];
-					if(count($ros)>0){
+        if (count($rowss) > 0) {
+            $hid = 0;
+            foreach ($rowss as $rowa) {
+                if ($hid!=$rowa['hdr_id']) {
+                    $hid = $rowa['hdr_id'];
+                    $this->id = $hid;
+                    $this->year_no = $rowa['year_no'];
+                    $this->month_no = $rowa['month_no'];
+                    if(count($ros)>0){
                         $this->market = $ros[0]['market'];
                         $this->legwork = $ros[0]['legwork'];
                         $this->service = $ros[0]['service'];
@@ -354,29 +354,29 @@ class MonthForm extends CFormModel
                         $this->finance = $ros[0]['finance'];
                         $this->other = $ros[0]['other'];
                     }
-				}
-				$temp = array();
-				$temp['id'] = $rowa['id'];
-				$temp['code'] = $rowa['data_field'];
-				$temp['name'] = $rowa['name'];
-				$temp['datavalue'] = $rowa['data_value'];
-				$temp['datavalueold'] = $rowa['data_value'];
-				$temp['updtype'] = $rowa['upd_type'];
-				$temp['fieldtype'] = $rowa['field_type'];
-				$temp['manualinput'] = $rowa['manual_input'];
+                }
+                $temp = array();
+                $temp['id'] = $rowa['id'];
+                $temp['code'] = $rowa['data_field'];
+                $temp['name'] = $rowa['name'];
+                $temp['datavalue'] = $rowa['data_value'];
+                $temp['datavalueold'] = $rowa['data_value'];
+                $temp['updtype'] = $rowa['upd_type'];
+                $temp['fieldtype'] = $rowa['field_type'];
+                $temp['manualinput'] = $rowa['manual_input'];
                 $temp['excel_row'] = $rowa['excel_row'];
-				$this->record[$rowa['data_field']] = $temp;
-			}
-		}
+                $this->record[$rowa['data_field']] = $temp;
+            }
+        }
 //        print_r('<pre>');
 //        print_r($ros);
-		return true;
-	}
+        return true;
+    }
 
-	public function retrieveDataa(){
+    public function retrieveDataa(){
 
     }
-	public function sendDate($model){
+    public function sendDate($model){
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $market=$model['market'];
@@ -391,7 +391,7 @@ class MonthForm extends CFormModel
 WHERE hdr_id = '".$model['id']."'";
         $int = Yii::app()->db->createCommand($in)->execute();
         $suffix = Yii::app()->params['envSuffix'];
-        $sql = "select approver_type, username from account$suffix.acc_approver where city='$city'";
+        $sql = "select approver_type, username from account.acc_approver where city='$city'";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         $sql1 = "SELECT email FROM security$suffix.sec_user WHERE username='".$rows[0]['username']."'";
         $a1 = Yii::app()->db->createCommand($sql1)->queryAll();
@@ -425,30 +425,84 @@ WHERE hdr_id = '".$model['id']."'";
         if (strpos($sqla,':rpt_content')!==false)
             $aa->bindParam(':rpt_content',$content,PDO::PARAM_LOB);
         $cnt = $aa->execute();
-       $qid=Yii::app()->db->getLastInsertID();
+        $qid=Yii::app()->db->getLastInsertID();
         $sqlb="INSERT INTO swo_queue_param (queue_id,param_field,param_value) VALUES ('".$qid."','RPT_ID','monthlyrpt')";
         $aa = Yii::app()->db->createCommand($sqlb)->execute();
         $b=array($rows[0]['username'],$rows[1]['username'],$rows[2]['username'],$rows[3]['username'],$rows[4]['username'],$rows[5]['username']);
         $b=General::dedupToEmailList($b);
+     //   $c=json_encode($b);
         if(count($b)==1){
-            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."')";
+            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username)";
+            $aaa = Yii::app()->db->createCommand($sqlb);
+            if (strpos($sqlb,':username')!==false)
+                $aaa->bindParam(':username',json_encode($b[0]),PDO::PARAM_STR);
         }
         if(count($b)==2){
-            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."'),('".$qid."','".$b[1]."')";
+            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username),(:queue_id,:usernamea)";
+            $aaa = Yii::app()->db->createCommand($sqlb);
+            if (strpos($sqlb,':username')!==false)
+                $aaa->bindParam(':username',json_encode($b[0]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernamea')!==false)
+                $aaa->bindParam(':usernamea',json_encode($b[1]),PDO::PARAM_STR);
         }
         if(count($b)==3){
-            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."'),('".$qid."','".$b[1]."'),('".$qid."','".$b[2]."')";
+            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username),(:queue_id,:usernamea),(:queue_id,:usernameb)";
+            $aaa = Yii::app()->db->createCommand($sqlb);
+            if (strpos($sqlb,':username')!==false)
+                $aaa->bindParam(':username',json_encode($b[0]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernamea')!==false)
+                $aaa->bindParam(':usernamea',json_encode($b[1]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernameb')!==false)
+                $aaa->bindParam(':usernameb',json_encode($b[2]),PDO::PARAM_STR);
         }
         if(count($b)==4){
-            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."'),('".$qid."','".$b[1]."'),('".$qid."','".$b[2]."'),('".$qid."','".$b[3]."')";
+            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username),(:queue_id,:usernamea),(:queue_id,:usernameb),(:queue_id,:usernamec)";
+            $aaa = Yii::app()->db->createCommand($sqlb);
+            if (strpos($sqlb,':username')!==false)
+                $aaa->bindParam(':username',json_encode($b[0]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernamea')!==false)
+                $aaa->bindParam(':usernamea',json_encode($b[1]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernameb')!==false)
+                $aaa->bindParam(':usernameb',json_encode($b[2]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernamec')!==false)
+                $aaa->bindParam(':usernamec',json_encode($b[3]),PDO::PARAM_STR);
         }
         if(count($b)==5){
-            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."'),('".$qid."','".$b[1]."'),('".$qid."','".$b[2]."'),('".$qid."','".$b[3]."'),('".$qid."','".$b[4]."')";
+            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username),(:queue_id,:usernamea),(:queue_id,:usernameb),(:queue_id,:usernamec),(:queue_id,:usernamed)";
+            $aaa = Yii::app()->db->createCommand($sqlb);
+            if (strpos($sqlb,':username')!==false)
+                $aaa->bindParam(':username',json_encode($b[0]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernamea')!==false)
+                $aaa->bindParam(':usernamea',json_encode($b[1]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernameb')!==false)
+                $aaa->bindParam(':usernameb',json_encode($b[2]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernamec')!==false)
+                $aaa->bindParam(':usernamec',json_encode($b[3]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernamed')!==false)
+                $aaa->bindParam(':usernamed',json_encode($b[4]),PDO::PARAM_STR);
         }
         if(count($b)==6){
-            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."'),('".$qid."','".$b[1]."'),('".$qid."','".$b[2]."'),('".$qid."','".$b[3]."'),('".$qid."','".$b[4]."'),('".$qid."','".$b[5]."')";
+            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username),(:queue_id,:usernamea),(:queue_id,:usernameb),(:queue_id,:usernamec),(:queue_id,:usernamed),(:queue_id,:usernamee)";
+            $aaa = Yii::app()->db->createCommand($sqlb);
+            if (strpos($sqlb,':username')!==false)
+                $aaa->bindParam(':username',json_encode($b[0]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernamea')!==false)
+                $aaa->bindParam(':usernamea',json_encode($b[1]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernameb')!==false)
+                $aaa->bindParam(':usernameb',json_encode($b[2]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernamec')!==false)
+                $aaa->bindParam(':usernamec',json_encode($b[3]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernamed')!==false)
+                $aaa->bindParam(':usernamed',json_encode($b[4]),PDO::PARAM_STR);
+            if (strpos($sqlb,':usernamee')!==false)
+                $aaa->bindParam(':usernamee',json_encode($b[5]),PDO::PARAM_STR);
         }
-        $aa = Yii::app()->db->createCommand($sqlb)->execute();
+//        if(count($b)==6){
+//            $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES (:queue_id,:username),(:queue_id,'".$b[1]."'),('".$qid."','".$b[2]."'),('".$qid."','".$b[3]."'),('".$qid."','".$b[4]."'),('".$qid."','".$b[5]."')";
+//        }
+        if (strpos($sqlb,':queue_id')!==false)
+            $aaa->bindParam(':queue_id',$qid,PDO::PARAM_INT);
+        $cnt = $aaa->execute();
         $from_addr = "it@lbsgroup.com.hk";
         if(count($a)==1){
             $to_addr = "[\"" . $a[0]. "\"]";
@@ -501,19 +555,52 @@ WHERE hdr_id = '".$model['id']."'";
         return $excel->getOutput();
     }
 
+    /*
+        public function retrieveDatas($model){
+            Yii::$enableIncludePath = false;
+            $phpExcelPath = Yii::getPathOfAlias('ext.phpexcel');
+            spl_autoload_unregister(array('YiiBase','autoload'));
+            include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
+            $objPHPExcel = new PHPExcel;
+            $objReader  = PHPExcel_IOFactory::createReader('Excel2007');
+            $objPHPExcel = $objReader->load("protected/commands/template/m_template_one.xlsx");
+            $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+            foreach ($model->record as $arr ){
+                $objPHPExcel->getActiveSheet()->setCellValue('B'.$arr['excel_row'], $arr['datavalueold']) ;
+            }
+            $time=time();
+            $str="templates/month_".$time.".xlsx";
+            header("Pragma: public");
+            header("Expires: 0");
+            header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
+            header("Content-Type:application/force-download");
+            header("Content-Type:application/vnd.ms-execl");
+            header("Content-Type:application/octet-stream");
+            header("Content-Type:application/download");;
+            header('Content-Disposition:attachment;filename="'.$str.'.xls"');
+            header("Content-Transfer-Encoding:binary");
+            $objWriter->save('php://output');
+        }
+    */
 
-	public function retrieveDatas($model){
+    public function retrieveDatas($model){
         Yii::$enableIncludePath = false;
         $phpExcelPath = Yii::getPathOfAlias('ext.phpexcel');
         spl_autoload_unregister(array('YiiBase','autoload'));
         include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
         $objPHPExcel = new PHPExcel;
         $objReader  = PHPExcel_IOFactory::createReader('Excel2007');
-        $objPHPExcel = $objReader->load("protected/commands/template/m_template_one.xlsx");
-        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+        $path = Yii::app()->basePath.'/commands/template/m_template_one.xlsx';
+        $objPHPExcel = $objReader->load($path);
         foreach ($model->record as $arr ){
             $objPHPExcel->getActiveSheet()->setCellValue('B'.$arr['excel_row'], $arr['datavalueold']) ;
         }
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        ob_start();
+        $objWriter->save('php://output');
+        $output = ob_get_clean();
+        spl_autoload_register(array('YiiBase','autoload'));
         $time=time();
         $str="templates/month_".$time.".xlsx";
         header("Pragma: public");
@@ -523,30 +610,31 @@ WHERE hdr_id = '".$model['id']."'";
         header("Content-Type:application/vnd.ms-execl");
         header("Content-Type:application/octet-stream");
         header("Content-Type:application/download");;
-        header('Content-Disposition:attachment;filename="'.$str.'.xls"');
+        header('Content-Disposition:attachment;filename="'.$str.'"');
         header("Content-Transfer-Encoding:binary");
-        $objWriter->save('php://output');
+        echo $output;
     }
-	
-	public function saveData()
-	{
-		$connection = Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->saveMonthly($connection);
-			$transaction->commit();
-		}
-		catch(Exception $e) {
-			$transaction->rollback();
-			throw new CHttpException(404,'Cannot update. ('.$e->getMessage().')');
-		}
-	}
 
-	protected function saveMonthly(&$connection) {
+
+    public function saveData()
+    {
+        $connection = Yii::app()->db;
+        $transaction=$connection->beginTransaction();
+        try {
+            $this->saveMonthly($connection);
+            $transaction->commit();
+        }
+        catch(Exception $e) {
+            $transaction->rollback();
+            throw new CHttpException(404,'Cannot update. ('.$e->getMessage().')');
+        }
+    }
+
+    protected function saveMonthly(&$connection) {
         $user = Yii::app()->user->id;
-		$sql = '';
-		switch ($this->scenario) {
-			case 'edit':
+        $sql = '';
+        switch ($this->scenario) {
+            case 'edit':
 //                $sql="insert into swo_monthly_comment(hdr_id,market,legwork,finance,service,personnel,other,luu,lcu) values(:hdr_id,:market,:legwork,:finance,:service,:personnel,:other,:luu,:lcu)
 //on duplicate key update market = :market, legwork = :legwork, finance = :finance , service = :service , personnel = :personnel , other = :other , luu= :luu)";
                 $sqla="select * from swo_monthly_comment where hdr_id=$this->id";
@@ -557,9 +645,9 @@ WHERE hdr_id = '".$model['id']."'";
                     $sql="UPDATE swo_monthly_comment SET market =:market,legwork = :legwork,service = :service,personnel = :personnel,finance =:finance,other = :other,luu=:luu
 WHERE hdr_id = :hdr_id";
                 }
-				break;
-		}
-		if (empty($sql)) return false;
+                break;
+        }
+        if (empty($sql)) return false;
 //		$city = Yii::app()->user->city();
 //		$uid = Yii::app()->user->id;
 //		$select = "select code from swo_monthly_field
@@ -568,33 +656,33 @@ WHERE hdr_id = :hdr_id";
 //				";
 //		$rows = Yii::app()->db->createCommand($select)->queryAll();
 //
-			$command=$connection->createCommand($sql);
+        $command=$connection->createCommand($sql);
 //			print_r('<pre>');
 //            print_r($user);
 //            print_r($this);
 //            exit();
-			if (isset($this)) {
-				if (strpos($sql,':hdr_id')!==false)
-					$command->bindParam(':hdr_id',$this->id,PDO::PARAM_INT);
-				if (strpos($sql,':market')!==false)
-					$command->bindParam(':market',$this->market,PDO::PARAM_STR);
-                if (strpos($sql,':legwork')!==false)
-                    $command->bindParam(':legwork',$this->legwork,PDO::PARAM_STR);
-                if (strpos($sql,':finance')!==false)
-                    $command->bindParam(':finance',$this->finance,PDO::PARAM_STR);
-                if (strpos($sql,':service')!==false)
-                    $command->bindParam(':service',$this->service,PDO::PARAM_STR);
-                if (strpos($sql,':personnel')!==false)
-                    $command->bindParam(':personnel',$this->personnel,PDO::PARAM_STR);
-                if (strpos($sql,':other')!==false)
-                    $command->bindParam(':other',$this->other,PDO::PARAM_STR);
-                if (strpos($sql,':luu')!==false)
-                    $command->bindParam(':luu',$user,PDO::PARAM_STR);
-                if (strpos($sql,':lcu')!==false)
-                    $command->bindParam(':lcu',$user,PDO::PARAM_STR);
-				$command->execute();
-			}
+        if (isset($this)) {
+            if (strpos($sql,':hdr_id')!==false)
+                $command->bindParam(':hdr_id',$this->id,PDO::PARAM_INT);
+            if (strpos($sql,':market')!==false)
+                $command->bindParam(':market',$this->market,PDO::PARAM_STR);
+            if (strpos($sql,':legwork')!==false)
+                $command->bindParam(':legwork',$this->legwork,PDO::PARAM_STR);
+            if (strpos($sql,':finance')!==false)
+                $command->bindParam(':finance',$this->finance,PDO::PARAM_STR);
+            if (strpos($sql,':service')!==false)
+                $command->bindParam(':service',$this->service,PDO::PARAM_STR);
+            if (strpos($sql,':personnel')!==false)
+                $command->bindParam(':personnel',$this->personnel,PDO::PARAM_STR);
+            if (strpos($sql,':other')!==false)
+                $command->bindParam(':other',$this->other,PDO::PARAM_STR);
+            if (strpos($sql,':luu')!==false)
+                $command->bindParam(':luu',$user,PDO::PARAM_STR);
+            if (strpos($sql,':lcu')!==false)
+                $command->bindParam(':lcu',$user,PDO::PARAM_STR);
+            $command->execute();
+        }
 
-		return true;
-	}
+        return true;
+    }
 }
