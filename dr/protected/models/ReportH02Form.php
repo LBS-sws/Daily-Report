@@ -59,6 +59,41 @@ class ReportH02Form extends CReportForm
         $this->date=$year_arr;
     }
 
+    public function retrieveXiaZai($model){
+        Yii::$enableIncludePath = false;
+        $phpExcelPath = Yii::getPathOfAlias('ext.phpexcel');
+        spl_autoload_unregister(array('YiiBase','autoload'));
+        include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
+        $objPHPExcel = new PHPExcel;
+        $objReader  = PHPExcel_IOFactory::createReader('Excel2007');
+        $path = Yii::app()->basePath.'/commands/template/month_more.xlsx';
+        $objPHPExcel = $objReader->load($path);
+//        foreach ($model->record as $arr ){
+//            $objPHPExcel->getActiveSheet()->setCellValue('B'.$arr['excel_row'], $arr['datavalueold']) ;
+//        }
+        $num_rows = $objPHPExcel->getActiveSheet()->getHighestColumn();
+        $objPHPExcel->getActiveSheet()->insertNewColumnBefore("D", 1);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(17);
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        ob_start();
+        $objWriter->save('php://output');
+        $output = ob_get_clean();
+        spl_autoload_register(array('YiiBase','autoload'));
+        $time=time();
+        $str="templates/month_".$time.".xlsx";
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
+        header("Content-Type:application/force-download");
+        header("Content-Type:application/vnd.ms-execl");
+        header("Content-Type:application/octet-stream");
+        header("Content-Type:application/download");;
+        header('Content-Disposition:attachment;filename="'.$str.'"');
+        header("Content-Transfer-Encoding:binary");
+        echo $output;
+    }
+
+
 	public function retrieveData($model){
         //获取月份
         $start_date = $model['_scenario']['start_dt']."-".$model['_scenario']['start_dt1']."-1"; // 自动为00:00:00 时分秒
@@ -150,40 +185,40 @@ class ReportH02Form extends CReportForm
                 $b31=intval($rows[27]['data_value']);
                 $b32=intval($rows[28]['data_value']);
                 $b33=intval($rows[29]['data_value']);
-                $b35=intval($rows[30]['data_value']);
-                $b37=intval($rows[31]['data_value']);
-                $b38=intval($rows[32]['data_value']);
-                $b39=intval($rows[33]['data_value']);
-                $b41=intval($rows[34]['data_value']);
-                $b42=intval($rows[35]['data_value']);
-                $b43=intval($rows[36]['data_value']);
-                $b44=intval($rows[37]['data_value']);
-                $b45=intval($rows[38]['data_value']);
-                $b46=intval($rows[39]['data_value']);
-                $b47=intval($rows[40]['data_value']);
-                $b48=intval($rows[41]['data_value']);
-                $b49=intval($rows[42]['data_value']);
-                $b50=$rows[43]['data_value'];
-                $b51=intval($rows[44]['data_value']);
-                $b52=intval($rows[45]['data_value']);
-                $b54=intval($rows[46]['data_value']);
-                $b55=intval($rows[47]['data_value']);
-                $b56=intval($rows[48]['data_value']);
-                $b57=intval($rows[49]['data_value']);
-                $b58=intval($rows[50]['data_value']);
-                $b59=intval($rows[51]['data_value']);
-                $b60=intval($rows[52]['data_value']);
-                $b62=intval($rows[53]['data_value']);
-                $b63=intval($rows[54]['data_value']);
-                $b64=intval($rows[55]['data_value']);
-                $b65=intval($rows[56]['data_value']);
-                $b66=intval($rows[57]['data_value']);
-                $b67=intval($rows[58]['data_value']);
-                $b68=intval($rows[59]['data_value']);
-                $b69=intval($rows[60]['data_value']);
-                $b70=intval($rows[61]['data_value']);
-                $b71=0;
-                $b72=0;
+                $b35=intval($rows[31]['data_value']);
+                $b37=intval($rows[32]['data_value']);
+                $b38=intval($rows[33]['data_value']);
+                $b39=intval($rows[34]['data_value']);
+                $b41=intval($rows[35]['data_value']);
+                $b42=intval($rows[36]['data_value']);
+                $b43=intval($rows[37]['data_value']);
+                $b44=intval($rows[38]['data_value']);
+                $b45=intval($rows[39]['data_value']);
+                $b46=intval($rows[40]['data_value']);
+                $b47=intval($rows[41]['data_value']);
+                $b48=intval($rows[42]['data_value']);
+                $b49=intval($rows[43]['data_value']);
+                $b50=intval($rows[44]['data_value']);
+                $b51=intval($rows[45]['data_value']);
+                $b52=intval($rows[46]['data_value']);
+                $b54=intval($rows[47]['data_value']);
+                $b55=intval($rows[48]['data_value']);
+                $b56=intval($rows[49]['data_value']);
+                $b57=intval($rows[50]['data_value']);
+                $b58=intval($rows[51]['data_value']);
+                $b59=intval($rows[52]['data_value']);
+                $b60=intval($rows[53]['data_value']);
+                $b62=intval($rows[54]['data_value']);
+                $b63=intval($rows[55]['data_value']);
+                $b64=intval($rows[56]['data_value']);
+                $b65=intval($rows[57]['data_value']);
+                $b66=intval($rows[58]['data_value']);
+                $b67=intval($rows[59]['data_value']);
+                $b68=intval($rows[60]['data_value']);
+                $b69=intval($rows[61]['data_value']);
+                $b70=intval($rows[62]['data_value']);
+                $b71=intval($rows[63]['data_value']);
+                $b72=intval($rows[64]['data_value']);
 
                 $c76=($b8-$b7)/abs($b7==0?1:$b7);
                 $c77=($b8-$b9)/abs($b9==0?1:$b9);
@@ -391,5 +426,6 @@ class ReportH02Form extends CReportForm
 //        print_r('<pre>');
 //        print_r($model);
     }
+
 
 }

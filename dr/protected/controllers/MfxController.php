@@ -35,11 +35,11 @@ class MfxController extends Controller
 			),
 */
 			array('allow', 
-				'actions'=>array('new','edit','delete','save','down','downs',"templates",'fileupload','fileremove','filedownload'),
+				'actions'=>array('new','edit','delete','save',"templates",'fileupload','fileremove','filedownload'),
 				'expression'=>array('MfxController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view','filedownload'),
+				'actions'=>array('index','view','downs','filedownload'),
 				'expression'=>array('MfxController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -66,13 +66,22 @@ class MfxController extends Controller
 //        $date1 = "2008-08-11";
 //        $date2 = "2008-11-06";
 //        $monthNum = $this->getMonth( $date1 , $date2 );
-        $model->retrieveData($model);
 //        print_r('<pre>');
 //        print_r($model);
+        $model->retrieveData($model);
+
 			$this->render('form',array('model'=>$model,));
 
 	}
 
+	public function actiondowns(){
+        $model = new ReportH02Form;
+        $model->scenario = $_POST['ReportH02Form'];
+        $model->retrieveData($model);
+       $model->retrieveXiaZai($model);
+//        print_r("<pre>");
+//        print_r($model);
+    }
 //	public function getMonth( $date1, $date2){
 //        $time1 = strtotime($date1); // 自动为00:00:00 时分秒
 //        $time2 = strtotime($date2);

@@ -21,8 +21,21 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
 	</ol>
 -->
 </section>
-<?php if(!empty($model->five)){ ?>
+<div class="box"><div class="box-body">
+        <div class="btn-group" role="group">
 
+            <?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
+                'submit'=>Yii::app()->createUrl('mfx/index')));
+            ?>
+
+        </div>
+        <div class="btn-group pull-right" role="group">
+            <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('misc','xiazai'), array(
+                'submit'=>Yii::app()->createUrl('mfx/downs')));
+            ?>
+        </div>
+    </div></div>
+<?php if(!empty($model->five)){ ?>
 <section class="content">
 <!--	--><?php //$this->widget('ext.layout.ListPageWidget', array(
 //			'title'=>Yii::t('monthly','Monthly Report Data List'),
@@ -44,14 +57,17 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
         .tftable td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #729ea5;}
         .tftable tr:hover {background-color:#ffffff;}
     </style>
-
+    <input name="ReportH02Form[city]" value="<?php echo $model->scenario['city'];?>" style="display: none">
+    <input name="ReportH02Form[start_dt]" value="<?php echo $model->scenario['start_dt'];?>" style="display: none">
+    <input name="ReportH02Form[start_dt1]" value="<?php echo $model->scenario['start_dt1'];?>" style="display: none">
+    <input name="ReportH02Form[end_dt]" value="<?php echo $model->scenario['end_dt'];?>" style="display: none">
+    <input name="ReportH02Form[end_dt1]" value="<?php echo $model->scenario['end_dt1'];?>" style="display: none">
     <table class="tftable" border="1">
         <tr><th colspan="2">管理项目</th><?php $i=0; for($i=0;$i<$model->ccuser;$i++){?><th><?php echo $model->year[$i]."/".$model->month[$i]?></th><?php }?><th>定义</th></tr>
         <?php for ($a=0;$a<count($model->five[0]);$a++){?>
         <tr><td  style="width: 13%;"></td><td  style="width: 20%;"><?php echo $model->five[0][$a]['name'];?></td><?php $i=0; for($i=0;$i<$model->ccuser;$i++){?><td><?php echo $model->five[$i][$a]['data_value'];?></td><?php }?><td style="width: 15%;"></td></tr>
         <?php }?>
     </table>
-
 
     <table class="tftable" border="1">
         <tr><td style="width: 13%;">总分(100分）：</td><td style="width: 20%;"></td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['f74']."</td>";}?><td style="width: 15%;"></td></tr>
