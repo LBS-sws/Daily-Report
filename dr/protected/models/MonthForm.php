@@ -140,7 +140,11 @@ class MonthForm extends CFormModel
         $b69=intval($rows[61]['data_value']);
         $b70=intval($rows[62]['data_value']);
         $b71=intval($rows[63]['data_value']);
-        $b72=intval($rows[64]['data_value']);
+        if (empty($rows[64]['data_value'])){
+            $b72=0;
+        } else{
+            $b72=intval($rows[64]['data_value']);
+        }
 
 
         $c76=($b8-$b7)/abs($b7==0?1:$b7);

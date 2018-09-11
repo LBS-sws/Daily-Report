@@ -127,8 +127,11 @@ class MonthList extends CListPageModel
                 $b69=intval($rows[61]['data_value']);
                 $b70=intval($rows[62]['data_value']);
                 $b71=intval($rows[63]['data_value']);
-                $b72=intval($rows[64]['data_value']);
-
+             if (empty($rows[64]['data_value'])){
+                 $b72=0;
+             } else{
+                 $b72=intval($rows[64]['data_value']);
+             }
                 $c76=($b8-$b7)/abs($b7==0?1:$b7);
                 $c77=($b8-$b9)/abs($b9==0?1:$b9);
                 $c78=($b32-$b31)/abs($b31==0?1:$b31);
