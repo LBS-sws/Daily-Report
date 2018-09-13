@@ -154,8 +154,8 @@ class MonthForm extends CFormModel
             $c84=$b13/($b14==0?1:$b14);
             $c85=$b5/($b6==0?1:$b6);
             $c86=$b19/($b4==0?1:$b4);
-            $c88=($b20-3000)/3000;
-            $c89=($b21-3000)/3000;
+            $c88=($b20-30000)/30000;
+            $c89=($b21-30000)/30000;
             $c90=$b21;
             $c91=$b25/($b5==0?1:$b5);
             $c92=$b26/($b6==0?1:$b6);
@@ -283,7 +283,7 @@ class MonthForm extends CFormModel
             $b47=intval($rows[41]['data_value']);
             $b48=intval($rows[42]['data_value']);
             $b49=intval($rows[43]['data_value']);
-            $b50=intval($rows[44]['data_value']);
+            $b50=$rows[44]['data_value'];
             $b51=intval($rows[45]['data_value']);
             $b52=intval($rows[46]['data_value']);
             $b54=intval($rows[47]['data_value']);
@@ -304,7 +304,6 @@ class MonthForm extends CFormModel
             $b70=intval($rows[62]['data_value']);
             $b71=intval($rows[63]['data_value']);
             $b72=intval($rows[64]['data_value']);
-
             $c76=($b8-$b7)/abs($b7==0?1:$b7);
             $c77=($b8-$b9)/abs($b9==0?1:$b9);
             $c78=($b32-$b31)/abs($b31==0?1:$b31);
@@ -316,8 +315,8 @@ class MonthForm extends CFormModel
             $c84=$b13/($b14==0?1:$b14);
             $c85=$b5/($b6==0?1:$b6);
             $c86=$b19/($b4==0?1:$b4);
-            $c88=($b20-3000)/3000;
-            $c89=($b21-3000)/3000;
+            $c88=($b20-30000)/30000;
+            $c89=($b21-30000)/30000;
             $c90=$b21;
             $c91=$b25/($b5==0?1:$b5);
             $c92=$b26/($b6==0?1:$b6);
@@ -350,7 +349,6 @@ class MonthForm extends CFormModel
             $c122=$b68/(($b66==0?1:$b66)/30);
             $c123=0;
             $c124=$b65/($b70==0?1:$b70);
-
             $e76=($c76>0.2?5:($c76>0.1?4:($c76>0?3:($c76>-0.1?2:($c76>-0.2?1:0)))));
             $e77=($c77>0.2?5:($c77>0.1?4:($c77>0?3:($c77>-0.1?2:($c77>-0.2?1:0)))));
             $e78=($c78>0.4?5:($c78>0.2?4:($c78>0?3:($c78>-0.2?2:($c78>-0.4?1:0)))));
@@ -404,53 +402,54 @@ class MonthForm extends CFormModel
         }
 
 
-     //   echo $c79;
+
+        echo $c91;
 
 //赋值
-        $this->excel['c76']=round($c76,4);
-        $this->excel['c77']=round($c77,4);
-        $this->excel['c78']=round($c78,4);
-        $this->excel['c79']=round($c79,4);
-        $this->excel['c80']=round($c80,4);
-        $this->excel['c81']=round($c81,4);
-        $this->excel['c82']=round($c82,4);
-        $this->excel['c83']=round($c83,4);
-        $this->excel['c84']=round($c84,4);
-        $this->excel['c85']=round($c85,4);
-        $this->excel['c86']=round($c86,4);
-        $this->excel['c88']=round($c88,4);
-        $this->excel['c89']=round($c89,4);
-        $this->excel['c90']=round($c90,4);
-        $this->excel['c91']=round($c91,4);
-        $this->excel['c92']=round($c92,4);
-        $this->excel['c93']=round($c93,4);
+        $this->excel['c76']=(round($c76,2)*100)."%";
+        $this->excel['c77']=(round($c77,2)*100)."%";
+        $this->excel['c78']=(round($c78,2)*100)."%";
+        $this->excel['c79']=(round($c79,2)*100)."%";
+        $this->excel['c80']=(round($c80,2)*100)."%";
+        $this->excel['c81']=(round($c81,2)*100)."%";
+        $this->excel['c82']=(round($c82,2)*100)."%";
+        $this->excel['c83']=(round($c83,2)*100)."%";
+        $this->excel['c84']=(round($c84,2)*100)."%";
+        $this->excel['c85']=(round($c85,2)*100)."%";
+        $this->excel['c86']=(round($c86,2)*100)."%";
+        $this->excel['c88']=(round($c88,2)*100)."%";
+        $this->excel['c89']=(round($c89,2)*100)."%";
+        $this->excel['c90']=round($c90,2);
+        $this->excel['c91']=(round($c91,2)*100)."%";
+        $this->excel['c92']=(round($c92,2)*100)."%";
+        $this->excel['c93']=(round($c93,2)*100)."%";
         $this->excel['c94']=$c94;
-        $this->excel['c96']=round($c96,4);
-        $this->excel['c97']=round($c97,4);
-        $this->excel['c98']=round($c98,4);
-        $this->excel['c99']=round($c99,4);
-        $this->excel['c100']=round($c100,4);
-        $this->excel['c102']=round($c102,4);
-        $this->excel['c103']=round($c103,4);
-        $this->excel['c104']=round($c104,4);
+        $this->excel['c96']=(round($c96,2)*100)."%";
+        $this->excel['c97']=(round($c97,2)*100)."%";
+        $this->excel['c98']=(round($c98,2)*100)."%";
+        $this->excel['c99']=round($c99,2);
+        $this->excel['c100']=(round($c100,2)*100)."%";
+        $this->excel['c102']=(round($c102,2)*100)."%";
+        $this->excel['c103']=(round($c103,2)*100)."%";
+        $this->excel['c104']=(round($c104,2)*100)."%";
         $this->excel['c105']=$c105;
-        $this->excel['c106']=round($c106,4);
-        $this->excel['c107']=round($c107,4);
-        $this->excel['c108']=round($c108,4);
-        $this->excel['c109']=round($c109,4);
-        $this->excel['c110']=round($c110,4);
-        $this->excel['c111']=round($c111,4);
-        $this->excel['c112']=round($c112,4);
-        $this->excel['c113']=round($c113,4);
-        $this->excel['c114']=round($c114,4);
-        $this->excel['c115']=round($c115,4);
-        $this->excel['c117']=round($c117,4);
-        $this->excel['c118']=round($c118,4);
-        $this->excel['c119']=round($c119,4);
-        $this->excel['c120']=round($c120,4);
-        $this->excel['c121']=round($c121,4);
-        $this->excel['c122']=round($c122,4);
-        $this->excel['c124']=round($c124,4);
+        $this->excel['c106']=(round($c106,2)*100)."%";
+        $this->excel['c107']=(round($c107,2)*100)."%";
+        $this->excel['c108']=(round($c108,2)*100)."%";
+        $this->excel['c109']=(round($c109,2)*100)."%";
+        $this->excel['c110']=$c110;
+        $this->excel['c111']=(round($c111,2)*100)."%";
+        $this->excel['c112']=(round($c112,2)*100)."%";
+        $this->excel['c113']=(round($c113,2)*100)."%";
+        $this->excel['c114']=(round($c114,2)*100)."%";
+        $this->excel['c115']=(round($c115,2)*100)."%";
+        $this->excel['c117']=(round($c117,2)*100)."%";
+        $this->excel['c118']=(round($c118,2)*100)."%";
+        $this->excel['c119']=(round($c119,2)*100)."%";
+        $this->excel['c120']=(round($c120,2)*100)."%";
+        $this->excel['c121']=(round($c121,2)*100)."%";
+        $this->excel['c122']=(round($c122,2)*100)."%";
+        $this->excel['c124']=(round($c124,2)*100)."%";
         $this->excel['e76']=round($e76,4);
         $this->excel['e77']=round($e77,4);
         $this->excel['e78']=round($e78,4);
