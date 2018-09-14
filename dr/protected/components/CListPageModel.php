@@ -15,6 +15,8 @@ class CListPageModel extends CFormModel
 	public $searchField;
 	
 	public $searchValue;
+
+    public $city;
 	
 	public $orderField;
 	
@@ -25,7 +27,7 @@ class CListPageModel extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('attr, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, filter','safe',),
+			array('attr, pageNum, noOfItem, totalRow,city, searchField, searchValue, orderField, orderType, filter','safe',),
 		);
 	}
 	

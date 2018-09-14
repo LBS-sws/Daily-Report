@@ -12,7 +12,12 @@ class MonthList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
         $suffix = Yii::app()->params['envSuffix'];
-		$city = Yii::app()->user->city();
+	    if(empty($this->city)){
+            $city = Yii::app()->user->city();
+        }
+        else{
+            $city =$this->city;
+        }
 		$sql1 = "select *,b.name as cityname
 				from swo_monthly_hdr a,security$suffix.sec_city b			
 				where a.city='$city' and a.city=b.code

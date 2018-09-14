@@ -40,6 +40,8 @@ class MonthController extends Controller
 		$model = new MonthList;
 		if (isset($_POST['MonthList'])) {
 			$model->attributes = $_POST['MonthList'];
+//			print_r('<pre>');
+//            print_r($model) ;
 		} else {
 			$session = Yii::app()->session;
 			if (isset($session['criteria_a09']) && !empty($session['criteria_a09'])) {

@@ -3,7 +3,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'monthly-list',
+'id'=>'month-list',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_INLINE,
@@ -23,6 +23,12 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
 </section>
 
 <section class="content">
+
+            <div class="btn-group" role="group">
+                <?php
+                echo TbHtml::button('dummyButton',array('style'=>'display:none','disabled'=>true,'submit'=>'#',));
+                ?>
+            </div>
 	<?php $this->widget('ext.layout.ListPageWidget', array(
 			'title'=>Yii::t('monthly','Monthly Report Data List'),
 			'model'=>$model,
@@ -34,6 +40,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
 							'year_no',
 							'month_no',
 						),
+                'city'=>'city',
 		));
 	?>
 </section>

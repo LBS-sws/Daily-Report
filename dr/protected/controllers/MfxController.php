@@ -78,7 +78,7 @@ class MfxController extends Controller
         $model = new ReportH02Form;
         $model->scenario = $_POST['ReportH02Form'];
         $model->retrieveData($model);
-       $model->retrieveXiaZai($model);
+        $model->retrieveXiaZai($model);
 //        print_r("<pre>");
 //        print_r($model);
     }

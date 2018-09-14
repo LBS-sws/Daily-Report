@@ -402,9 +402,6 @@ class MonthForm extends CFormModel
         }
 
 
-
-        echo $c91;
-
 //赋值
         $this->excel['c76']=(round($c76,4)*100)."%";
         $this->excel['c77']=(round($c77,4)*100)."%";

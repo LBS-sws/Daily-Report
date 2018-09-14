@@ -66,7 +66,7 @@ class ReportH02Form extends CReportForm
         include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
         $objPHPExcel = new PHPExcel;
         $objReader  = PHPExcel_IOFactory::createReader('Excel2007');
-        $path = Yii::app()->basePath.'/commands/template/month_more_one.xlsx';
+        $path = Yii::app()->basePath.'/commands/template/month_more_ones.xlsx';
         $objPHPExcel = $objReader->load($path);
         $excel_m=array('C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 //        foreach ($model->record as $arr ){

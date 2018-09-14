@@ -12,7 +12,7 @@ class ListPageWidget extends CWidget
 	public $hasSearchBar = true;
 	public $hasPageBar = true;
 	public $searchlinkparam = array();
-	
+	public $city=array();
 	public $advancedSearch = false;
 	
 	public $record;
@@ -21,12 +21,15 @@ class ListPageWidget extends CWidget
 	public function run()
 	{
 		$modelName = get_class($this->model);
-//		print_r("<pre>");
-//		print_r($this->model);
+        $suffix = Yii::app()->params['envSuffix'];
+        $city = Yii::app()->user->city();
+        $sql="select code ,name from security$suffix.sec_city where region='".$city."'";
+        $records = Yii::app()->db->createCommand($sql)->queryAll();
 		$layout = '<div class="box">';
 		$layout .= '<div class="box-header"><h3 class="box-title"><strong>'.$this->title.'</strong></h3>';
 		$layout .= '</div>';
 		$layout .= '<div class="box-body table-responsive">';
+
 		if ($this->hasSearchBar || $this->hasNavBar) {
 			$layout .= '<div class="box-tools">';
 			if ($this->hasNavBar) {
@@ -36,6 +39,20 @@ class ListPageWidget extends CWidget
 				$layout .= '<span class="pull-right">';
 				$layout .= $this->searchBar();
 				$layout .= '</span>';
+				if(!empty($this->city)){
+                    $layout.="<select id='MonthList_searchField' class='form-control' name='MonthList[city]' style='float:right;margin-right: 15px'> ";
+                    $layout.="<option value=''>-- 城市 --</option>";
+                    foreach ($records as $k) {
+                        if($this->model['city']==$k['code']){
+                            $layout .= "<option value='".$k['code']."' selected = 'selected'>".$k['name']."</option>";
+                        }
+                        else{
+                            $layout .= "<option value='".$k['code']."'>".$k['name']."</option>";
+                        }
+                    }
+                    $layout.="</select>";
+                }
+
 			}
 		$layout .= '</div>';
 		}
@@ -43,7 +60,6 @@ class ListPageWidget extends CWidget
 		$layout .= '<thead>';
 		$layout .= $this->render($this->viewhdr, null, true);
 		$layout .= '</thead>';
-
 		$layout .= '<tbody>';
 		if (count($this->model->attr) > 0)
 		{
@@ -65,6 +81,7 @@ class ListPageWidget extends CWidget
 		if ($this->hasSearchBar) {
 			$layout .= '<div class="box-tools">'.$this->pageBar().'</div>';
 		}
+
 		$layout .= '<span class="pull-right">'.Yii::t('misc','Rec').': '.$this->model->totalRow.'</span>';
 		$layout .= '</div>';
 
