@@ -23,8 +23,11 @@ class ListPageWidget extends CWidget
 		$modelName = get_class($this->model);
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
-        $sql="select code ,name from security$suffix.sec_city where region='".$city."'";
-        $records = Yii::app()->db->createCommand($sql)->queryAll();
+//        $sql="select code ,name from security$suffix.sec_city where region='".$city."'";
+//        $records = Yii::app()->db->createCommand($sql)->queryAll();
+        $model = new City();
+        $records=$model->getDescendant($city);
+       // print_r($records);exit();
 		$layout = '<div class="box">';
 		$layout .= '<div class="box-header"><h3 class="box-title"><strong>'.$this->title.'</strong></h3>';
 		$layout .= '</div>';
@@ -43,11 +46,11 @@ class ListPageWidget extends CWidget
                     $layout.="<select id='MonthList_searchField' class='form-control' name='MonthList[city]' style='float:right;margin-right: 15px'> ";
                     $layout.="<option value=''>-- 城市 --</option>";
                     foreach ($records as $k) {
-                        if($this->model['city']==$k['code']){
-                            $layout .= "<option value='".$k['code']."' selected = 'selected'>".$k['name']."</option>";
+                        if($this->model['city']==$k){
+                            $layout .= "<option value='".$k."' selected = 'selected'>".Yii::t('misc',$k)."</option>";
                         }
                         else{
-                            $layout .= "<option value='".$k['code']."'>".$k['name']."</option>";
+                            $layout .= "<option value='".$k."'>".Yii::t('misc',$k)."</option>";
                         }
                     }
                     $layout.="</select>";

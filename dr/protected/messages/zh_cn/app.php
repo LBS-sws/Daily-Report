@@ -12,7 +12,6 @@ return array(
 	'Personnel'=>'人事系统',
 	'Sales'=>'销售系统',
     'Quiz'=>'测验系统',
-	'Academic Credit'=>'学分系统',
 
 	'Data Entry'=>'数据输入',
 	'Report'=>'报表',
@@ -21,6 +20,7 @@ return array(
 	'Tools' => '工具',
 	'Misc'=>'其他',
 	'Management'=>'管理层',
+    'Data View'=>'数据查看',
 	
 	'Customer Info'=>'客户资料',
 	'Customer Service'=>'客户服务',
