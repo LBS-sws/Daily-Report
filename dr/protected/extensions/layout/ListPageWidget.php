@@ -46,11 +46,13 @@ class ListPageWidget extends CWidget
                     $layout.="<select id='MonthList_searchField' class='form-control' name='MonthList[city]' style='float:right;margin-right: 15px'> ";
                     $layout.="<option value=''>-- 城市 --</option>";
                     foreach ($records as $k) {
+                        $sql="select name from security$suffix.sec_city where code='".$k."'";
+                        $records = Yii::app()->db->createCommand($sql)->queryAll();
                         if($this->model['city']==$k){
-                            $layout .= "<option value='".$k."' selected = 'selected'>".Yii::t('misc',$k)."</option>";
+                            $layout .= "<option value='".$k."' selected = 'selected'>".$records[0]['name']."</option>";
                         }
                         else{
-                            $layout .= "<option value='".$k."'>".Yii::t('misc',$k)."</option>";
+                            $layout .= "<option value='".$k."'>".$records[0]['name']."</option>";
                         }
                     }
                     $layout.="</select>";
