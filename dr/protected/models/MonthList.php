@@ -52,7 +52,6 @@ class MonthList extends CListPageModel
 		$sql = $sql1.$clause.$order;
 		$sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
-
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
@@ -400,6 +399,7 @@ class MonthList extends CListPageModel
 						'year_no'=>$record['year_no'],
 						'month_no'=>$record['month_no'],
                         'city'=>$record['cityname'],
+                        'cityname'=>$record['city'],
                         'f74'=>$f75,
                         'f86'=>$f87,
                         'f94'=>$f95,

@@ -40,8 +40,7 @@ class MonthController extends Controller
 		$model = new MonthList;
 		if (isset($_POST['MonthList'])) {
 			$model->attributes = $_POST['MonthList'];
-//			print_r('<pre>');
-//            print_r($model) ;
+
 		} else {
 			$session = Yii::app()->session;
 			if (isset($session['criteria_a09']) && !empty($session['criteria_a09'])) {
@@ -51,6 +50,8 @@ class MonthController extends Controller
 		}
 		$model->determinePageNum($pageNum);
 		$model->retrieveDataByPage($model->pageNum);
+//        			print_r('<pre>');
+//            print_r($model) ;
 		$this->render('index',array('model'=>$model));
 	}
 
@@ -75,10 +76,10 @@ class MonthController extends Controller
 		}
 	}
 
-	public function actionView($index)
+	public function actionView($index,$city)
 	{
 		$model = new MonthForm('view');
-		if (!$model->retrieveData($index)) {
+		if (!$model->retrieveData($index,$city)) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		} else {
 			$this->render('form',array('model'=>$model,));

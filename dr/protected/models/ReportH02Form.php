@@ -43,7 +43,7 @@ class ReportH02Form extends CReportForm
 	}
 
     public function retrieveDatas($model){
-        $start_date = '1997-01-01'; // 自动为00:00:00 时分秒
+        $start_date = '2017-01-01'; // 自动为00:00:00 时分秒
         $end_date = date("Y-m-d");
         $start_arr = explode("-", $start_date);
         $end_arr = explode("-", $end_date);

@@ -55,8 +55,7 @@ class MonthForm extends CFormModel
 
 
     }
-    public function retrieveData($index) {
-        $city = Yii::app()->user->city();
+    public function retrieveData($index,$city) {
         $sql = "select a.year_no, a.month_no, b.id, b.hdr_id, b.data_field, b.data_value, c.name, c.upd_type, c.field_type, b.manual_input , c.excel_row  
 				from swo_monthly_hdr a, swo_monthly_dtl b, swo_monthly_field c 
 				where a.id=$index and a.city='$city'
@@ -76,7 +75,6 @@ class MonthForm extends CFormModel
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         $sql="select * from swo_monthly_comment where hdr_id=$index";
         $ros = Yii::app()->db->createCommand($sql)->queryAll();
-
         if(empty($rows[64])){
             $b3=intval($rows[0]['data_value']);
             $b4=intval($rows[1]['data_value']);
