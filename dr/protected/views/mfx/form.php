@@ -36,7 +36,9 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
         </div>
     </div></div>
 <?php if(!empty($model->five)){ ?>
-<section class="content">
+<section class="content" >
+    <div style="width: 100%;">
+        <div style=" overflow-x:auto; overflow-y:auto;">
 <!--	--><?php //$this->widget('ext.layout.ListPageWidget', array(
 //			'title'=>Yii::t('monthly','Monthly Report Data List'),
 //			'model'=>$model,
@@ -152,6 +154,8 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
         <tr><td>组长数目跟标准比例 （最多每30个技术员，就要有一个组长的设置)<br/>(技术员数目/30=标准组长数目， 比例 = 组长数目/标准数目）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c122']."(".$model->excel[$a]['e122'].")</td>";}?><td>>100% : 5<br/>80% - 100% : 3<br/><= 80% : 1</td></tr>
         <tr><td>办公室人员情况</td><td>离职办公室（工作满一个月的）人数% （当月离职办公室人员/整体办公室人员）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c124']."(".$model->excel[$a]['e124'].")</td>";}?><td>0% - 10% : 5<br/>10% - 20% : 3<br/>20% - 30% : 1<br/>>30% : 0</td></tr>
     </table>
+    </div>
+    </div>
 </section>
 <?php } else{echo "<br/><h1>暂无数据</h1>";}?>
 <?php
