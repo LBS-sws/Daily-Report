@@ -25,7 +25,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report Form';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('month/view',array('index'=> $model->id))));
+				'submit'=>Yii::app()->createUrl('month/view',array('index'=> $model->id,'city'=>$_GET['city']))));
 		?>
         <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
             'submit'=>Yii::app()->createUrl('month/save')));

@@ -84,6 +84,7 @@ class MonthController extends Controller
 		} else {
 			$this->render('form',array('model'=>$model,));
 		}
+
 	}
 
 	public function actionXiaZai(){
@@ -99,14 +100,14 @@ class MonthController extends Controller
 		if (!$model->retrieveData($index)) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		} else {
-
 			$this->render('summarize',array('model'=>$model,));
 		}
+
 	}
 
-    public function actionSummarize($index){
+    public function actionSummarize($index,$city){
         $model = new MonthForm('edit');
-        $model->retrieveData($index);
+        $model->retrieveData($index,$city);
 //        print_r('<pre/>');
 //        print_r($model);
         $this->render('summarize',array('model'=>$model,));
