@@ -21,6 +21,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
 	</ol>
 -->
 </section>
+
 <div class="box"><div class="box-body">
         <div class="btn-group" role="group">
 
@@ -38,7 +39,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
 <?php if(!empty($model->five)){ ?>
 <section class="content" >
     <div style="width: 100%;">
-        <div style=" overflow-x:auto; overflow-y:auto;">
+        <div class="acc" style=" overflow-x:auto; overflow-y:auto;">
 <!--	--><?php //$this->widget('ext.layout.ListPageWidget', array(
 //			'title'=>Yii::t('monthly','Monthly Report Data List'),
 //			'model'=>$model,
@@ -69,9 +70,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
         <?php for ($a=0;$a<count($model->five[0]);$a++){?>
         <tr><td  style="width: 13%;"></td><td  style="width: 20%;"><?php echo $model->five[0][$a]['name'];?></td><?php $i=0; for($i=0;$i<$model->ccuser;$i++){?><td><?php echo $model->five[$i][$a]['data_value'];?></td><?php }?><td style="width: 15%;"></td></tr>
         <?php }?>
-    </table>
 
-    <table class="tftable" border="1">
         <tr><td style="width: 13%;">总分(100分）：</td><td style="width: 20%;"></td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['f74']."</td>";}?><td style="width: 15%;"></td></tr>
         <tr><td style="width: 10%">销售部</td><td></td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['f75']."</td>";}?><td></td></tr>
         <tr><td rowspan="8">新生意情况</td><td>新(IA,IB)新服务年生意额增长 （(当月-上月)/上月)</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c76']."(".$model->excel[$a]['e76'].")</td>";}?><td>'-20% - -10%     :  1<br/>-10% - 0%   :  2<br/>0% - 10%   :  3<br/>10% - 20%   :  4<br/>> 20% :  5</td></tr>
@@ -85,13 +84,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
         <tr><td rowspan="2">生意结构比例</td><td>餐饮非餐饮新生意年生意额比例<br/>20% - 40%           （2：8和3：7之间）<br/>40% - 70%         （3：7和4：6之间）<br/>70% - 100%       （4：6和 5：5之间）<br/>100% - 150%    （5：5 和 6：4之间）<br/>150% - 230%    （6 ： 4 和 7：3之间）<br/>>230%                 （7：3以上）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c84']."(".$model->excel[$a]['e84'].")</td>";}?><td>20% - 40%     :  1<br/>40% - 70%   :  2<br/>70% - 100%   :  4<br/>100% - 150%   :  5<br/>150% - 230% : 3<br/>> 230% :  1</td></tr>
         <tr><td>当月IA, IB年生意额比例<br/>20% - 40%           （2：8和3：7之间）<br/>40% - 70%         （3：7和4：6之间）<br/>70% - 100%       （4：6和 5：5之间）<br/>100% - 150%    （5：5 和 6：4之间）<br/>150% - 230%    （6 ： 4 和 7：3之间）<br/>>230%                 （7：3以上）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c85']."(".$model->excel[$a]['e85'].")</td>";}?><td>20% - 40%     :  1<br/>40% - 70%   :  2<br/>70% - 100%   :  4<br/>100% - 150%   :  5<br/>150% - 230% : 3<br/>> 230% :  1</td></tr>
         <tr><td>停单情况</td><td>停单金额占生意比例% （当月停单总月金额/当月生意额）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c86']."(".$model->excel[$a]['e86'].")</td>";}?><td>0% - 0.8% : 5<br/>0.8% - 1.6% : 4<br/>1.6% - 2.4% : 3<br/>2.4% - 3.2% : 2<br/>X > 3.2% : 1</td></tr>
-    </table>
-    <style type="text/css">
-        .tftable1 {font-size:12px;color:#333333;width:100%;border-width: 1px;border-color: #9dcc7a;border-collapse: collapse;}
-        .tftable1 tr {background-color:#bedda7;}
-        .tftable1 td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #9dcc7a;}
-    </style>
-    <table class="tftable1" border="1">
+
         <tr><td style="width: 13%;">外勤部</td><td style="width: 20%;"></td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['f87']."</td>";}?><td style="width: 15%;"></td></tr>
         <tr><td rowspan="3">技术员生产力</td><td>上月技术员平均生意额超出标准门栏比例 （标准：30000/月， 当地平均技术员生意额 - 标准生意额 / 标准生意额 ），主管/主任级别以下技术员</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c88']."(".$model->excel[$a]['e88'].")</td>";}?><td ">>20% : 5<br/>0% - 10% : 4<br/>-10% - 0% : 3<br/>-20% - -10% : 2<br/>'-30% - -20% : 1<br/>< -30% : 0</td></tr>
         <tr><td>上月技术员最高生意额技术员金额跟标准比较  （标准：30000/月)</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c89']."(".$model->excel[$a]['e89'].")</td>";}?><td>>70% : 5<br/>30% - 70% : 4<br/>10% - 30% ： 3</td></tr>
@@ -100,28 +93,14 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
         <tr><td>技术员用料比例 灭虫（技术员IB领货金额/当月IB生意额）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c92']."(".$model->excel[$a]['e92'].")</td>";}?><td><5% : 5<br/>5% - 10% : 4<br/>10% - 15% : 3<br/>15% - 20% : 2<br/>20% - 25% : 1<br/>>25% : 0</td></tr>
         <tr><td rowspan="2">获奖情况</td><td>当月锦旗获奖数目占整体技术员比例 （锦旗数目/整体技术员数目）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c93']."(".$model->excel[$a]['e93'].")</td>";}?><td>>20% : 5<br/>10% - 20% : 3<br/>5% - 10% : 1<br/><=0% : 0</td></tr>
         <tr><td>当月襟章颁发明细 （P:N) P为受颁技术员数目，N为襟章发放数目</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c94']."</td>";}?><td>仅供参考，不计算分数</td></tr>
-    </table>
-    <style type="text/css">
-        .tftable2 {font-size:12px;color:#333333;width:100%;border-width: 1px;border-color: #a9a9a9;border-collapse: collapse;}
-        .tftable2 tr {background-color:#b8b8b8;}
-        .tftable2 td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #a9a9a9;}
-    </style>
 
-    <table class="tftable2" border="1">
         <tr><td style="width: 13%">财务部</td><td style="width: 20%"></td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['f95']."</td>";}?><td style="width: 15%"> </td></tr>
         <tr><td rowspan="2">财政状况</td><td>IA,IB毛利率 （当月IA,IB生意额 - 材料订购 - 技术员工资）/当月IA,IB生意额</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c96']."(".$model->excel[$a]['e96'].")</td>";}?><td>55% : 5<br/>50% - 55% : 4<br/>45% - 50%% : 3<br/>40% - 45% : 2<br/>35% - 40% : 1<br/><35% : 0</td></tr>
         <tr><td>工资占生意额比例</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c97']."(".$model->excel[$a]['e97'].")</td>";}?><td >20% - 25% : 5<br/>25% - 28% : 4 28% - 30% : 3 30% - 35% : 2 >35% : 1</td></tr>
         <tr><td  rowspan="2">收款情况</td><td>收款效率（当月收款额/上月生意额） </td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c98']."(".$model->excel[$a]['e98'].")</td>";}?><td> 100% : 5<br/>95% - 100% : 4<br/>90% - 95% : 3<br/>85% - 90% : 2<br/>80% - 85% : 1</td ></tr>
         <tr><td>公司累积结余（到每月最后一天止）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c99']."</td>";}?><td>仅供参考，不计算分数</td></tr>
         <tr><td>应收未收帐情况</td><td>问题客人（超过90天没有结款）比例 (问题客户总月费金额/当月生意额）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c100']."(".$model->excel[$a]['e100'].")</td>";}?><td><= 30% : 5<br/>30% - 40% : 4<br/>40% - 50% :３<br/>50% - 60% : 2<br/>60% - 70% : 1</td ></tr>
-    </table>
-    <style type="text/css">
-        .tftable3 {font-size:12px;color:#333333;width:100%;border-width: 1px;border-color: #ebab3a;border-collapse: collapse;}
-        .tftable3 tr {background-color:#f0c169;}
-        .tftable3 td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #ebab3a;}
-    </style>
 
-    <table class="tftable3" border="1">
         <tr><td style="width: 13%">营运部</td><td style="width: 20%"></td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['f101']."</td>";}?><td style="width: 15%"></td></tr>
         <tr><td>整体情况</td><td>新合同7天内安排首次比例 （成功7天首次客户数目/整体当月新IA,IB合同数目）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c102']."(".$model->excel[$a]['e102'].")</td>";}?><td >95% - 100% ： 5<br/>90% - 95% ： 4<br/>85% - 90% ： 3<br/>80% - 85% ： 2<br/>75% - 80% ： 1<br/><75% : 0</td></tr>
         <tr><td rowspan="3">物流情况</td><td>运送皂液准确度 （实际送皂液/应送皂液）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c103']."(".$model->excel[$a]['e103'].")</td>";}?><td>95% - 100% ： 5<br/>   90% - 95% ： 4<br/>   85% - 90% ： 3<br/>  80% - 85% ： 2<br/>   75% - 80% ： 1<br/>  <75% : 0</td></tr>
@@ -137,14 +116,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
         <tr><td>队长跟投诉技术员面谈比例<br/>（队长/组长面谈客诉技术员数目/客诉数目）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c113']."(".$model->excel[$a]['e113'].")</td>";}?><td>15% - 20% ： 5<br/> 10% - 15% ： 3<br/>  5% - 10% ： 1<br/> <5% : 0 </td></tr>
         <tr><td>高效回访率 （高效回访 = 客诉后7天内电话客户回访数目）<br/>（高效回访率=高效回访/今月客诉数目）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c114']."(".$model->excel[$a]['e114'].")</td>";}?><td>95% - 100% ： 5<br/> 90% - 95% ： 4<br/> 85% - 90% ： 3<br/> 80% - 85% ： 2<br/> 75% - 80% ： 1<br/>  <75% : 0</td></tr>
         <tr><td>问题客户需要队长/组长跟进数目</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c115']."</td>";}?><td>仅供参考，不计算分数</td></tr>
-    </table>
 
-    <style type="text/css">
-        .tftable4 {font-size:12px;color:#333333;width:100%;border-width: 1px;border-color: #bcaf91;border-collapse: collapse;}
-        .tftable4 tr {background-color:#e9dbbb;}
-        .tftable4 td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #bcaf91;}
-    </style>
-    <table class="tftable4" border="1">
         <tr><td style="width: 13%">人事部</td><td  style="width: 20%"></td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['f116']."</td>";}?><td style="width: 15%"></td></tr>
         <tr><td>整体情况</td><td>所有同事劳动合同进展 (超过一个月没有签署劳动合同同事数目（张））</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c117']."(".$model->excel[$a]['e117'].")</td>";}?><td>0 : 5<br/>1 - 3 : 4<br/>3 - 5 : 3<br/>>5 : 0</td></tr>
         <tr><td rowspan="2">销售人员情况</td><td>销售人员流失率 （工作满一个月的）（离职销售人员/当月所有销售人员）</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c118']."(".$model->excel[$a]['e118'].")</td>";}?><td>0% - 10% : 5<br/>10% - 20% : 3<br/>20% - 30% : 1<br/>>30% : 0</td></tr>
