@@ -543,7 +543,7 @@ class QcForm extends CFormModel
 	public function readonly() {
 		if ($this->scenario!='new' && ($this->service_type=='IA' || $this->service_type=='IB')) {
 			$flag = (isset($this->info['sign_cust']) && !empty($this->info['sign_cust'])) &&
-					(isset($this->info['sign_tech']) && !empty($this->info['sign_tech'])) &&
+//					(isset($this->info['sign_tech']) && !empty($this->info['sign_tech'])) &&
 					(isset($this->info['sign_qc']) && !empty($this->info['sign_qc']));
 			return ($this->scenario=='view' || $flag);
 		} else {

@@ -110,13 +110,13 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'job_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo $form->textField($model, 'job_staff', 
+					<?php echo $form->textField($model, 'job_staff',
 						array('maxlength'=>500,'readonly'=>($model->readonly()),
 						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->readonly())))
 					)); ?>
 				</div>
 			</div>
-			
+
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'service_dt',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
@@ -126,7 +126,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 						</div>
 						<?php 
 							echo TbHtml::textField('QcForm[info][service_dt]',$model->info['service_dt'], 
-								array('class'=>'form-control pull-right','readonly'=>($model->readonly()),)); 
+								array('class'=>'form-control pull-right','readonly'=>($model->readonly()),));
 						?>
 					</div>
 				</div>
