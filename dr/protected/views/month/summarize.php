@@ -57,7 +57,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report Form';
 				</div>
 			</div>
 			<legend>&nbsp;</legend>
-
+            <input name="MonthForm[total]" id="MonthForm_year_no" class="input-10 form-control readonly" type="text" value="<?php echo $model->excel['f74'];?>" style="display: none" >
             <div class="form-group">
                 <?php echo $form->labelEx($model,'销售',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-7">

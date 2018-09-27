@@ -116,7 +116,6 @@ class QueueController extends Controller
 	}
 
 	public static function allowExecute() {
-		Yii::app()->user->setUrlAfterLogin();
 		return Yii::app()->user->validFunction('B12');
 	}
 

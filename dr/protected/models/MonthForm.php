@@ -13,6 +13,7 @@ class MonthForm extends CFormModel
     public $personnel;
     public $finance;
     public $other;
+    public $total;
 
     public function attributeLabels()
     {
@@ -535,7 +536,7 @@ class MonthForm extends CFormModel
     public function retrieveDataa(){
 
     }
-    public function sendDate($model){
+    public function sendDate($model,$total){
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $market=$model['market'];
@@ -620,8 +621,8 @@ WHERE hdr_id = '".$model['id']."'";
         $from_addr = "it@lbsgroup.com.hk";
         $to_addr=json_encode($a);
         $subject = "月报表总汇-" .$time;
-        $description = "内容分析";
-        $message = "销售：<br/>" . $market . "<br/>外勤：<br/>" .$legwork ."<br/>财务：<br/>" . $service ."<br/>营运：<br/>" .$personnel ."<br/>人事：<br/>" .$finance ."<br/>其他：<br/>" .$other ;
+        $description = "<br/>月报表总分：".$total."<br/>内容分析";
+        $message = "销售：<br/>" . $market . "<br/><br/>外勤：<br/>" .$legwork ."<br/><br/>财务：<br/>" . $service ."<br/><br/>营运：<br/>" .$personnel ."<br/><br/>人事：<br/>" .$finance ."<br/><br/>其他：<br/>" .$other ;
         $url = Yii::app()->createAbsoluteUrl('queue/download',array('index'=>$qid));
         $msg_url = str_replace('{url}',$url, Yii::t('report',"Please click <a href=\"{url}\" onClick=\"return popup(this,'Daily Report');\">here</a> to download the report."));
         $message .= "<p>&nbsp;</p><p>$msg_url</p>";
