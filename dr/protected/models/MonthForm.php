@@ -539,6 +539,8 @@ class MonthForm extends CFormModel
     public function sendDate($model,$total){
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
+        $sqlcity="select name from security$suffix.sec_city where code='".$city."'";
+        $cityname = Yii::app()->db->createCommand($sqlcity)->queryAll();
         $market=$model['market'];
         $legwork=$model['legwork'];
         $service=$model['service'];
@@ -621,7 +623,7 @@ WHERE hdr_id = '".$model['id']."'";
         $from_addr = "it@lbsgroup.com.hk";
         $to_addr=json_encode($a);
         $subject = "月报表总汇-" .$time;
-        $description = "<br/>月报表总分：".$total."<br/>内容分析";
+        $description = "<br/>月报表总分：".$total."    &nbsp;&nbsp;&nbsp;&nbsp;城市：".$cityname[0]['name']."<br/>内容分析";
         $message = "销售：<br/>" . $market . "<br/><br/>外勤：<br/>" .$legwork ."<br/><br/>财务：<br/>" .$finance  ."<br/><br/>营运：<br/>" . $service ."<br/><br/>人事：<br/>" .$personnel."<br/><br/>其他：<br/>" .$other ;
         $url = Yii::app()->createAbsoluteUrl('queue/download',array('index'=>$qid));
         $msg_url = str_replace('{url}',$url, Yii::t('report',"Please click <a href=\"{url}\" onClick=\"return popup(this,'Daily Report');\">here</a> to download the report."));
