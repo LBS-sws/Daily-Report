@@ -622,7 +622,7 @@ WHERE hdr_id = '".$model['id']."'";
         $to_addr=json_encode($a);
         $subject = "月报表总汇-" .$time;
         $description = "<br/>月报表总分：".$total."<br/>内容分析";
-        $message = "销售：<br/>" . $market . "<br/><br/>外勤：<br/>" .$legwork ."<br/><br/>财务：<br/>" . $service ."<br/><br/>营运：<br/>" .$personnel ."<br/><br/>人事：<br/>" .$finance ."<br/><br/>其他：<br/>" .$other ;
+        $message = "销售：<br/>" . $market . "<br/><br/>外勤：<br/>" .$legwork ."<br/><br/>财务：<br/>" .$finance  ."<br/><br/>营运：<br/>" . $service ."<br/><br/>人事：<br/>" .$personnel."<br/><br/>其他：<br/>" .$other ;
         $url = Yii::app()->createAbsoluteUrl('queue/download',array('index'=>$qid));
         $msg_url = str_replace('{url}',$url, Yii::t('report',"Please click <a href=\"{url}\" onClick=\"return popup(this,'Daily Report');\">here</a> to download the report."));
         $message .= "<p>&nbsp;</p><p>$msg_url</p>";
