@@ -115,7 +115,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report Form';
 <?php
 //Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
-$js = Script::genDeleteData(Yii::app()->createUrl('month/send'));
+$js = Script::genDeleteData(Yii::app()->createUrl('month/send',array('city'=>$_GET['city'])));
 Yii::app()->clientScript->registerScript('sendRecord',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();

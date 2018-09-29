@@ -113,13 +113,13 @@ class MonthController extends Controller
         $this->render('summarize',array('model'=>$model,));
     }
 
-    public function actionSend(){
+    public function actionSend($city){
         $model = new MonthForm;
         $model->attributes = $_POST['MonthForm'];
         $total=$_POST['MonthForm']['total'];
 //        print_r('<pre/>');
 //        print_r($total);exit();
-        $model->sendDate($model,$total);
+        $model->sendDate($model,$total,$city);
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Ok'));
         $this->render('summarize',array('model'=>$model,));
     }

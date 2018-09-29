@@ -536,9 +536,8 @@ class MonthForm extends CFormModel
     public function retrieveDataa(){
 
     }
-    public function sendDate($model,$total){
+    public function sendDate($model,$total,$city){
         $suffix = Yii::app()->params['envSuffix'];
-        $city = Yii::app()->user->city();
         $sqlcity="select name from security$suffix.sec_city where code='".$city."'";
         $cityname = Yii::app()->db->createCommand($sqlcity)->queryAll();
         $market=$model['market'];
@@ -577,7 +576,6 @@ WHERE hdr_id = '".$model['id']."'";
         $a6 = Yii::app()->db->createCommand($sql6)->queryAll();
         $a=array($a1[0]['email'],$a2[0]['email'],$a3[0]['email'],$a4[0]['email'],$a5[0]['email']);
         $a=General::dedupToEmailList($a);
-        $city = Yii::app()->user->city();
         $sql = "select a.year_no, a.month_no, b.id, b.hdr_id, b.data_field, b.data_value, c.name, c.upd_type, c.field_type, b.manual_input , c.excel_row  
 				from swo_monthly_hdr a, swo_monthly_dtl b, swo_monthly_field c 
 				where a.id=$index and a.city='$city'
