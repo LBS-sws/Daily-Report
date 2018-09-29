@@ -638,6 +638,7 @@ WHERE hdr_id = '".$model['id']."'";
             'lcu' => $lcu,
             'lcd' => date('Y-m-d H:i:s'),
         ));
+        $model->excel['f74']=$total;
 //        print_r('<pre/>');
 //        print_r($msg_url);
     }
