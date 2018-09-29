@@ -2181,3 +2181,19 @@ in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
 in D:\xampp\htdocs\dr\protected\controllers\MonthController.php (118)
 in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
 in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/09/29 18:02:59 [warning] [application] Failed to set unsafe attribute "scenario" of "MonthForm".
+in D:\xampp\htdocs\dr\protected\controllers\MonthController.php (118)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/09/29 18:02:59 [warning] [application] Failed to set unsafe attribute "total" of "MonthForm".
+in D:\xampp\htdocs\dr\protected\controllers\MonthController.php (118)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/09/29 18:09:04 [warning] [application] Failed to set unsafe attribute "scenario" of "MonthForm".
+in D:\xampp\htdocs\dr\protected\controllers\MonthController.php (118)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/09/29 18:09:04 [warning] [application] Failed to set unsafe attribute "total" of "MonthForm".
+in D:\xampp\htdocs\dr\protected\controllers\MonthController.php (118)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)

@@ -577,8 +577,29 @@ WHERE hdr_id = '".$model['id']."'";
         $a6 = Yii::app()->db->createCommand($sql6)->queryAll();
         $sql7 = "SELECT email FROM security$suffix.sec_user WHERE username='".$user."'";
         $a7 = Yii::app()->db->createCommand($sql7)->queryAll();
-        $a=array($a1[0]['email'],$a2[0]['email'],$a3[0]['email'],$a4[0]['email'],$a5[0]['email'],$a6[0]['email'],$a7[0]['email']);
-        $a=General::dedupToEmailList($a);
+        $arr=array();
+        if(!empty($a1)){
+            $arr[] = $a1[0]['email'];
+        }
+        if(!empty($a2)){
+            $arr[] = $a2[0]['email'];
+        }
+        if(!empty($a3)){
+            $arr[] = $a3[0]['email'];
+        }
+        if(!empty($a4)){
+            $arr[] = $a4[0]['email'];
+        }
+        if(!empty($a5)){
+            $arr[] = $a5[0]['email'];
+        }
+        if(!empty($a6)){
+            $arr[] = $a6[0]['email'];
+        }
+        if(!empty($a7)){
+            $arr[] = $a7[0]['email'];
+        }
+        $a=General::dedupToEmailList($arr);
         $sql = "select a.year_no, a.month_no, b.id, b.hdr_id, b.data_field, b.data_value, c.name, c.upd_type, c.field_type, b.manual_input , c.excel_row  
 				from swo_monthly_hdr a, swo_monthly_dtl b, swo_monthly_field c 
 				where a.id=$index and a.city='$city'
