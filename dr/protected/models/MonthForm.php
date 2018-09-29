@@ -560,6 +560,7 @@ WHERE hdr_id = '".$model['id']."'";
         }
         $int = Yii::app()->db->createCommand($in)->execute();
         $suffix = Yii::app()->params['envSuffix'];
+        $user = Yii::app()->user->id;
         $sql = "select approver_type, username from account$suffix.acc_approver where city='$city'";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         $sql1 = "SELECT email FROM security$suffix.sec_user WHERE username='".$rows[0]['username']."'";
@@ -574,7 +575,9 @@ WHERE hdr_id = '".$model['id']."'";
         $a5 = Yii::app()->db->createCommand($sql5)->queryAll();
         $sql6 = "SELECT email FROM security$suffix.sec_user WHERE username='".$rows[5]['username']."'";
         $a6 = Yii::app()->db->createCommand($sql6)->queryAll();
-        $a=array($a1[0]['email'],$a2[0]['email'],$a3[0]['email'],$a4[0]['email'],$a5[0]['email']);
+        $sql7 = "SELECT email FROM security$suffix.sec_user WHERE username='".$user."'";
+        $a7 = Yii::app()->db->createCommand($sql7)->queryAll();
+        $a=array($a1[0]['email'],$a2[0]['email'],$a3[0]['email'],$a4[0]['email'],$a5[0]['email'],$a6[0]['email'],$a7[0]['email']);
         $a=General::dedupToEmailList($a);
         $sql = "select a.year_no, a.month_no, b.id, b.hdr_id, b.data_field, b.data_value, c.name, c.upd_type, c.field_type, b.manual_input , c.excel_row  
 				from swo_monthly_hdr a, swo_monthly_dtl b, swo_monthly_field c 
@@ -585,7 +588,6 @@ WHERE hdr_id = '".$model['id']."'";
 			";
         $rowss = Yii::app()->db->createCommand($sql)->queryAll();
         $content=$this->getOutput($rowss);
-
         $sqla="INSERT INTO swo_queue (rpt_desc,req_dt,fin_dt,username,status,rpt_type,rpt_content)
                 VALUES ('Monthly Report',now(),now(),'admin','C','EXCEL',:rpt_content)
                 ";
