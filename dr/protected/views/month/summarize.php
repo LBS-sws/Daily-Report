@@ -28,7 +28,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report Form';
 				'submit'=>Yii::app()->createUrl('month/view',array('index'=> $model->id,'city'=>$_GET['city']))));
 		?>
         <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
-            'submit'=>Yii::app()->createUrl('month/save')));
+            'submit'=>Yii::app()->createUrl('month/save',array('city'=>$_GET['city']))));
         ?>
         <?php echo TbHtml::button('<span class=""></span> '.Yii::t('misc','Submit Save'), array(
                 'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)

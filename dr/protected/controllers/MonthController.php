@@ -56,7 +56,7 @@ class MonthController extends Controller
 	}
 
 
-	public function actionSave()
+	public function actionSave($city)
 	{
 		if (isset($_POST['MonthForm'])) {
 			$model = new MonthForm($_POST['MonthForm']['scenario']);
@@ -67,7 +67,7 @@ class MonthController extends Controller
 			if ($model->validate()) {
 				$model->saveData();
 				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-				$this->redirect(Yii::app()->createUrl('month/edit',array('index'=>$model->id)));
+				$this->redirect(Yii::app()->createUrl('month/edit',array('index'=>$model->id,'city'=>$_GET['city'])));
 			} else {
 				$message = CHtml::errorSummary($model);
 				Dialog::message(Yii::t('dialog','Validation Message'), $message);
@@ -94,10 +94,10 @@ class MonthController extends Controller
     }
 
 
-	public function actionEdit($index)
+	public function actionEdit($index,$city)
 	{
 		$model = new MonthForm('edit');
-		if (!$model->retrieveData($index)) {
+		if (!$model->retrieveData($index,$city)) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		} else {
 			$this->render('summarize',array('model'=>$model,));
