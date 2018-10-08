@@ -86,7 +86,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-7">
 					<?php 
 						echo $form->textField($model, 'qc_staff', 
-							array('size'=>50,'maxlength'=>500,'readonly'=>($model->readonlySP()),
+							array('size'=>50,'maxlength'=>500,'readonly'=>'readonly',
 							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','QC Staff'),
 											array('name'=>'btnStaffQc','id'=>'btnStaffQc',
 												'disabled'=>($model->readonlySP())
@@ -101,7 +101,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-7">
 					<?php echo $form->hiddenField($model, 'company_id'); ?>
 					<?php echo $form->textField($model, 'company_name', 
-						array('maxlength'=>500,'readonly'=>($model->readonly()),
+						array('maxlength'=>500,'readonly'=>'readonly',
 						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->readonly())))
 					)); ?>
 				</div>
@@ -111,7 +111,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'job_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
 					<?php echo $form->textField($model, 'job_staff',
-						array('maxlength'=>500,'readonly'=>($model->readonly()),
+						array('maxlength'=>500,'readonly'=>'readonly',
 						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->readonly())))
 					)); ?>
 				</div>
@@ -604,14 +604,16 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 													'form'=>$form,
 													'doctype'=>'QC',
 													'header'=>Yii::t('dialog','File Attachment'),
-													'ronly'=>($model->readonly()),
+													'ronly'=>(""),
+                                                     'nodelete'=>$model->readonlys(),
 													)); 
 ?>
 <?php $this->renderPartial('//site/fileupload',array('model'=>$model,
 													'form'=>$form,
 													'doctype'=>'QCPHOTO',
 													'header'=>Yii::t('qc','Photo Attachment'),
-													'ronly'=>($model->readonly()),
+													'ronly'=>(""),
+                                                     'nodelete'=>$model->readonlys(),
 													)); 
 ?>
 <?php $this->renderPartial('//qc/_type',array('model'=>$model)); ?>
