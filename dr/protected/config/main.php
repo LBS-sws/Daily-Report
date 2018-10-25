@@ -113,7 +113,7 @@ return array(
 			'class'=>'CHttpSession',
 			'cookieMode'=>'allow',
 			'cookieParams'=>array(
-				'domain'=>'192.168.3.210',
+				'domain'=>'192.168.3.108',
 			),
 		),
 		
@@ -151,30 +151,41 @@ return array(
 		'envSuffix'=>'dev',
 		'systemMapping'=>array(
 				'drs'=>array(
-						'webroot'=>'http://192.168.3.210/dr',
+						'webroot'=>'http://192.168.3.108/dr',
 						'name'=>'Daily Report',
 						'icon'=>'fa fa-pencil-square-o',
 					),	
 				'acct'=>array(
-						'webroot'=>'http://192.168.3.210/acct',
+						'webroot'=>'http://192.168.3.108/acct',
 						'name'=>'Accounting',
 						'icon'=>'fa fa-money',
 					),
 //				'ops'=>array(
-//						'webroot'=>'http://192.168.3.210/operation',
+//						'webroot'=>'http://192.168.3.108/operation',
 //						'name'=>'Operation',
 //						'icon'=>'fa fa-gears',
 //					),
 				'hr'=>array(
-						'webroot'=>'http://192.168.3.210/hr',
+						'webroot'=>'http://192.168.3.108/hr',
 						'name'=>'Personnel',
 						'icon'=>'fa fa-users',
 					),
-				'sal'=>array(
-						'webroot'=>'http://192.168.3.210/sales',
-						'name'=>'Sales',
-						'icon'=>'fa fa-users',
-					),
+            'sal'=>array(
+                'webroot'=>'http://192.168.3.108/sales',
+                'name'=>'Sales',
+                'icon'=>'fa fa-suitcase',
+            ),
+//            'quiz'=>array(
+//                'webroot'=>'http://192.168.3.108/qz-uat',
+//                'name'=>'Quiz',
+//                'icon'=>'fa fa-question',
+//            ),
+//            'sp'=>array(
+//
+//                'webroot'=>'http://192.168.3.108/sp-uat',
+//                'name'=>'Academic Credit',
+//                'icon'=>'fa fa-cube',
+//            ),
 //				'twapp'=>array(
 //						'webroot'=>'https://app.lbsgroup.com.tw/web',
 //						'script'=>'remoteLoginTwApp',

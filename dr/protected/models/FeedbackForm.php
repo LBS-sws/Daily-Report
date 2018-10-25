@@ -242,13 +242,18 @@ class FeedbackForm extends CFormModel
 	}
 	
 	public function sendNotification() {
+        $suffix = Yii::app()->params['envSuffix'];
 		$incharge = City::model()->getAncestorInChargeList(Yii::app()->user->city());
+		$city=Yii::app()->user->city();
+        $sqlcity="select name from security$suffix.sec_city where code='".$city."'";
+        $cityname = Yii::app()->db->createCommand($sqlcity)->queryAll();
 		$to = General::getEmailByUserIdArray($incharge);
 		$to = array_merge($to, Yii::app()->params['bossEmail']);
 		$cc = empty($this->cc) ? array() : General::getEmailByUserIdArray($this->cc);
 		$cc[] = Yii::app()->user->email();
 		$subject = Yii::app()->user->city_name().': '.str_replace('{date}',$this->request_dt,Yii::t('feedback','Feedback about All Daily Reports (Date: {date})'));
 		$description = Yii::t('feedback','Feedback Content');
+        $description.="<br/>城市：".$cityname[0]['name'];
 		$message = '';
 		$cnt = 0;
 		foreach ($this->cats as $cat=>$desc) {
