@@ -373,6 +373,7 @@ class ReportH02Form extends CReportForm
                     $b31=intval($rows[27]['data_value']);
                     $b32=intval($rows[28]['data_value']);
                     $b33=intval($rows[29]['data_value']);
+                    $b34=intval($rows[30]['data_value']);
                     $b35=intval($rows[31]['data_value']);
                     $b37=intval($rows[32]['data_value']);
                     $b38=intval($rows[33]['data_value']);
@@ -436,7 +437,7 @@ class ReportH02Form extends CReportForm
                     $c104=$b59/($b58==0?1:$b58);
                     $c105=0;
                     $c106=$b60/100;
-                    $c107=$b51/($b33==0?1:$b33);
+                    $c107=$b51/($b34==0?1:$b34);
                     $c108=$b48/(($b18==0?1:$b18)/(1500*12));
                     $c109=$b49/($b48==0?1:$b48);
                     $c110=$b50;
