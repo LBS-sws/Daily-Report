@@ -48,8 +48,8 @@ class RptCustterminate extends ReportData2 {	public function fields() {		retur
 				$temp['company_name'] = $row['company_name'];
 				$temp['nature'] = $row['nature'];
 				$temp['service'] = $row['service'];
-				$temp['amt_month'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:($row['paid_type']=='M'?$row['amt_paid']:round($row['amt_paid']/($row['ctrt_period']>0?$row['ctrt_period']:1),2))),2,'.','');
-				$temp['amt_year'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:($row['paid_type']=='M'?$row['amt_paid']*($row['ctrt_period']<12?$row['ctrt_period']:12):$row['amt_paid'])),2,'.','');
+				$temp['amt_month'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:($row['paid_type']=='M'?$row['amt_paid']:round($row['amt_paid']/($row['ctrt_period']>0?$row['ctrt_period']:12),2))),2,'.','');
+				$temp['amt_year'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:($row['paid_type']=='M'?$row['amt_paid']*($row['ctrt_period']<12&&!empty($row['ctrt_period'])?$row['ctrt_period']:12):$row['amt_paid'])),2,'.','');
 				$temp['salesman'] = $row['salesman'];
 				$temp['sign_dt'] = General::toDate($row['sign_dt']);
 				$temp['ctrt_period'] = $row['ctrt_period'];
