@@ -4545,3 +4545,39 @@ in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
 in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
 in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
 in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 10:27:04 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 10:31:37 [warning] [application] Failed to set unsafe attribute "scenario" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 10:31:37 [warning] [application] Failed to set unsafe attribute "signature" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 10:37:21 [warning] [application] Failed to set unsafe attribute "scenario" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 10:37:21 [warning] [application] Failed to set unsafe attribute "signature" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 10:44:25 [warning] [application] Failed to set unsafe attribute "scenario" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 10:44:25 [warning] [application] Failed to set unsafe attribute "signature" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 10:46:32 [warning] [application] Failed to set unsafe attribute "scenario" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 10:46:32 [warning] [application] Failed to set unsafe attribute "signature" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)

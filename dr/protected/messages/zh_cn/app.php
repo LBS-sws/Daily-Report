@@ -91,5 +91,6 @@ return array(
 	
 	'Complaint Read All'=>'投诉全閱',
 	'QC Read All'=>'品檢全閱',
+    'QC Delete'=>'品检删除',
 );
 ?>
