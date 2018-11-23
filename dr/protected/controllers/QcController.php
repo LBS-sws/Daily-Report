@@ -695,6 +695,7 @@ EOD;
             $model->attributes = $_POST['QcForm'];
 
         }
+        $model->remove($model);
         echo "<script>location.href='".$_SERVER["HTTP_REFERER"]."';</script>";
 //        if (! $model->remove($model)) {
 //            throw new CHttpException(404,'The requested page does not exist.');

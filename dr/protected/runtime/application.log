@@ -5588,3 +5588,31 @@ in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
 in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
 in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
 in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:44:33 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:44:40 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:44:41 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:44:46 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:44:50 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:45:35 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:46:05 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
