@@ -4581,3 +4581,1010 @@ in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
 in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
 in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
 in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 15:57:55 [warning] [application] Failed to set unsafe attribute "scenario" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 15:57:55 [warning] [application] Failed to set unsafe attribute "signature" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 16:02:44 [warning] [application] Failed to set unsafe attribute "scenario" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 16:02:44 [warning] [application] Failed to set unsafe attribute "signature" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 16:05:42 [warning] [application] Failed to set unsafe attribute "scenario" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 16:05:42 [warning] [application] Failed to set unsafe attribute "signature" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 16:08:54 [warning] [application] Failed to set unsafe attribute "scenario" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/21 16:08:54 [warning] [application] Failed to set unsafe attribute "signature" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:18:44 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:19:04 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:19:08 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:19:22 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:31:43 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:31:43 [error] [exception.CException] exception 'CException' with message 'QcController and its behaviors do not have a method or closure named "removeqm".' in D:\xampp\htdocs\yii\framework\base\CComponent.php:266
+Stack trace:
+#0 D:\xampp\htdocs\dr\protected\controllers\QcController.php(698): CComponent->__call('removeqm', Array)
+#1 D:\xampp\htdocs\dr\protected\controllers\QcController.php(698): QcController->removeqm(Object(QcForm))
+#2 D:\xampp\htdocs\yii\framework\web\actions\CInlineAction.php(50): QcController->actionRemove()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#4 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#6 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#17 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#18 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#19 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#20 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#21 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#22 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#23 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#24 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 15:33:09 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:36:44 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:36:44 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[HY000]: General error. The SQL statement executed was: delete from swo_qc_info where qc_id ='5432' and field_id='sign_cust'.
+in D:\xampp\htdocs\dr\protected\models\QcForm.php (474)
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (698)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+2018/11/23 15:36:44 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand 无法执行 SQL 语句: SQLSTATE[HY000]: General error. The SQL statement executed was: delete from swo_qc_info where qc_id ='5432' and field_id='sign_cust'' in D:\xampp\htdocs\yii\framework\db\CDbCommand.php:528
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\db\CDbCommand.php(390): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 D:\xampp\htdocs\dr\protected\models\QcForm.php(474): CDbCommand->queryAll()
+#2 D:\xampp\htdocs\dr\protected\controllers\QcController.php(698): QcForm->remove(Object(QcForm))
+#3 D:\xampp\htdocs\yii\framework\web\actions\CInlineAction.php(50): QcController->actionRemove()
+#4 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#6 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#9 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#10 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#11 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#12 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#13 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#14 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#16 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#17 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#18 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#19 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#20 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#21 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#22 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#23 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#24 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#25 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 15:38:20 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:38:20 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[HY000]: General error. The SQL statement executed was: delete from swo_qc_info where qc_id ='5432' and field_id='sign_cust'.
+in D:\xampp\htdocs\dr\protected\models\QcForm.php (474)
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (698)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+2018/11/23 15:38:20 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand 无法执行 SQL 语句: SQLSTATE[HY000]: General error. The SQL statement executed was: delete from swo_qc_info where qc_id ='5432' and field_id='sign_cust'' in D:\xampp\htdocs\yii\framework\db\CDbCommand.php:528
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\db\CDbCommand.php(390): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 D:\xampp\htdocs\dr\protected\models\QcForm.php(474): CDbCommand->queryAll()
+#2 D:\xampp\htdocs\dr\protected\controllers\QcController.php(698): QcForm->remove(Object(QcForm))
+#3 D:\xampp\htdocs\yii\framework\web\actions\CInlineAction.php(50): QcController->actionRemove()
+#4 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#6 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#9 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#10 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#11 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#12 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#13 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#14 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#16 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#17 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#18 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#19 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#20 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#21 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#22 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#23 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#24 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#25 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 15:38:31 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:42:37 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:42:37 [error] [php] Indirect modification of overloaded element of QcForm has no effect (D:\xampp\htdocs\dr\protected\models\QcForm.php:477)
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams()
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): QcController->runAction()
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CAccessControlFilter->filter()
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterAccessControl()
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceNoConcurrentLogin()
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceSessionExpiration()
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceRegisteredStation()
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): QcController->runActionWithFilters()
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): QcController->run()
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController()
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CWebApplication->run()
+REQUEST_URI=/dr/qc/remove
+in D:\xampp\htdocs\dr\protected\models\QcForm.php (477)
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (698)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+2018/11/23 15:43:22 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:43:22 [error] [php] Indirect modification of overloaded element of QcForm has no effect (D:\xampp\htdocs\dr\protected\models\QcForm.php:477)
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams()
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): QcController->runAction()
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CAccessControlFilter->filter()
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterAccessControl()
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceNoConcurrentLogin()
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceSessionExpiration()
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceRegisteredStation()
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): QcController->runActionWithFilters()
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): QcController->run()
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController()
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CWebApplication->run()
+REQUEST_URI=/dr/qc/remove
+in D:\xampp\htdocs\dr\protected\models\QcForm.php (477)
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (698)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+2018/11/23 15:43:39 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:44:25 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:44:25 [error] [php] Indirect modification of overloaded element of QcForm has no effect (D:\xampp\htdocs\dr\protected\models\QcForm.php:477)
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams()
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): QcController->runAction()
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CAccessControlFilter->filter()
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterAccessControl()
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceNoConcurrentLogin()
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceSessionExpiration()
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceRegisteredStation()
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): QcController->runActionWithFilters()
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): QcController->run()
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController()
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CWebApplication->run()
+REQUEST_URI=/dr/qc/remove
+in D:\xampp\htdocs\dr\protected\models\QcForm.php (477)
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (698)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+2018/11/23 15:46:29 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:46:29 [error] [php] Indirect modification of overloaded element of QcForm has no effect (D:\xampp\htdocs\dr\protected\models\QcForm.php:477)
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams()
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): QcController->runAction()
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CAccessControlFilter->filter()
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterAccessControl()
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceNoConcurrentLogin()
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceSessionExpiration()
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceRegisteredStation()
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): QcController->runActionWithFilters()
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): QcController->run()
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController()
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CWebApplication->run()
+REQUEST_URI=/dr/qc/remove
+in D:\xampp\htdocs\dr\protected\models\QcForm.php (477)
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (698)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+2018/11/23 15:59:18 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:59:26 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 15:59:47 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:00:24 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:00:34 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:02:34 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:02:34 [error] [php] Undefined index: 欠 (D:\xampp\htdocs\dr\protected\views\qc\formia.php:235)
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(870): QcController->renderFile()
+#1 D:\xampp\htdocs\yii\framework\web\CController.php(783): QcController->renderPartial()
+#2 D:\xampp\htdocs\dr\protected\controllers\QcController.php(704): QcController->render()
+#3 D:\xampp\htdocs\yii\framework\web\actions\CInlineAction.php(50): QcController->actionRemove()
+#4 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams()
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): QcController->runAction()
+#6 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CAccessControlFilter->filter()
+#8 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterAccessControl()
+#9 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#10 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#11 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceNoConcurrentLogin()
+#12 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#13 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#14 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceSessionExpiration()
+#15 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#16 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#17 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): QcController->filterEnforceRegisteredStation()
+#18 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#19 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#20 D:\xampp\htdocs\yii\framework\web\CController.php(266): QcController->runActionWithFilters()
+#21 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): QcController->run()
+#22 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController()
+#23 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#24 D:\xampp\htdocs\dr\index.php(13): CWebApplication->run()
+REQUEST_URI=/dr/qc/remove
+in D:\xampp\htdocs\dr\protected\views\qc\formia.php (235)
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (704)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+2018/11/23 16:02:54 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:03:10 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:04:24 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:04:27 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:04:27 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The requested page does not exist.' in D:\xampp\htdocs\dr\protected\controllers\QcController.php:699
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\actions\CInlineAction.php(50): QcController->actionRemove()
+#1 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#3 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#4 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#6 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#7 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#8 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#9 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#10 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#11 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#12 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#13 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#14 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#17 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#19 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#20 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#21 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#22 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:04:32 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:04:32 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The requested page does not exist.' in D:\xampp\htdocs\dr\protected\controllers\QcController.php:699
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\actions\CInlineAction.php(50): QcController->actionRemove()
+#1 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#3 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#4 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#6 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#7 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#8 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#9 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#10 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#11 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#12 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#13 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#14 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#17 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#19 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#20 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#21 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#22 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:06:07 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:06:14 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:09:17 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:09:20 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:09:31 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:10:22 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:10:25 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The requested page does not exist.' in D:\xampp\htdocs\dr\protected\controllers\QcController.php:699
+Stack trace:
+#0 [internal function]: QcController->actionRemove('5432')
+#1 D:\xampp\htdocs\yii\framework\web\actions\CAction.php(107): ReflectionMethod->invokeArgs(Object(QcController), Array)
+#2 D:\xampp\htdocs\yii\framework\web\actions\CInlineAction.php(48): CAction->runWithParamsInternal(Object(QcController), Object(ReflectionMethod), Array)
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#4 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#6 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#17 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#18 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#19 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#20 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#21 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#22 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#23 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#24 {main}
+REQUEST_URI=/dr/qc/remove?index=5432
+---
+2018/11/23 16:10:34 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+---
+2018/11/23 16:10:46 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:13:03 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:15:18 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:15:27 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:15:39 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:15:55 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:16:34 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:16:40 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:16:56 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:17:15 [error] [exception.CHttpException.403] exception 'CHttpException' with message '您未被授权执行这个动作' in D:\xampp\htdocs\yii\framework\web\auth\CAccessControlFilter.php:170
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\auth\CAccessControlFilter.php(133): CAccessControlFilter->accessDenied(Object(WebUser), '\xE6\x82\xA8\xE6\x9C\xAA\xE8\xA2\xAB\xE6\x8E\x88\xE6\x9D\x83...')
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(39): CAccessControlFilter->preFilter(Object(CFilterChain))
+#2 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#3 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#5 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#6 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#7 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#8 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#9 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#10 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#11 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#12 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#13 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#16 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#18 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#19 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#20 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:17:22 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:17:28 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:17:54 [error] [exception.CHttpException.404] exception 'CHttpException' with message '系统无法找到请求的 "remove" 动作.' in D:\xampp\htdocs\yii\framework\web\CController.php:484
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(271): CController->missingAction('remove')
+#1 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#2 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#3 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#4 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#5 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:18:09 [error] [exception.CHttpException.400] exception 'CHttpException' with message '您的请求无效。' in D:\xampp\htdocs\yii\framework\web\CController.php:337
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\CController.php(310): CController->invalidActionParams(Object(CInlineAction))
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#3 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#4 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#6 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#8 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#11 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#12 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#14 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#19 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#20 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#21 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:20:18 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:20:18 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The requested page does not exist.' in D:\xampp\htdocs\dr\protected\controllers\QcController.php:700
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\actions\CInlineAction.php(50): QcController->actionRemove()
+#1 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#2 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#3 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#4 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#5 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#6 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#7 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#8 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#9 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#10 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#11 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#12 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#13 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#14 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#15 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#16 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#17 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#18 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('remove')
+#19 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('qc/remove')
+#20 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#21 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#22 {main}
+REQUEST_URI=/dr/qc/remove
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/11/23 16:21:58 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:22:11 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:23:01 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (70)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/11/23 16:23:04 [warning] [application] Failed to set unsafe attribute "scenario" of "QcForm".
+in D:\xampp\htdocs\dr\protected\controllers\QcController.php (695)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)

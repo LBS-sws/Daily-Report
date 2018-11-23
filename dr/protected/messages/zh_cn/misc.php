@@ -49,6 +49,7 @@ return array(
 	'About'=>'关于',
 	'City'=>'地区',
 	'Attachment'=>'附件',
+	'Remove'=>'撤销',
 	
 	'Invalid Station. Please register first.'=>'工作站无效。请先登记。',
 	'User ID has been logged in more than one station.'=>'帐户已被登录到另一工作站。',

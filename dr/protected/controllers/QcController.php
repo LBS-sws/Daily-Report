@@ -28,7 +28,7 @@ class QcController extends Controller
 			),
 */
 			array('allow', 
-				'actions'=>array('new','edit','delete','save','down','downs',"templates",'fileupload','fileremove','filedownload'),
+				'actions'=>array('new','edit','delete','save','down','downs','remove',"templates",'fileupload','fileremove','filedownload'),
 				'expression'=>array('QcController','allowReadWrite'),
 			),
 			array('allow', 
@@ -687,6 +687,27 @@ EOD;
 		}
 		$this->redirect(Yii::app()->createUrl('qc/index'));
 	}
+
+    public function actionRemove()
+    {
+        $model = new QcForm('remove');
+        if (isset($_POST['QcForm'])) {
+            $model->attributes = $_POST['QcForm'];
+
+        }
+        echo "<script>location.href='".$_SERVER["HTTP_REFERER"]."';</script>";
+//        if (! $model->remove($model)) {
+//            throw new CHttpException(404,'The requested page does not exist.');
+//        } else {
+//            switch ($model->service_type) {
+//                case 'IA': $formfile = $model->new_form ? 'formia' : 'form'; break;
+//                case 'IB' : $formfile = $model->new_form ? 'formib' : 'form'; break;
+//                default : $formfile = 'form';
+//            }
+//            $this->render($formfile,array('model'=>$model,));
+//        }
+//        $this->redirect(Yii::app()->createUrl('qc/index'));
+   }
 	
 //	public function actionFileupload() {
 //		$model = new QcForm();

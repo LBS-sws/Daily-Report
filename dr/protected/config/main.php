@@ -113,7 +113,7 @@ return array(
 			'class'=>'CHttpSession',
 			'cookieMode'=>'allow',
 			'cookieParams'=>array(
-				'domain'=>'192.168.3.108',
+				'domain'=>'192.168.3.191',
 			),
 		),
 		
@@ -151,38 +151,38 @@ return array(
 		'envSuffix'=>'dev',
 		'systemMapping'=>array(
 				'drs'=>array(
-						'webroot'=>'http://192.168.3.108/dr',
+						'webroot'=>'http://192.168.3.191/dr',
 						'name'=>'Daily Report',
 						'icon'=>'fa fa-pencil-square-o',
 					),	
 				'acct'=>array(
-						'webroot'=>'http://192.168.3.108/acct',
+						'webroot'=>'http://192.168.3.191/acct',
 						'name'=>'Accounting',
 						'icon'=>'fa fa-money',
 					),
 //				'ops'=>array(
-//						'webroot'=>'http://192.168.3.108/operation',
+//						'webroot'=>'http://192.168.3.191/operation',
 //						'name'=>'Operation',
 //						'icon'=>'fa fa-gears',
 //					),
 				'hr'=>array(
-						'webroot'=>'http://192.168.3.108/hr',
+						'webroot'=>'http://192.168.3.191/hr',
 						'name'=>'Personnel',
 						'icon'=>'fa fa-users',
 					),
             'sal'=>array(
-                'webroot'=>'http://192.168.3.108/sales',
+                'webroot'=>'http://192.168.3.191/sales',
                 'name'=>'Sales',
                 'icon'=>'fa fa-suitcase',
             ),
 //            'quiz'=>array(
-//                'webroot'=>'http://192.168.3.108/qz-uat',
+//                'webroot'=>'http://192.168.3.191/qz-uat',
 //                'name'=>'Quiz',
 //                'icon'=>'fa fa-question',
 //            ),
 //            'sp'=>array(
 //
-//                'webroot'=>'http://192.168.3.108/sp-uat',
+//                'webroot'=>'http://192.168.3.191/sp-uat',
 //                'name'=>'Academic Credit',
 //                'icon'=>'fa fa-cube',
 //            ),

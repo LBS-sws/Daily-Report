@@ -43,7 +43,10 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			?>
 <?php endif ?>
 <?php if ($model->scenario=='edit'): ?>
-            <?php if($model->readonly()&&Yii::app()->user->validFunction('CN03')==false){}else{echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+            <?php if($model->readonly()&&Yii::app()->user->validFunction('CN03')==false){}else{
+                echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Remove'), array(
+                    'submit'=>Yii::app()->createUrl('qc/remove')));
+                echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
                     'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
             );}
             ?>

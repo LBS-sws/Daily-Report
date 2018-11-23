@@ -469,6 +469,19 @@ class QcForm extends CFormModel
 		return true;
 	}
 
+	public function remove($model){
+	    $id=$model['id'];
+        $sql = "delete from swo_qc_info where qc_id =:qc_id and field_id='sign_cust'";
+        $connection = Yii::app()->db;
+        $command=$connection->createCommand($sql);
+        if (strpos($sql,':qc_id')!==false){
+            $command->bindParam(':qc_id',$id,PDO::PARAM_INT);
+        }
+        $command->execute();
+//        print_r('<pre>');
+//        print_r($model);
+    }
+
 	protected function saveQcInfo(&$connection)
 	{
 		$city = Yii::app()->user->city();
