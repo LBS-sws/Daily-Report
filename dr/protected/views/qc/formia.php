@@ -121,7 +121,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 					)); ?>
 				</div>
 			</div>
-			
+
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'service_dt',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">

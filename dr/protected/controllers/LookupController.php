@@ -142,14 +142,14 @@ class LookupController extends Controller
 		$sql = "select id, concat(name, ' (', code, ')') as value from swo_staff_v
 				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
 				and (leave_dt is null or leave_dt=0 or leave_dt > now()) ";
-		$result1 = Yii::app()->db->createCommand($sql)->queryAll();
+        $records = Yii::app()->db->createCommand($sql)->queryAll();
 
-		$sql = "select id, concat(name, ' (', code, ')',' ".Yii::t('app','(Resign)')."') as value from swo_staff_v
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
-				and  leave_dt is not null and leave_dt<>0 and leave_dt <= now() ";
-		$result2 = Yii::app()->db->createCommand($sql)->queryAll();
+//		$sql = "select id, concat(name, ' (', code, ')',' ".Yii::t('app','(Resign)')."') as value from swo_staff_v
+//				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
+//				and  leave_dt is not null and leave_dt<>0 and leave_dt <= now() ";
+//		$result2 = Yii::app()->db->createCommand($sql)->queryAll();
 		
-		$records = array_merge($result1, $result2);
+//		$records = array_merge($result1, $result2);
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
 				$result[$record['id']] = $record['value'];
