@@ -6324,3 +6324,122 @@ Stack trace:
 REQUEST_URI=/dr/index.php/lookup/staffex2?search=
 HTTP_REFERER=http://192.168.3.191/dr/qc/new?type=IA
 ---
+2018/12/06 10:43:17 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'swoper.swo_staff_v' doesn't exist. The SQL statement executed was: select id, concat(name, ' (', code, ')') as value from swo_staff_v
+				where (code like '%%' or name like '%%') and city='SH'
+				and (leave_dt is null or leave_dt=0 or leave_dt > now()) .
+in D:\xampp\htdocs\dr\protected\controllers\LookupController.php (145)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/12/06 10:43:17 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand 无法执行 SQL 语句: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'swoper.swo_staff_v' doesn't exist. The SQL statement executed was: select id, concat(name, ' (', code, ')') as value from swo_staff_v
+				where (code like '%%' or name like '%%') and city='SH'
+				and (leave_dt is null or leave_dt=0 or leave_dt > now()) ' in D:\xampp\htdocs\yii\framework\db\CDbCommand.php:528
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\db\CDbCommand.php(390): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 D:\xampp\htdocs\dr\protected\controllers\LookupController.php(145): CDbCommand->queryAll()
+#2 [internal function]: LookupController->actionStaffEx2('')
+#3 D:\xampp\htdocs\yii\framework\web\actions\CAction.php(107): ReflectionMethod->invokeArgs(Object(LookupController), Array)
+#4 D:\xampp\htdocs\yii\framework\web\actions\CInlineAction.php(48): CAction->runWithParamsInternal(Object(LookupController), Object(ReflectionMethod), Array)
+#5 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#6 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#7 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#8 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#10 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#11 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#12 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#13 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#14 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#15 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#16 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#17 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#18 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#19 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#20 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#21 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#22 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('staffex2')
+#23 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('lookup/staffex2')
+#24 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#25 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#26 {main}
+REQUEST_URI=/dr/index.php/lookup/staffex2?search=
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/12/06 10:55:38 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'swoper.swo_staff_v' doesn't exist. The SQL statement executed was: select id, concat(name, ' (', code, ')') as value from swo_staff_v
+				where (code <>'%离职%' and (code like '%%' or name like '%%')) and city='SH'
+				and (leave_dt is null or leave_dt=0 or leave_dt > now()) .
+in D:\xampp\htdocs\dr\protected\controllers\LookupController.php (145)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/12/06 10:55:38 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand 无法执行 SQL 语句: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'swoper.swo_staff_v' doesn't exist. The SQL statement executed was: select id, concat(name, ' (', code, ')') as value from swo_staff_v
+				where (code <>'%离职%' and (code like '%%' or name like '%%')) and city='SH'
+				and (leave_dt is null or leave_dt=0 or leave_dt > now()) ' in D:\xampp\htdocs\yii\framework\db\CDbCommand.php:528
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\db\CDbCommand.php(390): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 D:\xampp\htdocs\dr\protected\controllers\LookupController.php(145): CDbCommand->queryAll()
+#2 [internal function]: LookupController->actionStaffEx2('')
+#3 D:\xampp\htdocs\yii\framework\web\actions\CAction.php(107): ReflectionMethod->invokeArgs(Object(LookupController), Array)
+#4 D:\xampp\htdocs\yii\framework\web\actions\CInlineAction.php(48): CAction->runWithParamsInternal(Object(LookupController), Object(ReflectionMethod), Array)
+#5 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#6 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#7 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#8 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#10 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#11 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#12 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#13 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#14 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#15 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#16 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#17 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#18 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#19 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#20 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#21 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#22 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('staffex2')
+#23 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('lookup/staffex2')
+#24 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#25 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#26 {main}
+REQUEST_URI=/dr/index.php/lookup/staffex2?search=
+HTTP_REFERER=http://192.168.3.191/dr/qc/edit?index=5432
+---
+2018/12/06 10:55:42 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'swoper.swo_staff_v' doesn't exist. The SQL statement executed was: select id, concat(name, ' (', code, ')') as value from swo_staff_v
+				where (code <>'%离职%' and (code like '%%' or name like '%%')) and city='SH'
+				and (leave_dt is null or leave_dt=0 or leave_dt > now()) .
+in D:\xampp\htdocs\dr\protected\controllers\LookupController.php (145)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/12/06 10:55:42 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand 无法执行 SQL 语句: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'swoper.swo_staff_v' doesn't exist. The SQL statement executed was: select id, concat(name, ' (', code, ')') as value from swo_staff_v
+				where (code <>'%离职%' and (code like '%%' or name like '%%')) and city='SH'
+				and (leave_dt is null or leave_dt=0 or leave_dt > now()) ' in D:\xampp\htdocs\yii\framework\db\CDbCommand.php:528
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\db\CDbCommand.php(390): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 D:\xampp\htdocs\dr\protected\controllers\LookupController.php(145): CDbCommand->queryAll()
+#2 [internal function]: LookupController->actionStaffEx2('')
+#3 D:\xampp\htdocs\yii\framework\web\actions\CAction.php(107): ReflectionMethod->invokeArgs(Object(LookupController), Array)
+#4 D:\xampp\htdocs\yii\framework\web\actions\CInlineAction.php(48): CAction->runWithParamsInternal(Object(LookupController), Object(ReflectionMethod), Array)
+#5 D:\xampp\htdocs\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#6 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#7 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#8 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#9 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#10 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#11 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#12 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceNoConcurrentLogin(Object(CFilterChain))
+#13 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#14 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#15 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceSessionExpiration(Object(CFilterChain))
+#16 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#17 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#18 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): Controller->filterEnforceRegisteredStation(Object(CFilterChain))
+#19 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#20 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#21 D:\xampp\htdocs\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#22 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): CController->run('staffex2')
+#23 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('lookup/staffex2')
+#24 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#25 D:\xampp\htdocs\dr\index.php(13): CApplication->run()
+#26 {main}
+REQUEST_URI=/dr/index.php/lookup/staffex2?search=
+---
