@@ -6443,3 +6443,29 @@ Stack trace:
 #26 {main}
 REQUEST_URI=/dr/index.php/lookup/staffex2?search=
 ---
+2018/12/19 14:46:36 [error] [php] Undefined index: ReportH02Form (D:\xampp\htdocs\dr\protected\controllers\MfxController.php:64)
+Stack trace:
+#0 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(134): MfxController->runAction()
+#1 D:\xampp\htdocs\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#2 D:\xampp\htdocs\yii\framework\web\CController.php(1146): CAccessControlFilter->filter()
+#3 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): MfxController->filterAccessControl()
+#4 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#5 D:\xampp\htdocs\dr\protected\components\Controller.php(71): CFilterChain->run()
+#6 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): MfxController->filterEnforceNoConcurrentLogin()
+#7 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#8 D:\xampp\htdocs\dr\protected\components\Controller.php(95): CFilterChain->run()
+#9 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): MfxController->filterEnforceSessionExpiration()
+#10 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#11 D:\xampp\htdocs\dr\protected\components\Controller.php(51): CFilterChain->run()
+#12 D:\xampp\htdocs\yii\framework\web\filters\CInlineFilter.php(59): MfxController->filterEnforceRegisteredStation()
+#13 D:\xampp\htdocs\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#14 D:\xampp\htdocs\yii\framework\web\CController.php(292): CFilterChain->run()
+#15 D:\xampp\htdocs\yii\framework\web\CController.php(266): MfxController->runActionWithFilters()
+#16 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(283): MfxController->run()
+#17 D:\xampp\htdocs\yii\framework\web\CWebApplication.php(142): CWebApplication->runController()
+#18 D:\xampp\htdocs\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#19 D:\xampp\htdocs\dr\index.php(13): CWebApplication->run()
+REQUEST_URI=/dr/mfx/view
+in D:\xampp\htdocs\dr\protected\controllers\MfxController.php (64)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
