@@ -38,6 +38,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer';
 		$search = array(
 						'code',
 						'name',
+						'full_name',
 						'cont_name',
 						'cont_phone',
 					);
