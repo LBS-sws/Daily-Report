@@ -6469,3 +6469,19 @@ REQUEST_URI=/dr/mfx/view
 in D:\xampp\htdocs\dr\protected\controllers\MfxController.php (64)
 in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
 in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/12/26 10:12:53 [warning] [application] Failed to set unsafe attribute "scenario" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2018/12/26 10:12:53 [warning] [application] Failed to set unsafe attribute "signature" of "UserForm".
+in D:\xampp\htdocs\dr\protected\controllers\UserController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2019/01/26 10:05:32 [warning] [application] Failed to set unsafe attribute "scenario" of "MonthlyForm".
+in D:\xampp\htdocs\dr\protected\controllers\MonthlyController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
+2019/01/26 10:46:40 [warning] [application] Failed to set unsafe attribute "scenario" of "MonthlyForm".
+in D:\xampp\htdocs\dr\protected\controllers\MonthlyController.php (60)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (71)
+in D:\xampp\htdocs\dr\protected\components\Controller.php (95)
