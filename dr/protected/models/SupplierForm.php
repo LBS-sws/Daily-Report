@@ -98,18 +98,12 @@ class SupplierForm extends CListPageModel
 //					'className'=>'Supplier',
 //				),
 //*/
-//			array('code','validateCode'),
 //		);
         $a=parent::rules();
         $b=array(
             array('id, full_name, tax_reg_no, cont_name, cont_phone, address, bank, acct_no','safe'),
             array('name, code','required'),
-            array('code','unique','allowEmpty'=>true,
-					'attributeName'=>'code',
-					'caseSensitive'=>false,
-					'className'=>'Supplier',
-				),
-
+//			array('code','validateCode'),
         );
         return array_merge($a,$b);
 	}

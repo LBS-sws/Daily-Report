@@ -29,7 +29,7 @@ class MonthlyForm extends CFormModel
 	public function validateRecord($attribute, $params){
 		$message = '';
 		foreach ($this->record as $data) {
-			if (isset($data['updtype']) && $data['updtype']=='M') {
+			if (isset($data['updtype']) && $data['updtype']!='Y') {
 				if (isset($data['fieldtype'])) {
 					switch($data['fieldtype']) {
 						case 'N':
@@ -123,14 +123,15 @@ class MonthlyForm extends CFormModel
 				if (strpos($sql,':data_value')!==false)
 					$command->bindParam(':data_value',$this->record[$code]['datavalue'],PDO::PARAM_STR);
 				if (strpos($sql,':manual_input')!==false) {
-					$input = 'N';
-					if ($this->record[$code]['updtype']=='M' || $this->record[$code]['datavalueold']==$this->record[$code]['datavalue']) {
-						$input = $this->record[$code]['manualinput'];
-					} else {
-						if ($this->record[$code]['updtype']!='M') {
-							$input = (empty($this->record[$code]['datavalue']) || $this->record[$code]['datavalue']=='0') ? 'N' : 'Y';
-						}
-					}
+					$input = empty($this->record[$code]['manualinput']) ? 'N' : $this->record[$code]['manualinput'];
+					if ($this->record[$code]['updtype']!='Y' && $this->record[$code]['datavalueold']!=$this->record[$code]['datavalue']) {
+						$input = 'Y';
+					} 
+//					else {
+//						if ($this->record[$code]['updtype']!='M') {
+//							$input = (empty($this->record[$code]['datavalue']) || $this->record[$code]['datavalue']=='0') ? 'N' : 'Y';
+//						}
+//					}
 					$command->bindParam(':manual_input',$input,PDO::PARAM_STR);
 				}
 				if (strpos($sql,':uid')!==false)

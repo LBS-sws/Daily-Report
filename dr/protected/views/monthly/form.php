@@ -66,11 +66,11 @@ $this->pageTitle=Yii::app()->name . ' - Monthly Report Form';
 		$name_prefix = $modelName.'[record]['.$key.']';
 		echo '<div class="form-group">';
 		echo '<div class="col-sm-4">';
-		echo  TbHtml::label($cnt.'. '.$data['name'].($data['updtype']!='M' ? ' *' : ''),$id_prefix.'_datavalue');
+		echo  TbHtml::label($cnt.'. '.$data['name'].($data['updtype']=='Y' ? ' *' : ''),$id_prefix.'_datavalue');
 		echo '</div>';
 		echo '<div class="col-sm-3">';
 		echo TbHtml::textField($name_prefix.'[datavalue]',$data['datavalue'],
-				array('size'=>40,'maxlength'=>100,'class'=>($data['updtype']!='M' ? 'bg-gray' : ''),'readonly'=>($model->scenario=='view'||$data['updtype']!='M'))
+				array('size'=>40,'maxlength'=>100,'readonly'=>($model->scenario=='view'||$data['updtype']=='Y'))
 			);		
 		echo TbHtml::hiddenField($name_prefix.'[id]',$data['id']);
 		echo TbHtml::hiddenField($name_prefix.'[code]',$data['code']);

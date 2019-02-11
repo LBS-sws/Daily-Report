@@ -21,6 +21,7 @@ return array(
 	'Entry Date'=>'输入日期',
 	'Staff Type'=>'员工类别',
 	'Team/Group Leader'=>'队长/组长',
+	'Acc. Leave Days'=>'剩余年假天数',
 	
 	'Office'=>'办公室',
 	'Sales'=>'销售',

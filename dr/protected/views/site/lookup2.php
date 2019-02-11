@@ -15,7 +15,7 @@
 //<table id="tblLookup" class="table table-hover"></table>
 //EOF;
 	$mesg = TbHtml::label(Yii::t('dialog','Hold down <kbd>Ctrl</kbd> button to select multiple options'), false);
-
+			
 	$content = <<<EOF
 <div class="row">
 	$hidden_param

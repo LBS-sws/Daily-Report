@@ -37,7 +37,7 @@ class CustomerenqController extends Controller
 		);
 	}
 
-	public function actionIndex($pageNum=1) 
+	public function actionIndex($pageNum=1,$show=1) 
 	{
 		$model = new CustomerEnqList;
 		if (isset($_POST['CustomerEnqList'])) {
@@ -49,8 +49,11 @@ class CustomerenqController extends Controller
 				$model->setCriteria($criteria);
 			}
 		}
-		$model->determinePageNum($pageNum);
-		$model->retrieveDataByPage($model->pageNum);
+		$model->show = $show;
+		if ($show!=0) {
+			$model->determinePageNum($pageNum);
+			$model->retrieveDataByPage($model->pageNum);
+		}
 		$this->render('index',array('model'=>$model));
 	}
 

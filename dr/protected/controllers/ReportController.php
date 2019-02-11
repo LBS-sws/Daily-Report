@@ -83,6 +83,7 @@ class ReportController extends Controller
 					'MONTH'=>$criteria->month,
 				);
 		if (!empty($criteria->type)) $data['TYPE'] = (is_array($criteria->type) ? json_encode($criteria->type) : $criteria->type);
+		
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
@@ -169,7 +170,6 @@ class ReportController extends Controller
 				'RptQc'=>'Quality Control Report',
 				'RptStaff'=>'Staff Report',
 			);
-
 		$criteria->name = 'All Daily Reports';
 		$this->addQueueItem('RptAll', $criteria, 'A3', $rptname);
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));

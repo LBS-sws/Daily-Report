@@ -1,12 +1,12 @@
 <?php
-class JobQueueCommand extends CConsoleCommand {
+class JobQueueDbgCommand extends CConsoleCommand {
 	protected $webroot;
 	
 	public function run($args) {
 		$this->webroot = Yii::app()->params['webroot'];
 		$sql = "select a.id, a.ts, a.rpt_type, a.username, a.rpt_desc, a.req_dt  
 					from swo_queue a
-				where a.status='P' order by a.req_dt limit 1";
+				where a.status='X' order by a.req_dt limit 1";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			$id = 0;
