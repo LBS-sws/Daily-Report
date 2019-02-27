@@ -13,12 +13,26 @@ class GroupForm extends CFormModel
 	public $temp_name;
 	public $rights = array();
 
+	public $extfields = array();
 	private $systems;
 	private $localelabels;
 
 	public function init() {
 		parent::init();
 		$this->systems = General::getInstalledSystemFunctions();
+		foreach($this->systems as $id=>$value) {
+			if (isset($value['item']['zzexternal']['XX01']['fields'])) {
+				$fldsfunc = 'UserFormEx::'.$value['item']['zzexternal']['XX01']['fields'];
+				$fldsarray = call_user_func($fldsfunc);
+				if (!empty($fldsarray) && is_array($fldsarray)) {
+					foreach($fldsarray as $fldid=>$fldtype) {
+						$this->extfields[$fldid]['type'] = $fldtype;
+						$this->extfields[$fldid]['value'] = ($fldtype=='json' ? array() : '');
+						$this->extfields[$fldid]['sysid'] = $id;
+					}
+				}
+			}
+		}
 		$this->localelabels = General::getLocaleAppLabels();
 		$this->initAccessRights();
 	}
@@ -36,7 +50,7 @@ class GroupForm extends CFormModel
 	 */
 	public function rules()	{
 		return array(
-			array('temp_id,rights','safe'),
+			array('temp_id,rights, extfields','safe'),
 			array('temp_name,system_id','required'),
 		);
 	}
@@ -57,31 +71,47 @@ class GroupForm extends CFormModel
 	public function retrieveData($index) {
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select a.* from security$suffix.sec_template a where a.temp_id=".$index;
-		$rows = Yii::app()->db->createCommand($sql)->queryAll();
-		if (count($rows) > 0) {
-			foreach ($rows as $row) {
-				$this->temp_id = $row['temp_id'];
-				$this->temp_name = $row['temp_name'];
-				$this->system_id = $row['system_id'];
-				$ro = $row['a_read_only'];
-				$rw = $row['a_read_write'];
-				$cn = $row['a_control'];
+		$row = Yii::app()->db->createCommand($sql)->queryRow();
+		if ($row!==false) {
+			$this->temp_id = $row['temp_id'];
+			$this->temp_name = $row['temp_name'];
+			$this->system_id = $row['system_id'];
+			$ro = $row['a_read_only'];
+			$rw = $row['a_read_write'];
+			$cn = $row['a_control'];
 
-				$a_sys = $this->systemMappingArray();
-				$sid = array_search($this->system_id, $a_sys);
-				foreach ($this->rights[$sid] as $key=>$value) {
-					$this->rights[$sid][$key] = $this->getAccessRightValue($key, $rw, $ro, $cn);
+			$a_sys = $this->systemMappingArray();
+			$sid = array_search($this->system_id, $a_sys);
+			foreach ($this->rights[$sid] as $key=>$value) {
+				$this->rights[$sid][$key] = $this->getAccessRightValue($key, $rw, $ro, $cn);
+			}
+			
+			$sql = "select field_id, field_value from security$suffix.sec_template_info where temp_id=$index";
+			$rows = Yii::app()->db->createCommand($sql)->queryAll();
+			if (count($rows) > 0) {
+				foreach ($rows as $row) {
+					switch ($this->extfields[$row['field_id']]['type']) {
+						case 'json':
+							$this->extfields[$row['field_id']]['value'] = json_decode($row['field_value']);
+							break;
+						default: 
+							$this->extfields[$row['field_id']]['value'] = $row['field_value'];
+					}
 				}
-
-				break;
 			}
 		}
 		return true;
 	}
-	
+
+	public function getExternalSystemLayout($systemId) {
+		return isset($this->systems[$systemId]['item']['zzexternal']['XX01']['layout']) 
+			? $this->systems[$systemId]['item']['zzexternal']['XX01']['layout'] 
+			: '';
+	}
+
 	protected function systemMappingArray() {
 		$rtn = array();
-		foreach (Yii::app()->params['systemMapping'] as $key=>$value) {
+		foreach (General::systemMapping() as $key=>$value) {
 			$rtn[] = $key;
 		}
 		return $rtn;
@@ -129,6 +159,7 @@ class GroupForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveGroup($connection);
+			$this->saveGroupInfo($connection);
 			$transaction->commit();
 		}
 		catch(Exception $e) {
@@ -200,11 +231,50 @@ class GroupForm extends CFormModel
 			$this->temp_id = Yii::app()->db->getLastInsertID();
 		return true;
 	}
+
+	protected function saveGroupInfo(&$connection)
+	{
+		$suffix = Yii::app()->params['envSuffix'];
+
+		switch ($this->scenario) {
+			case 'delete':
+				$sql = "delete from security$suffix.sec_template_info where temp_id = :username";
+				break;
+			case 'new':
+			case 'edit':
+				$sql = "insert into security$suffix.sec_template_info 
+							(temp_id, field_id, field_value, lcu, luu)
+						values 
+							(:temp_id, :field_id, :field_value, :lcu, :luu)
+						on duplicate key update 
+							field_value = :field_value, luu = :luu
+					";
+				break;
+		}
+
+		$uid = Yii::app()->user->id;
+		foreach($this->extfields as $fldid=>$item) {
+			if ($item['sysid']==$this->system_id && !empty($item['value']) && $this->scenario!='delete') {
+				$value = $item['type']=='json' ? json_encode($item['value']) : $item['value'];
+				$command=$connection->createCommand($sql);
+				if (strpos($sql,':temp_id')!==false)
+					$command->bindParam(':temp_id',$this->temp_id,PDO::PARAM_INT);
+				if (strpos($sql,':field_id')!==false)
+					$command->bindParam(':field_id',$fldid,PDO::PARAM_STR);
+				if (strpos($sql,':field_value')!==false)
+					$command->bindParam(':field_value',$value,PDO::PARAM_STR);
+				if (strpos($sql,':lcu')!==false)
+					$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
+				if (strpos($sql,':luu')!==false)
+					$command->bindParam(':luu',$uid,PDO::PARAM_STR);
+				$command->execute();
+			}
+		}
+	}
 	
 	public function isOccupied($index) {
 		$rtn = false;
-		$suffix = Yii::app()->params['envSuffix'];
-		$sql = "select a.username from security$suffix.sec_user a where a.group_id=".$index." limit 1";
+		$sql = "select a.username from swo_user a where a.group_id=".$index." limit 1";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		foreach ($rows as $row) {
 			$rtn = true;

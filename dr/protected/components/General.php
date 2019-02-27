@@ -497,7 +497,7 @@ class General {
 
 	public function getInstalledSystemList() {
 		$rtn = array();
-		$systems = Yii::app()->params['systemMapping'];
+		$systems = General::systemMapping();
 		foreach ($systems as $key=>$value) {
 			$rtn[$key] = Yii::t('app',$value['name']);
 		}
@@ -508,7 +508,7 @@ class General {
 		$rtn = array();
 		$sysid = Yii::app()->user->system();
 		$basePath = Yii::app()->basePath;
-		$systems = Yii::app()->params['systemMapping'];
+		$systems = General::systemMapping();
 		$cpathid = end(explode('/',$systems[$sysid]['webroot']));
 		foreach ($systems as $key=>$value) {
 			$rtn[$key] = array('name'=>$value['name'], 'item'=>array());
@@ -516,6 +516,10 @@ class General {
 			if (isset($value['external']) && $value['external']) {
 				$rtn[$key]['item']['zzexternal']['XX01']['name'] = 'System Use';
 				$rtn[$key]['item']['zzexternal']['XX01']['tag'] = '';
+				$rtn[$key]['item']['zzexternal']['XX01']['layout'] = isset($value['external']['layout']) ? $value['external']['layout'] : '';
+				$rtn[$key]['item']['zzexternal']['XX01']['update'] = isset($value['external']['update']) ? $value['external']['update'] : '';
+				$rtn[$key]['item']['zzexternal']['XX01']['fields'] = isset($value['external']['fields']) ? $value['external']['fields'] : '';
+				
 			} else {
 				$confFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath).'/config/menu.php';
 				$menuitems = require($confFile);
@@ -541,13 +545,18 @@ class General {
 		return $rtn;
 	}
 
+	public function systemMapping() {
+		$rtn = require(Yii::app()->basePath.'/config/system.php');
+		return $rtn;
+	}
+	
 	public function getLocaleAppLabels() {
 		$rtn = array();
 		$sysid = Yii::app()->user->system();
 		$basePath = Yii::app()->basePath;
 		$lang = Yii::app()->language;
 		if (Yii::app()->sourceLanguage!=$lang) {
-			$systems = Yii::app()->params['systemMapping'];
+			$systems = General::systemMapping();
 			$cpathid = end(explode('/',$systems[$sysid]['webroot']));
 			foreach ($systems as $key=>$value) {
 				if (isset($value['external']) && $value['external']) {

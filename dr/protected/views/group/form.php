@@ -72,12 +72,11 @@ $this->pageTitle=Yii::app()->name . ' - Template Form';
 							echo $form->dropDownList($model, 'system_id', $option);
 						}
 						else { 
-							echo $form->hiddenField($model, 'system_id', $option);
+							echo $form->hiddenField($model, 'system_id');
 							echo TbHtml::textField('system_name', $option[$model->system_id],
 								array('maxlength'=>100,'readonly'=>true)						
 							);
 						}
-
 					?>
 				</div>
 			</div>
@@ -88,22 +87,25 @@ $this->pageTitle=Yii::app()->name . ' - Template Form';
 		$style = ($sid==$model->system_id) ? "" : "style='display:none'";
 		echo "<div id='reg_$sid' $style>";
 		foreach($model->installedSystemGroup($sid) as $gname) {
-			$groupname = ($gname=='zzcontrol') ? Yii::t('app','Misc') : $model->functionLabels($gname);
+			$groupname = ($gname=='zzcontrol' || $gname=='zzexternal') ? Yii::t('app','Misc') : $model->functionLabels($gname);
 			echo "<legend>".$groupname."</legend>";
-			$cnt = 0;
-			$out = '';
-			foreach($model->installedSystemItems($sid, $gname) as $fid=>$fname) {
-				$fieldid = get_class($model).'_rights_'.$idx.'_'.$fid;
-				$fieldname = get_class($model).'[rights]['.$idx.']['.$fid.']';
-				$fieldvalue = $model->rights[$idx][$fid];
+			if ($gname=='zzexternal') {
+				echo $this->renderPartial('//group/'.$model->getExternalSystemLayout($sid),array('model'=>$model,'idx'=>$idx),true);
+			} else {
+				$cnt = 0;
+				$out = '';
+				foreach($model->installedSystemItems($sid, $gname) as $fid=>$fname) {
+					$fieldid = get_class($model).'_rights_'.$idx.'_'.$fid;
+					$fieldname = get_class($model).'[rights]['.$idx.']['.$fid.']';
+					$fieldvalue = $model->rights[$idx][$fid];
 
-				if ($cnt==0) echo "<div class='form-group'>";
+					if ($cnt==0) echo "<div class='form-group'>";
 
-				echo "<div class='col-sm-2'>";
-				echo TbHtml::label($fname, $fieldid);
-				echo "</div>";
-				echo "<div class='col-sm-2'>";
-				$option = ($gname=='zzcontrol') 
+					echo "<div class='col-sm-2'>";
+					echo TbHtml::label($fname, $fieldid);
+					echo "</div>";
+					echo "<div class='col-sm-2'>";
+					$option = ($gname=='zzcontrol') 
 						? array('CN'=>Yii::t('misc','On'),
 								'NA'=>Yii::t('misc','Off'),
 							)
@@ -115,18 +117,19 @@ $this->pageTitle=Yii::app()->name . ' - Template Form';
 						: array('RW'=>Yii::t('misc','On'),
 								'NA'=>Yii::t('misc','Off'),
 							));
-				echo TbHtml::dropDownList($fieldname, $fieldvalue, $option,
+					echo TbHtml::dropDownList($fieldname, $fieldvalue, $option,
 								array('disabled'=>($model->scenario=='view')));
-				echo "</div>";
-				$cnt++;
-
-				if ($cnt==3) {
 					echo "</div>";
-					$cnt = 0;
+					$cnt++;
+
+					if ($cnt==3) {
+						echo "</div>";
+						$cnt = 0;
+					}
 				}
+				if ($cnt!=0) echo '</div>';
+				$cnt = 0;
 			}
-			if ($cnt!=0) echo '</div>';
-			$cnt = 0;
 		}
 		echo "</div>";
 		$idx++;

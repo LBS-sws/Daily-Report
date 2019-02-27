@@ -20,6 +20,10 @@ class UserForm extends CFormModel
 	public $email;
 	public $rights = array();
 
+	public $extfields = array();
+	public $oriextfields = array();
+	public $oriextrights = array();
+	
 	public $info_fields = array(
 							'signature'=>'blob',
 							'signature_file_type'=>'value',
@@ -79,12 +83,28 @@ class UserForm extends CFormModel
 			array('password','safe','on'=>'edit, delete'),
 			array('email','email','allowEmpty'=>true,),
 			array('signature','file','types'=>'jpg, png','allowEmpty'=>true),
+			array('extfields, oriextfields, oriextrights','safe'),
 		);
 	}
 
 	public function init() {
 		parent::init();
+		$formEx = new UserFormEx();
 		$this->systems = General::getInstalledSystemFunctions();
+		foreach($this->systems as $id=>$value) {
+			if (isset($value['item']['zzexternal']['XX01']['fields'])) {
+				$fldsfunc = 'UserFormEx::'.$value['item']['zzexternal']['XX01']['fields'];
+				$fldsarray = call_user_func($fldsfunc);
+				if (!empty($fldsarray) && is_array($fldsarray)) {
+					foreach($fldsarray as $fldid=>$fldtype) {
+						$this->extfields[$fldid]['type'] = $fldtype;
+						$this->extfields[$fldid]['value'] = ($fldtype=='json' ? array() : '');
+					}
+				}
+				$this->oriextrights[$id]['XX01'] = 'NA';
+			}
+		}
+		$this->oriextfields = $this->extfields;
 		$this->localelabels = General::getLocaleAppLabels();
 		$this->initAccessRights();
 	}
@@ -130,21 +150,24 @@ class UserForm extends CFormModel
 		return $rtn;
 	}
 
+	public function getExternalSystemLayout($systemId) {
+		return isset($this->systems[$systemId]['item']['zzexternal']['XX01']['layout']) 
+			? $this->systems[$systemId]['item']['zzexternal']['XX01']['layout'] 
+			: '';
+	}
+	
 	public function getTemplateData($id) {
 		$rtn = array();
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select system_id, a_read_only, a_read_write, a_control from security$suffix.sec_template
 				where temp_id=$id 
 			";
-		$records = Yii::app()->db->createCommand($sql)->queryAll();
-		if (count($records) > 0) {
-			foreach ($records as $k=>$record) {
-				$ro = $record['a_read_only'];
-				$rw = $record['a_read_write'];
-				$cn = $record['a_control'];
-				$sid = $record['system_id'];
-				break;
-			}
+		$record = Yii::app()->db->createCommand($sql)->queryRow();
+		if ($record!==false) {
+			$ro = $record['a_read_only'];
+			$rw = $record['a_read_write'];
+			$cn = $record['a_control'];
+			$sid = $record['system_id'];
 
 			$a_sys = $this->systemMappingArray();
 			$idx = array_search($sid, $a_sys);
@@ -154,7 +177,24 @@ class UserForm extends CFormModel
 											((strpos($ro,$key)!==false) ? 'RO' :
 											((strpos($cn,$key)!==false) ? 'CN' : 'NA'
 											));
-				$rtn[] = array('idx'=>$idx,'id'=>$key,'value'=>$access);
+				$rtn[] = array('idx'=>$idx,'id'=>$key,'value'=>$access,'extra'=>false,'sysid'=>$sid,'type'=>'');
+			}
+			
+			$sql = "select field_id, field_value from security$suffix.sec_template_info where temp_id=$id";
+			$rows = Yii::app()->db->createCommand($sql)->queryAll();
+			if (count($rows) > 0) {
+				if (isset($this->systems[$sid]['item']['zzexternal']['XX01']['fields'])) {
+					$fldsfunc = 'UserFormEx::'.$this->systems[$sid]['item']['zzexternal']['XX01']['fields'];
+					$fldsarray = call_user_func($fldsfunc);
+					$x = array();
+					foreach($fldsarray as $fldid=>$fldtype) {
+						$x[$fldid]= $fldtype;
+					}
+					foreach ($rows as $row) {
+						$type = isset($x[$row['field_id']]) ? $x[$row['field_id']] : '';
+						$rtn[] = array('idx'=>$idx,'id'=>$row['field_id'],'value'=>$row['field_value'],'extra'=>true,'sysid'=>$sid,'type'=>$type);
+					}
+				}
 			}
 		}
 		return $rtn;
@@ -198,6 +238,7 @@ class UserForm extends CFormModel
 														((strpos($dtl['a_read_only'],$key)!==false) ? 'RO' :
 														((strpos($dtl['a_control'],$key)!==false) ? 'CN' : 'NA'
 														));
+							isset($this->oriextrights[$sid]['XX01']) && $key=='XX01' && $this->oriextrights[$sid]['XX01'] = $this->rights[$idx][$key];
 						}
 					}
 				}
@@ -215,16 +256,25 @@ class UserForm extends CFormModel
 						case 'signature_file_type': $this->signature_file_type = $rec['field_value']; break;
 						case 'staff_id': $this->staff_id = $rec['field_value']; break;
 						case 'staff_name': $this->staff_name = $rec['field_value']; break;
+						default: 
+							switch ($this->extfields[$rec['field_id']]['type']) {
+								case 'json':
+									$this->extfields[$rec['field_id']]['value'] = json_decode($rec['field_value']);
+									break;
+								default: 
+									$this->extfields[$rec['field_id']]['value'] = $rec['field_value'];
+							}
 					}
 				}
 			}
+			$this->oriextfields = $this->extfields;
 		}
 		return true;
 	}
 	
 	protected function systemMappingArray() {
 		$rtn = array();
-		foreach (Yii::app()->params['systemMapping'] as $key=>$value) {
+		foreach (General::systemMapping() as $key=>$value) {
 			$rtn[] = $key;
 		}
 		return $rtn;
@@ -237,6 +287,14 @@ class UserForm extends CFormModel
 		try {
 			$this->saveUser($connection);
 			$this->saveRights($connection);
+			foreach($this->systems as $id=>$value) {
+				if (isset($value['item']['zzexternal']['XX01']['update'])) {
+					$func = 'UserFormEx::'.$value['item']['zzexternal']['XX01']['update'];
+					if (!call_user_func_array($func, array(&$connection, &$this))) {
+						throw new Exception('Update external system fail.');
+					}
+				}
+			}
 			$this->saveInfo($connection);
 			$transaction->commit();
 		}
@@ -302,7 +360,7 @@ class UserForm extends CFormModel
 
 		switch ($this->scenario) {
 			case 'delete':
-				$sql = "delete from security$suffix.sec_user_access where username = :username and system_id :system_id";
+				$sql = "delete from security$suffix.sec_user_access where username = :username and system_id=:system_id";
 				break;
 			case 'new':
 			case 'edit':
@@ -329,13 +387,20 @@ class UserForm extends CFormModel
 			}
 			$sid = $a_sys[$idx];
 			$command=$connection->createCommand($sql);
-			$command->bindParam(':username',$this->username,PDO::PARAM_STR);
-			$command->bindParam(':system_id',$sid,PDO::PARAM_STR);
-			$command->bindParam(':a_read_only',$ro,PDO::PARAM_STR);
-			$command->bindParam(':a_read_write',$rw,PDO::PARAM_STR);
-			$command->bindParam(':a_control',$cn,PDO::PARAM_STR);
-			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
-			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
+			if (strpos($sql,':username')!==false)
+				$command->bindParam(':username',$this->username,PDO::PARAM_STR);
+			if (strpos($sql,':system_id')!==false)
+				$command->bindParam(':system_id',$sid,PDO::PARAM_STR);
+			if (strpos($sql,':a_read_only')!==false)
+				$command->bindParam(':a_read_only',$ro,PDO::PARAM_STR);
+			if (strpos($sql,':a_read_write')!==false)
+				$command->bindParam(':a_read_write',$rw,PDO::PARAM_STR);
+			if (strpos($sql,':a_control')!==false)
+				$command->bindParam(':a_control',$cn,PDO::PARAM_STR);
+			if (strpos($sql,':lcu')!==false)
+				$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
+			if (strpos($sql,':luu')!==false)
+				$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 			$command->execute();
 		}
 	}
@@ -361,20 +426,47 @@ class UserForm extends CFormModel
 
 		$uid = Yii::app()->user->id;
 		foreach($this->info_fields as $fldid=>$fldtype) {
-//			if (($fldid!='signature' && $fldid!='signature_file_type') || !empty($this->$fldid)) {
+			if (($fldid!='signature' && $fldid!='signature_file_type') || !empty($this->$fldid) || $this->scenario=='delete') {
 				$value = ($fldtype=='value') ? $this->$fldid : '';
 				$blob = ($fldtype=='blob') ? $this->$fldid : '';
 			
 				$command=$connection->createCommand($sql);
-				$command->bindParam(':username',$this->username,PDO::PARAM_STR);
-				$command->bindParam(':field_id',$fldid,PDO::PARAM_STR);
-				$command->bindParam(':field_value',$value,PDO::PARAM_STR);
-				$command->bindParam(':field_blob',$blob,PDO::PARAM_LOB);
-				$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
-				$command->bindParam(':luu',$uid,PDO::PARAM_STR);
+				if (strpos($sql,':username')!==false)
+					$command->bindParam(':username',$this->username,PDO::PARAM_STR);
+				if (strpos($sql,':field_id')!==false)
+					$command->bindParam(':field_id',$fldid,PDO::PARAM_STR);
+				if (strpos($sql,':field_value')!==false)
+					$command->bindParam(':field_value',$value,PDO::PARAM_STR);
+				if (strpos($sql,':field_blob')!==false)
+					$command->bindParam(':field_blob',$blob,PDO::PARAM_LOB);
+				if (strpos($sql,':lcu')!==false)
+					$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
+				if (strpos($sql,':luu')!==false)
+					$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 				$command->execute();
 			}
-//		}
+		}
+	
+		foreach($this->extfields as $fldid=>$item) {
+			if (!empty($item['value']) && $this->scenario!='delete') {
+				$value = $item['type']=='json' ? json_encode($item['value']) : $item['value'];
+				$blob = '';
+				$command=$connection->createCommand($sql);
+				if (strpos($sql,':username')!==false)
+					$command->bindParam(':username',$this->username,PDO::PARAM_STR);
+				if (strpos($sql,':field_id')!==false)
+					$command->bindParam(':field_id',$fldid,PDO::PARAM_STR);
+				if (strpos($sql,':field_value')!==false)
+					$command->bindParam(':field_value',$value,PDO::PARAM_STR);
+				if (strpos($sql,':field_blob')!==false)
+					$command->bindParam(':field_blob',$blob,PDO::PARAM_LOB);
+				if (strpos($sql,':lcu')!==false)
+					$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
+				if (strpos($sql,':luu')!==false)
+					$command->bindParam(':luu',$uid,PDO::PARAM_STR);
+				$command->execute();
+			}
+		}
 	}
 	
 	public function getSignatureString() {

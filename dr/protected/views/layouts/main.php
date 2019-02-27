@@ -38,9 +38,10 @@
 				<!-- Collect the nav links, forms, and other content for toggling -->
 				<div class="collapse navbar-collapse pull-left" id="navbar-collapse">
 				<?php
+					$sysmap = General::systemMapping();
 					$sysId = Yii::app()->session['system'];
-					$sysTitle = Yii::app()->params['systemMapping'][$sysId]['name'];
-					$sysIcon = Yii::app()->params['systemMapping'][$sysId]['icon'];
+					$sysTitle = $sysmap[$sysId]['name'];
+					$sysIcon = $sysmap[$sysId]['icon'];
 					echo "<button id='btnSysChange' type='button' 
 						class='btn btn-default navbar-btn navbar-left' data-toggle='tooltip' data-placement='bottom' title='".Yii::t('app','System Change')."'>"
 						.Yii::t('app',$sysTitle)."</button>";
@@ -123,15 +124,27 @@ $('#btnSysChange').on('click',function() {
 	$('#syschangedialog').modal('show');
 });
 	";
-	foreach (Yii::app()->params['systemMapping'] as $id=>$value) {
+	$incl_js = false;
+	foreach (General::systemMapping() as $id=>$value) {
 		if (Yii::app()->user->validSystem($id)) {
 			$oid = 'btnSys'.$id;
 			$url = $value['webroot'];
-			$temp = '
-$("#'.$oid.'").on("click",function(){$("#syschangedialog").modal("hide");window.location="'.$url.'";});
-				';
+			if (!isset($value['script'])) {
+				$temp = '$("#'.$oid.'").on("click",function(){$("#syschangedialog").modal("hide");window.location="'.$url.'";});';
+			} else {
+				$func_name = $value['script'];
+				$lang = Yii::app()->language;
+				$homeurl = Yii::app()->createUrl("");
+				$incl_js = true;
+				$temp = '$("#'.$oid.'").on("click",function(){$("#syschangedialog").modal("hide");'.$func_name.'("'.$id.'","'.$url.'","'.$homeurl.'");});';
+			}
 			$js .= $temp;
 		}
+	}
+	
+	if ($incl_js) {
+		$sfile = Yii::app()->baseUrl.'/js/systemlink.js';
+		Yii::app()->clientScript->registerScriptFile($sfile,CClientScript::POS_HEAD);
 	}
 	Yii::app()->clientScript->registerScript('systemchange',$js,CClientScript::POS_READY);
 }
