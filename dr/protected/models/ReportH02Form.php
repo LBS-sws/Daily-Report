@@ -66,7 +66,7 @@ class ReportH02Form extends CReportForm
         include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
         $objPHPExcel = new PHPExcel;
         $objReader  = PHPExcel_IOFactory::createReader('Excel2007');
-        if(count($model->five[0])==68){
+        if(count($model->five[0])==69){
             $path = Yii::app()->basePath.'/commands/template/month_more_lirun.xlsx';
             $objPHPExcel = $objReader->load($path);
             $excel_m=array('C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
@@ -83,10 +83,10 @@ class ReportH02Form extends CReportForm
                     $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].$arr['excel_row'], $arr['data_value']) ;
                 }
                 for($a=80;$a<132;$a++){
-                    if($a!=87&&$a!=95&&$a!=101&&$a!=116&&$a!=123){
-                        $value=$model->excel[$i]['c'.$a]."(".$model->excel[$i]['e'.$a].")";
-                        $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].$a, $value) ;
-                    }
+//                    if($a!=87&&$a!=95&&$a!=101&&$a!=116&&$a!=123){
+//                        $value=$model->excel[$i]['c'.$a]."(".$model->excel[$i]['e'.$a].")";
+//                        $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].$a, $value) ;
+//                    }
                     $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'80',$model->excel[$i]['c76']."(".$model->excel[$i]['e76'].")") ;
                     $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'81',$model->excel[$i]['c77']."(".$model->excel[$i]['e77'].")") ;
                     $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'82',$model->excel[$i]['c78']."(".$model->excel[$i]['e78'].")") ;
@@ -854,13 +854,13 @@ class ReportH02Form extends CReportForm
                 $excel['e122']=round($e122,4);
                 $excel['e124']=round($e124,4);
                 if(!empty($rows[67])){
-                    $this->excel['b67']=round($rows[67],4);
-                    $this->excel['bc102']=(round($bc102,4)*100)."%";
-                    $this->excel['bc103']=(round($bc103,4)*100)."%";
-                    $this->excel['bc104']=(round($bc104,4)*100)."%";
-                    $this->excel['be102']=round($be102,4);
-                    $this->excel['be103']=round($be103,4);
-                    $this->excel['be104']=round($be104,4);
+                    $excel['b67']=round($rows[67],4);
+                    $excel['bc102']=(round($bc102,4)*100)."%";
+                    $excel['bc103']=(round($bc103,4)*100)."%";
+                    $excel['bc104']=(round($bc104,4)*100)."%";
+                    $excel['be102']=round($be102,4);
+                    $excel['be103']=round($be103,4);
+                    $excel['be104']=round($be104,4);
                 }
 
                 $excel['f74']=$f74;

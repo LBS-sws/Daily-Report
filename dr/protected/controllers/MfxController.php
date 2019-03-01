@@ -66,10 +66,10 @@ class MfxController extends Controller
 //        $date1 = "2008-08-11";
 //        $date2 = "2008-11-06";
 //        $monthNum = $this->getMonth( $date1 , $date2 );
+
+        $model->retrieveData($model);
 //        print_r('<pre>');
 //        print_r($model);
-        $model->retrieveData($model);
-
 			$this->render('form',array('model'=>$model,));
 
 	}
