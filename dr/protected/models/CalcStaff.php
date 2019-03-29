@@ -18,7 +18,7 @@ class CalcStaff extends Calculation {
 	
 	public static function countStaffResign($stafftype, $year, $month) {
 		$rtn = array();
-		$sql = "select a.city, count(a.id) as counter from swo_staff a
+		$sql = "select a.city, count(a.id) as counter from swo_staff_v a
 				where a.leave_dt is not null and timestampdiff(MONTH,a.join_dt,a.leave_dt) > 0
 				and year(a.leave_dt)=$year and month(a.leave_dt)=$month 
 				and a.staff_type='$stafftype' 
@@ -48,7 +48,7 @@ class CalcStaff extends Calculation {
 	public static function countStaff($stafftype, $year, $month) {
 		$rtn = array();
 		$d = $year.'-'.$month.'-1';
-		$sql = "select a.city, count(a.id) as counter from swo_staff a
+		$sql = "select a.city, count(a.id) as counter from swo_staff_v a
 				where (a.leave_dt is null or a.leave_dt >= date_add('$d', interval 1 month))
 				and a.join_dt < date_add('$d', interval 1 month)
 				and a.staff_type='$stafftype' 
@@ -74,7 +74,7 @@ class CalcStaff extends Calculation {
 	public static function countLeader($type, $year, $month) {
 		$rtn = array();
 		$d = $year.'-'.$month.'-1';
-		$sql = "select a.city, count(a.id) as counter from swo_staff a
+		$sql = "select a.city, count(a.id) as counter from swo_staff_v a
 				where (a.leave_dt is null or a.leave_dt >= date_add('$d', interval 1 month))
 				and a.join_dt < date_add('$d', interval 1 month)
 				and a.leader='$type' 
@@ -90,7 +90,7 @@ class CalcStaff extends Calculation {
 	public static function countNoContract($year, $month) {
 		$rtn = array();
 		$d = $year.'-'.$month.'-1';
-		$sql = "select a.city, count(a.id) as counter from swo_staff a
+		$sql = "select a.city, count(a.id) as counter from swo_staff_v a
 				where a.ctrt_start_dt is null and a.join_dt < date_add('$d', interval -1 month)
 				and (a.leave_dt is null or a.leave_dt >= date_add('$d', interval 1 month)) 
 				group by a.city
@@ -100,7 +100,7 @@ class CalcStaff extends Calculation {
 			foreach ($rows as $row) $rtn[$row['city']] = $row['counter'];
 		}
 
-		$sql = "select a.city, count(a.id) as counter from swo_staff a
+		$sql = "select a.city, count(a.id) as counter from swo_staff_v a
 				where a.ctrt_start_dt < a.ctrt_renew_dt and a.ctrt_renew_dt < date_add('$d', interval -1 month)
 				and a.ctrt_renew_dt is not null and a.ctrt_start_dt is not null 
 				and (a.leave_dt is null or a.leave_dt >= date_add('$d', interval 1 month)) 

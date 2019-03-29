@@ -90,8 +90,10 @@ class MonthlyCommand extends CConsoleCommand {
 //	
 	public function actionCalculate($year='', $month='', $lastmonth='N') {
 		if ($lastmonth=='Y') {
-			$this->year = date('Y', strtotime('-1 month'));
-			$this->month = date('m', strtotime('-1 month'));
+			$this->year = date('Y', strtotime('first day of last month'));
+			$this->month = date('m', strtotime('first day of last month'));
+//			$this->year = date('Y', strtotime('-1 month'));
+//			$this->month = date('m', strtotime('-1 month'));
 		} else {
 			$this->year = (empty($year)) ? date('Y') : $year;
 			$this->month = (empty($month)) ? date('m') : $month;

@@ -50,5 +50,20 @@ class Calculation {
 		}
 		return $rtn;
     }
+	
+	public static function getCityArray() {
+		$rtn = array();
+		$suffix = Yii::app()->params['envSuffix'];
+		$sql = "select a.code
+				from security$suffix.sec_city a left outer join security$suffix.sec_city b on a.code=b.region 
+				where b.code is null 
+				order by a.code
+			";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) $rtn[$row['code']] = 0;
+		}
+		return $rtn;
+	}
 }
 ?>
