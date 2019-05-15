@@ -3,6 +3,7 @@
 return array(
 	'Data Entry'=>array(
 		'access'=>'A',
+		'icon'=>'fa-pencil-square-o',
 		'items'=>array(
 			'Staff Info'=>array(
 				'access'=>'A07',
@@ -48,6 +49,7 @@ return array(
 	),
 	'Report'=>array(
 		'access'=>'B',
+		'icon'=>'fa-file-text-o',
 		'items'=>array(
 			'Complaint Cases'=>array(
 				'access'=>'B01',
@@ -121,6 +123,7 @@ return array(
 	),
 	'Management'=>array(
 		'access'=>'G',
+		'icon'=>'fa-user-secret',
 		'items'=>array(
 			'LBS Customer Enquiry'=>array(
 				'access'=>'G01',
@@ -143,6 +146,7 @@ return array(
     ),
 	'System Setting'=>array(
 		'access'=>'C',
+		'icon'=>'fa-gear',
 		'items'=>array(
 			'Nature'=>array(
 				'access'=>'C01',
@@ -186,6 +190,7 @@ return array(
 	),
 	'Security'=>array(
 		'access'=>'D',
+		'icon'=>'fa-shield',
 		'items'=>array(
 			'User'=>array(
 				'access'=>'D01',

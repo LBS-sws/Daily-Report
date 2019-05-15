@@ -4,6 +4,11 @@ return array(
 	'Daily Report System - UAT'=>'日报表系统 - 测试版',
 	'LBS Daily Management'=>'LBS 日常管理',
 	'LBS Daily Management - UAT'=>'LBS 日常管理 - 测试版',
+	'LBS DMS (UAT)'=>'LBS 日常管理 (测试)',
+	'LBS DMS'=>'LBS 日常管理',
+	'MAIN NAVIGATION'=>'系统菜单',
+	'Region'=>'地区',
+	'Last Update Date '=>'更新日期 ',
 
 	'System Change'=>'系统切换',
 	'Daily Report'=>'日报表系统',

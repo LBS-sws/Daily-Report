@@ -22,7 +22,8 @@ class UserFormEx
 	public static function saveOnlib(&$connection, &$model) {
 		$sys_id = 'onlib';
 		$action = '';
-		$right = isset($model->rights[5]['XX01']) ? $model->rights[5]['XX01'] : 'NA';
+		$right = isset($model->rights[7]['XX01']) ? $model->rights[7]['XX01'] : 'NA';
+//		$right = isset($model->rights[5]['XX01']) ? $model->rights[5]['XX01'] : 'NA';
 		$old_param = array(
 				'role'=>isset($model->oriextfields['onlibrole']['value'])
 						? (is_array($model->oriextfields['onlibrole']['value']) 
@@ -42,15 +43,18 @@ class UserFormEx
 							: $model->extfields['onlibrole']['value']
 						)
 						: array(),
-				'user'=>isset($model->extfields['onlibuser']['value']) ? $model->extfields['onlibuser']['value'] : '',
+				'user'=>isset($model->extfields['onlibuser']['value']) && !empty($model->extfields['onlibuser']['value'])
+					? $model->extfields['onlibuser']['value'] 
+					: strtolower($model->username).'.'.strtolower($model->city),
 				'right'=>$right,
 				'disp_name'=>$model->disp_name,
 				'email'=>$model->email,
 			);
 		$model->scenario=='delete' && $action='delete';
 		$model->scenario=='new' && $right=='CN' && $action='new';
-		$model->scenario=='edit' && $old_param!=$new_param && $action='edit';
-		
+		if ($model->scenario=='edit' && ($old_param['right']!=$new_param['right'] || ($old_param['role']!=$new_param['role'] && $right=='CN')))
+			$action='edit';
+
 		if (!empty($action)) {
 			$onlibuser = isset($model->extfields['onlibuser']['value']) ? $model->extfields['onlibuser']['value'] : '';
 			if ($right=='CN' && empty($onlibuser)) {
@@ -59,26 +63,28 @@ class UserFormEx
 				$new_param['user'] = $onlibuser;
 			}
 			
-			$suffix = Yii::app()->params['envSuffix'];
-			$sql = "insert into security$suffix.sec_extsys_queue(sys_id, action, req_dt, username, old_param, new_param, status)
-					value(:sys_id, :action, now(), :username, :old_param, :new_param, 'P')
-				";
-			$command=$connection->createCommand($sql);
-			if (strpos($sql,':sys_id')!==false)
-				$command->bindParam(':sys_id',$sys_id,PDO::PARAM_STR);
-			if (strpos($sql,':action')!==false)
-				$command->bindParam(':action',$action,PDO::PARAM_STR);
-			if (strpos($sql,':username')!==false)
-				$command->bindParam(':username',$onlibuser,PDO::PARAM_STR);
-			if (strpos($sql,':old_param')!==false) {
-				$oparam = json_encode($old_param);
-				$command->bindParam(':old_param',$oparam,PDO::PARAM_STR);
+			if (!empty($onlibuser)) {
+				$suffix = Yii::app()->params['envSuffix'];
+				$sql = "insert into security$suffix.sec_extsys_queue(sys_id, action, req_dt, username, old_param, new_param, status)
+						value(:sys_id, :action, now(), :username, :old_param, :new_param, 'P')
+					";
+				$command=$connection->createCommand($sql);
+				if (strpos($sql,':sys_id')!==false)
+					$command->bindParam(':sys_id',$sys_id,PDO::PARAM_STR);
+				if (strpos($sql,':action')!==false)
+					$command->bindParam(':action',$action,PDO::PARAM_STR);
+				if (strpos($sql,':username')!==false)
+					$command->bindParam(':username',$onlibuser,PDO::PARAM_STR);
+				if (strpos($sql,':old_param')!==false) {
+					$oparam = json_encode($old_param);
+					$command->bindParam(':old_param',$oparam,PDO::PARAM_STR);
+				}
+				if (strpos($sql,':new_param')!==false) {
+					$nparam = json_encode($new_param);
+					$command->bindParam(':new_param',$nparam,PDO::PARAM_STR);
+				}
+				$command->execute();
 			}
-			if (strpos($sql,':new_param')!==false) {
-				$nparam = json_encode($new_param);
-				$command->bindParam(':new_param',$nparam,PDO::PARAM_STR);
-			}
-			$command->execute();
 		}
 		return true;
 	}

@@ -23,6 +23,10 @@ class Controller extends CController
 	
 	public $displayname;
 	
+	public $function_id = '';
+	
+	public $interactive = true;
+	
 	public function init()
 	{
 		parent::init();
@@ -91,9 +95,10 @@ class Controller extends CController
 				$rtn = false;
 			}
 		}
-		if ($rtn)
+		if ($rtn) {
+			if ($this->interactive) Yii::app()->session['active_func'] = $this->function_id;
 			$filterChain->run();
-		else {
+		} else {
 			$returl = Yii::app()->user->returnUrl;
 			Yii::app()->user->logout();
 //			Dialog::message('Warning Message', Yii::t('misc',"Session expired."));

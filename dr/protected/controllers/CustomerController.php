@@ -2,6 +2,8 @@
 
 class CustomerController extends Controller 
 {
+	public $function_id='A01';
+	
 	public function filters()
 	{
 		return array(

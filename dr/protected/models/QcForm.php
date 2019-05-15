@@ -545,7 +545,7 @@ class QcForm extends CFormModel
 	protected function updateDocman(&$connection, $doctype) {
 		if ($this->scenario=='new') {
 			$docidx = strtolower($doctype);
-			if ($this->docMasterId[$docidx] > 0) {
+			if (isset($this->docMasterId[$docidx]) && $this->docMasterId[$docidx] > 0) {
 				$docman = new DocMan($doctype,$this->id,get_class($this));
 				$docman->masterId = $this->docMasterId[$docidx];
 				$docman->updateDocId($connection, $this->docMasterId[$docidx]);

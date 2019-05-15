@@ -35,7 +35,7 @@ return array(
 	'SMTPSecure' => 'none',
 	'SMTPAuth' => true,
 	'Username' => 'smtp@lbsgroup.com.hk',
-	'Password' => 'U4gApuat',
+	'Password' => 'Cr)%Q3UFqfA3'
 //	'Username' => 'smtp1@lbsgroup.com.cn',
 //	'Password' => 'UrSkQ5dQ',
 );

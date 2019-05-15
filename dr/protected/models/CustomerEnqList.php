@@ -6,6 +6,8 @@ class CustomerEnqList extends CListPageModel
 	public $company_name;
 	public $company_status;
 	public $city_list;
+	public $company_type_list;
+	public $show;
 
 	
 	public function attributeLabels()
@@ -13,6 +15,7 @@ class CustomerEnqList extends CListPageModel
 		return array(	
 			'company_code'=>Yii::t('customer','Customer Code'),
 			'company_name'=>Yii::t('customer','Customer Name'),
+			'company_type_list'=>Yii::t('customer','Customer Type'),
 			'company_status'=>Yii::t('customer','Status'),
 			'full_name'=>Yii::t('customer','Full Name'),
 			'cont_name'=>Yii::t('customer','Contact Name'),
@@ -31,7 +34,7 @@ class CustomerEnqList extends CListPageModel
 	public function rules()
 	{	$rtn1 = parent::rules();
 		$rtn2 =  array(
-			array('company_code, company_name, company_status, city_list','safe',),
+			array('company_code, company_name, company_type_list, company_status, city_list, show','safe',),
 			);
 		return array_merge($rtn1, $rtn2);
 	}
@@ -40,7 +43,7 @@ class CustomerEnqList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 //		$city = Yii::app()->user->city_allow();
-		$sql1 = "select a.*, c.name as city_name, b.status 
+		$sql1 = "select a.*, c.name as city_name, b.status, b.type_list  
 				from swo_company a
 				inner join security$suffix.sec_city c on a.city=c.code
 				left outer join swo_company_status b on a.id=b.id
@@ -73,6 +76,13 @@ class CustomerEnqList extends CListPageModel
 					$clause .= (empty($clause) ? '' : ' and ')."(b.status='U' or b.status is null)";
 					break;
 			}
+		}
+		if (!empty($this->company_type_list)) {
+			$svalue = '';
+			foreach ($this->company_type_list as $item) {
+				$svalue .= ($svalue=='' ? '' : ' or ')."position('/$item/' in b.type_list)>0";
+			}
+			$clause .= (empty($clause) ? '' : ' and ')."($svalue)";
 		}
 		if (!empty($this->city_list)) {
 			$svalue = '';
@@ -156,6 +166,7 @@ class CustomerEnqList extends CListPageModel
 					'company_name'=>$this->company_name,
 					'company_status'=>$this->company_status,
 					'city_list'=>$this->city_list,
+					'company_type_list'=>$this->company_type_list,
 				);
 		return array_merge($rtn1, $rtn2);
 	}

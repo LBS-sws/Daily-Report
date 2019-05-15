@@ -2,6 +2,8 @@
 
 class ServiceController extends Controller 
 {
+	public $function_id = 'A02';
+	
 	public function filters()
 	{
 		return array(

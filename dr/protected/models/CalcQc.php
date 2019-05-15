@@ -32,9 +32,9 @@ class CalcQc extends Calculation {
 
 	public static function listHighestMarkStaff($year, $month) {
 		$rtn = array();
-		$sql = "select a.city, a.job_staff, avg(a.qc_result) as score from swo_qc a
+		$sql = "select a.city, a.job_staff, avg(cast(a.qc_result as decimal(8,2))) as score from swo_qc a
 				where year(a.qc_dt)=$year and month(a.qc_dt)=$month 
-				and a.qc_result is not null and a.qc_result <> '' and concat('',a.qc_result*1)=a.qc_result
+				and a.qc_result is not null and a.qc_result <> '' 
 				group by a.city, a.job_staff
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
