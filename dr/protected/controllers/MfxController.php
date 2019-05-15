@@ -2,6 +2,8 @@
 
 class MfxController extends Controller
 {
+	public $function_id='H02';
+	
     protected static $actions = array(
         'index'=>'H02',
         'overtimelist'=>'YB02',

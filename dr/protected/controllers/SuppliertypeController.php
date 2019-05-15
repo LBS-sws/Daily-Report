@@ -2,6 +2,8 @@
 
 class SuppliertypeController extends Controller 
 {
+	public $function_id='C08';
+
 	public function filters()
 	{
 		return array(

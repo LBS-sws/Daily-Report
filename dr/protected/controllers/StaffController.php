@@ -2,6 +2,8 @@
 
 class StaffController extends Controller 
 {
+	public $function_id='A07';
+
 	public function filters()
 	{
 		return array(

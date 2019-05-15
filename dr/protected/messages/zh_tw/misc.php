@@ -21,6 +21,9 @@ return array(
 'Search'=>'搜尋',
 'Back'=>'返回',
 'Delete'=>'刪除',
+'xiazai'=>'下載',
+'fenxi'=>'月報總結',
+'ZongJie'=>'總結',
 'Yes'=>'是',
 'No'=>'否',
 'Login' => '登錄',
@@ -41,9 +44,12 @@ return array(
 'Refresh'=>'刷新',
 'Download'=>'下載',
 'Submit'=>'提交',
+    'Submit Save'=>'提交並發送郵件',
 'Copy'=>'複製',
+'About'=>'關於',
 'City'=>'地區',
 'Attachment'=>'附件',
+'Remove'=>'撤銷',
 
 'Invalid Station. Please register first.'=>'工作站無效。請先登記。 ',
 'User ID has been logged in more than one station.'=>'帳戶已被登錄到另一工作站。 ',
@@ -51,6 +57,8 @@ return array(
 'Message'=>'訊息',
 'All rights reserved'=>'版權所有',
 'Copyright'=>'版權',
+'**Please use Firefox web browser in order to use LBS Daily Management System for best result'
+=>'**為求使用史偉莎日常管理系統達至最佳效果，請使用火狐瀏覽器',
 );
 
 ?>

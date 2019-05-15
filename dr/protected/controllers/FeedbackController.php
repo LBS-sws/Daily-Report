@@ -2,6 +2,8 @@
 
 class FeedbackController extends Controller 
 {
+	public $function_id='A08';
+
 	public function filters()
 	{
 		return array(

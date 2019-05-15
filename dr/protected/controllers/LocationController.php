@@ -2,6 +2,8 @@
 
 class LocationController extends Controller 
 {
+	public $function_id='C03';
+
 	public function filters()
 	{
 		return array(

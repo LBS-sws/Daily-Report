@@ -2,6 +2,8 @@
 
 class QcController extends Controller 
 {
+	public $function_id='A06';
+
 	public function filters()
 	{
 		return array(

@@ -4,6 +4,11 @@ return array(
 'Daily Report System - UAT'=>'日報表系統 - 測試版',
 'LBS Daily Management'=>'LBS 日常管理',
 'LBS Daily Management - UAT'=>'LBS 日常管理 - 測試版',
+'LBS DMS (UAT)'=>'LBS 日常管理 (測試)',
+'LBS DMS'=>'LBS 日常管理',
+'MAIN NAVIGATION'=>'系統菜單',
+'Region'=>'地區',
+'Last Update Date '=>'更新日期 ',
 
 'System Change'=>'系統切換',
 'Daily Report'=>'日報表系統',
@@ -11,8 +16,8 @@ return array(
 'Operation'=>'營運系統',
 'Personnel'=>'人事系統',
 'Sales'=>'銷售系統',
-'Quiz'=>'培訓測驗系統',
-'Academic Credit'=>'學分系統',
+    'Quiz'=>'培訓測驗系統',
+    'Academic Credit'=>'學分系統',
 'Online Library'=>'網上文庫',
 
 'Data Entry'=>'數據輸入',
@@ -22,7 +27,7 @@ return array(
 'Tools' => '工具',
 'Misc'=>'其他',
 'Management'=>'管理層',
-'Data View'=>'數據查看',
+    'Data View'=>'數據查看',
 
 'Customer Info'=>'客戶資料',
 'Customer Service'=>'客戶服務',
@@ -92,7 +97,7 @@ return array(
 
 'Complaint Read All'=>'投訴全閱',
 'QC Read All'=>'品檢全閱',
-'QC Delete'=>'品檢刪除',
+    'QC Delete'=>'品檢刪除',
 'System Use'=>'系統使用',
 );
 ?>

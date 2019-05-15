@@ -2,6 +2,8 @@
 
 class FollowupController extends Controller 
 {
+	public $function_id='A03';
+
 	public function filters()
 	{
 		return array(

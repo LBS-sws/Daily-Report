@@ -2,6 +2,8 @@
 
 class EnquiryController extends Controller 
 {
+	public $function_id='A04';
+
 	public function filters()
 	{
 		return array(

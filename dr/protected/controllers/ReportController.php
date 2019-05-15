@@ -149,10 +149,12 @@ class ReportController extends Controller
 	
 // Report: All
 	protected static function allowAll() {
-		return Yii::app()->user->validFunction('B10');
+		return Yii::app()->user->validFunction('B11');
 	}
 
 	public function actionAll() {
+		$this->function_id = 'B11';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUIFeedback('all', 'All Daily Reports');
 	}
 
@@ -217,6 +219,8 @@ class ReportController extends Controller
 	}
 	
 	public function actionCustnew() {
+		$this->function_id = 'B02';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('custnew', 'Customer Report - New');
 	}
 
@@ -231,6 +235,8 @@ class ReportController extends Controller
 	}
 	
 	public function actionCustrenew() {
+		$this->function_id = 'B15';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('custrenew', 'Customer Report - Renewal');
 	}
 
@@ -245,6 +251,8 @@ class ReportController extends Controller
 	}
 
 	public function actionCustamend() {
+		$this->function_id = 'B05';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('custamend', 'Customer Report - Amendment');
 	}
 
@@ -259,6 +267,8 @@ class ReportController extends Controller
 	}
 
 	public function actionCustsuspend() {
+		$this->function_id = 'B03';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('custsuspend','Customer Report - Suspended');
 	}
 
@@ -273,6 +283,8 @@ class ReportController extends Controller
 	}
 	
 	public function actionCustresume() {
+		$this->function_id = 'B04';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('custresume','Customer Report - Resume');
 	}
 
@@ -287,6 +299,8 @@ class ReportController extends Controller
 	}
 
 	public function actionCustterminate() {
+		$this->function_id = 'B10';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('custterminate','Customer Report - Terminate');
 	}
 
@@ -301,6 +315,8 @@ class ReportController extends Controller
 	}
 	
 	public function actionComplaint() {
+		$this->function_id = 'B01';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('complaint','Complaint Cases Report');
 	}
 
@@ -315,6 +331,8 @@ class ReportController extends Controller
 	}
 	
 	public function actionEnquiry() {
+		$this->function_id = 'B06';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('enquiry','Customer Report - Enquiry');
 	}
 
@@ -329,6 +347,8 @@ class ReportController extends Controller
 	}
 	
 	public function actionLogistic() {
+		$this->function_id = 'B07';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('logistic','Product Delivery Report');
 	}
 
@@ -343,6 +363,8 @@ class ReportController extends Controller
 	}
 	
 	public function actionQc() {
+		$this->function_id = 'B08';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('qc', 'Quality Control Report');
 	}
 	
@@ -357,6 +379,8 @@ class ReportController extends Controller
 	}
 	
 	public function actionStaff() {
+		$this->function_id = 'B09';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('staff', 'Staff Report');
 	}
 
@@ -371,6 +395,8 @@ class ReportController extends Controller
 	}
 	
 	public function actionRenewal() {
+		$this->function_id = 'B13';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('renewal', 'Renewal Reminder Report', 'target_dt,format,city');
 	}
 
@@ -385,6 +411,8 @@ class ReportController extends Controller
 	}
 	
 	public function actionFeedbackstat() {
+		$this->function_id = 'B16';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('feedbackstat', 'Feedback Statistics Report', 'year,month,format');
 	}
 
@@ -399,6 +427,8 @@ class ReportController extends Controller
 	}
 	
 	public function actionFeedback() {
+		$this->function_id = 'B17';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUIFbList('feedback', 'Feedback List Report', 'start_dt,end_dt,format');
 	}
 
@@ -413,6 +443,8 @@ class ReportController extends Controller
 	}
 	
 	public function actionMonthly() {
+		$this->function_id = 'B14';
+		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('monthly', 'Monthly Report', 'year,month,city');
 	}
 

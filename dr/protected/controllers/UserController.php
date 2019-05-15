@@ -2,6 +2,8 @@
 
 class UserController extends Controller 
 {
+	public $function_id='D01';
+
 	public function filters()
 	{
 		return array(

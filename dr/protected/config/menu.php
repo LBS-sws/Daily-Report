@@ -133,6 +133,7 @@ return array(
 	),
     '月报表'=>array(
         'access'=>'H',
+		'icon'=>'fa-calendar',
         'items'=>array(
             'Monthly Report Data'=>array(
                 'access'=>'H01',

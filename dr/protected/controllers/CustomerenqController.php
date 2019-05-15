@@ -2,6 +2,8 @@
 
 class CustomerenqController extends Controller 
 {
+	public $function_id='G01';
+
 	public function filters()
 	{
 		return array(

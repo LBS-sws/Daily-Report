@@ -3,6 +3,7 @@ return array(
 'Supplier'=>'供應商',
 'Supplier Form'=>'供應商表單',
 'Supplier List'=>'供應商列表',
+    'Supplier Pay'=>'供應商付款記錄',
 
 'AI'=>'IA 供應商',
 'BI'=>'IB 供應商',
@@ -15,6 +16,7 @@ return array(
 'Code'=>'供應商編號',
 'Type'=>'類別',
 'Name'=>'名稱',
+'Full Name'=>'全稱',
 'Contact Name'=>'供應商聯繫',
 'Contact Phone'=>'供應商電話',
 'Nature'=>'性質',
@@ -26,5 +28,13 @@ return array(
 'Contract Period'=>'合同年限',
 'Status' => '狀態',
 'Address'=>'供應商地址',
+'Bank'=>'開行戶',
+'Account No'=>'賬戶號碼',
+    'req_dt'=>'申請日期',
+    'ref_no'=>'會計參考編號',
+    'trans_type_desc'=>'交易類別',
+    'bank'=>'付款賬戶',
+    'amount'=>'金額',
+    'item_desc'=>'擇要',
 );
 ?>

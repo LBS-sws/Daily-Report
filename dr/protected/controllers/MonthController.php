@@ -2,6 +2,8 @@
 
 class MonthController extends Controller
 {
+	public $function_id='H01';
+
 	public function filters()
 	{
 		return array(

@@ -2,6 +2,8 @@
 
 class CityController extends Controller 
 {
+	public $function_id='C05';
+	
 	public function filters()
 	{
 		return array(

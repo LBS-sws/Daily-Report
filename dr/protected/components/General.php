@@ -73,122 +73,98 @@ class General {
 		return $return;
 	}
 	
-	public static function getAcctTypeList()
+	public static function getGroupList()
 	{
-		$list = array();
-		$sql = "select id, acct_type_desc from acc_account_type order by acct_type_desc";
+		$list = array(0=>Yii::t('misc','-- None --'));
+		$sql = "select group_id, group_name from swo_group where group_id <> 1 order by group_name";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
-				$list[$row['id']] = $row['acct_type_desc'];
-			}
-		}
-		return $list;
-	}
-
-	public static function getAcctCodeList()
-	{
-		$list = array();
-		$sql = "select code, name from acc_account_code order by code";
-		$rows = Yii::app()->db->createCommand($sql)->queryAll();
-		if (count($rows) > 0) {
-			foreach ($rows as $row) {
-				$list[$row['code']] = $row['code'].' '.$row['name'];
-			}
-		}
-		return $list;
-	}
-
-	public static function getAcctItemList()
-	{
-		$list = array();
-		$sql = "select code, name from acc_account_item order by code";
-		$rows = Yii::app()->db->createCommand($sql)->queryAll();
-		if (count($rows) > 0) {
-			foreach ($rows as $row) {
-				$list[$row['code']] = $row['name'].' ('.$row['code'].')';
-			}
-		}
-		return $list;
-	}
-
-	public static function getTransTypeList($type,$open=false,$adj=false)
-	{
-		$list = array();
-		$clause1 = ($open) ? "" : "and trans_type_code<>'OPEN' ";
-		$clause2 = ($adj) ? "" : "and adj_type='N' ";
-		$sql = "select trans_type_code, trans_type_desc 
-				from acc_trans_type
-				where trans_cat='$type' $clause1 $clause2  
-				order by trans_type_desc";
-		$rows = Yii::app()->db->createCommand($sql)->queryAll();
-		if (count($rows) > 0) {
-			foreach ($rows as $row) {
-				$list[$row['trans_type_code']] = $row['trans_type_desc'];
-			}
-		}
-		return $list;
-	}
-
-	public static function getAccountList($in_city='',$exclude='')
-	{
-		$city = empty($in_city) ? Yii::app()->user->city() : $in_city;
-		if (strpos($city, "'")===false) $city = "'".$city."'";
-
-		$list = array();
-		$cond = empty($exclude) ? '' : " and a.id not in ($exclude) ";
-		$sql = "select a.id, a.acct_no, a.acct_name, a.bank_name, b.acct_type_desc  
-				from acc_account a, acc_account_type b
-				where a.acct_type_id=b.id and a.city in ($city,'99999') $cond
-				order by a.id
-			";
-		$rows = Yii::app()->db->createCommand($sql)->queryAll();
-		if (count($rows) > 0) {
-			foreach ($rows as $row) {
-				$list[$row['id']] = (empty($row['acct_type_desc']) ? '' : '('.$row['acct_type_desc'].') ')
-									.(empty($row['acct_name']) ? '' : $row['acct_name'].' ')
-									.(empty($row['acct_no']) ? '' : $row['acct_no'].' ')
-									.(empty($row['bank_name']) ? '' : '('.$row['bank_name'].')')
-				;
+				$list[$row['group_id']] = $row['group_name'];
 			}
 		}
 		return $list;
 	}
 	
-	public static function getPayerTypeList() {
-		return array(
-				'C'=>Yii::t('trans','Client'),
-				'S'=>Yii::t('trans','Supplier'),
-				'F'=>Yii::t('trans','Staff'),
-				'A'=>Yii::t('trans','Company A/C'),
-				'O'=>Yii::t('trans','Others')
-			);
+	public static function getStaffList()
+	{
+		$list = array(0=>Yii::t('misc','-- None --'));
+		$sql = "select id, name from swo_staff 
+			where leave_dt is null or leave_dt=0 or leave_dt > now()  
+			order by name ";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) {
+				$list[$row['id']] = $row['name'];
+			}
+		}
+		
+		$sql = "select id, name from swo_staff 
+			where leave_dt is not null and leave_dt<>0 and leave_dt <= now()  
+			order by name ";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) {
+				$list[$row['id']] = Yii::t('app','(Resign)').' '.$row['name'];
+			}
+		}
+		
+		return $list;
+	}
+
+	public static function getCustomerList()
+	{
+		$list = array(0=>Yii::t('misc','-- None --'));
+		$sql = "select id, name from swo_company order by name";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) {
+				$list[$row['id']] = $row['name'];
+			}
+		}
+		return $list;
 	}
 	
-	public static function getJsDefaultAccountList()
+	public static function getNatureList()
 	{
-		$list = "";
+		$list = array();
+		$sql = "select id, description from swo_nature order by id";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) {
+				$list[$row['id']] = $row['description'];
+			}
+		}
+		return $list;
+	}
+
+	public static function getCustTypeList()
+	{
+		$list = array();
+		$sql = "select id, description from swo_customer_type order by description";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) {
+				$list[$row['id']] = $row['description'];
+			}
+		}
+		return $list;
+	}
+
+	public static function getLocationList()
+	{
 		$city = Yii::app()->user->city();
-		$sql = "select a.trans_type_code, b.acct_id  
-				from acc_trans_type a
-				left outer join acc_trans_type_def b on a.trans_type_code=b.trans_type_code and b.city='$city'
-				order by a.trans_type_code
-			";
+		$list = array();
+		$sql = "select id, description from swo_location where city='".$city."'  order by id";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
-				$list .= (!empty($list) ? "," : "")."'".$row['trans_type_code']."': ".(empty($row['acct_id']) ? '0' : $row['acct_id']);
+				$list[$row['id']] = $row['description'];
 			}
 		}
 		return $list;
 	}
 
-	public static function getCounterTransType($code) {
-		$sql = "select counter_type from acc_trans_type where trans_type_code='$code'";
-		$row = Yii::app()->db->createCommand($sql)->queryRow();
-		return ($row!==false) ? $row['counter_type'] : '';
-	}
-	
 	public static function getTaskList()
 	{
 		$city = Yii::app()->user->city();
@@ -236,6 +212,40 @@ class General {
 		return $list;
 	}
 	
+	public static function getMgrFeedbackList()
+	{
+		$list = array();
+		$suffix = Yii::app()->params['envSuffix'];
+		$sysid = Yii::app()->user->system();
+		$sql = "select a.username, a.disp_name, a.email 
+				from security$suffix.sec_user a, security$suffix.sec_user_access b
+				where a.username = b.username
+				and b.system_id = '$sysid' 
+				and	a.city='".Yii::app()->user->city()."' 
+				and b.a_read_write like '%A08%' 
+				and a.email is not null and a.email<>''
+				and a.status='A' 
+				order by a.disp_name
+		";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) {
+				$list[$row['username']] = $row['disp_name'].' ('.$row['email'].')';
+			}
+		}
+		return $list;
+	}
+
+	public static function getFeedbackCatList() {
+		$list = array();
+		$model = new FeedbackForm;
+		$rows = $model->cats;
+		foreach ($rows as $key=>$value) {
+			$list[$key] = Yii::t('app',$value);
+		}
+		return $list;
+	}
+	
 	public static function getEmailListboxData()
 	{
 		$list = array();
@@ -259,19 +269,47 @@ class General {
 		return $list;
 	}
 
-	public static function getTransStatusDesc($invalue) {
+	public static function getServiceTypeList($descOnly=false)
+	{
+		$list = array();
+		$sql = "select id, description from swo_service_type order by description";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) {
+				if ($descOnly)
+					$list[$row['description']] = $row['description'];
+				else
+					$list[$row['id']] = $row['description'];
+			}
+		}
+		return $list;
+	}
+
+	public static function getStatusDesc($invalue) {
 		switch ($invalue) {
-			case 'V':
-				return Yii::t('app','Void');
+			case 'N':
+				return Yii::t('app','New');
 				break;
 			case 'A':
-				return Yii::t('app','Normal');
+				return Yii::t('app','Amend');
+				break;
+			case 'R':
+				return Yii::t('app','Resume');
+				break;
+			case 'S':
+				return Yii::t('app','Suspend');
+				break;
+			case 'T':
+				return Yii::t('app','Terminate');
+				break;
+			case 'C':
+				return Yii::t('app','Renew');
 				break;
 			default:
 				return '';
 		}
 	}
-
+	
 	public static function getActiveStatusDesc($invalue) {
 		switch ($invalue) {
 			case 'I':
@@ -307,6 +345,25 @@ class General {
 		}
 	}
 	
+	public static function getStaffTypeDesc($invalue) {
+		switch ($invalue) {
+			case 'OFFICE':
+				return Yii::t('staff','Office');
+				break;
+			case 'SALES':
+				return Yii::t('staff','Sales');
+				break;
+			case 'TECHNICIAN':
+				return Yii::t('staff','Technician');
+				break;
+			case 'OTHER':
+				return Yii::t('staff','Others');
+				break;
+			default:
+				return '';
+		}
+	}
+
 	public static function getLeaderDesc($invalue) {
 		switch ($invalue) {
 			case 'NIL':
@@ -438,7 +495,7 @@ class General {
 		return Yii::app()->db->createCommand($sql)->queryScalar();
 	}
 
-	public static function getInstalledSystemList() {
+	public function getInstalledSystemList() {
 		$rtn = array();
 		$systems = General::systemMapping();
 		foreach ($systems as $key=>$value) {
@@ -447,7 +504,7 @@ class General {
 		return $rtn;
 	}
 
-	public static function getInstalledSystemFunctions() {
+	public function getInstalledSystemFunctions() {
 		$rtn = array();
 		$sysid = Yii::app()->user->system();
 		$basePath = Yii::app()->basePath;
@@ -456,23 +513,32 @@ class General {
 		foreach ($systems as $key=>$value) {
 			$rtn[$key] = array('name'=>$value['name'], 'item'=>array());
 			$pathid = end(explode('/',$systems[$key]['webroot']));
-			$confFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath).'/config/menu.php';
-			$menuitems = require($confFile);
-			foreach ($menuitems as $group=>$items) {
-				foreach ($items['items'] as $k=>$v){
-					$aid = $v['access'];
-					$rtn[$key]['item'][$group][$aid]['name'] = $k;
-					$rtn[$key]['item'][$group][$aid]['tag'] = isset($v['tag']) ? $v['tag'] : '';
+			if (isset($value['external']) && $value['external']) {
+				$rtn[$key]['item']['zzexternal']['XX01']['name'] = 'System Use';
+				$rtn[$key]['item']['zzexternal']['XX01']['tag'] = '';
+				$rtn[$key]['item']['zzexternal']['XX01']['layout'] = isset($value['external']['layout']) ? $value['external']['layout'] : '';
+				$rtn[$key]['item']['zzexternal']['XX01']['update'] = isset($value['external']['update']) ? $value['external']['update'] : '';
+				$rtn[$key]['item']['zzexternal']['XX01']['fields'] = isset($value['external']['fields']) ? $value['external']['fields'] : '';
+				
+			} else {
+				$confFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath).'/config/menu.php';
+				$menuitems = require($confFile);
+				foreach ($menuitems as $group=>$items) {
+					foreach ($items['items'] as $k=>$v){
+						$aid = $v['access'];
+						$rtn[$key]['item'][$group][$aid]['name'] = $k;
+						$rtn[$key]['item'][$group][$aid]['tag'] = isset($v['tag']) ? $v['tag'] : '';
+					}
 				}
-			}
 			
-			$confFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath).'/config/control.php';
-			if (file_exists($confFile)) {
-				$cntitems = require($confFile);
-				foreach ($cntitems as $name=>$items) {
-					$aid = $items['access'];
-					$rtn[$key]['item']['zzcontrol'][$aid]['name'] = $name;
-					$rtn[$key]['item']['zzcontrol'][$aid]['tag'] = '';
+				$confFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath).'/config/control.php';
+				if (file_exists($confFile)) {
+					$cntitems = require($confFile);
+					foreach ($cntitems as $name=>$items) {
+						$aid = $items['access'];
+						$rtn[$key]['item']['zzcontrol'][$aid]['name'] = $name;
+						$rtn[$key]['item']['zzcontrol'][$aid]['tag'] = '';
+					}
 				}
 			}
 		}
@@ -483,8 +549,8 @@ class General {
 		$rtn = require(Yii::app()->basePath.'/config/system.php');
 		return $rtn;
 	}
-
-	public static function getLocaleAppLabels() {
+	
+	public function getLocaleAppLabels() {
 		$rtn = array();
 		$sysid = Yii::app()->user->system();
 		$basePath = Yii::app()->basePath;
@@ -493,80 +559,19 @@ class General {
 			$systems = General::systemMapping();
 			$cpathid = end(explode('/',$systems[$sysid]['webroot']));
 			foreach ($systems as $key=>$value) {
-				$pathid = end(explode('/',$systems[$key]['webroot']));
-				$msgFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath)
-					.'/messages/'.$lang.'/app.php';
-				$tmp = require($msgFile);
-				$rtn = array_merge($rtn, $tmp);
+				if (isset($value['external']) && $value['external']) {
+				} else {
+					$pathid = end(explode('/',$systems[$key]['webroot']));
+					$msgFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath)
+						.'/messages/'.$lang.'/app.php';
+					$tmp = require($msgFile);
+					$rtn = array_merge($rtn, $tmp);
+				}
 			}
 		}
 		return $rtn;
-	}
-	
-	public static function authenticate($username,$password) {
-		$identity=new UserIdentity($username,$password);
-		if(!$identity->authenticate()) {
-			return $identity->errorCode; 
-		} else {
-			return UserIdentity::ERROR_NONE;
-		}
 	}
 
-	public static function dollarToChinese($value) {
-		list($dollar, $remain) = split("\.",str_replace(",","",$value));
-		$cent = $remain % 10;
-		$tencent = ($remain - $cent) / 10;
-		$rtn = self::numberToChinese($dollar).'圓';
-		$rtn .= $tencent==0 ? '' : self::numberToChinese((string)$tencent).'角';
-		$rtn .= $cent==0 ? '' : self::numberToChinese((string)$cent).'仙';
-		return $rtn;
-	}
-	
-	public static function numberToChinese($input) {
-		$number = ['零', '壹', '貳', '參', '肆', '伍', '陸', '柒', '捌', '玖'];
-		$unit = ['', '拾', '佰', '仟'];
-		$unit2 = ['', '萬', '億', '兆'];
- 
-		$zeroed = false; // 是否出現零
-		$partedNonZero = false; // 是否出現非零數字
-		var_dump($input);
- 
-		$rtn = '';
-		for ($char = strlen($input) - 1; $char >= 0; $char--)
-		{
-			// 取得數字
-			$digit = $input[strlen($input) - $char - 1];
- 
-			// 判斷數字是否為零
-			if ($digit != 0)
-			{
-				// 顯示剛剛出現的零(如果有)
-				if ($zeroed) {
-					$zeroed = false;
-					$rtn .= $number[0];
-				}
- 
-				// 顯示非零數字和單位
-				$rtn .= $number[$digit].$unit[$char % 4];
-				// 標記有非零數字
-				$partedNonZero = true;
-			}
-			else
-			{
-				// 標記有零
-				$zeroed = true;
-			}
- 
-			// 跨單位時，出現非零數字要顯示單位
-			if ($partedNonZero && $char % 4 == 0) {
-				$rtn .= $unit2[$char / 4];
-				$zeroed = false;
-				$partedNonZero = false;
-			}	
-		}
-		return $rtn;
-	}
-	
 	public function getUpdateDate() {
 		$file = Yii::app()->basePath.'/config/lud.php';
 		if (file_exists($file)) {

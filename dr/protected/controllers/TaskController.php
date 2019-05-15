@@ -2,6 +2,8 @@
 
 class TaskController extends Controller 
 {
+	public $function_id='C04';
+
 	public function filters()
 	{
 		return array(

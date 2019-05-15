@@ -2,6 +2,8 @@
 
 class GroupController extends Controller 
 {
+	public $function_id='D02';
+
 	public function filters()
 	{
 		return array(

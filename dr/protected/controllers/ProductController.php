@@ -2,6 +2,8 @@
 
 class ProductController extends Controller 
 {
+	public $function_id='C06';
+
 	public function filters()
 	{
 		return array(

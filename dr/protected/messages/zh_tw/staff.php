@@ -21,6 +21,7 @@ return array(
 'Entry Date'=>'輸入日期',
 'Staff Type'=>'員工類別',
 'Team/Group Leader'=>'隊長/組長',
+'Acc. Leave Days'=>'剩餘年假天數',
 
 'Office'=>'辦公室',
 'Sales'=>'銷售',

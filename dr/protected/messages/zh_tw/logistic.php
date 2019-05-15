@@ -14,10 +14,8 @@ return array(
 'Quantity'=>'數量',
 'Finished'=>'是否完成',
 'Deadline'=>'完成日期',
-'Late Reason'=>'甩單原因',
 'Invalid quantity '=>'數量不正確',
 'Task cannot be empty'=>'任務不能空白',
-
 'Job Status'=>'工作單情況',
 'Address'=>'客戶地址',
 'Repair Items'=>'維修事項',

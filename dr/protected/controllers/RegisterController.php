@@ -1,6 +1,8 @@
 <?php
 class RegisterController extends Controller
 {
+	public $function_id='D04';
+
 	public function filters()
 	{
 		return array(

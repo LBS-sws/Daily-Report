@@ -2,6 +2,8 @@
 
 class SupplierController extends Controller 
 {
+	public $function_id='A10';
+
 	public function filters()
 	{
 		return array(

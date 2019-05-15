@@ -2,6 +2,8 @@
 
 class StationController extends Controller 
 {
+	public $function_id='D03';
+
 	public function filters()
 	{
 		return array(

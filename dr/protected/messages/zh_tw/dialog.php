@@ -9,10 +9,11 @@ return array(
 'Information' => '信息',
 'OK' => '確定',
 'Password changed' => '密碼更改完成',
-'New password and confirm password n​​ot match' => '新密碼與確認密碼不匹配',
+'New password and confirm password not match' => '新密碼與確認密碼不匹配',
 'Save' => '保存',
 'Save Record' => '保存記錄',
 'Save Done' => '記錄保存完成',
+'Save Ok'=>'郵件發送成功',
 'Validation Message' => '驗證信息',
 'Warning'=>'警告',
 'Confirmation'=>'確認',
@@ -31,7 +32,6 @@ return array(
 'Save Done and Sent Notification' => '記錄保存完成並發出電郵通知',
 'Save Done but Fail in Sent Notification' => '記錄保存完成但發出電郵通知不成功',
 'Save Done and Submit to Sent Notification'=>'記錄保存完成並提交到發送電郵通知',
-
 'Attachment'=>'附件',
 'File Attachment'=>'附件檔案',
 'File Name'=>'檔案名稱',
@@ -39,6 +39,8 @@ return array(
 'Remove'=>'刪除',
 'Date'=>'日期',
 'Download'=>'下載',
-
+'Exceeds file upload limit.'=>'超出文件上傳限制。 ',
+    'TiJiao'=>'提交記錄',
+    'Confirmation Ti'=>'確認要提交並發送郵件？ ',
 );
 ?>

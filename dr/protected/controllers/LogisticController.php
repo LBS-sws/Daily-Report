@@ -2,6 +2,8 @@
 
 class LogisticController extends Controller 
 {
+	public $function_id='A05';
+
 	public function filters()
 	{
 		return array(
