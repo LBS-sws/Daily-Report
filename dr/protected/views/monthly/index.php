@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - Monthly Report';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('monthly','Monthly Report Data'); ?></strong>
+		<strong><?php echo Yii::t('monthly','Monthly Report Input'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">

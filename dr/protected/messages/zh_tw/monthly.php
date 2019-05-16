@@ -1,6 +1,7 @@
 <?php
 return array(
 'Monthly Report Data'=>'月報表數據',
+'Monthly Report Input'=>'月報數據輸入',
 'Monthly Report Data List'=>'月報表數據列表',
 'Monthly Report Data Form'=>'月報表數據表單',
 'Year'=>'年',
