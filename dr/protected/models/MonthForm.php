@@ -894,7 +894,7 @@ WHERE hdr_id = '".$model['id']."'";
         if(count($model->record)==65){
             $path = Yii::app()->basePath.'/commands/template/m_template_one.xlsx';
         }
-        elseif (count($model->record)==69){
+        elseif (count($model->record)==68){
             $path = Yii::app()->basePath.'/commands/template/m_template_lirun.xlsx';
         }
         else{
