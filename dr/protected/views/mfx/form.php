@@ -96,7 +96,8 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
         <tr><td style="width: 13%">财务部</td><td style="width: 20%"></td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['f95']."</td>";}?><td style="width: 15%"> </td></tr>
         <tr><td rowspan="2">财政状况</td><td>IA,IB毛利率 （当月IA,IB生意额 - 材料订购 - 技术员工资）/当月IA,IB生意额</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c96']."(".$model->excel[$a]['e96'].")</td>";}?><td>55% : 5<br/>50% - 55% : 4<br/>45% - 50%% : 3<br/>40% - 45% : 2<br/>35% - 40% : 1<br/><35% : 0</td></tr>
         <tr><td>工资占生意额比例</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['c97']."(".$model->excel[$a]['e97'].")</td>";}?><td >20% - 25% : 5<br/>25% - 28% : 4 28% - 30% : 3 30% - 35% : 2 >35% : 1</td></tr>
-        <?php if(!empty($model->excel['bc102'])){?>
+
+        <?php if(!empty($model->excel[0]['bc102'])){?>
         <tr><td rowspan="3">利润状况</td><td>纯利率</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['bc102']."(".$model->excel[$a]['be102'].")</td>";}?><td style="width: 10%"><5% : 1<br/>5%-10% : 2<br/>11%-15% : 3<br/>16%-20% : 4<br/>>20% : 5</td style="width: 10%"></td></tr>
         <tr><td>纯利跟上月横比增长</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['bc103']."(".$model->excel[$a]['be103'].")</td>";}?><td style="width: 10%">>=1% : 1<br/>>=1.5% : 2<br/>>=2% : 3<br/>>=2.5% : 4<br/>>=3% : 5</td style="width: 10%"></tr>
         <tr><td>纯利跟去年同比增长</td><?php for ($a=0;$a<count($model->excel);$a++){ echo "<td>".$model->excel[$a]['bc104']."(".$model->excel[$a]['be104'].")</td>";}?><td style="width: 10%">0-8% : 1<br/>8%-16% : 2<br/>17%-25% : 3<br/>26%-34% : 4<br/>>34% : 5</td style="width: 10%"></tr>

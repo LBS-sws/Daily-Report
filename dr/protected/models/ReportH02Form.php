@@ -66,7 +66,7 @@ class ReportH02Form extends CReportForm
         include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
         $objPHPExcel = new PHPExcel;
         $objReader  = PHPExcel_IOFactory::createReader('Excel2007');
-        if(count($model->five[0])==69){
+        if(count($model->five[0])==68){
             $path = Yii::app()->basePath.'/commands/template/month_more_lirun.xlsx';
             $objPHPExcel = $objReader->load($path);
             $excel_m=array('C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
@@ -546,7 +546,6 @@ class ReportH02Form extends CReportForm
                     $be102=($bc102>0.2?5:($bc102>0.15?4:($bc102>0.1?3:($bc102>0.05?2:1))));
                     $be103=($bc103>=0.03?5:($bc103>=0.025?4:($bc103>=0.02?3:($bc103>=0.015?2:($bc103>=0.01?1:0)))));
                     $be104=($bc104>0.34?5:($bc104>0.25?4:($bc104>0.16?3:($bc104>0.08?2:($bc104>0?1:0)))));
-
                     $e76=($c76>0.2?5:($c76>0.1?4:($c76>0?3:($c76>-0.1?2:($c76>-0.2?1:0)))));
                     $e77=($c77>0.2?5:($c77>0.1?4:($c77>0?3:($c77>-0.1?2:($c77>-0.2?1:0)))));
                     $e78=($c78>0.4?5:($c78>0.2?4:($c78>0?3:($c78>-0.2?2:($c78>-0.4?1:0)))));

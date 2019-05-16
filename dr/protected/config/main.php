@@ -73,7 +73,7 @@ return array(
 
 		// uncomment the following to use a MySQL database
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=swoper_w',
+			'connectionString' => 'mysql:host=localhost;dbname=swoper',
 			'emulatePrepare' => true,
 			'username' => 'swuser',
 			'password' => 'swisher168',
@@ -106,7 +106,7 @@ return array(
 			'class'=>'CHttpSession',
 			'cookieMode'=>'allow',
 			'cookieParams'=>array(
-				'domain'=>'192.168.0.128',
+				'domain'=>'192.168.3.221',
 			),
 		),
 	),
