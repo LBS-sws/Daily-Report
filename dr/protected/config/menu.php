@@ -41,7 +41,7 @@ return array(
 				'access'=>'A08',
 				'url'=>'/feedback/index',
 			),
-			'Monthly Report Data'=>array(
+			'Monthly Report Input'=>array(
 				'access'=>'A09',
 				'url'=>'/monthly/index',
 			),

@@ -39,6 +39,7 @@ return array(
 'Staff Info'=>'人事資料',
 'Feedback'=>'回饋',
 'Monthly Report Data'=>'月報表數據',
+'Monthly Report Input'=>'月報數據輸入',
 'LBS Customer Enquiry'=>'史偉莎客戶查詢',
 
 'All'=>'全部',

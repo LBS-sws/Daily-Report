@@ -39,6 +39,7 @@ return array(
 	'Staff Info'=>'人事资料',
 	'Feedback'=>'回馈',
 	'Monthly Report Data'=>'月报表数据',
+	'Monthly Report Input'=>'月报数据输入',
 	'LBS Customer Enquiry'=>'史伟莎客户查询',
 	
 	'All'=>'全部',
