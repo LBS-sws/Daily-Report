@@ -51,10 +51,13 @@ class MonthController extends Controller
 		}
 		$model->determinePageNum($pageNum);
 		$model->retrieveDataByPage($model->pageNum);
-		for ($i=1;$i<count($model['attr']);$i++){
-		    $arr[]=$model['attr'][$i];
-		}
-		$model['attr']=$arr;
+		if(!empty($model['attr'])){
+            for ($i=1;$i<count($model['attr']);$i++){
+                $arr[]=$model['attr'][$i];
+            }
+            $model['attr']=$arr;
+
+        }
 
 		$this->render('index',array('model'=>$model));
 	}
