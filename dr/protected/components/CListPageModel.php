@@ -74,6 +74,7 @@ class CListPageModel extends CFormModel
 			'noOfItem'=>$this->noOfItem,
 			'pageNum'=>$this->pageNum,
 			'filter'=>$this->filter,
+            'city'=>$this->city,
 		);
 	}
 	

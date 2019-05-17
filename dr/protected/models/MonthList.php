@@ -20,7 +20,7 @@ class MonthList extends CListPageModel
         }
 		$sql1 = "select *,b.name as cityname
 				from swo_monthly_hdr a,security$suffix.sec_city b			
-				where a.city='$city' and a.city=b.code
+				where a.city='$city' and a.city=b.code 
 			";
 		$sql2 = "select count(id)
 				from swo_monthly_hdr
