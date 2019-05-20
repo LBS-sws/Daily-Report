@@ -51,7 +51,10 @@ class MonthController extends Controller
 		}
 		$model->determinePageNum($pageNum);
 		$model->retrieveDataByPage($model->pageNum);
-		if(!empty($model['attr'])){
+        $moth=date("n");
+//        print_r('<pre>');
+//		print_r($model->attributes );
+		if(!empty($model['attr'])&&$model->attributes['searchField']!='month_no'&&$model->attributes['searchValue']!=$moth){
             for ($i=1;$i<count($model['attr']);$i++){
                 $arr[]=$model['attr'][$i];
             }
