@@ -44,7 +44,7 @@ return array(
 'Refresh'=>'刷新',
 'Download'=>'下載',
 'Submit'=>'提交',
-    'Submit Save'=>'提交並發送郵件',
+'Submit Save'=>'提交並發送郵件',
 'Copy'=>'複製',
 'About'=>'關於',
 'City'=>'地區',

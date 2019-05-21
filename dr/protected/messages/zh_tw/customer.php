@@ -30,7 +30,7 @@ return array(
 
 'Customer Code'=>'客戶編號',
 'Customer Name'=>'客戶名字',
-    'Customer Type'=>'客戶類別',
+'Customer Type'=>'客戶類別',
 'Date'=>'日期',
 'Type'=>'類型',
 'Product'=>'服務',

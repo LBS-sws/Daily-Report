@@ -16,8 +16,8 @@ return array(
 'Operation'=>'營運系統',
 'Personnel'=>'人事系統',
 'Sales'=>'銷售系統',
-    'Quiz'=>'培訓測驗系統',
-    'Academic Credit'=>'學分系統',
+'Quiz'=>'培訓測驗系統',
+'Academic Credit'=>'學分系統',
 'Online Library'=>'網上文庫',
 
 'Data Entry'=>'數據輸入',
@@ -27,7 +27,7 @@ return array(
 'Tools' => '工具',
 'Misc'=>'其他',
 'Management'=>'管理層',
-    'Data View'=>'數據查看',
+'Data View'=>'數據查看',
 
 'Customer Info'=>'客戶資料',
 'Customer Service'=>'客戶服務',
@@ -98,7 +98,7 @@ return array(
 
 'Complaint Read All'=>'投訴全閱',
 'QC Read All'=>'品檢全閱',
-    'QC Delete'=>'品檢刪除',
+'QC Delete'=>'品檢刪除',
 'System Use'=>'系統使用',
 );
 ?>
