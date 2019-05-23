@@ -40,7 +40,7 @@ return array(
 'Date'=>'日期',
 'Download'=>'下載',
 'Exceeds file upload limit.'=>'超出文件上傳限制。 ',
-    'TiJiao'=>'提交記錄',
-    'Confirmation Ti'=>'確認要提交並發送郵件？ ',
+'TiJiao'=>'提交記錄',
+'Confirmation Ti'=>'確認要提交並發送郵件？ ',
 );
 ?>

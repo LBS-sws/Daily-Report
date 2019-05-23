@@ -3,7 +3,7 @@ return array(
 'Supplier'=>'供應商',
 'Supplier Form'=>'供應商表單',
 'Supplier List'=>'供應商列表',
-    'Supplier Pay'=>'供應商付款記錄',
+'Supplier Pay'=>'供應商付款記錄',
 
 'AI'=>'IA 供應商',
 'BI'=>'IB 供應商',
@@ -30,11 +30,11 @@ return array(
 'Address'=>'供應商地址',
 'Bank'=>'開行戶',
 'Account No'=>'賬戶號碼',
-    'req_dt'=>'申請日期',
-    'ref_no'=>'會計參考編號',
-    'trans_type_desc'=>'交易類別',
-    'bank'=>'付款賬戶',
-    'amount'=>'金額',
-    'item_desc'=>'擇要',
+'req_dt'=>'申請日期',
+'ref_no'=>'會計參考編號',
+'trans_type_desc'=>'交易類別',
+'bank'=>'付款賬戶',
+'amount'=>'金額',
+'item_desc'=>'擇要',
 );
 ?>
