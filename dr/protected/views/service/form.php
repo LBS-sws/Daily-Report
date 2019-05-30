@@ -203,6 +203,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 						);
 					?>
 				</div>
+
 				<div class="col-sm-2">
 					<?php
 						echo $form->numberField($model, 'amt_paid', 
@@ -211,6 +212,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 						); 
 					?>
 				</div>
+
 			</div>
 <?php if (($model->status!='S') && ($model->status!='T')) : ?>
 			<div class="form-group">
@@ -222,6 +224,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 					); ?>
 				</div>
 			</div>
+
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'need_install',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
@@ -242,6 +245,17 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 					?>
 				</div>
 			</div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'technician',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-7">
+                    <?php
+                    echo $form->textField($model, 'technician',
+                        array('size'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'),
+                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Technician'),array('name'=>'btnTechnician','id'=>'btnTechnician','disabled'=>($model->scenario=='view'))),
+                        ));
+                    ?>
+                </div>
+            </div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'sign_dt',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
@@ -457,6 +471,9 @@ Yii::app()->clientScript->registerScript('lookupService',$js,CClientScript::POS_
 
 $js = Script::genLookupButtonEx('btnSalesman', 'staff', '', 'salesman');
 Yii::app()->clientScript->registerScript('lookupSalesman',$js,CClientScript::POS_READY);
+
+$js = Script::genLookupButtonEx('btnTechnician', 'staff', '', 'technician');
+Yii::app()->clientScript->registerScript('lookupTechnician',$js,CClientScript::POS_READY);
 
 $js = Script::genLookupButtonEx('btnFirstTech', 'staff', '', 'first_tech', array(), true);
 Yii::app()->clientScript->registerScript('lookupFirstTech',$js,CClientScript::POS_READY);

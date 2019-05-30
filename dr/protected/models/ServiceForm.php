@@ -20,6 +20,7 @@ class ServiceForm extends CFormModel
 	public $amt_install;
 	public $need_install;
 	public $salesman;
+    public $technician;
 	public $sign_dt;
 	public $ctrt_end_dt;
 	public $ctrt_period;
@@ -77,6 +78,7 @@ class ServiceForm extends CFormModel
 			'amt_install'=>Yii::t('service','Install Amt'),
 			'need_install'=>Yii::t('service','Installation'),
 			'salesman'=>Yii::t('service','Salesman'),
+            'technician'=>Yii::t('service','Technician'),
 			'sign_dt'=>Yii::t('service','Sign Date'),
 			'ctrt_end_dt'=>Yii::t('service','Contract End Date'),
 			'ctrt_period'=>Yii::t('service','Contract Period'),
@@ -115,7 +117,7 @@ class ServiceForm extends CFormModel
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
 */
-			array('id, salesman, cont_info, first_tech, reason, remarks, remarks2, paid_type, nature_type, cust_type, 
+			array('id, salesman,technician, cont_info, first_tech, reason, remarks, remarks2, paid_type, nature_type, cust_type, 
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
 				b4_product_id, b4_service, b4_paid_type, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'), 
@@ -156,6 +158,7 @@ class ServiceForm extends CFormModel
 				$this->b4_amt_paid = $row['b4_amt_paid'];
 				$this->amt_install = $row['amt_install'];
 				$this->salesman = $row['salesman'];
+                $this->technician = $row['technician'];
 				$this->sign_dt = General::toDate($row['sign_dt']);
 				$this->ctrt_end_dt = General::toDate($row['ctrt_end_dt']);
 				$this->ctrt_period = $row['ctrt_period'];
@@ -211,7 +214,7 @@ class ServiceForm extends CFormModel
 			case 'resume':
 				$sql = "insert into swo_service(
 							company_id, company_name, product_id, service, nature_type, cust_type, 
-							paid_type, amt_paid, amt_install, need_install, salesman, sign_dt, b4_product_id,
+							paid_type, amt_paid, amt_install, need_install, salesman,technician, sign_dt, b4_product_id,
 							b4_service, b4_paid_type, b4_amt_paid, 
 							ctrt_period, cont_info, first_dt, first_tech, reason,
 							status, status_dt, remarks, remarks2, ctrt_end_dt,
@@ -219,7 +222,7 @@ class ServiceForm extends CFormModel
 							city, luu, lcu
 						) values (
 							:company_id, :company_name, :product_id, :service, :nature_type, :cust_type, 
-							:paid_type, :amt_paid, :amt_install, :need_install, :salesman, :sign_dt, :b4_product_id,
+							:paid_type, :amt_paid, :amt_install, :need_install, :salesman,:technician, :sign_dt, :b4_product_id,
 							:b4_service, :b4_paid_type, :b4_amt_paid, 
 							:ctrt_period, :cont_info, :first_dt, :first_tech, :reason,
 							:status, :status_dt, :remarks, :remarks2, :ctrt_end_dt,
@@ -246,6 +249,7 @@ class ServiceForm extends CFormModel
 							amt_install = :amt_install, 
 							need_install = :need_install,
 							salesman = :salesman, 
+							technician = :technician,
 							sign_dt = :sign_dt,
 							ctrt_end_dt = :ctrt_end_dt,
 							ctrt_period = :ctrt_period, 
@@ -307,8 +311,13 @@ class ServiceForm extends CFormModel
 		}
 		if (strpos($sql,':need_install')!==false)
 			$command->bindParam(':need_install',$this->need_install,PDO::PARAM_STR);
+
 		if (strpos($sql,':salesman')!==false)
 			$command->bindParam(':salesman',$this->salesman,PDO::PARAM_STR);
+
+        if (strpos($sql,':technician')!==false)
+            $command->bindParam(':technician',$this->technician,PDO::PARAM_STR);
+
 		if (strpos($sql,':sign_dt')!==false) {
 			$sdate = General::toMyDate($this->sign_dt);
 			$command->bindParam(':sign_dt',$sdate,PDO::PARAM_STR);
