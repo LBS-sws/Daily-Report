@@ -18,6 +18,7 @@ class NoticeList extends CListPageModel
 		$uid = Yii::app()->user->id;
 		$sysid = Yii::app()->params['systemId'];
 		$suffix = Yii::app()->params['envSuffix'];
+		$suffix = $suffix=='dev' ? '_w' : $suffix;
 		$sql1 = "select a.*, b.status
 				from swoper$suffix.swo_notification a, swoper$suffix.swo_notification_user b 
 				where b.username='$uid' and a.system_id='$sysid'
@@ -96,8 +97,11 @@ class NoticeList extends CListPageModel
 			}
 		}
 		$session = Yii::app()->session;
-		$session['criteria_z101'] = $this->getCriteria();
+		$session[$this->criteriaName()] = $this->getCriteria();
 		return true;
 	}
 
+	public function criteriaName() {
+		return Yii::app()->params['systemId'].'_criteria_z101';
+	}
 }
