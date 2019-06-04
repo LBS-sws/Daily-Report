@@ -2,37 +2,37 @@
 
 return array(
 	'drs'=>array(
-		'webroot'=>'http://192.168.3.221/dr-new',
+		'webroot'=>'http://192.168.3.25/dr-new',
 		'name'=>'Daily Report',
 		'icon'=>'fa fa-pencil-square-o',
 	),
 	'acct'=>array(
-		'webroot'=>'http://192.168.3.221/ac-new',
+		'webroot'=>'http://192.168.3.25/ac-new',
 		'name'=>'Accounting',
 		'icon'=>'fa fa-money',
 	),
 //	'ops'=>array(
-//		'webroot'=>'http://192.168.3.221/op-new',
+//		'webroot'=>'http://192.168.3.25/op-new',
 //		'name'=>'Operation',
 //		'icon'=>'fa fa-gears',
 //	),
 	'hr'=>array(
-		'webroot'=>'http://192.168.3.221/hr-new',
+		'webroot'=>'http://192.168.3.25/hr-new',
 		'name'=>'Personnel',
 		'icon'=>'fa fa-users',
 	),
 	'sal'=>array(
-		'webroot'=>'http://192.168.3.221/sa-new',
+		'webroot'=>'http://192.168.3.25/sa-new',
 		'name'=>'Sales',
 		'icon'=>'fa fa-suitcase',
 	),
 //	'quiz'=>array(
-//		'webroot'=>'http://192.168.3.221/qz-new',
+//		'webroot'=>'http://192.168.3.25/qz-new',
 //		'name'=>'Quiz',
 //		'icon'=>'fa fa-pencil',
 //	),
 //	'sp'=>array(
-//		'webroot'=>'http://192.168.3.221/sp-new',
+//		'webroot'=>'http://192.168.3.25/sp-new',
 //		'name'=>'Academic Credit',
 //		'icon'=>'fa fa-cube',
 //	),
