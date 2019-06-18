@@ -114,6 +114,7 @@ class AjaxController extends Controller
 			$uid = Yii::app()->user->id;
 			$sysid = Yii::app()->params['systemId'];
 			$suffix = Yii::app()->params['envSuffix'];
+			$suffix = $suffix=='dev' ? '_w' : $suffix;
 
 			$sql = "select a.note_type, count(a.id) as num
 				from swoper$suffix.swo_notification a, swoper$suffix.swo_notification_user b 
