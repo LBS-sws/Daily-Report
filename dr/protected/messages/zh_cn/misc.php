@@ -8,6 +8,11 @@ return array(
 	'Confirm Password' => '确认密码',
 	'Change Password' => '更改密码',
 
+    'Remove'=>'撤销',
+    'Submit Save'=>'提交并发送邮件',
+    'xiazai'=>'下载',
+    'fenxi'=>'月报总结',
+    'ZongJie'=>'总结',
 	'Add'=>'新增',
 	'Add New'=>'新增',
 	'Add Record'=>'新增纪录',
