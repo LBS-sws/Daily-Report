@@ -8,6 +8,10 @@ return array(
 'Confirm Password' => '確認密碼',
 'Change Password' => '更改密碼',
 
+'Submit Save'=>'提交並發送郵件',
+'xiazai'=>'下載',
+'fenxi'=>'月報總結',
+'ZongJie'=>'總結',
 'Add'=>'新增',
 'Add New'=>'新增',
 'Add Record'=>'新增紀錄',
