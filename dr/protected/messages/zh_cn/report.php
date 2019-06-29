@@ -17,6 +17,7 @@ return array(
 	'Feedback Statistics Report'=>'经理回馈统计报表',
 	'Feedback List Report'=>'经理回馈列表',
 	'Monthly Report'=>'月报表',
+    'Comprehensive data comparative analysis'=>'综合数据对比分析',
 	
 	'City'=>'地区',
 	'Type'=>'类别',

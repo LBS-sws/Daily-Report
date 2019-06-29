@@ -129,6 +129,10 @@ return array(
 				'access'=>'G01',
 				'url'=>'/customerenq/index',
 			),
+            'Comprehensive data comparative analysis'=>array(
+                'access'=>'G02',
+                'url'=>'/comprehensive/index',
+            ),
 		),
 	),
     '月报表'=>array(
