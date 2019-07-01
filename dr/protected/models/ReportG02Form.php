@@ -194,7 +194,7 @@ class ReportG02Form extends CReportForm
         }
             $model['excel']=$arr;
 //         print_r('<pre>');
-//        print_r($report);
+//        print_r($reportMonth);
     }
     //提取月报表数据
     public function value($city,$year,$month,$data_field){
@@ -965,10 +965,10 @@ class ReportG02Form extends CReportForm
 
     //月报表分数
     public function report($year,$month,$city){
-        $arr=array();
         $city = explode(",", $city);
         $o=0;
         for($i=0;$i<count($month);$i++) {
+            $arr=array();
             foreach ($city as $c){
                 $rows=$this-> fenshu($c,$year[$i],$month[$i]);
                 $arr[]=$rows;
@@ -982,33 +982,36 @@ class ReportG02Form extends CReportForm
         return $arrs;
     }
     public function reportMonth($year,$month,$city){
-        $arr=array();
         $city = explode(",", $city);
         $o=0;
         for($i=0;$i<count($month);$i++) {
+            $arr=array();
+            //每个月
             $month[$i]=$month[$i]-1;
             if( $month[$i]==0){
                 $month[$i]=12;
                 $year[$i]=$year[$i]-1;
             }
             foreach ($city as $c){
+                //每个月的所有城市
                $rows=$this-> fenshu($c,$year[$i],$month[$i]);
                 $arr[]=$rows;
                 if($rows==0){
                     $o=$o+1;
                 }
+                $count=(count($arr)-$o)==0?1:(count($arr)-$o);
+                $arrs[]=round((array_sum($arr))/$count,2);
             }
-            $count=(count($arr)-$o)==0?1:(count($arr)-$o);
-            $arrs[]=round((array_sum($arr))/$count,2);
+
         }
         return $arrs;
     }
 
     public function reportYear($year,$month,$city){
-        $arr=array();
         $city = explode(",", $city);
         $o=0;
         for($i=0;$i<count($month);$i++) {
+            $arr=array();
             $year[$i]=$year[$i]-1;
             foreach ($city as $c){
                 $rows=$this-> fenshu($c,$year[$i],$month[$i]);
