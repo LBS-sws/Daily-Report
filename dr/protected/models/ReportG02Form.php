@@ -966,8 +966,8 @@ class ReportG02Form extends CReportForm
     //月报表分数
     public function report($year,$month,$city){
         $city = explode(",", $city);
-        $o=0;
         for($i=0;$i<count($month);$i++) {
+            $o=0;
             $arr=array();
             foreach ($city as $c){
                 $rows=$this-> fenshu($c,$year[$i],$month[$i]);
@@ -983,8 +983,8 @@ class ReportG02Form extends CReportForm
     }
     public function reportMonth($year,$month,$city){
         $city = explode(",", $city);
-        $o=0;
         for($i=0;$i<count($month);$i++) {
+            $o=0;
             $arr=array();
             //每个月
             $month[$i]=$month[$i]-1;
@@ -999,18 +999,17 @@ class ReportG02Form extends CReportForm
                 if($rows==0){
                     $o=$o+1;
                 }
-                $count=(count($arr)-$o)==0?1:(count($arr)-$o);
-                $arrs[]=round((array_sum($arr))/$count,2);
             }
-
+            $count=(count($arr)-$o)==0?1:(count($arr)-$o);
+            $arrs[]=round((array_sum($arr))/$count,2);
         }
         return $arrs;
     }
 
     public function reportYear($year,$month,$city){
         $city = explode(",", $city);
-        $o=0;
         for($i=0;$i<count($month);$i++) {
+            $o=0;
             $arr=array();
             $year[$i]=$year[$i]-1;
             foreach ($city as $c){
