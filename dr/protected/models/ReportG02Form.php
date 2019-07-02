@@ -1231,6 +1231,7 @@ class ReportG02Form extends CReportForm
         $objPHPExcel = $objReader->load($path);
         $excel_m=array('C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
         for($i=0;$i<count($model['excel']);$i++){
+            $objPHPExcel->getActiveSheet()->setCellValue('A1', $model['city'][$model['scenario']['city']]) ;
             $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'1', $model['excel'][$i]['time']) ;
             $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'2', $model['excel'][$i]['business']) ;
             $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'3', $model['excel'][$i]['businessMonth']) ;

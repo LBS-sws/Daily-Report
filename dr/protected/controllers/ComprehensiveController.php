@@ -77,7 +77,7 @@ class ComprehensiveController extends Controller
         $model->retrieveData($model);
         $model->retrieveXiaZai($model);
 //        print_r("<pre>");
-//        print_r($model);
+//        print_r($model['city'][$model['scenario']['city']]);
     }
 //	public function getMonth( $date1, $date2){
 //        $time1 = strtotime($date1); // 自动为00:00:00 时分秒
