@@ -65,7 +65,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
     <input name="ReportG02Form[end_dt]" value="<?php echo $model->scenario['end_dt'];?>" style="display: none">
     <input name="ReportG02Form[end_dt1]" value="<?php echo $model->scenario['end_dt1'];?>" style="display: none">
     <table class="tftable" border="1">
-        <tr><td style="width: 150px;text-align: center"><b><?php echo $model['city'][$model['scenario']['city']];?></b></td><td style="width: 80px;"></td><?php foreach ($model['excel'] as $arr){ echo "<td>".$arr['time']."</td>" ;}?></tr>
+        <tr><td style="width: 150px;text-align: center;height: 50px"><b><h4><?php echo $model['city'][$model['scenario']['city']];?></h4></b></td><td style="width: 80px;"></td><?php foreach ($model['excel'] as $arr){ echo "<td><h5>".$arr['time']."</h5></td>" ;}?></tr>
         <tr><td  rowspan="3">生意额增长<br/>(当月生意额-上月）/上月</td><td>当月</td><?php foreach ($model['excel'] as $arr){ echo "<td>".$arr['business']."</td>" ;}?></tr>
         <tr><td>比上月</td><?php foreach ($model['excel'] as $arr){ echo "<td>".$arr['businessMonth']."</td>" ;}?></tr>
         <tr><td>比去年当月</td><?php foreach ($model['excel'] as $arr){ echo "<td>".$arr['businessYear']."</td>" ;}?></tr>
