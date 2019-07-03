@@ -988,7 +988,7 @@ class ReportG02Form extends CReportForm
             $o=0;
             $arr=array();
             foreach ($city as $c){
-                if($c=='RN'){
+                if($c=="'RN'"){
                     $rows=0;
                 }else{
                     $rows=$this-> fenshu($c,$year[$i],$month[$i]);
@@ -1016,7 +1016,7 @@ class ReportG02Form extends CReportForm
             }
             foreach ($city as $c){
                 //每个月的所有城市
-                if($c=='RN'){
+                if($c=="'RN'"){
                     $rows=0;
                 }else{
                     $rows=$this-> fenshu($c,$year[$i],$month[$i]);
@@ -1039,7 +1039,7 @@ class ReportG02Form extends CReportForm
             $arr=array();
             $year[$i]=$year[$i]-1;
             foreach ($city as $c){
-                if($c=='RN'){
+                if($c=="'RN'"){
                     $rows=0;
                 }else{
                     $rows=$this-> fenshu($c,$year[$i],$month[$i]);
