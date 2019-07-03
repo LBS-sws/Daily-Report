@@ -736,7 +736,7 @@ class ReportG02Form extends CReportForm
         for($i=0;$i<count($month);$i++) {
             $rows=$this->value($city,$year[$i],$month[$i],'00002');
             $business= array_sum(array_map(create_function('$val', 'return $val["data_value"];'), $rows));
-            $arr[]=round($business,2);
+            $arr[]=round($business,0);
         }
         return $arr;
     }
@@ -773,7 +773,7 @@ class ReportG02Form extends CReportForm
         for($i=0;$i<count($month);$i++) {
             $rows=$this->value($city,$year[$i],$month[$i],'00067');
             $profit= array_sum(array_map(create_function('$val', 'return $val["data_value"];'), $rows));
-            $arr[]=round($profit,2);
+            $arr[]=round($profit,0);
         }
         return $arr;
     }
@@ -937,7 +937,7 @@ class ReportG02Form extends CReportForm
             //当月平均生意额
             $rows=$this->value($city,$year[$i],$month[$i],'00018');
             $productivity= array_sum(array_map(create_function('$val', 'return $val["data_value"];'), $rows));
-            $arr[]=round($productivity/$a,2);
+            $arr[]=round($productivity/$a,0);
         }
         return $arr;
     }
@@ -958,7 +958,7 @@ class ReportG02Form extends CReportForm
             //上月平均生意额
             $rows=$this->value($city,$year[$i],$month[$i],'00018');
             $productivityMonth= array_sum(array_map(create_function('$val', 'return $val["data_value"];'), $rows));
-            $arr[]=round($productivityMonth/$a,2);
+            $arr[]=round($productivityMonth/$a,0);
         }
         return $arr;
     }
@@ -975,7 +975,7 @@ class ReportG02Form extends CReportForm
             //去年平均生意额
             $rows=$this->value($city,$year[$i],$month[$i],'00018');
             $productivityYear= array_sum(array_map(create_function('$val', 'return $val["data_value"];'), $rows));
-            $arr[]=round($productivityYear/$a,2);
+            $arr[]=round($productivityYear/$a,0);
         }
         return $arr;
     }
@@ -1117,7 +1117,7 @@ class ReportG02Form extends CReportForm
         for($i=0;$i<count($month);$i++) {
             $rows=$this->value($city,$year[$i],$month[$i],'00042');
             $productivityYear= array_sum(array_map(create_function('$val', 'return $val["data_value"];'), $rows));
-            $arr[]=round($productivityYear,2);
+            $arr[]=round($productivityYear,0);
         }
         return $arr;
     }
@@ -1131,7 +1131,7 @@ class ReportG02Form extends CReportForm
             }
             $rows=$this->value($city,$year[$i],$month[$i],'00042');
             $productivityYear= array_sum(array_map(create_function('$val', 'return $val["data_value"];'), $rows));
-            $arr[]=round($productivityYear,2);
+            $arr[]=round($productivityYear,0);
         }
         return $arr;
     }
@@ -1141,7 +1141,7 @@ class ReportG02Form extends CReportForm
             $year[$i]=$year[$i]-1;
             $rows=$this->value($city,$year[$i],$month[$i],'00042');
             $productivityYear= array_sum(array_map(create_function('$val', 'return $val["data_value"];'), $rows));
-            $arr[]=round($productivityYear,2);
+            $arr[]=round($productivityYear,0);
         }
         return $arr;
     }
@@ -1156,7 +1156,7 @@ class ReportG02Form extends CReportForm
             $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) ";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visit= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
-            $arr[]=round($visit,2);
+            $arr[]=round($visit,0);
         }
         return $arr;
     }
@@ -1174,7 +1174,7 @@ class ReportG02Form extends CReportForm
             $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) ";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visitMonth= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
-            $arr[]=round($visitMonth,2);
+            $arr[]=round($visitMonth,0);
         }
         return $arr;
     }
@@ -1188,7 +1188,7 @@ class ReportG02Form extends CReportForm
             $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) ";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visitYear= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
-            $arr[]=round($visitYear,2);
+            $arr[]=round($visitYear,0);
         }
         return $arr;
     }
