@@ -194,7 +194,7 @@ class ReportG02Form extends CReportForm
         }
             $model['excel']=$arr;
 //         print_r('<pre>');
-//        print_r($reportMonth);
+//        print_r($productivity);
     }
     //提取月报表数据
     public function value($city,$year,$month,$data_field){
@@ -928,9 +928,18 @@ class ReportG02Form extends CReportForm
     public function productivity($year,$month,$city){
         $arr=array();
         $citys = explode(",", $city);
-        if(in_array("'RN'", $citys)){
-            $a=(count($citys)-1)==0?1:(count($citys)-1);
-        }else{
+        if(in_array("'HK'", $citys)){
+            $a=19;
+        }elseif(in_array("'HD1'", $citys)){
+            $a=4;
+        }
+        elseif(in_array("'HN1'", $citys)){
+            $a=9;
+        }
+        elseif(in_array("'HX'", $citys)){
+            $a=4;
+        }
+        else{
             $a=count($citys);
         }
         for($i=0;$i<count($month);$i++) {
@@ -944,9 +953,18 @@ class ReportG02Form extends CReportForm
     public function productivityMonth($year,$month,$city){
         $arr=array();
         $citys = explode(",", $city);
-        if(in_array("'RN'", $citys)){
-            $a=(count($citys)-1)==0?1:(count($citys)-1);
-        }else{
+        if(in_array("'HK'", $citys)){
+            $a=19;
+        }elseif(in_array("'HD1'", $citys)){
+            $a=4;
+        }
+        elseif(in_array("'HN1'", $citys)){
+            $a=9;
+        }
+        elseif(in_array("'HX'", $citys)){
+            $a=4;
+        }
+        else{
             $a=count($citys);
         }
         for($i=0;$i<count($month);$i++) {
@@ -965,9 +983,18 @@ class ReportG02Form extends CReportForm
     public function productivityYear($year,$month,$city){
         $arr=array();
         $citys = explode(",", $city);
-        if(in_array("'RN'", $citys)){
-            $a=(count($citys)-1)==0?1:(count($citys)-1);
-        }else{
+        if(in_array("'HK'", $citys)){
+            $a=19;
+        }elseif(in_array("'HD1'", $citys)){
+            $a=4;
+        }
+        elseif(in_array("'HN1'", $citys)){
+            $a=9;
+        }
+        elseif(in_array("'HX'", $citys)){
+            $a=4;
+        }
+        else{
             $a=count($citys);
         }
         for($i=0;$i<count($month);$i++) {
@@ -988,7 +1015,7 @@ class ReportG02Form extends CReportForm
             $o=0;
             $arr=array();
             foreach ($city as $c){
-                if($c=="'RN'"){
+                if($c=="'TY'"||$c=="'KS'"||$c=="'TN'"||$c=="'TC'"||$c=="'HK'"||$c=="'TP'"||$c=="'ZS1'"||$c=="'HN'"||$c=="'MY'"||$c=="'ZY'"||$c=="'HXHB'"||$c=="'MO'"||$c=="'HD'"||$c=="'JMS'"||$c=="'XM'"||$c=="'CS'"||$c=="'HX'"||$c=="'H-N'"||$c=="'HD1'"||$c=="'RN'"||$c=="'HN1'"||$c=="'HN2'"||$c=="'CN'"||$c=="'HB'"){
                     $rows=0;
                 }else{
                     $rows=$this-> fenshu($c,$year[$i],$month[$i]);
@@ -1016,7 +1043,7 @@ class ReportG02Form extends CReportForm
             }
             foreach ($city as $c){
                 //每个月的所有城市
-                if($c=="'RN'"){
+                if($c=="'TY'"||$c=="'KS'"||$c=="'TN'"||$c=="'TC'"||$c=="'HK'"||$c=="'TP'"||$c=="'ZS1'"||$c=="'HN'"||$c=="'MY'"||$c=="'ZY'"||$c=="'HXHB'"||$c=="'MO'"||$c=="'HD'"||$c=="'JMS'"||$c=="'XM'"||$c=="'CS'"||$c=="'HX'"||$c=="'H-N'"||$c=="'HD1'"||$c=="'RN'"||$c=="'HN1'"||$c=="'HN2'"||$c=="'CN'"||$c=="'HB'"){
                     $rows=0;
                 }else{
                     $rows=$this-> fenshu($c,$year[$i],$month[$i]);
@@ -1039,7 +1066,7 @@ class ReportG02Form extends CReportForm
             $arr=array();
             $year[$i]=$year[$i]-1;
             foreach ($city as $c){
-                if($c=="'RN'"){
+                if($c=="'TY'"||$c=="'KS'"||$c=="'TN'"||$c=="'TC'"||$c=="'HK'"||$c=="'TP'"||$c=="'ZS1'"||$c=="'HN'"||$c=="'MY'"||$c=="'ZY'"||$c=="'HXHB'"||$c=="'MO'"||$c=="'HD'"||$c=="'JMS'"||$c=="'XM'"||$c=="'CS'"||$c=="'HX'"||$c=="'H-N'"||$c=="'HD1'"||$c=="'RN'"||$c=="'HN1'"||$c=="'HN2'"||$c=="'CN'"||$c=="'HB'"){
                     $rows=0;
                 }else{
                     $rows=$this-> fenshu($c,$year[$i],$month[$i]);
@@ -1206,7 +1233,7 @@ class ReportG02Form extends CReportForm
             $signing= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=$signing;
             $arr[$i]=$arr[$i]/abs($visit[$i]==0?1:$visit[$i]);
-            $arr[$i]=(round( $arr[$i],4)*100)."%";
+            $arr[$i]=(round( $arr[$i],4)*100)."%"; 
         }
         return $arr;
     }
