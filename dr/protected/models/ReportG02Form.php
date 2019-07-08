@@ -928,16 +928,17 @@ class ReportG02Form extends CReportForm
     public function productivity($year,$month,$city){
         $arr=array();
         $citys = explode(",", $city);
-        if(in_array("'HX'", $citys)){
-            $a=6;
+        if(in_array("'MO'", $citys)){
+            $a=19;
+
         }elseif(in_array("'HD1'", $citys)){
             $a=4;
         }
         elseif(in_array("'HN1'", $citys)){
             $a=9;
         }
-        elseif(in_array("'MO'", $citys)){
-            $a=19;
+        elseif(in_array("'HX'", $citys)){
+            $a=6;
         }
         else{
             $a=count($citys);
@@ -953,16 +954,17 @@ class ReportG02Form extends CReportForm
     public function productivityMonth($year,$month,$city){
         $arr=array();
         $citys = explode(",", $city);
-        if(in_array("'HX'", $citys)){
-            $a=6;
+        if(in_array("'MO'", $citys)){
+            $a=19;
+
         }elseif(in_array("'HD1'", $citys)){
             $a=4;
         }
         elseif(in_array("'HN1'", $citys)){
             $a=9;
         }
-        elseif(in_array("'MO'", $citys)){
-            $a=19;
+        elseif(in_array("'HX'", $citys)){
+            $a=6;
         }
         else{
             $a=count($citys);
@@ -983,16 +985,17 @@ class ReportG02Form extends CReportForm
     public function productivityYear($year,$month,$city){
         $arr=array();
         $citys = explode(",", $city);
-        if(in_array("'HX'", $citys)){
-            $a=6;
+        if(in_array("'MO'", $citys)){
+            $a=19;
+
         }elseif(in_array("'HD1'", $citys)){
             $a=4;
         }
         elseif(in_array("'HN1'", $citys)){
             $a=9;
         }
-        elseif(in_array("'MO'", $citys)){
-            $a=19;
+        elseif(in_array("'HX'", $citys)){
+            $a=6;
         }
         else{
             $a=count($citys);
