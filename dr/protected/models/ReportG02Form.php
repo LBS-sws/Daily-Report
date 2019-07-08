@@ -936,7 +936,7 @@ class ReportG02Form extends CReportForm
         elseif(in_array("'HN1'", $citys)){
             $a=9;
         }
-        elseif(in_array("'HK'", $citys)){
+        elseif(in_array("'MO'", $citys)){
             $a=19;
         }
         else{
@@ -961,7 +961,7 @@ class ReportG02Form extends CReportForm
         elseif(in_array("'HN1'", $citys)){
             $a=9;
         }
-        elseif(in_array("'HK'", $citys)){
+        elseif(in_array("'MO'", $citys)){
             $a=19;
         }
         else{
