@@ -1486,67 +1486,144 @@ class ReportG02Form extends CReportForm
         include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
         $objPHPExcel = new PHPExcel;
         $objReader  = PHPExcel_IOFactory::createReader('Excel2007');
-        $path = Yii::app()->basePath.'/commands/template/month_comprehensive.xlsx';
-        $objPHPExcel = $objReader->load($path);
-        $excel_m=array('C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
-        for($i=0;$i<count($model['excel']);$i++){
-            $objPHPExcel->getActiveSheet()->setCellValue('A1', $model['city'][$model['scenario']['city']]) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'1', $model['excel'][$i]['time']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'2', $model['excel'][$i]['business']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'3', $model['excel'][$i]['businessMonth']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'4', $model['excel'][$i]['businessYear']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'5', $model['excel'][$i]['profit']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'6', $model['excel'][$i]['profitMonth']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'7', $model['excel'][$i]['profitYear']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'8', $model['excel'][$i]['stoporder']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'9', $model['excel'][$i]['stoporderMonth']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'10', $model['excel'][$i]['stoporderYear']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'11', $model['excel'][$i]['receipt']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'12', $model['excel'][$i]['receiptMonth']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'13', $model['excel'][$i]['receiptYear']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'14', $model['excel'][$i]['productivity']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'15', $model['excel'][$i]['productivityMonth']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'16', $model['excel'][$i]['productivityYear']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'17', $model['excel'][$i]['report']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'18', $model['excel'][$i]['reportMonth']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'19', $model['excel'][$i]['reportYear']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'20', $model['excel'][$i]['feedback']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'21', $model['excel'][$i]['feedbackMonth']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'22', $model['excel'][$i]['feedbackYear']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'23', $model['excel'][$i]['quality']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'24', $model['excel'][$i]['qualityMonth']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'25', $model['excel'][$i]['qualityYear']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'26', $model['excel'][$i]['visit']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'27', $model['excel'][$i]['visitMonth']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'28', $model['excel'][$i]['visitYear']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'29', $model['excel'][$i]['signing']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'30', $model['excel'][$i]['signingMonth']) ;
-            $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'31', $model['excel'][$i]['signingYear']) ;
-            $styleArray = array(
-                'borders' => array(
-                    'allborders' => array(
-                        'style' => PHPExcel_Style_Border::BORDER_THIN, //细边框
-//’color’ => array(‘argb’ => ‘FFFF0000’),
-                    ),
-                ),
-            );
-            $objPHPExcel->getActiveSheet()->getStyle('A1:'.$excel_m[$i].'31')->applyFromArray($styleArray);
-            $styleArray2 = array(
-                'borders' => array(
-                    'outline' => array(
-                        'style' => PHPExcel_Style_Border::BORDER_THICK,//边框是粗的
-                    ),
-                ),
-            );
-            $objPHPExcel->getActiveSheet()->getStyle('A1:'.$excel_m[$i].'31')->applyFromArray($styleArray2);
-            $objPHPExcel->getActiveSheet()->getStyle('A5:'.$excel_m[$i].'7')->applyFromArray($styleArray2);
-            $objPHPExcel->getActiveSheet()->getStyle('A8:'.$excel_m[$i].'10')->applyFromArray($styleArray2);
-            $objPHPExcel->getActiveSheet()->getStyle('A14:'.$excel_m[$i].'16')->applyFromArray($styleArray2);
-            $objPHPExcel->getActiveSheet()->getStyle('A20:'.$excel_m[$i].'22')->applyFromArray($styleArray2);
-            $objPHPExcel->getActiveSheet()->getStyle('A23:'.$excel_m[$i].'25')->applyFromArray($styleArray2);
-            $objPHPExcel->getActiveSheet()->getStyle('A26:'.$excel_m[$i].'28')->applyFromArray($styleArray2);
-            $objPHPExcel->getActiveSheet()->getStyle('A29:'.$excel_m[$i].'31')->applyFromArray($styleArray2);
+        $city_allow = City::model()->getDescendantList($model['scenario']['city']);
+        if(empty($city_allow)){
+            $city_allow="'".$model['scenario']['city']."'";
         }
+        $city = explode(",", $city_allow);
+        if(count($city)==1){
+            $path = Yii::app()->basePath.'/commands/template/month_comprehensive.xlsx';
+            $objPHPExcel = $objReader->load($path);
+            $excel_m=array('C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
+            for($i=0;$i<count($model['excel']);$i++){
+                $objPHPExcel->getActiveSheet()->setCellValue('A1', $model['city'][$model['scenario']['city']]) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'1', $model['excel'][$i]['time']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'2', $model['excel'][$i]['business']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'3', $model['excel'][$i]['businessMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'4', $model['excel'][$i]['businessYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'5', $model['excel'][$i]['profit']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'6', $model['excel'][$i]['profitMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'7', $model['excel'][$i]['profitYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'8', $model['excel'][$i]['stoporder']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'9', $model['excel'][$i]['stoporderMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'10', $model['excel'][$i]['stoporderYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'11', $model['excel'][$i]['receipt']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'12', $model['excel'][$i]['receiptMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'13', $model['excel'][$i]['receiptYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'14', $model['excel'][$i]['productivity']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'15', $model['excel'][$i]['productivityMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'16', $model['excel'][$i]['productivityYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'17', $model['excel'][$i]['report']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'18', $model['excel'][$i]['reportMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'19', $model['excel'][$i]['reportYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'20', $model['excel'][$i]['feedback']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'21', $model['excel'][$i]['feedbackMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'22', $model['excel'][$i]['feedbackYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'23', $model['excel'][$i]['quality']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'24', $model['excel'][$i]['qualityMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'25', $model['excel'][$i]['qualityYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'26', $model['excel'][$i]['visit']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'27', $model['excel'][$i]['visitMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'28', $model['excel'][$i]['visitYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'29', $model['excel'][$i]['signing']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'30', $model['excel'][$i]['signingMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'31', $model['excel'][$i]['signingYear']) ;
+                $styleArray = array(
+                    'borders' => array(
+                        'allborders' => array(
+                            'style' => PHPExcel_Style_Border::BORDER_THIN, //细边框
+//’color’ => array(‘argb’ => ‘FFFF0000’),
+                        ),
+                    ),
+                );
+                $objPHPExcel->getActiveSheet()->getStyle('A1:'.$excel_m[$i].'31')->applyFromArray($styleArray);
+                $styleArray2 = array(
+                    'borders' => array(
+                        'outline' => array(
+                            'style' => PHPExcel_Style_Border::BORDER_THICK,//边框是粗的
+                        ),
+                    ),
+                );
+                $objPHPExcel->getActiveSheet()->getStyle('A1:'.$excel_m[$i].'31')->applyFromArray($styleArray2);
+                $objPHPExcel->getActiveSheet()->getStyle('A5:'.$excel_m[$i].'7')->applyFromArray($styleArray2);
+                $objPHPExcel->getActiveSheet()->getStyle('A8:'.$excel_m[$i].'10')->applyFromArray($styleArray2);
+                $objPHPExcel->getActiveSheet()->getStyle('A14:'.$excel_m[$i].'16')->applyFromArray($styleArray2);
+                $objPHPExcel->getActiveSheet()->getStyle('A20:'.$excel_m[$i].'22')->applyFromArray($styleArray2);
+                $objPHPExcel->getActiveSheet()->getStyle('A23:'.$excel_m[$i].'25')->applyFromArray($styleArray2);
+                $objPHPExcel->getActiveSheet()->getStyle('A26:'.$excel_m[$i].'28')->applyFromArray($styleArray2);
+                $objPHPExcel->getActiveSheet()->getStyle('A29:'.$excel_m[$i].'31')->applyFromArray($styleArray2);
+            }
+        }else{
+            $path = Yii::app()->basePath.'/commands/template/month_comprehensive_quyu.xlsx';
+            $objPHPExcel = $objReader->load($path);
+            $excel_m=array('C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
+            for($i=0;$i<count($model['excel']);$i++){
+                $objPHPExcel->getActiveSheet()->setCellValue('A1', $model['city'][$model['scenario']['city']]) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'1', $model['excel'][$i]['time']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'2', $model['excel'][$i]['business']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'3', $model['excel'][$i]['businessMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'4', $model['excel'][$i]['businessYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'5', $model['excel'][$i]['profit']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'6', $model['excel'][$i]['profitMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'7', $model['excel'][$i]['profitYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'8', $model['excel'][$i]['stopordermax']['max']." / ".$model['excel'][$i]['stopordermax']['end']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'9', $model['excel'][$i]['stoporder']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'10', $model['excel'][$i]['stoporderMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'11', $model['excel'][$i]['stoporderYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'12', $model['excel'][$i]['receiptmax']['max']." / ".$model['excel'][$i]['receiptmax']['end']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'13', $model['excel'][$i]['receipt']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'14', $model['excel'][$i]['receiptMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'15', $model['excel'][$i]['receiptYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'16', $model['excel'][$i]['productivitymax']['max']." / ".$model['excel'][$i]['productivitymax']['end']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'17', $model['excel'][$i]['productivity']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'18', $model['excel'][$i]['productivityMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'19', $model['excel'][$i]['productivityYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'20', $model['excel'][$i]['reportmax']['max']." / ".$model['excel'][$i]['reportmax']['end']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'21', $model['excel'][$i]['report']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'22', $model['excel'][$i]['reportMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'23', $model['excel'][$i]['reportYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'24', $model['excel'][$i]['feedbackmax']['max']." / ".$model['excel'][$i]['feedbackmax']['end']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'25', $model['excel'][$i]['feedback']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'26', $model['excel'][$i]['feedbackMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'27', $model['excel'][$i]['feedbackYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'28', $model['excel'][$i]['qualitymax']['max']." / ".$model['excel'][$i]['qualitymax']['end']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'29', $model['excel'][$i]['quality']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'30', $model['excel'][$i]['qualityMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'31', $model['excel'][$i]['qualityYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'32', $model['excel'][$i]['visitmax']['max']." / ".$model['excel'][$i]['visitmax']['end']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'33', $model['excel'][$i]['visit']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'34', $model['excel'][$i]['visitMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'35', $model['excel'][$i]['visitYear']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'36', $model['excel'][$i]['signingmax']['max']." / ".$model['excel'][$i]['signingmax']['end']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'37', $model['excel'][$i]['signing']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'38', $model['excel'][$i]['signingMonth']) ;
+                $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'39', $model['excel'][$i]['signingYear']) ;
+                $styleArray = array(
+                    'borders' => array(
+                        'allborders' => array(
+                            'style' => PHPExcel_Style_Border::BORDER_THIN, //细边框
+//’color’ => array(‘argb’ => ‘FFFF0000’),
+                        ),
+                    ),
+                );
+                $objPHPExcel->getActiveSheet()->getStyle('A1:'.$excel_m[$i].'39')->applyFromArray($styleArray);
+                $styleArray2 = array(
+                    'borders' => array(
+                        'outline' => array(
+                            'style' => PHPExcel_Style_Border::BORDER_THICK,//边框是粗的
+                        ),
+                    ),
+                );
+                $objPHPExcel->getActiveSheet()->getStyle('A1:'.$excel_m[$i].'39')->applyFromArray($styleArray2);
+                $objPHPExcel->getActiveSheet()->getStyle('A5:'.$excel_m[$i].'7')->applyFromArray($styleArray2);
+                $objPHPExcel->getActiveSheet()->getStyle('A8:'.$excel_m[$i].'11')->applyFromArray($styleArray2);
+                $objPHPExcel->getActiveSheet()->getStyle('A16:'.$excel_m[$i].'19')->applyFromArray($styleArray2);
+                $objPHPExcel->getActiveSheet()->getStyle('A24:'.$excel_m[$i].'27')->applyFromArray($styleArray2);
+                $objPHPExcel->getActiveSheet()->getStyle('A32:'.$excel_m[$i].'35')->applyFromArray($styleArray2);
+
+            }
+        }
+
 //        print_r('<pre/>');
 //        print_r($model['all']);
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
