@@ -1335,7 +1335,7 @@ class ReportG02Form extends CReportForm
         for($i=0;$i<count($month);$i++) {
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and visit_obj like '%\"1\"%'";
+            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) ";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visit= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=round($visit,0);
@@ -1353,7 +1353,7 @@ class ReportG02Form extends CReportForm
             }
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and visit_obj like '%\"1\"%'";
+            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city)";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visitMonth= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=round($visitMonth,0);
@@ -1367,7 +1367,7 @@ class ReportG02Form extends CReportForm
             $year[$i]=$year[$i]-1;
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and  visit_obj like '%\"1\"%'";
+            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) ";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visitYear= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=round($visitYear,0);
@@ -1382,7 +1382,7 @@ class ReportG02Form extends CReportForm
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
             foreach ($city as $c) {
-                $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%\"1\"%'";
+                $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c ";
                 $rows = Yii::app()->db->createCommand($sql)->queryScalar();
                 $sql1="select name from security$suffix.sec_city where code=$c";
                 $cityname = Yii::app()->db->createCommand($sql1)->queryScalar();
@@ -1400,9 +1400,17 @@ class ReportG02Form extends CReportForm
 
     //签单成交率
     public function signing($year,$month,$city){
-        $visit=$this->visit($year,$month,$city);
         $arr=array();
         $suffix = Yii::app()->params['envSuffix'];
+        for($i=0;$i<count($month);$i++) {
+            $start=$year[$i]."-".$month[$i]."-1" ;
+            $end=$year[$i]."-".$month[$i]."-31" ;
+            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and  visit_obj like '%\"1\"%'";
+            $rows = Yii::app()->db->createCommand($sql)->queryAll();
+            $visit= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
+            $visits[]=round($visit,0);
+        }
+
         for($i=0;$i<count($month);$i++) {
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
@@ -1410,15 +1418,27 @@ class ReportG02Form extends CReportForm
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $signing= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=$signing;
-            $arr[$i]=$arr[$i]/abs($visit[$i]==0?1:$visit[$i]);
+            $arr[$i]=$arr[$i]/abs($visits[$i]==0?1:$visits[$i]);
             $arr[$i]=(round( $arr[$i],4)*100)."%"; 
         }
         return $arr;
     }
     public function signingMonth($year,$month,$city){
-        $visit=$this->visitMonth($year,$month,$city);
         $arr=array();
         $suffix = Yii::app()->params['envSuffix'];
+        for($i=0;$i<count($month);$i++) {
+            $month[$i]=$month[$i]-1;
+            if( $month[$i]==0){
+                $month[$i]=12;
+                $year[$i]=$year[$i]-1;
+            }
+            $start=$year[$i]."-".$month[$i]."-1" ;
+            $end=$year[$i]."-".$month[$i]."-31" ;
+            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and  visit_obj like '%\"1\"%'";
+            $rows = Yii::app()->db->createCommand($sql)->queryAll();
+            $visitMonth= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
+            $visit[]=round($visitMonth,0);
+        }
         for($i=0;$i<count($month);$i++) {
             $month[$i]=$month[$i]-1;
             if( $month[$i]==0){
@@ -1437,9 +1457,17 @@ class ReportG02Form extends CReportForm
         return $arr;
     }
     public function signingYear($year,$month,$city){
-        $visit=$this->visitYear($year,$month,$city);
         $arr=array();
         $suffix = Yii::app()->params['envSuffix'];
+        for($i=0;$i<count($month);$i++) {
+            $year[$i]=$year[$i]-1;
+            $start=$year[$i]."-".$month[$i]."-1" ;
+            $end=$year[$i]."-".$month[$i]."-31" ;
+            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and  visit_obj like '%\"1\"%'";
+            $rows = Yii::app()->db->createCommand($sql)->queryAll();
+            $visitYear= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
+            $visit[]=round($visitYear,0);
+        }
         for($i=0;$i<count($month);$i++) {
             $year[$i]=$year[$i]-1;
             $start=$year[$i]."-".$month[$i]."-1" ;
@@ -1463,11 +1491,13 @@ class ReportG02Form extends CReportForm
             $end=$year[$i]."-".$month[$i]."-31" ;
             foreach ($city as $c) {
                 $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%10%'";
+                $row = Yii::app()->db->createCommand($sql)->queryScalar();
+                $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%\"1\"%'";
                 $rows = Yii::app()->db->createCommand($sql)->queryScalar();
                 $sql1="select name from security$suffix.sec_city where code=$c";
                 $cityname = Yii::app()->db->createCommand($sql1)->queryScalar();
                 $arr[$i][$o]['city']=$cityname;
-                $arr[$i][$o]['value']=$rows;
+                $arr[$i][$o]['value']=(round($row/abs($rows==0?1:$rows),4)*100)."%";
                 $o=$o+1;
             }
             $last_names = array_column($arr[$i],'value');
