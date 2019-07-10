@@ -130,35 +130,45 @@ class ReportG02Form extends CReportForm
         $stoporder=$this->stoporder($year_arr,$month_arr,$city_allow);
         $stoporderMonth=$this->stoporderMonth($year_arr,$month_arr,$city_allow);
         $stoporderYear=$this->stoporderYear($year_arr,$month_arr,$city_allow);
+        $stopordermax=$this->stopordermax($year_arr,$month_arr,$city_allow);
         //收款率  本月/上月/去年当月
         $receipt=$this->receipt($year_arr,$month_arr,$city_allow);
         $receiptMonth=$this->receiptMonth($year_arr,$month_arr,$city_allow);
         $receiptYear=$this->receiptYear($year_arr,$month_arr,$city_allow);
+        $receiptmax=$this->receiptmax($year_arr,$month_arr,$city_allow);
         //技术员平均生产力  (月报的技术当月平均生意额）
         $productivity=$this->productivity($year_arr,$month_arr,$city_allow);
         $productivityMonth=$this->productivityMonth($year_arr,$month_arr,$city_allow);
         $productivityYear=$this->productivityYear($year_arr,$month_arr,$city_allow);
+        $productivitymax=$this->productivitymax($year_arr,$month_arr,$city_allow);
         //月报表分数
         $report=$this->report($year_arr,$month_arr,$city_allow);
         $reportMonth=$this->reportMonth($year_arr,$month_arr,$city_allow);
         $reportYear=$this->reportYear($year_arr,$month_arr,$city_allow);
+        $reportmax=$this->reportmax($year_arr,$month_arr,$city_allow);
         //回馈
         $feedback=$this->feedback($year_arr,$month_arr,$city_allow);
         $feedbackMonth=$this->feedbackMonth($year_arr,$month_arr,$city_allow);
         $feedbackYear=$this->feedbackYear($year_arr,$month_arr,$city_allow);
+        $feedbackmax=$this->feedbackmax($year_arr,$month_arr,$city_allow);
         //质检拜访量（月报里的质检客户数量） quality
         $quality=$this->quality($year_arr,$month_arr,$city_allow);
         $qualityMonth=$this->qualityMonth($year_arr,$month_arr,$city_allow);
         $qualityYear=$this->qualityYear($year_arr,$month_arr,$city_allow);
+        $qualitymax=$this->qualitymax($year_arr,$month_arr,$city_allow);
         //销售拜访量
         $visit=$this->visit($year_arr,$month_arr,$city_allow);
         $visitMonth=$this->visitMonth($year_arr,$month_arr,$city_allow);
         $visitYear=$this->visitYear($year_arr,$month_arr,$city_allow);
+        $visitmax=$this->visitmax($year_arr,$month_arr,$city_allow);
         //签单成交率 （当月签单量/当月拜访量）
         $signing=$this->signing($year_arr,$month_arr,$city_allow);
         $signingMonth=$this->signingMonth($year_arr,$month_arr,$city_allow);
         $signingYear=$this->signingYear($year_arr,$month_arr,$city_allow);
+        $signingmax=$this->signingmax($year_arr,$month_arr,$city_allow);
         $arr=array();
+//                 print_r('<pre>');
+//        print_r($signingmax);exit();
         for ($i=0;$i<count($month_arr);$i++){
             $arr[$i]['time']=  $start=$year_arr[$i]."年".$month_arr[$i]."月" ;;
            $arr[$i]['business']=$business[$i];
@@ -170,31 +180,38 @@ class ReportG02Form extends CReportForm
            $arr[$i]['stoporder']=$stoporder[$i];
            $arr[$i]['stoporderMonth']=$stoporderMonth[$i];
            $arr[$i]['stoporderYear']=$stoporderYear[$i];
+           $arr[$i]['stopordermax']=$stopordermax[$i];
            $arr[$i]['receipt']=$receipt[$i];
            $arr[$i]['receiptMonth']=$receiptMonth[$i];
            $arr[$i]['receiptYear']=$receiptYear[$i];
+           $arr[$i]['receiptmax']=$receiptmax[$i];
            $arr[$i]['productivity']=$productivity[$i];
            $arr[$i]['productivityMonth']=$productivityMonth[$i];
            $arr[$i]['productivityYear']=$productivityYear[$i];
+           $arr[$i]['productivitymax']=$productivitymax[$i];
            $arr[$i]['report']=$report[$i];
            $arr[$i]['reportMonth']=$reportMonth[$i];
            $arr[$i]['reportYear']=$reportYear[$i];
+           $arr[$i]['reportmax']=$reportmax[$i];
            $arr[$i]['feedback']=$feedback[$i];
            $arr[$i]['feedbackMonth']=$feedbackMonth[$i];
            $arr[$i]['feedbackYear']=$feedbackYear[$i];
+           $arr[$i]['feedbackmax']=$feedbackmax[$i];
            $arr[$i]['quality']=$quality[$i];
            $arr[$i]['qualityMonth']=$qualityMonth[$i];
            $arr[$i]['qualityYear']=$qualityYear[$i];
+           $arr[$i]['qualitymax']=$qualitymax[$i];
            $arr[$i]['visit']=$visit[$i];
            $arr[$i]['visitMonth']=$visitMonth[$i];
            $arr[$i]['visitYear']=$visitYear[$i];
+           $arr[$i]['visitmax']=$visitmax[$i];
            $arr[$i]['signing']=$signing[$i];
            $arr[$i]['signingMonth']=$signingMonth[$i];
            $arr[$i]['signingYear']=$signingYear[$i];
+           $arr[$i]['signingmax']=$signingmax[$i];
         }
             $model['excel']=$arr;
-//         print_r('<pre>');
-//        print_r($productivity);
+
     }
     //提取月报表数据
     public function value($city,$year,$month,$data_field){
@@ -866,6 +883,30 @@ class ReportG02Form extends CReportForm
         return $arr;
 
     }
+    public function stopordermax($year,$month,$city){
+        for($i=0;$i<count($month);$i++) {
+            $suffix = Yii::app()->params['envSuffix'];
+            $rows17=$this->value($city,$year[$i],$month[$i],'00017');
+            $arr17[]=$rows17;
+            $rows02=$this->value($city,$year[$i],$month[$i],'00002');
+            $arr02[]=$rows02;
+            for($o=0;$o<count($arr17[$i]);$o++) {
+                $end=$arr17[$i][$o]['hdr_id'];
+                $sql="select name from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
+                $cityname = Yii::app()->db->createCommand($sql)->queryScalar();
+                $arrs[$i][$o]['value'] = $arr17[$i][$o]['data_value'] / abs($arr02[$i][$o]['data_value'] == 0 ? 1 : $arr02[$i][$o]['data_value']);
+                $arrs[$i][$o]['value']=(round(  $arrs[$i][$o]['value'],4)*100)."%";
+                $arrs[$i][$o]['city']= $cityname;
+            }
+            $last_names = array_column($arrs[$i],'value');
+            array_multisort($last_names,SORT_DESC,$arrs[$i]);
+          //  $arr[$i]=$arr[$i]/abs($business[$i]==0?1:$business[$i]);
+          //  $arr[$i]=(round( $arr[$i],4)*100)."%";
+            $model[$i]['max']=$arrs[$i][0]['value']." (".$arrs[$i][0]['city'].")";
+            $model[$i]['end']=$arrs[$i][$o-1]['value']." (".$arrs[$i][$o-1]['city'].")";
+        }
+        return $model;
+    }
     //"收款率
     //当月收款额/上月生意额"
 
@@ -922,6 +963,28 @@ class ReportG02Form extends CReportForm
             $arr[$i]=(round( $arr[$i],4)*100)."%";
         }
         return $arr;
+    }
+    public function receiptmax($year,$month,$city){
+        for($i=0;$i<count($month);$i++) {
+            $suffix = Yii::app()->params['envSuffix'];
+            $rows21=$this->value($city,$year[$i],$month[$i],'00021');
+            $arr21[]=$rows21;
+            $rows01=$this->value($city,$year[$i],$month[$i],'00001');
+            $arr01[]=$rows01;
+            for($o=0;$o<count($arr21[$i]);$o++) {
+                $end=$arr21[$i][$o]['hdr_id'];
+                $sql="select name from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
+                $cityname = Yii::app()->db->createCommand($sql)->queryScalar();
+                $arrs[$i][$o]['value'] = $arr21[$i][$o]['data_value'] / abs($arr01[$i][$o]['data_value'] == 0 ? 1 : $arr01[$i][$o]['data_value']);
+                $arrs[$i][$o]['value']=(round(  $arrs[$i][$o]['value'],4)*100)."%";
+                $arrs[$i][$o]['city']= $cityname;
+            }
+            $last_names = array_column($arrs[$i],'value');
+            array_multisort($last_names,SORT_DESC,$arrs[$i]);
+            $model[$i]['max']=$arrs[$i][0]['value']." (".$arrs[$i][0]['city'].")";
+            $model[$i]['end']=$arrs[$i][$o-1]['value']." (".$arrs[$i][$o-1]['city'].")";
+        }
+        return $model;
     }
 
     //技术员平均生产力  (月报的技术当月平均生意额）
@@ -1009,6 +1072,26 @@ class ReportG02Form extends CReportForm
         }
         return $arr;
     }
+    public function productivitymax($year,$month,$city){
+        for($i=0;$i<count($month);$i++) {
+            $suffix = Yii::app()->params['envSuffix'];
+            //当月平均生意额
+            $rows=$this->value($city,$year[$i],$month[$i],'00018');
+            $arr[]=$rows;
+            for($o=0;$o<count($arr[$i]);$o++) {
+                $end=$arr[$i][$o]['hdr_id'];
+                $sql="select name from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
+                $cityname = Yii::app()->db->createCommand($sql)->queryScalar();
+                $arrs[$i][$o]['city']= $cityname;
+                $arrs[$i][$o]['value']=$arr[$i][$o]['data_value'];
+            }
+            $last_names = array_column($arrs[$i],'value');
+            array_multisort($last_names,SORT_DESC,$arrs[$i]);
+            $model[$i]['max']=$arrs[$i][0]['value']." (".$arrs[$i][0]['city'].")";
+            $model[$i]['end']=$arrs[$i][$o-1]['value']." (".$arrs[$i][$o-1]['city'].")";
+        }
+        return $model;
+    }
 
 
     //月报表分数
@@ -1061,7 +1144,6 @@ class ReportG02Form extends CReportForm
         }
         return $arrs;
     }
-
     public function reportYear($year,$month,$city){
         $city = explode(",", $city);
         for($i=0;$i<count($month);$i++) {
@@ -1083,6 +1165,29 @@ class ReportG02Form extends CReportForm
             $arrs[]=round((array_sum($arr))/$count,2);
         }
         return $arrs;
+    }
+    public function reportmax($year,$month,$city){
+        $city = explode(",", $city);
+        for($i=0;$i<count($month);$i++) {
+            $o=0;
+            $suffix = Yii::app()->params['envSuffix'];
+            foreach ($city as $c){
+                if($c=="'TY'"||$c=="'KS'"||$c=="'TN'"||$c=="'TC'"||$c=="'HK'"||$c=="'TP'"||$c=="'ZS1'"||$c=="'HN'"||$c=="'MY'"||$c=="'ZY'"||$c=="'HXHB'"||$c=="'MO'"||$c=="'HD'"||$c=="'JMS'"||$c=="'XM'"||$c=="'CS'"||$c=="'HX'"||$c=="'H-N'"||$c=="'HD1'"||$c=="'RN'"||$c=="'HN1'"||$c=="'HN2'"||$c=="'CN'"||$c=="'HB'"){
+                }else{
+                    $rows=$this-> fenshu($c,$year[$i],$month[$i]);
+                    $arr[$i][$o]['value']=$rows;
+                    $sql="select name from security$suffix.sec_city where code=$c";
+                    $cityname = Yii::app()->db->createCommand($sql)->queryScalar();
+                    $arr[$i][$o]['city']=$cityname;
+                    $o=$o+1;
+                }
+            }
+            $last_names = array_column($arr[$i],'value');
+            array_multisort($last_names,SORT_DESC,$arr[$i]);
+            $model[$i]['max']=$arr[$i][0]['value']." (".$arr[$i][0]['city'].")";
+            $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
+        }
+        return $model;
     }
 
     //回馈
@@ -1140,6 +1245,33 @@ class ReportG02Form extends CReportForm
         }
         return $arr;
     }
+    public function feedbackmax($year,$month,$city){
+        $city = explode(",", $city);
+        $suffix = Yii::app()->params['envSuffix'];
+        for($i=0;$i<count($month);$i++) {
+            $o=0;
+            $start=$year[$i]."-".$month[$i]."-1" ;
+            $end=$year[$i]."-".$month[$i]."-30" ;
+            foreach ($city as $c){
+                $sql="select  
+			    sum(case when a.status='Y' and datediff(a.feedback_dt,a.request_dt) < 2 then 1 else 0 end) as counter 
+				from swo_mgr_feedback a 
+				where a.id>0  and request_dt>='$start' and request_dt<='$end' and city =$c ";
+                $rows = Yii::app()->db->createCommand($sql)->queryScalar();
+                $sql1="select name from security$suffix.sec_city where code=$c";
+                $cityname = Yii::app()->db->createCommand($sql1)->queryScalar();
+                $arr[$i][$o]['city']=$cityname;
+                $arr[$i][$o]['value']=$rows;
+                $o=$o+1;
+            }
+            $last_names = array_column($arr[$i],'value');
+            array_multisort($last_names,SORT_DESC,$arr[$i]);
+            $model[$i]['max']=$arr[$i][0]['value']." (".$arr[$i][0]['city'].")";
+            $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
+
+        }
+        return $model;
+    }
 
     //质检拜访
     public function quality($year,$month,$city){
@@ -1175,6 +1307,26 @@ class ReportG02Form extends CReportForm
         }
         return $arr;
     }
+    public function qualitymax($year,$month,$city){
+        for($i=0;$i<count($month);$i++) {
+            $suffix = Yii::app()->params['envSuffix'];
+            //当月平均生意额
+            $rows=$this->value($city,$year[$i],$month[$i],'00042');
+            $arr[]=$rows;
+            for($o=0;$o<count($arr[$i]);$o++) {
+                $end=$arr[$i][$o]['hdr_id'];
+                $sql="select name from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
+                $cityname = Yii::app()->db->createCommand($sql)->queryScalar();
+                $arrs[$i][$o]['city']= $cityname;
+                $arrs[$i][$o]['value']=$arr[$i][$o]['data_value'];
+            }
+            $last_names = array_column($arrs[$i],'value');
+            array_multisort($last_names,SORT_DESC,$arrs[$i]);
+            $model[$i]['max']=$arrs[$i][0]['value']." (".$arrs[$i][0]['city'].")";
+            $model[$i]['end']=$arrs[$i][$o-1]['value']." (".$arrs[$i][$o-1]['city'].")";
+        }
+        return $model;
+    }
 
     //销售拜访量
     public function visit($year,$month,$city){
@@ -1183,7 +1335,7 @@ class ReportG02Form extends CReportForm
         for($i=0;$i<count($month);$i++) {
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) ";
+            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and visit_obj like '%\"1\"%'";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visit= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=round($visit,0);
@@ -1201,7 +1353,7 @@ class ReportG02Form extends CReportForm
             }
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) ";
+            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and visit_obj like '%\"1\"%'";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visitMonth= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=round($visitMonth,0);
@@ -1215,12 +1367,35 @@ class ReportG02Form extends CReportForm
             $year[$i]=$year[$i]-1;
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) ";
+            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and  visit_obj like '%\"1\"%'";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visitYear= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=round($visitYear,0);
         }
         return $arr;
+    }
+    public function visitmax($year,$month,$city){
+        $city = explode(",", $city);
+        $suffix = Yii::app()->params['envSuffix'];
+        for($i=0;$i<count($month);$i++) {
+            $o=0;
+            $start=$year[$i]."-".$month[$i]."-1" ;
+            $end=$year[$i]."-".$month[$i]."-31" ;
+            foreach ($city as $c) {
+                $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%\"1\"%'";
+                $rows = Yii::app()->db->createCommand($sql)->queryScalar();
+                $sql1="select name from security$suffix.sec_city where code=$c";
+                $cityname = Yii::app()->db->createCommand($sql1)->queryScalar();
+                $arr[$i][$o]['city']=$cityname;
+                $arr[$i][$o]['value']=$rows;
+                $o=$o+1;
+            }
+            $last_names = array_column($arr[$i],'value');
+            array_multisort($last_names,SORT_DESC,$arr[$i]);
+            $model[$i]['max']=$arr[$i][0]['value']." (".$arr[$i][0]['city'].")";
+            $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
+        }
+        return $model;
     }
 
     //签单成交率
@@ -1277,6 +1452,30 @@ class ReportG02Form extends CReportForm
             $arr[$i]=(round( $arr[$i],4)*100)."%";
         }
         return $arr;
+    }
+    public function signingmax($year,$month,$city){
+        $suffix = Yii::app()->params['envSuffix'];
+        $city = explode(",", $city);
+        for($i=0;$i<count($month);$i++) {
+            $o=0;
+            $year[$i]=$year[$i]-1;
+            $start=$year[$i]."-".$month[$i]."-1" ;
+            $end=$year[$i]."-".$month[$i]."-31" ;
+            foreach ($city as $c) {
+                $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%10%'";
+                $rows = Yii::app()->db->createCommand($sql)->queryScalar();
+                $sql1="select name from security$suffix.sec_city where code=$c";
+                $cityname = Yii::app()->db->createCommand($sql1)->queryScalar();
+                $arr[$i][$o]['city']=$cityname;
+                $arr[$i][$o]['value']=$rows;
+                $o=$o+1;
+            }
+            $last_names = array_column($arr[$i],'value');
+            array_multisort($last_names,SORT_DESC,$arr[$i]);
+            $model[$i]['max']=$arr[$i][0]['value']." (".$arr[$i][0]['city'].")";
+            $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
+        }
+        return $model;
     }
 
     //下载报表

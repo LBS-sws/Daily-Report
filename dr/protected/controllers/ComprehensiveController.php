@@ -65,9 +65,14 @@ class ComprehensiveController extends Controller
     {
         $model=new ReportG02Form($_POST['ReportG02Form']);
         $model->retrieveData($model);
+        $city_allow = City::model()->getDescendantList($model['scenario']['city']);
+        if(empty($city_allow)){
+            $city_allow="'".$model['scenario']['city']."'";
+        }
+        $city = explode(",", $city_allow);
 //        print_r('<pre>');
 //        print_r($model);
-        $this->render('form',array('model'=>$model,));
+        $this->render('form',array('model'=>$model,'city'=>$city));
 
     }
 
