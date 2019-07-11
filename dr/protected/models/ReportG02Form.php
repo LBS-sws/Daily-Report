@@ -1216,7 +1216,7 @@ class ReportG02Form extends CReportForm
         $arr=array();
         for($i=0;$i<count($month);$i++) {
             $start=$year[$i]."-".$month[$i]."-1" ;
-            $end=$year[$i]."-".$month[$i]."-30" ;
+            $end=$year[$i]."-".$month[$i]."-31" ;
             $sql="select 
 			    sum(case when a.status='Y' and datediff(a.feedback_dt,a.request_dt) < 2 then 1 else 0 end) as counter 
 				from swo_mgr_feedback a 
@@ -1237,7 +1237,7 @@ class ReportG02Form extends CReportForm
                 $year[$i]=$year[$i]-1;
             }
             $start=$year[$i]."-".$month[$i]."-1" ;
-            $end=$year[$i]."-".$month[$i]."-30" ;
+            $end=$year[$i]."-".$month[$i]."-31" ;
             $sql="select 
 			    sum(case when a.status='Y' and datediff(a.feedback_dt,a.request_dt) < 2 then 1 else 0 end) as counter 
 				from swo_mgr_feedback a 
@@ -1254,7 +1254,7 @@ class ReportG02Form extends CReportForm
         for($i=0;$i<count($month);$i++) {
             $year[$i]=$year[$i]-1;
             $start=$year[$i]."-".$month[$i]."-1" ;
-            $end=$year[$i]."-".$month[$i]."-30" ;
+            $end=$year[$i]."-".$month[$i]."-31" ;
             $sql="select 
 			    sum(case when a.status='Y' and datediff(a.feedback_dt,a.request_dt) < 2 then 1 else 0 end) as counter 
 				from swo_mgr_feedback a 
@@ -1272,7 +1272,7 @@ class ReportG02Form extends CReportForm
         for($i=0;$i<count($month);$i++) {
             $o=0;
             $start=$year[$i]."-".$month[$i]."-1" ;
-            $end=$year[$i]."-".$month[$i]."-30" ;
+            $end=$year[$i]."-".$month[$i]."-31" ;
             foreach ($city as $c){
                 if($c=="'TY'"||$c=="'KS'"||$c=="'TN'"||$c=="'TC'"||$c=="'HK'"||$c=="'TP'"||$c=="'ZS1'"||$c=="'HN'"||$c=="'MY'"||$c=="'ZY'"||$c=="'HXHB'"||$c=="'MO'"||$c=="'HD'"||$c=="'JMS'"||$c=="'XM'"||$c=="'CS'"||$c=="'HX'"||$c=="'H-N'"||$c=="'HD1'"||$c=="'RN'"||$c=="'HN1'"||$c=="'HN2'"||$c=="'CN'"||$c=="'HB'"){
                 }else {
