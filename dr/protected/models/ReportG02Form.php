@@ -1531,12 +1531,13 @@ class ReportG02Form extends CReportForm
                     if($year[$i]<=2019&&$month[$i]<=5&&$c!='JM') {
                         $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%10%'";
                         $row = Yii::app()->db->createCommand($sql)->queryScalar();
-                        $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%\"1\"%'";
-                        $rows = Yii::app()->db->createCommand($sql)->queryScalar();
+                        $sql2 = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%\"1\"%'";
+                        $rows = Yii::app()->db->createCommand($sql2)->queryScalar();
                         $sql1 = "select name from security$suffix.sec_city where code=$c";
                         $cityname = Yii::app()->db->createCommand($sql1)->queryScalar();
+                        $a=$row/($rows==0?1:$rows);
                         $arr[$i][$o]['city'] = $cityname;
-                        $arr[$i][$o]['value'] = (round($row / abs($rows == 0 ? 1 : $rows), 4) * 100) . "%";
+                        $arr[$i][$o]['value'] =(round($a,4)*100)."%";
                         $o = $o + 1;
                     }
                 }
