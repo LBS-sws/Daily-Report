@@ -1193,14 +1193,12 @@ class ReportG02Form extends CReportForm
             foreach ($city as $c){
                 if($c=="'TY'"||$c=="'KS'"||$c=="'TN'"||$c=="'TC'"||$c=="'HK'"||$c=="'TP'"||$c=="'ZS1'"||$c=="'HN'"||$c=="'MY'"||$c=="'ZY'"||$c=="'HXHB'"||$c=="'MO'"||$c=="'HD'"||$c=="'JMS'"||$c=="'XM'"||$c=="'CS'"||$c=="'HX'"||$c=="'H-N'"||$c=="'HD1'"||$c=="'RN'"||$c=="'HN1'"||$c=="'HN2'"||$c=="'CN'"||$c=="'HB'"){
                 }else{
-                    if($year[$i]<=2019&&$month[$i]<=5&&$c!='JM'){
                         $rows=$this-> fenshu($c,$year[$i],$month[$i]);
                         $arr[$i][$o]['value']=$rows;
                         $sql="select name from security$suffix.sec_city where code=$c";
                         $cityname = Yii::app()->db->createCommand($sql)->queryScalar();
                         $arr[$i][$o]['city']=$cityname;
                         $o=$o+1;
-                    }
                 }
             }
             $last_names = array_column($arr[$i],'value');
@@ -1276,7 +1274,7 @@ class ReportG02Form extends CReportForm
             foreach ($city as $c){
                 if($c=="'TY'"||$c=="'KS'"||$c=="'TN'"||$c=="'TC'"||$c=="'HK'"||$c=="'TP'"||$c=="'ZS1'"||$c=="'HN'"||$c=="'MY'"||$c=="'ZY'"||$c=="'HXHB'"||$c=="'MO'"||$c=="'HD'"||$c=="'JMS'"||$c=="'XM'"||$c=="'CS'"||$c=="'HX'"||$c=="'H-N'"||$c=="'HD1'"||$c=="'RN'"||$c=="'HN1'"||$c=="'HN2'"||$c=="'CN'"||$c=="'HB'"){
                 }else {
-                    if($year[$i]<=2019&&$month[$i]<=5&&$c!='JM') {
+
                         $sql = "select  
 			    sum(case when a.status='Y' and datediff(a.feedback_dt,a.request_dt) < 2 then 1 else 0 end) as counter 
 				from swo_mgr_feedback a 
@@ -1287,7 +1285,7 @@ class ReportG02Form extends CReportForm
                         $arr[$i][$o]['city'] = $cityname;
                         $arr[$i][$o]['value'] = $rows;
                         $o = $o + 1;
-                    }
+
                 }
             }
             $last_names = array_column($arr[$i],'value');
@@ -1414,7 +1412,7 @@ class ReportG02Form extends CReportForm
                 if($c=="'TY'"||$c=="'KS'"||$c=="'TN'"||$c=="'TC'"||$c=="'HK'"||$c=="'TP'"||$c=="'ZS1'"||$c=="'HN'"||$c=="'MY'"||$c=="'ZY'"||$c=="'HXHB'"||$c=="'MO'"||$c=="'HD'"||$c=="'JMS'"||$c=="'XM'"||$c=="'CS'"||$c=="'HX'"||$c=="'H-N'"||$c=="'HD1'"||$c=="'RN'"||$c=="'HN1'"||$c=="'HN2'"||$c=="'CN'"||$c=="'HB'"){
 
                 }else {
-                    if($year[$i]<=2019&&$month[$i]<=5&&$c!='JM') {
+
                         $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c ";
                         $rows = Yii::app()->db->createCommand($sql)->queryScalar();
                         $sql1 = "select name from security$suffix.sec_city where code=$c";
@@ -1422,7 +1420,7 @@ class ReportG02Form extends CReportForm
                         $arr[$i][$o]['city'] = $cityname;
                         $arr[$i][$o]['value'] = $rows;
                         $o = $o + 1;
-                    }
+
                 }
             }
             $last_names = array_column($arr[$i],'value');
@@ -1528,7 +1526,7 @@ class ReportG02Form extends CReportForm
                 if($c=="'TY'"||$c=="'KS'"||$c=="'TN'"||$c=="'TC'"||$c=="'HK'"||$c=="'TP'"||$c=="'ZS1'"||$c=="'HN'"||$c=="'MY'"||$c=="'ZY'"||$c=="'HXHB'"||$c=="'MO'"||$c=="'HD'"||$c=="'JMS'"||$c=="'XM'"||$c=="'CS'"||$c=="'HX'"||$c=="'H-N'"||$c=="'HD1'"||$c=="'RN'"||$c=="'HN1'"||$c=="'HN2'"||$c=="'CN'"||$c=="'HB'"){
 
                 }else {
-                    if($year[$i]<=2019&&$month[$i]<=5&&$c!='JM') {
+
                         $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%10%'";
                         $row = Yii::app()->db->createCommand($sql)->queryScalar();
                         $sql2 = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%\"1\"%'";
@@ -1539,7 +1537,7 @@ class ReportG02Form extends CReportForm
                         $arr[$i][$o]['city'] = $cityname;
                         $arr[$i][$o]['value'] =(round($a,4)*100)."%";
                         $o = $o + 1;
-                    }
+
                 }
             }
             $last_names = array_column($arr[$i],'value');
