@@ -1126,11 +1126,14 @@ class ReportG02Form extends CReportForm
                 if($rows==0){
                     $o=$o+1;
                 }
-                if($year[$i]<=2019&&$month[$i]<=5&&$c=='JM'){
-                    $o=$o+1;
-                }
             }
             $count=(count($arr)-$o)==0?1:(count($arr)-$o);
+            if(in_array("'JM'", $city)){
+                $count=9;
+                if(in_array("'HN'", $city)){
+                    $count=19;
+                }
+            }
             $arrs[]=round((array_sum($arr))/$count,2);
         }
         return $arrs;
@@ -1157,11 +1160,14 @@ class ReportG02Form extends CReportForm
                 if($rows==0){
                     $o=$o+1;
                 }
-                if($year[$i]<=2019&&$month[$i]<=5&&$c=='JM'){
-                    $o=$o+1;
-                }
             }
             $count=(count($arr)-$o)==0?1:(count($arr)-$o);
+            if(in_array("'JM'", $city)){
+                $count=9;
+                if(in_array("'HN'", $city)){
+                    $count=19;
+                }
+            }
             $arrs[]=round((array_sum($arr))/$count,2);
         }
         return $arrs;
@@ -1182,11 +1188,14 @@ class ReportG02Form extends CReportForm
                 if($rows==0){
                     $o=$o+1;
                 }
-                if($year[$i]<=2019&&$month[$i]<=5&&$c=='JM'){
-                    $o=$o+1;
-                }
             }
             $count=(count($arr)-$o)==0?1:(count($arr)-$o);
+            if(in_array("'JM'", $city)){
+                $count=9;
+                if(in_array("'HN'", $city)){
+                    $count=19;
+                }
+            }
             $arrs[]=round((array_sum($arr))/$count,2);
         }
         return $arrs;
@@ -1210,11 +1219,15 @@ class ReportG02Form extends CReportForm
             $last_names = array_column($arr[$i],'value');
             array_multisort($last_names,SORT_DESC,$arr[$i]);
             $model[$i]['max']=$arr[$i][0]['value']." (".$arr[$i][0]['city'].")";
-            if($year[$i]<=2019&&$month[$i]<=5&&$arr[$i][$o-1]['city']=='江门'){
+            if($year[$i]==2019&&$month[$i]<=5&&$arr[$i][$o-1]['city']=='江门'){
                 $model[$i]['end']=$arr[$i][$o-2]['value']." (".$arr[$i][$o-2]['city'].")";
-            }else{
+            }elseif ($year[$i]==2018&&$month[$i]<=12&&$arr[$i][$o-1]['city']=='江门'){
+                $model[$i]['end']=$arr[$i][$o-2]['value']." (".$arr[$i][$o-2]['city'].")";
+            }
+            else{
                 $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
             }
+
         }
         return $model;
     }
@@ -1300,9 +1313,12 @@ class ReportG02Form extends CReportForm
             $last_names = array_column($arr[$i],'value');
             array_multisort($last_names,SORT_DESC,$arr[$i]);
             $model[$i]['max']=$arr[$i][0]['value']." (".$arr[$i][0]['city'].")";
-            if($year[$i]<=2019&&$month[$i]<=5&&$arr[$i][$o-1]['city']=='江门'){
+            if($year[$i]==2019&&$month[$i]<=5&&$arr[$i][$o-1]['city']=='江门'){
                 $model[$i]['end']=$arr[$i][$o-2]['value']." (".$arr[$i][$o-2]['city'].")";
-            }else{
+            }elseif ($year[$i]==2018&&$month[$i]<=12&&$arr[$i][$o-1]['city']=='江门'){
+                $model[$i]['end']=$arr[$i][$o-2]['value']." (".$arr[$i][$o-2]['city'].")";
+            }
+            else{
                 $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
             }
 
@@ -1439,11 +1455,15 @@ class ReportG02Form extends CReportForm
             $last_names = array_column($arr[$i],'value');
             array_multisort($last_names,SORT_DESC,$arr[$i]);
             $model[$i]['max']=$arr[$i][0]['value']." (".$arr[$i][0]['city'].")";
-            if($year[$i]<=2019&&$month[$i]<=5&&$arr[$i][$o-1]['city']=='江门'){
+            if($year[$i]==2019&&$month[$i]<=5&&$arr[$i][$o-1]['city']=='江门'){
                 $model[$i]['end']=$arr[$i][$o-2]['value']." (".$arr[$i][$o-2]['city'].")";
-            }else{
+            }elseif ($year[$i]==2018&&$month[$i]<=12&&$arr[$i][$o-1]['city']=='江门'){
+                $model[$i]['end']=$arr[$i][$o-2]['value']." (".$arr[$i][$o-2]['city'].")";
+            }
+            else{
                 $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
             }
+
         }
         return $model;
     }
@@ -1557,11 +1577,15 @@ class ReportG02Form extends CReportForm
             $last_names = array_column($arr[$i],'value');
             array_multisort($last_names,SORT_DESC,$arr[$i]);
             $model[$i]['max']=$arr[$i][0]['value']." (".$arr[$i][0]['city'].")";
-            if($year[$i]<=2019&&$month[$i]<=5&&$arr[$i][$o-1]['city']=='江门'){
+            if($year[$i]==2019&&$month[$i]<=5&&$arr[$i][$o-1]['city']=='江门'){
                 $model[$i]['end']=$arr[$i][$o-2]['value']." (".$arr[$i][$o-2]['city'].")";
-            }else{
+            }elseif ($year[$i]==2018&&$month[$i]<=12&&$arr[$i][$o-1]['city']=='江门'){
+                $model[$i]['end']=$arr[$i][$o-2]['value']." (".$arr[$i][$o-2]['city'].")";
+            }
+            else{
                 $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
             }
+
         }
         return $model;
     }
