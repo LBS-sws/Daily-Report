@@ -1393,7 +1393,19 @@ class ReportG02Form extends CReportForm
         for($i=0;$i<count($month);$i++) {
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) ";
+            $sql = "select a.*, b.name as city_name, concat(f.code,' - ',f.name) as staff,  
+				d.name as visit_type_name, g.name as cust_type_name,count(id) as number,
+				h.name as district_name, VisitObjDesc(a.visit_obj) as visit_obj_name, i.cust_vip
+				from sal_visit a 
+				inner join hr$suffix.hr_binding c on a.username = c.user_id 
+				inner join hr$suffix.hr_employee f on c.employee_id = f.id
+				inner join sal_visit_type d on a.visit_type = d.id
+				inner join sal_cust_type g on a.cust_type = g.id
+				inner join sal_cust_district h on a.district = h.id
+				left outer join security$suffix.sec_city b on a.city=b.code
+				left outer join sal_custstar i on a.username=i.username and a.cust_name=i.cust_name
+				where a.city in ($city) and visit_dt<='".$end."' and visit_dt>='".$start."'  
+			";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visit= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=round($visit,0);
@@ -1411,7 +1423,19 @@ class ReportG02Form extends CReportForm
             }
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city)";
+            $sql = "select a.*, b.name as city_name, concat(f.code,' - ',f.name) as staff,  
+				d.name as visit_type_name, g.name as cust_type_name,count(id) as number,
+				h.name as district_name, VisitObjDesc(a.visit_obj) as visit_obj_name, i.cust_vip
+				from sal_visit a 
+				inner join hr$suffix.hr_binding c on a.username = c.user_id 
+				inner join hr$suffix.hr_employee f on c.employee_id = f.id
+				inner join sal_visit_type d on a.visit_type = d.id
+				inner join sal_cust_type g on a.cust_type = g.id
+				inner join sal_cust_district h on a.district = h.id
+				left outer join security$suffix.sec_city b on a.city=b.code
+				left outer join sal_custstar i on a.username=i.username and a.cust_name=i.cust_name
+				where a.city in ($city) and visit_dt<='".$end."' and visit_dt>='".$start."'  
+			";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visitMonth= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=round($visitMonth,0);
@@ -1425,7 +1449,19 @@ class ReportG02Form extends CReportForm
             $year[$i]=$year[$i]-1;
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) ";
+            $sql = "select a.*, b.name as city_name, concat(f.code,' - ',f.name) as staff,  
+				d.name as visit_type_name, g.name as cust_type_name,count(id) as number,
+				h.name as district_name, VisitObjDesc(a.visit_obj) as visit_obj_name, i.cust_vip
+				from sal_visit a 
+				inner join hr$suffix.hr_binding c on a.username = c.user_id 
+				inner join hr$suffix.hr_employee f on c.employee_id = f.id
+				inner join sal_visit_type d on a.visit_type = d.id
+				inner join sal_cust_type g on a.cust_type = g.id
+				inner join sal_cust_district h on a.district = h.id
+				left outer join security$suffix.sec_city b on a.city=b.code
+				left outer join sal_custstar i on a.username=i.username and a.cust_name=i.cust_name
+				where a.city in ($city) and visit_dt<='".$end."' and visit_dt>='".$start."'  
+			";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visitYear= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=round($visitYear,0);
@@ -1475,11 +1511,35 @@ class ReportG02Form extends CReportForm
         for($i=0;$i<count($month);$i++) {
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and  visit_obj like '%\"1\"%'";
+            $sql = "select a.*, b.name as city_name, concat(f.code,' - ',f.name) as staff,  
+				d.name as visit_type_name, g.name as cust_type_name,count(id) as number,
+				h.name as district_name, VisitObjDesc(a.visit_obj) as visit_obj_name, i.cust_vip
+				from sal_visit a 
+				inner join hr$suffix.hr_binding c on a.username = c.user_id 
+				inner join hr$suffix.hr_employee f on c.employee_id = f.id
+				inner join sal_visit_type d on a.visit_type = d.id
+				inner join sal_cust_type g on a.cust_type = g.id
+				inner join sal_cust_district h on a.district = h.id
+				left outer join security$suffix.sec_city b on a.city=b.code
+				left outer join sal_custstar i on a.username=i.username and a.cust_name=i.cust_name
+				where a.city in ($city) and visit_dt<='".$end."' and visit_dt>='".$start."'   and  visit_obj like '%\"1\"%'
+			";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visit= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $visits[]=round($visit,0);
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and  visit_obj like '%10%'";
+            $sql = "select a.*, b.name as city_name, concat(f.code,' - ',f.name) as staff,  
+				d.name as visit_type_name, g.name as cust_type_name,count(id) as number,
+				h.name as district_name, VisitObjDesc(a.visit_obj) as visit_obj_name, i.cust_vip
+				from sal_visit a 
+				inner join hr$suffix.hr_binding c on a.username = c.user_id 
+				inner join hr$suffix.hr_employee f on c.employee_id = f.id
+				inner join sal_visit_type d on a.visit_type = d.id
+				inner join sal_cust_type g on a.cust_type = g.id
+				inner join sal_cust_district h on a.district = h.id
+				left outer join security$suffix.sec_city b on a.city=b.code
+				left outer join sal_custstar i on a.username=i.username and a.cust_name=i.cust_name
+				where a.city in ($city) and visit_dt<='".$end."' and visit_dt>='".$start."'   and  visit_obj like '%10%'
+			";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $signing= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=$signing;
@@ -1499,11 +1559,35 @@ class ReportG02Form extends CReportForm
             }
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and  visit_obj like '%\"1\"%'";
+            $sql = "select a.*, b.name as city_name, concat(f.code,' - ',f.name) as staff,  
+				d.name as visit_type_name, g.name as cust_type_name,count(id) as number,
+				h.name as district_name, VisitObjDesc(a.visit_obj) as visit_obj_name, i.cust_vip
+				from sal_visit a 
+				inner join hr$suffix.hr_binding c on a.username = c.user_id 
+				inner join hr$suffix.hr_employee f on c.employee_id = f.id
+				inner join sal_visit_type d on a.visit_type = d.id
+				inner join sal_cust_type g on a.cust_type = g.id
+				inner join sal_cust_district h on a.district = h.id
+				left outer join security$suffix.sec_city b on a.city=b.code
+				left outer join sal_custstar i on a.username=i.username and a.cust_name=i.cust_name
+				where a.city in ($city) and visit_dt<='".$end."' and visit_dt>='".$start."'   and  visit_obj like '%\"1\"%'
+			";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visitMonth= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $visit[]=round($visitMonth,0);
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and  visit_obj like '%10%'";
+            $sql = "select a.*, b.name as city_name, concat(f.code,' - ',f.name) as staff,  
+				d.name as visit_type_name, g.name as cust_type_name,count(id) as number,
+				h.name as district_name, VisitObjDesc(a.visit_obj) as visit_obj_name, i.cust_vip
+				from sal_visit a 
+				inner join hr$suffix.hr_binding c on a.username = c.user_id 
+				inner join hr$suffix.hr_employee f on c.employee_id = f.id
+				inner join sal_visit_type d on a.visit_type = d.id
+				inner join sal_cust_type g on a.cust_type = g.id
+				inner join sal_cust_district h on a.district = h.id
+				left outer join security$suffix.sec_city b on a.city=b.code
+				left outer join sal_custstar i on a.username=i.username and a.cust_name=i.cust_name
+				where a.city in ($city) and visit_dt<='".$end."' and visit_dt>='".$start."'   and  visit_obj like '%10%'
+			";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $signingMonth= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=$signingMonth;
@@ -1519,11 +1603,35 @@ class ReportG02Form extends CReportForm
             $year[$i]=$year[$i]-1;
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and  visit_obj like '%\"1\"%'";
+            $sql = "select a.*, b.name as city_name, concat(f.code,' - ',f.name) as staff,  
+				d.name as visit_type_name, g.name as cust_type_name,count(id) as number,
+				h.name as district_name, VisitObjDesc(a.visit_obj) as visit_obj_name, i.cust_vip
+				from sal_visit a 
+				inner join hr$suffix.hr_binding c on a.username = c.user_id 
+				inner join hr$suffix.hr_employee f on c.employee_id = f.id
+				inner join sal_visit_type d on a.visit_type = d.id
+				inner join sal_cust_type g on a.cust_type = g.id
+				inner join sal_cust_district h on a.district = h.id
+				left outer join security$suffix.sec_city b on a.city=b.code
+				left outer join sal_custstar i on a.username=i.username and a.cust_name=i.cust_name
+				where a.city in ($city) and visit_dt<='".$end."' and visit_dt>='".$start."'   and  visit_obj like '%\"1\"%'
+			";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $visitYear= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $visit[]=round($visitYear,0);
-            $sql="select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city in($city) and  visit_obj like '%10%'";
+            $sql = "select a.*, b.name as city_name, concat(f.code,' - ',f.name) as staff,  
+				d.name as visit_type_name, g.name as cust_type_name,count(id) as number,
+				h.name as district_name, VisitObjDesc(a.visit_obj) as visit_obj_name, i.cust_vip
+				from sal_visit a 
+				inner join hr$suffix.hr_binding c on a.username = c.user_id 
+				inner join hr$suffix.hr_employee f on c.employee_id = f.id
+				inner join sal_visit_type d on a.visit_type = d.id
+				inner join sal_cust_type g on a.cust_type = g.id
+				inner join sal_cust_district h on a.district = h.id
+				left outer join security$suffix.sec_city b on a.city=b.code
+				left outer join sal_custstar i on a.username=i.username and a.cust_name=i.cust_name
+				where a.city in ($city) and visit_dt<='".$end."' and visit_dt>='".$start."'   and  visit_obj like '%10%'
+			";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             $signingYear= array_sum(array_map(create_function('$val', 'return $val["number"];'), $rows));
             $arr[]=$signingYear;
