@@ -168,7 +168,7 @@ class ReportG02Form extends CReportForm
         $signingmax=$this->signingmax($year_arr,$month_arr,$city_allow);
         $arr=array();
 //                 print_r('<pre>');
-//        print_r($stopordermax);//exit();
+//        print_r($reportmax);exit();
         for ($i=0;$i<count($month_arr);$i++){
             $arr[$i]['time']=  $start=$year_arr[$i]."年".$month_arr[$i]."月" ;;
            $arr[$i]['business']=$business[$i];
@@ -894,7 +894,7 @@ class ReportG02Form extends CReportForm
                 $end=$arr17[$i][$o]['hdr_id'];
                 $sql="select a.name,a.code from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
                 $cityname = Yii::app()->db->createCommand($sql)->queryRow();
-                if($cityname['code']=="'TY'"||$cityname['code']=="'KS'"||$cityname['code']=="'TN'"||$cityname['code']=="'TC'"||$cityname['code']=="'HK'"||$cityname['code']=="'TP'"||$cityname['code']=="'ZS1'"||$cityname['code']=="'HN'"||$cityname['code']=="'MY'"||$cityname['code']=="'ZY'"||$cityname['code']=="'HXHB'"||$cityname['code']=="'MO'"||$cityname['code']=="'HD'"||$cityname['code']=="'JMS'"||$cityname['code']=="'XM'"||$cityname['code']=="'CS'"||$cityname['code']=="'HX'"||$cityname['code']=="'H-N'"||$cityname['code']=="'HD1'"||$cityname['code']=="'RN'"||$cityname['code']=="'HN1'"||$cityname['code']=="'HN2'"||$cityname['code']=="'CN'"||$cityname['code']=="'HB'"){
+                if($cityname['code']=="TY"||$cityname['code']=="KS"||$cityname['code']=="TN"||$cityname['code']=="TC"||$cityname['code']=="HK"||$cityname['code']=="TP"||$cityname['code']=="ZS1"||$cityname['code']=="HN"||$cityname['code']=="MY"||$cityname['code']=="ZY"||$cityname['code']=="HXHB"||$cityname['code']=="MO"||$cityname['code']=="HD"||$cityname['code']=="JMS"||$cityname['code']=="XM"||$cityname['code']=="CS"||$cityname['code']=="HX"||$cityname['code']=="H-N"||$cityname['code']=="HD1"||$cityname['code']=="RN"||$cityname['code']=="HN1"||$cityname['code']=="HN2"||$cityname['code']=="CN"||$cityname['code']=="HB"){
                 }else{
                     $arrs[$i][$o]['value'] = $arr17[$i][$o]['data_value'] / abs($arr02[$i][$o]['data_value'] == 0 ? 1 : $arr02[$i][$o]['data_value']);
                     $arrs[$i][$o]['value']=(round(  $arrs[$i][$o]['value'],4)*100)."%";
@@ -979,8 +979,8 @@ class ReportG02Form extends CReportForm
                 $end=$arr21[$i][$o]['hdr_id'];
                 $sql="select a.name,a.code from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
                 $cityname = Yii::app()->db->createCommand($sql)->queryRow();
-                if($cityname['code']=="'TY'"||$cityname['code']=="'KS'"||$cityname['code']=="'TN'"||$cityname['code']=="'TC'"||$cityname['code']=="'HK'"||$cityname['code']=="'TP'"||$cityname['code']=="'ZS1'"||$cityname['code']=="'HN'"||$cityname['code']=="'MY'"||$cityname['code']=="'ZY'"||$cityname['code']=="'HXHB'"||$cityname['code']=="'MO'"||$cityname['code']=="'HD'"||$cityname['code']=="'JMS'"||$cityname['code']=="'XM'"||$cityname['code']=="'CS'"||$cityname['code']=="'HX'"||$cityname['code']=="'H-N'"||$cityname['code']=="'HD1'"||$cityname['code']=="'RN'"||$cityname['code']=="'HN1'"||$cityname['code']=="'HN2'"||$cityname['code']=="'CN'"||$cityname['code']=="'HB'"){
-                }else {
+                if($cityname['code']=="TY"||$cityname['code']=="KS"||$cityname['code']=="TN"||$cityname['code']=="TC"||$cityname['code']=="HK"||$cityname['code']=="TP"||$cityname['code']=="ZS1"||$cityname['code']=="HN"||$cityname['code']=="MY"||$cityname['code']=="ZY"||$cityname['code']=="HXHB"||$cityname['code']=="MO"||$cityname['code']=="HD"||$cityname['code']=="JMS"||$cityname['code']=="XM"||$cityname['code']=="CS"||$cityname['code']=="HX"||$cityname['code']=="H-N"||$cityname['code']=="HD1"||$cityname['code']=="RN"||$cityname['code']=="HN1"||$cityname['code']=="HN2"||$cityname['code']=="CN"||$cityname['code']=="HB"){
+                }else{
                     $arrs[$i][$o]['value'] = $arr21[$i][$o]['data_value'] / abs($arr01[$i][$o]['data_value'] == 0 ? 1 : $arr01[$i][$o]['data_value']);
                     $arrs[$i][$o]['value'] = (round($arrs[$i][$o]['value'], 4) * 100) . "%";
                     $arrs[$i][$o]['city'] = $cityname['name'];
@@ -1089,8 +1089,8 @@ class ReportG02Form extends CReportForm
                 $end=$arr[$i][$o]['hdr_id'];
                 $sql="select a.name,a.code from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
                 $cityname = Yii::app()->db->createCommand($sql)->queryRow();
-                if($cityname['code']=="'TY'"||$cityname['code']=="'KS'"||$cityname['code']=="'TN'"||$cityname['code']=="'TC'"||$cityname['code']=="'HK'"||$cityname['code']=="'TP'"||$cityname['code']=="'ZS1'"||$cityname['code']=="'HN'"||$cityname['code']=="'MY'"||$cityname['code']=="'ZY'"||$cityname['code']=="'HXHB'"||$cityname['code']=="'MO'"||$cityname['code']=="'HD'"||$cityname['code']=="'JMS'"||$cityname['code']=="'XM'"||$cityname['code']=="'CS'"||$cityname['code']=="'HX'"||$cityname['code']=="'H-N'"||$cityname['code']=="'HD1'"||$cityname['code']=="'RN'"||$cityname['code']=="'HN1'"||$cityname['code']=="'HN2'"||$cityname['code']=="'CN'"||$cityname['code']=="'HB'"){
-                }else {
+                if($cityname['code']=="TY"||$cityname['code']=="KS"||$cityname['code']=="TN"||$cityname['code']=="TC"||$cityname['code']=="HK"||$cityname['code']=="TP"||$cityname['code']=="ZS1"||$cityname['code']=="HN"||$cityname['code']=="MY"||$cityname['code']=="ZY"||$cityname['code']=="HXHB"||$cityname['code']=="MO"||$cityname['code']=="HD"||$cityname['code']=="JMS"||$cityname['code']=="XM"||$cityname['code']=="CS"||$cityname['code']=="HX"||$cityname['code']=="H-N"||$cityname['code']=="HD1"||$cityname['code']=="RN"||$cityname['code']=="HN1"||$cityname['code']=="HN2"||$cityname['code']=="CN"||$cityname['code']=="HB"){
+                }else{
                     $arrs[$i][$o]['city'] = $cityname['name'];
                     $arrs[$i][$o]['value'] = $arr[$i][$o]['data_value'];
                 }
@@ -1204,7 +1204,11 @@ class ReportG02Form extends CReportForm
             $last_names = array_column($arr[$i],'value');
             array_multisort($last_names,SORT_DESC,$arr[$i]);
             $model[$i]['max']=$arr[$i][0]['value']." (".$arr[$i][0]['city'].")";
-            $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
+            if($year[$i]<=2019&&$month[$i]<=5&&$arr[$i][$o-1]['city']=='江门'){
+                $model[$i]['end']=$arr[$i][$o-2]['value']." (".$arr[$i][$o-2]['city'].")";
+            }else{
+                $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
+            }
         }
         return $model;
     }
@@ -1274,7 +1278,6 @@ class ReportG02Form extends CReportForm
             foreach ($city as $c){
                 if($c=="'TY'"||$c=="'KS'"||$c=="'TN'"||$c=="'TC'"||$c=="'HK'"||$c=="'TP'"||$c=="'ZS1'"||$c=="'HN'"||$c=="'MY'"||$c=="'ZY'"||$c=="'HXHB'"||$c=="'MO'"||$c=="'HD'"||$c=="'JMS'"||$c=="'XM'"||$c=="'CS'"||$c=="'HX'"||$c=="'H-N'"||$c=="'HD1'"||$c=="'RN'"||$c=="'HN1'"||$c=="'HN2'"||$c=="'CN'"||$c=="'HB'"){
                 }else {
-
                         $sql = "select  
 			    sum(case when a.status='Y' and datediff(a.feedback_dt,a.request_dt) < 2 then 1 else 0 end) as counter 
 				from swo_mgr_feedback a 
@@ -1291,7 +1294,11 @@ class ReportG02Form extends CReportForm
             $last_names = array_column($arr[$i],'value');
             array_multisort($last_names,SORT_DESC,$arr[$i]);
             $model[$i]['max']=$arr[$i][0]['value']." (".$arr[$i][0]['city'].")";
-            $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
+            if($year[$i]<=2019&&$month[$i]<=5&&$arr[$i][$o-1]['city']=='江门'){
+                $model[$i]['end']=$arr[$i][$o-2]['value']." (".$arr[$i][$o-2]['city'].")";
+            }else{
+                $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
+            }
 
         }
         return $model;
@@ -1341,8 +1348,8 @@ class ReportG02Form extends CReportForm
                 $end=$arr[$i][$o]['hdr_id'];
                 $sql="select a.name,a.code from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
                 $cityname = Yii::app()->db->createCommand($sql)->queryRow();
-                if($cityname['code']=="'TY'"||$cityname['code']=="'KS'"||$cityname['code']=="'TN'"||$cityname['code']=="'TC'"||$cityname['code']=="'HK'"||$cityname['code']=="'TP'"||$cityname['code']=="'ZS1'"||$cityname['code']=="'HN'"||$cityname['code']=="'MY'"||$cityname['code']=="'ZY'"||$cityname['code']=="'HXHB'"||$cityname['code']=="'MO'"||$cityname['code']=="'HD'"||$cityname['code']=="'JMS'"||$cityname['code']=="'XM'"||$cityname['code']=="'CS'"||$cityname['code']=="'HX'"||$cityname['code']=="'H-N'"||$cityname['code']=="'HD1'"||$cityname['code']=="'RN'"||$cityname['code']=="'HN1'"||$cityname['code']=="'HN2'"||$cityname['code']=="'CN'"||$cityname['code']=="'HB'"){
-                }else {
+                if($cityname['code']=="TY"||$cityname['code']=="KS"||$cityname['code']=="TN"||$cityname['code']=="TC"||$cityname['code']=="HK"||$cityname['code']=="TP"||$cityname['code']=="ZS1"||$cityname['code']=="HN"||$cityname['code']=="MY"||$cityname['code']=="ZY"||$cityname['code']=="HXHB"||$cityname['code']=="MO"||$cityname['code']=="HD"||$cityname['code']=="JMS"||$cityname['code']=="XM"||$cityname['code']=="CS"||$cityname['code']=="HX"||$cityname['code']=="H-N"||$cityname['code']=="HD1"||$cityname['code']=="RN"||$cityname['code']=="HN1"||$cityname['code']=="HN2"||$cityname['code']=="CN"||$cityname['code']=="HB"){
+                }else{
                     $arrs[$i][$o]['city'] = $cityname['name'];
                     $arrs[$i][$o]['value'] = $arr[$i][$o]['data_value'];
                 }
@@ -1410,9 +1417,7 @@ class ReportG02Form extends CReportForm
             $end=$year[$i]."-".$month[$i]."-31" ;
             foreach ($city as $c) {
                 if($c=="'TY'"||$c=="'KS'"||$c=="'TN'"||$c=="'TC'"||$c=="'HK'"||$c=="'TP'"||$c=="'ZS1'"||$c=="'HN'"||$c=="'MY'"||$c=="'ZY'"||$c=="'HXHB'"||$c=="'MO'"||$c=="'HD'"||$c=="'JMS'"||$c=="'XM'"||$c=="'CS'"||$c=="'HX'"||$c=="'H-N'"||$c=="'HD1'"||$c=="'RN'"||$c=="'HN1'"||$c=="'HN2'"||$c=="'CN'"||$c=="'HB'"){
-
                 }else {
-
                         $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c ";
                         $rows = Yii::app()->db->createCommand($sql)->queryScalar();
                         $sql1 = "select name from security$suffix.sec_city where code=$c";
@@ -1426,7 +1431,11 @@ class ReportG02Form extends CReportForm
             $last_names = array_column($arr[$i],'value');
             array_multisort($last_names,SORT_DESC,$arr[$i]);
             $model[$i]['max']=$arr[$i][0]['value']." (".$arr[$i][0]['city'].")";
-            $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
+            if($year[$i]<=2019&&$month[$i]<=5&&$arr[$i][$o-1]['city']=='江门'){
+                $model[$i]['end']=$arr[$i][$o-2]['value']." (".$arr[$i][$o-2]['city'].")";
+            }else{
+                $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
+            }
         }
         return $model;
     }
@@ -1519,14 +1528,11 @@ class ReportG02Form extends CReportForm
         $city = explode(",", $city);
         for($i=0;$i<count($month);$i++) {
             $o=0;
-            $year[$i]=$year[$i]-1;
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
             foreach ($city as $c) {
                 if($c=="'TY'"||$c=="'KS'"||$c=="'TN'"||$c=="'TC'"||$c=="'HK'"||$c=="'TP'"||$c=="'ZS1'"||$c=="'HN'"||$c=="'MY'"||$c=="'ZY'"||$c=="'HXHB'"||$c=="'MO'"||$c=="'HD'"||$c=="'JMS'"||$c=="'XM'"||$c=="'CS'"||$c=="'HX'"||$c=="'H-N'"||$c=="'HD1'"||$c=="'RN'"||$c=="'HN1'"||$c=="'HN2'"||$c=="'CN'"||$c=="'HB'"){
-
                 }else {
-
                         $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%10%'";
                         $row = Yii::app()->db->createCommand($sql)->queryScalar();
                         $sql2 = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%\"1\"%'";
@@ -1543,7 +1549,11 @@ class ReportG02Form extends CReportForm
             $last_names = array_column($arr[$i],'value');
             array_multisort($last_names,SORT_DESC,$arr[$i]);
             $model[$i]['max']=$arr[$i][0]['value']." (".$arr[$i][0]['city'].")";
-            $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
+            if($year[$i]<=2019&&$month[$i]<=5&&$arr[$i][$o-1]['city']=='江门'){
+                $model[$i]['end']=$arr[$i][$o-2]['value']." (".$arr[$i][$o-2]['city'].")";
+            }else{
+                $model[$i]['end']=$arr[$i][$o-1]['value']." (".$arr[$i][$o-1]['city'].")";
+            }
         }
         return $model;
     }
