@@ -890,7 +890,8 @@ class ReportG02Form extends CReportForm
             $arr17[]=$rows17;
             $rows02=$this->value($city,$year[$i],$month[$i],'00002');
             $arr02[]=$rows02;
-            for($o=0;$o<count($arr17[$i]);$o++) {
+            $o=0;
+            for($p=0;$p<count($arr17[$i]);$p++) {
                 $end=$arr17[$i][$o]['hdr_id'];
                 $sql="select a.name,a.code from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
                 $cityname = Yii::app()->db->createCommand($sql)->queryRow();
@@ -899,6 +900,7 @@ class ReportG02Form extends CReportForm
                     $arrs[$i][$o]['value'] = $arr17[$i][$o]['data_value'] / abs($arr02[$i][$o]['data_value'] == 0 ? 1 : $arr02[$i][$o]['data_value']);
                     $arrs[$i][$o]['value']=(round(  $arrs[$i][$o]['value'],4)*100)."%";
                     $arrs[$i][$o]['city']= $cityname['name'];
+                    $o=$o+1;
                 }
 
             }
@@ -975,7 +977,8 @@ class ReportG02Form extends CReportForm
             $arr21[]=$rows21;
             $rows01=$this->value($city,$year[$i],$month[$i],'00001');
             $arr01[]=$rows01;
-            for($o=0;$o<count($arr21[$i]);$o++) {
+            $o=0;
+            for($p=0;$p<count($arr21[$i]);$p++) {
                 $end=$arr21[$i][$o]['hdr_id'];
                 $sql="select a.name,a.code from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
                 $cityname = Yii::app()->db->createCommand($sql)->queryRow();
@@ -984,6 +987,7 @@ class ReportG02Form extends CReportForm
                     $arrs[$i][$o]['value'] = $arr21[$i][$o]['data_value'] / abs($arr01[$i][$o]['data_value'] == 0 ? 1 : $arr01[$i][$o]['data_value']);
                     $arrs[$i][$o]['value'] = (round($arrs[$i][$o]['value'], 4) * 100) . "%";
                     $arrs[$i][$o]['city'] = $cityname['name'];
+                    $o=$o+1;
                 }
             }
             $last_names = array_column($arrs[$i],'value');
@@ -1085,7 +1089,8 @@ class ReportG02Form extends CReportForm
             //当月平均生意额
             $rows=$this->value($city,$year[$i],$month[$i],'00018');
             $arr[]=$rows;
-            for($o=0;$o<count($arr[$i]);$o++) {
+            $o=0;
+            for($p=0;$p<count($arr[$i]);$p++) {
                 $end=$arr[$i][$o]['hdr_id'];
                 $sql="select a.name,a.code from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
                 $cityname = Yii::app()->db->createCommand($sql)->queryRow();
@@ -1093,6 +1098,7 @@ class ReportG02Form extends CReportForm
                 }else{
                     $arrs[$i][$o]['city'] = $cityname['name'];
                     $arrs[$i][$o]['value'] = $arr[$i][$o]['data_value'];
+                    $o=$o+1;
                 }
             }
             $last_names = array_column($arrs[$i],'value');
@@ -1344,7 +1350,8 @@ class ReportG02Form extends CReportForm
             //当月平均生意额
             $rows=$this->value($city,$year[$i],$month[$i],'00042');
             $arr[]=$rows;
-            for($o=0;$o<count($arr[$i]);$o++) {
+            $o=0;
+            for($p=0;$p<count($arr[$i]);$p++) {
                 $end=$arr[$i][$o]['hdr_id'];
                 $sql="select a.name,a.code from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
                 $cityname = Yii::app()->db->createCommand($sql)->queryRow();
@@ -1352,6 +1359,7 @@ class ReportG02Form extends CReportForm
                 }else{
                     $arrs[$i][$o]['city'] = $cityname['name'];
                     $arrs[$i][$o]['value'] = $arr[$i][$o]['data_value'];
+                    $o=$o+1;
                 }
             }
             $last_names = array_column($arrs[$i],'value');
