@@ -117,11 +117,11 @@ class ServiceForm extends CFormModel
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
 */
-			array('id, salesman,technician, cont_info, first_tech, reason, remarks, remarks2, paid_type, nature_type, cust_type, 
+			array('id, technician, cont_info, first_tech, reason, remarks, remarks2, paid_type, nature_type, cust_type, 
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
 				b4_product_id, b4_service, b4_paid_type, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'), 
-			array('company_name, service, status_dt','required'),
+			array('company_name,salesman, service, status_dt','required'),
 			array('ctrt_period','numerical','allowEmpty'=>true,'integerOnly'=>true),
 			array('amt_paid, amt_install','numerical','allowEmpty'=>true),
 			array('org_equip_qty, rtn_equip_qty','numerical','allowEmpty'=>true),

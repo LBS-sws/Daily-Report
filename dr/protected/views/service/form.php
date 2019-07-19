@@ -390,44 +390,44 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 	
 <?php
 	$buttons = array(
-			TbHtml::button(Yii::t('service','New Service'), 
+			TbHtml::button(Yii::t('service','New Service'),
 				array(
 					'name'=>'btnNew',
 					'id'=>'btnNew',
 					'class'=>'btn btn-block',
 				)),
-			TbHtml::button(Yii::t('service','Renew Service'), 
+			TbHtml::button(Yii::t('service','Renew Service'),
 				array(
 					'name'=>'btnRenew',
 					'id'=>'btnRenew',
 					'class'=>'btn btn-block',
 				)),
-			TbHtml::button(Yii::t('service','Amend Service'), 
+			TbHtml::button(Yii::t('service','Amend Service'),
 				array(
 					'name'=>'btnAmend',
 					'id'=>'btnAmend',
 					'class'=>'btn btn-block',
 				)),
-			TbHtml::button(Yii::t('service','Suspend Service'), 
+			TbHtml::button(Yii::t('service','Suspend Service'),
 				array(
 					'name'=>'btnSuspend',
 					'id'=>'btnSuspend',
 					'class'=>'btn btn-block',
 				)),
-			TbHtml::button(Yii::t('service','Resume Service'), 
+			TbHtml::button(Yii::t('service','Resume Service'),
 				array(
 					'name'=>'btnResume',
 					'id'=>'btnResume',
 					'class'=>'btn btn-block',
 				)),
-			TbHtml::button(Yii::t('service','Terminate Service'), 
+			TbHtml::button(Yii::t('service','Terminate Service'),
 				array(
 					'name'=>'btnTerminate',
 					'id'=>'btnTerminate',
 					'class'=>'btn btn-block',
 				)),
 		);
-	
+
 	$content = "";
 	foreach ($buttons as $button) {
 		$content .= "<div class=\"row\"><div class=\"col-sm-10\">$button</div></div>";
@@ -450,7 +450,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 													'doctype'=>'SERVICE',
 													'header'=>Yii::t('dialog','File Attachment'),
 													'ronly'=>($model->scenario=='view'),
-													)); 
+													));
 ?>
 
 <?php
