@@ -44,8 +44,8 @@ class UserController extends Controller
 			$model->attributes = $_POST['UserList'];
 		} else {
 			$session = Yii::app()->session;
-			if (isset($session['criteria_u1']) && !empty($session['criteria_u1'])) {
-				$criteria = $session['criteria_u1'];
+			if (isset($session['criteria_ul']) && !empty($session['criteria_ul'])) {
+				$criteria = $session['criteria_ul'];
 				$model->setCriteria($criteria);
 			}
 		}
