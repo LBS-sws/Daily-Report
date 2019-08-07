@@ -37,7 +37,7 @@ class ServiceForm extends CFormModel
 	public $rtn_equip_qty = 0;
 	public $city;
 	public $surplus;
-    public $number;
+    public $all_number;
 	public $b4_product_id;
 	public $b4_service;
 	public $b4_paid_type;
@@ -104,7 +104,7 @@ class ServiceForm extends CFormModel
 			'resume_dt'=>Yii::t('service','Resume Date'),
 			'suspend_dt'=>Yii::t('service','Suspend Date'),
 			'terminate_dt'=>Yii::t('service','Terminate Date'),
-            'number'=>Yii::t('service','Number'),
+            'all_number'=>Yii::t('service','Number'),
             'surplus'=>Yii::t('service','Surplus'),
 		);
 	}
@@ -121,7 +121,7 @@ class ServiceForm extends CFormModel
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
 */
 			array('id, technician, cont_info, first_tech, reason, remarks, remarks2, paid_type, nature_type, cust_type, 
-				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, number,surplus,
+				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,
 				b4_product_id, b4_service, b4_paid_type, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'), 
 			array('company_name,salesman, service, status_dt','required'),
@@ -180,7 +180,7 @@ class ServiceForm extends CFormModel
 				$this->no_of_attm['service'] = $row['no_of_attm'];
                 $this->city = $row['city'];
                 $this->surplus = $row['surplus'];
-                $this->number = $row['number'];
+                $this->all_number = $row['all_number'];
 //                print_r('<pre>');
 //                print_r($this);exit();
 				break;
@@ -225,7 +225,7 @@ class ServiceForm extends CFormModel
 							ctrt_period, cont_info, first_dt, first_tech, reason,
 							status, status_dt, remarks, remarks2, ctrt_end_dt,
 							equip_install_dt, org_equip_qty, rtn_equip_qty, 
-							city, luu, lcu,number,surplus
+							city, luu, lcu,all_number,surplus
 						) values (
 							:company_id, :company_name, :product_id, :service, :nature_type, :cust_type, 
 							:paid_type, :amt_paid, :amt_install, :need_install, :salesman,:technician, :sign_dt, :b4_product_id,
@@ -233,7 +233,7 @@ class ServiceForm extends CFormModel
 							:ctrt_period, :cont_info, :first_dt, :first_tech, :reason,
 							:status, :status_dt, :remarks, :remarks2, :ctrt_end_dt,
 							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, 
-							:city, :luu, :lcu,:number,:surplus
+							:city, :luu, :lcu,:all_number,:surplus
 						)";
 				$this->execSql($connection,$sql);
 				$this->id = Yii::app()->db->getLastInsertID();
@@ -270,7 +270,7 @@ class ServiceForm extends CFormModel
 							equip_install_dt = :equip_install_dt,
 							org_equip_qty = :org_equip_qty,
 							rtn_equip_qty = :rtn_equip_qty,
-							number = :number, 
+							all_number = :all_number, 
                             surplus = :surplus, 
 							luu = :luu 
 						where id = :id and city = :city
@@ -391,16 +391,16 @@ class ServiceForm extends CFormModel
 			$req = General::toMyNumber($this->rtn_equip_qty);
 			$command->bindParam(':rtn_equip_qty',$req,PDO::PARAM_INT);
 		}
-        if (strpos($sql,':number')!==false) {
-            $number = General::toMyNumber($this->number);
-            $command->bindParam(':number',$number,PDO::PARAM_INT);
+        if (strpos($sql,':all_number')!==false) {
+            $all_number = General::toMyNumber($this->all_number);
+            $command->bindParam(':all_number',$all_number,PDO::PARAM_INT);
         }
         if (strpos($sql,':surplus')!==false) {
             $surplus = General::toMyNumber($this->surplus);
             $command->bindParam(':surplus',$surplus,PDO::PARAM_INT);
         }
 //        print_r('<pre>');
-//        print_r($this->number);exit();
+//        print_r($this->all_number);exit();
 		$command->execute();
 	}
 	
