@@ -99,7 +99,9 @@ class ServiceController extends Controller
 			$model->b4_paid_type = '';
 			$model->b4_amt_paid = 0;
 			$model->reason = '';
-			$model->remarks = '';
+            $model->remarks = '';
+            $model->surplus = 0;
+            $model->number = 0;
 			$model->org_equip_qty = 0;
 			$model->rtn_equip_qty = 0;
 			$model->id = 0;
@@ -126,6 +128,8 @@ class ServiceController extends Controller
 			$model->reason = '';
 			$model->remarks = '';
 			$model->org_equip_qty = 0;
+            $model->surplus = 0;
+            $model->number = 0;
 			$model->rtn_equip_qty = 0;
 			$model->sign_dt = null;
 			$model->equip_install_dt = null;
@@ -169,6 +173,8 @@ class ServiceController extends Controller
 			$model->ctrt_end_dt = null;
 			$model->cont_info = '';
 			$model->first_tech = '';
+            $model->surplus = 0;
+            $model->number = 0;
 			$model->reason = '';
 			$model->remarks = '';
 			$model->equip_install_dt = null;
@@ -196,6 +202,8 @@ class ServiceController extends Controller
 			$model->b4_paid_type = '';
 			$model->b4_amt_paid = 0;
 			$model->amt_install = 0;
+            $model->surplus = 0;
+            $model->number = 0;
 			$model->cont_info = '';
 			$model->first_dt = null;
 			$model->first_tech = '';
@@ -227,6 +235,8 @@ class ServiceController extends Controller
 			$model->b4_amt_paid = 0;
 			$model->amt_install = 0;
 			$model->ctrt_period = 0;
+            $model->surplus = 0;
+            $model->number = 0;
 			$model->ctrt_end_dt = null;
 			$model->cont_info = '';
 			$model->first_dt = null;
@@ -254,6 +264,8 @@ class ServiceController extends Controller
 			$model->b4_service = '';
 			$model->b4_paid_type = '';
 			$model->b4_amt_paid = 0;
+            $model->surplus = 0;
+            $model->number = 0;
 			$model->amt_install = 0;
 			$model->ctrt_period = 0;
 			$model->ctrt_end_dt = null;

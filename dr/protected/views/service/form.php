@@ -179,6 +179,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 				</div>
 			</div>
 <?php endif; ?>
+
 			<div class="form-group">
 				<?php echo $form->labelEx($model,(($model->status=='A') ? 'af_service' : 'service'),array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
@@ -234,6 +235,24 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 				</div>
 			</div>
 <?php endif; ?>
+
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'number',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->numberField($model, 'number',
+                        array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+                <?php if (($model->status=='A') || ($model->status=='T')) : ?>
+                <?php echo $form->labelEx($model,'surplus',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->numberField($model, 'surplus',
+                        array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+                <?php endif; ?>
+            </div>
+
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'salesman',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">

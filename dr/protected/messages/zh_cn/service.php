@@ -26,6 +26,9 @@ return array(
 	'Status Date'=>'记录日期',
 	'Installation'=>'需安装',
 
+    'Number'=>'服务总次数',
+    'Surplus'=>'剩余次数',
+
 	'Service (Before)'=>'服务內容(更改前)',
 	'Paid Amt (Before)'=>'服务金额(更改前)',
 	'Service (After)'=>'服务內容(更改后)',
