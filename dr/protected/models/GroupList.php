@@ -18,7 +18,7 @@ class GroupList extends CListPageModel
 	
 	public function retrieveDataByPage($pageNum=1)
 	{
-		$a_sys = Yii::app()->params['systemMapping'];
+		$a_sys = $this->systemMappingArray();
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql1 = "select temp_id, temp_name, system_id
 				from security$suffix.sec_template 
@@ -46,7 +46,11 @@ class GroupList extends CListPageModel
 		
 		$order = "";
 		if (!empty($this->orderField)) {
-			$order .= " order by ".$this->orderField." ";
+			if ($this->orderField=='system_name') {
+				$order .= " order by system_id ";
+			} else {
+				$order .= " order by ".$this->orderField." ";
+			}
 			if ($this->orderType=='D') $order .= "desc ";
 		}
 
@@ -73,4 +77,11 @@ class GroupList extends CListPageModel
 		return true;
 	}
 
+	protected function systemMappingArray() {
+		$rtn = array();
+		foreach (General::systemMapping() as $key=>$value) {
+			$rtn[$key] = $value;
+		}
+		return $rtn;
+	}
 }

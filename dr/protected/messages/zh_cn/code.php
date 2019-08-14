@@ -55,5 +55,15 @@ return array(
 	'Puriscent'=>'飘盈香',
 	'Perfume'=>'香水',
 	
+	'Start Date'=>'开始日期',
+	'End Date'=>'结束日期',
+	'Priority'=>'优先',
+	'Image'=>'图片',
+	'Image Type'=>'图像类型',
+	'Image Caption'=>'图片标题',
+	'Content'=>'内容',
+	'Announcement Form'=>'公告表单',
+	'Announcement List'=>'公告列表',
+	'Announcement'=>'公告',
 );
 ?>

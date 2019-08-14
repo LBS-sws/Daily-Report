@@ -217,6 +217,11 @@ return array(
 				'url'=>'/register/index',
 				'tag'=>'@',
 			),
+			'Announcement'=>array(
+				'access'=>'D05',
+				'url'=>'/announce/index',
+				'tag'=>'@',
+			),
 		),
 	),
 );

@@ -101,5 +101,6 @@ return array(
 'QC Read All'=>'品檢全閱',
 'QC Delete'=>'品檢刪除',
 'System Use'=>'系統使用',
+'Announcement'=>'公告',
 );
 ?>
