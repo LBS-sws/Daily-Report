@@ -36,13 +36,13 @@ class ServiceForm extends CFormModel
 	public $org_equip_qty = 0;
 	public $rtn_equip_qty = 0;
 	public $city;
-	public $surplus;
+	public $surplus=0;
     public $all_number;
 	public $b4_product_id;
 	public $b4_service;
 	public $b4_paid_type;
 	public $b4_amt_paid;
-	
+	public $othersalesman;
 	public $status_desc;
 	public $backlink;
 	
@@ -79,6 +79,7 @@ class ServiceForm extends CFormModel
 			'amt_install'=>Yii::t('service','Install Amt'),
 			'need_install'=>Yii::t('service','Installation'),
 			'salesman'=>Yii::t('service','Salesman'),
+            'othersalesman'=>Yii::t('service','othersalesman'),
             'technician'=>Yii::t('service','Technician'),
 			'sign_dt'=>Yii::t('service','Sign Date'),
 			'ctrt_end_dt'=>Yii::t('service','Contract End Date'),
@@ -123,8 +124,8 @@ class ServiceForm extends CFormModel
 			array('id, technician, cont_info, first_tech, reason, remarks, remarks2, paid_type, nature_type, cust_type, 
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,
 				b4_product_id, b4_service, b4_paid_type, need_install','safe'),
-			array('files, removeFileId, docMasterId, no_of_attm','safe'), 
-			array('company_name,salesman, service, status_dt','required'),
+			array('files, removeFileId, docMasterId, no_of_attm','safe'),
+			array('company_name,salesman, service,all_number,surplus, status_dt','required'),
 			array('ctrt_period','numerical','allowEmpty'=>true,'integerOnly'=>true),
 			array('amt_paid, amt_install','numerical','allowEmpty'=>true),
 			array('org_equip_qty, rtn_equip_qty','numerical','allowEmpty'=>true),

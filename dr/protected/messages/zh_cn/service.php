@@ -73,7 +73,7 @@ return array(
 	
 	'Type'=>'类别',
 	'Source'=>'接收来源',
-	
+	'othersalesman'=>'跨区业务员',
 	'Resp. Tech.'=>'负责技术员',
 	'Notify Manager'=>'经理知悉',
 	'Schedule Date'=>'安排跟进日期',
