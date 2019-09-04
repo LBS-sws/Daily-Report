@@ -502,7 +502,7 @@ Yii::app()->clientScript->registerScript('lookupService',$js,CClientScript::POS_
 $js = Script::genLookupButtonEx('btnSalesman', 'staff', '', 'salesman');
 Yii::app()->clientScript->registerScript('lookupSalesman',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButtonEx('btnOtherSalesman', 'staff', '', 'salesman');
+$js = Script::genLookupButtonEx('btnOtherSalesman', 'staff', '', 'othersalesman');
 Yii::app()->clientScript->registerScript('lookupSalesman',$js,CClientScript::POS_READY);
 
 $js = Script::genLookupButtonEx('btnTechnician', 'staff', '', 'technician');
