@@ -30,6 +30,17 @@ return array(
 	
 	'Nil'=>'不适用',
 	'Group Leader'=>'组长',
+
 	'Team Leader'=>'队长',
+    "Primary school"=>"小学",
+    "Junior school"=>"中学",
+    "High school"=>"高中",
+    "Technical school"=>"中专",
+    "College school"=>"大专",
+    "Undergraduate"=>"本科",
+    "Graduate"=>"研究生",
+    "Doctorate"=>"博士",
+	"AL Days"=>'应有年假天数',
+	"Education"=>'学历或文化程度',
 );
 ?>

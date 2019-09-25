@@ -2,7 +2,9 @@
 class RptStaff extends ReportData2 {	public function fields() {		return array(
 			'lud'=>array('label'=>Yii::t('staff','Entry Date'),'width'=>18,'align'=>'L'),			'code'=>array('label'=>Yii::t('staff','Code'),'width'=>15,'align'=>'L'),			'name'=>array('label'=>Yii::t('staff','Name'),'width'=>30,'align'=>'L'),			'position'=>array('label'=>Yii::t('staff','Position'),'width'=>30,'align'=>'L'),			'staff_type'=>array('label'=>Yii::t('staff','Staff Type'),'width'=>20,'align'=>'C'),
 			'leader'=>array('label'=>Yii::t('staff','Team/Group Leader'),'width'=>20,'align'=>'C'),
-			'join_dt'=>array('label'=>Yii::t('staff','Join Date'),'width'=>18,'align'=>'C'),			'ctrt_duration'=>array('label'=>Yii::t('staff','Cont. Duration'),'width'=>40,'align'=>'C'),			'ctrt_period'=>array('label'=>Yii::t('staff','Cont. Period'),'width'=>18,'align'=>'C'),			'leave_days'=>array('label'=>Yii::t('staff','Acc. Leave Days'),'width'=>18,'align'=>'C'),
+			'education'=>array('label'=>Yii::t('staff','Education'),'width'=>20,'align'=>'C'),
+			'join_dt'=>array('label'=>Yii::t('staff','Join Date'),'width'=>18,'align'=>'C'),			'ctrt_duration'=>array('label'=>Yii::t('staff','Cont. Duration'),'width'=>40,'align'=>'C'),			'ctrt_period'=>array('label'=>Yii::t('staff','Cont. Period'),'width'=>18,'align'=>'C'),			'year_day'=>array('label'=>Yii::t('staff','AL Days'),'width'=>18,'align'=>'C'),
+			'leave_days'=>array('label'=>Yii::t('staff','Acc. Leave Days'),'width'=>18,'align'=>'C'),
 			'ctrt_renew_dt'=>array('label'=>Yii::t('staff','Cont. Renew Date'),'width'=>18,'align'=>'C'),
 			'remarks'=>array('label'=>Yii::t('staff','Remarks'),'width'=>20,'align'=>'L'),
 			'email'=>array('label'=>Yii::t('staff','Email'),'width'=>28,'align'=>'L'),			'leave_dt'=>array('label'=>Yii::t('staff','Leave Date'),'width'=>22,'align'=>'C'),			'leave_reason'=>array('label'=>Yii::t('staff','Leave Reason'),'width'=>28,'align'=>'L'),		);	}
@@ -28,7 +30,8 @@ class RptStaff extends ReportData2 {	public function fields() {		return array(
 		} else 
 			$where .= (($where=='where') ? " " : " and ")." a.leave_dt is null";
 		if ($where!='where') $sql .= $where;	
-		$sql .= " order by a.lud desc";		$rows = Yii::app()->db->createCommand($sql)->queryAll();		if (count($rows) > 0) {			foreach ($rows as $row) {				$temp = array();				$temp['code'] = $row['code'];				$temp['name'] = $row['name'];				$temp['position'] = $row['position'];				$temp['join_dt'] = General::toDate($row['join_dt']);
+		$sql .= " order by a.lud desc";		$rows = Yii::app()->db->createCommand($sql)->queryAll();		if (count($rows) > 0) {			foreach ($rows as $row) {
+				$temp = array();				$temp['code'] = $row['code'];				$temp['name'] = $row['name'];				$temp['position'] = $row['position'];				$temp['join_dt'] = General::toDate($row['join_dt']);
 				$temp['ctrt_start_dt'] = General::toDate($row['ctrt_start_dt']);				$temp['ctrt_period'] = $row['ctrt_period'];				$temp['ctrt_renew_dt'] = General::toDate($row['ctrt_renew_dt']);
 //				$temp['ctrt_renew_dt'] = date('Y/m/d',strtotime('+'.$temp['ctrt_period'].' year',strtotime($temp['ctrt_start_dt'])));
 				$temp['ctrt_duration'] = $temp['ctrt_start_dt'].'-'.$temp['ctrt_renew_dt'];
@@ -36,9 +39,36 @@ class RptStaff extends ReportData2 {	public function fields() {		return array(
 				$temp['leader'] = General::getLeaderDesc($row['leader']);
 				$temp['lud'] = General::toDate($row['lud']);
 				
+				$employee = $this->getEmployeeRecord($row['code']);
+				$temp['year_day'] = $employee['year_day'];
+				$temp['education'] = $employee['education'];
+				
 				$temp['leave_days'] = $this->getLeaveDays($row['id'], $temp['join_dt'], $cutoff);
 				
 				$this->data[] = $temp;			}		}		return true;	}
+
+	private function getEmployeeRecord($code) {
+		$education = array(
+            ""=>"",
+            "Primary school"=>Yii::t("staff","Primary school"),
+            "Junior school"=>Yii::t("staff","Junior school"),
+            "High school"=>Yii::t("staff","High school"),
+            "Technical school"=>Yii::t("staff","Technical school"),
+            "College school"=>Yii::t("staff","College school"),
+            "Undergraduate"=>Yii::t("staff","Undergraduate"),
+            "Graduate"=>Yii::t("staff","Graduate"),
+            "Doctorate"=>Yii::t("staff","Doctorate")
+        );
+		$suffix = Yii::app()->params['envSuffix'];
+		$sql = "select year_day, education from hr$suffix.hr_employee where code='$code' limit 1";
+		$row = Yii::app()->db->createCommand($sql)->queryRow();
+		if ($row!==false) {
+			$row['education'] = $education[$row['education']];
+			return $row;
+		} else {
+			return array('year_day'=>'', 'education'=>'');
+		}
+	}
 
 	public function getLeaveDays($id, $joindt, $cutoff) {
 		$result = 0;
@@ -73,6 +103,7 @@ class RptStaff extends ReportData2 {	public function fields() {		return array(
 			
 				$startdt = $year.'/'.date("m/d",strtotime($joindt)).' 00:00:00';
 				$enddt = ($year+1).'/'.date("m/d",strtotime($joindt)).' 23:59:59';
+//				$enddt = date("Y/m/d",strtotime($cutoff)).' 23:59:59';
 				$sql = "select sum(a.log_time) as sumleave
 						from hr$suffix.hr_employee_leave a
 						left outer join hr$suffix.hr_vacation b on a.vacation_id = b.id
