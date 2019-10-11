@@ -28,6 +28,8 @@ return array(
 
     'Number'=>'服务总次数',
     'Surplus'=>'剩余次数',
+    'Number edit'=>'更改服务总次数',
+    'Surplus edit'=>'更改剩余次数',
 
 	'Service (Before)'=>'服务內容(更改前)',
 	'Paid Amt (Before)'=>'服务金额(更改前)',
