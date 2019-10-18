@@ -252,7 +252,64 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 </div>
                 <?php endif; ?>
             </div>
-
+            <?php if ($model->status=='T') : ?>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'all_number_edit0',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->numberField($model, 'all_number_edit0',
+                        array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+                    <?php echo $form->labelEx($model,'surplus_edit0',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'surplus_edit0',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+            </div>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'all_number_edit1',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'all_number_edit1',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                    <?php echo $form->labelEx($model,'surplus_edit1',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'surplus_edit1',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'all_number_edit2',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'all_number_edit2',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                    <?php echo $form->labelEx($model,'surplus_edit2',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'surplus_edit2',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'all_number_edit3',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'all_number_edit3',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                    <?php echo $form->labelEx($model,'surplus_edit3',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'surplus_edit3',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'salesman',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">

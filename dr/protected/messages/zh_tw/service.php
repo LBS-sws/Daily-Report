@@ -25,6 +25,17 @@ return array(
 'Status Date'=>'記錄日期',
 'Installation'=>'需安裝',
 
+    'Number'=>'服務總次數',
+    'Surplus'=>'剩餘次數',
+    'Number edit0'=>'第二次更改服務總次數',
+    'Surplus edit0'=>'第二次更改剩餘次數',
+    'Number edit1'=>'第三次更改服務總次數',
+    'Surplus edit1'=>'第三次更改剩餘次數',
+    'Number edit2'=>'第四次更改服務總次數',
+    'Surplus edit2'=>'第四次更改剩餘次數',
+    'Number edit3'=>'第五次更改服務總次數',
+    'Surplus edit3'=>'第五次更改剩餘次數',
+
 'Service (Before)'=>'服務內容(更改前)',
 'Paid Amt (Before)'=>'服務金額(更改前)',
 'Service (After)'=>'服務內容(更改後)',

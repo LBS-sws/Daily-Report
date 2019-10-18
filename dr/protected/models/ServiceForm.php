@@ -38,8 +38,16 @@ class ServiceForm extends CFormModel
 	public $city;
 	public $surplus=0;
     public $all_number;
-    public $surplus_edit;
-    public $all_number_edit;
+    public $surplus_edit0;
+    public $all_number_edit0;
+    public $surplus_edit1;
+    public $all_number_edit1;
+    public $surplus_edit2;
+    public $all_number_edit2;
+    public $surplus_edit3;
+    public $all_number_edit3;
+    public $surplus_edit4;
+    public $all_number_edit4;
 	public $b4_product_id;
 	public $b4_service;
 	public $b4_paid_type;
@@ -109,8 +117,14 @@ class ServiceForm extends CFormModel
 			'terminate_dt'=>Yii::t('service','Terminate Date'),
             'all_number'=>Yii::t('service','Number'),
             'surplus'=>Yii::t('service','Surplus'),
-            'all_number_edit'=>Yii::t('service','Number edit'),
-            'surplus_edit'=>Yii::t('service','Surplus edit'),
+            'all_number_edit0'=>Yii::t('service','Number edit0'),
+            'surplus_edit0'=>Yii::t('service','Surplus edit0'),
+            'all_number_edit1'=>Yii::t('service','Number edit1'),
+            'surplus_edit1'=>Yii::t('service','Surplus edit1'),
+            'all_number_edit2'=>Yii::t('service','Number edit2'),
+            'surplus_edit2'=>Yii::t('service','Surplus edit2'),
+            'all_number_edit3'=>Yii::t('service','Number edit3'),
+            'surplus_edit3'=>Yii::t('service','Surplus edit3'),
 		);
 	}
 
@@ -126,8 +140,8 @@ class ServiceForm extends CFormModel
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
 */
 			array('id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, cust_type, 
-				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit,surplus_edit,
-				b4_product_id, b4_service, b4_paid_type, need_install','safe'),
+				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
+				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'),
 			array('company_name,salesman, service,all_number,surplus, status_dt','required'),
 			array('ctrt_period','numerical','allowEmpty'=>true,'integerOnly'=>true),
@@ -187,8 +201,14 @@ class ServiceForm extends CFormModel
                 $this->city = $row['city'];
                 $this->surplus = $row['surplus'];
                 $this->all_number = $row['all_number'];
-                $this->surplus_edit = $row['surplus_edit'];
-                $this->all_number_edit = $row['all_number_edit'];
+                $this->surplus_edit0 = $row['surplus_edit0'];
+                $this->all_number_edit0 = $row['all_number_edit0'];
+                $this->surplus_edit1 = $row['surplus_edit1'];
+                $this->all_number_edit1 = $row['all_number_edit1'];
+                $this->surplus_edit2 = $row['surplus_edit2'];
+                $this->all_number_edit2 = $row['all_number_edit2'];
+                $this->surplus_edit3 = $row['surplus_edit3'];
+                $this->all_number_edit3 = $row['all_number_edit3'];
 //                print_r('<pre>');
 //                print_r($this);exit();
 				break;
@@ -233,7 +253,7 @@ class ServiceForm extends CFormModel
 							ctrt_period, cont_info, first_dt, first_tech, reason,
 							status, status_dt, remarks, remarks2, ctrt_end_dt,
 							equip_install_dt, org_equip_qty, rtn_equip_qty, 
-							city, luu, lcu,all_number,surplus,all_number_edit,surplus_edit
+							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3
 						) values (
 							:company_id, :company_name, :product_id, :service, :nature_type, :cust_type, 
 							:paid_type, :amt_paid, :amt_install, :need_install, :salesman,:othersalesman,:technician, :sign_dt, :b4_product_id,
@@ -241,7 +261,7 @@ class ServiceForm extends CFormModel
 							:ctrt_period, :cont_info, :first_dt, :first_tech, :reason,
 							:status, :status_dt, :remarks, :remarks2, :ctrt_end_dt,
 							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, 
-							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit,:surplus_edit
+							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3
 						)";
 				$this->execSql($connection,$sql);
 				$this->id = Yii::app()->db->getLastInsertID();
@@ -281,8 +301,14 @@ class ServiceForm extends CFormModel
 							rtn_equip_qty = :rtn_equip_qty,
 							all_number = :all_number, 
                             surplus = :surplus, 
-                            all_number_edit = :all_number_edit, 
-                            surplus_edit = :surplus_edit, 
+                            all_number_edit0 = :all_number_edit0, 
+                            surplus_edit0 = :surplus_edit0, 
+                            all_number_edit1 = :all_number_edit1, 
+                            surplus_edit1 = :surplus_edit1, 
+                            all_number_edit2 = :all_number_edit2, 
+                            surplus_edit2 = :surplus_edit2, 
+                            all_number_edit3 = :all_number_edit3, 
+                            surplus_edit3 = :surplus_edit3, 
 							luu = :luu 
 						where id = :id and city = :city
 						";
@@ -413,13 +439,37 @@ class ServiceForm extends CFormModel
             $surplus = General::toMyNumber($this->surplus);
             $command->bindParam(':surplus',$surplus,PDO::PARAM_INT);
         }
-        if (strpos($sql,':all_number_edit')!==false) {
-            $all_number_edit = General::toMyNumber($this->all_number_edit);
-            $command->bindParam(':all_number_edit',$all_number_edit,PDO::PARAM_INT);
+        if (strpos($sql,':all_number_edit0')!==false) {
+            $all_number_edit = General::toMyNumber($this->all_number_edit0);
+            $command->bindParam(':all_number_edit0',$all_number_edit,PDO::PARAM_INT);
         }
-        if (strpos($sql,':surplus_edit')!==false) {
-            $surplus_edit = General::toMyNumber($this->surplus_edit);
-            $command->bindParam(':surplus_edit',$surplus_edit,PDO::PARAM_INT);
+        if (strpos($sql,':surplus_edit0')!==false) {
+            $surplus_edit = General::toMyNumber($this->surplus_edit0);
+            $command->bindParam(':surplus_edit0',$surplus_edit,PDO::PARAM_INT);
+        }
+        if (strpos($sql,':all_number_edit1')!==false) {
+            $all_number_edit = General::toMyNumber($this->all_number_edit1);
+            $command->bindParam(':all_number_edit1',$all_number_edit,PDO::PARAM_INT);
+        }
+        if (strpos($sql,':surplus_edit1')!==false) {
+            $surplus_edit = General::toMyNumber($this->surplus_edit1);
+            $command->bindParam(':surplus_edit1',$surplus_edit,PDO::PARAM_INT);
+        }
+        if (strpos($sql,':all_number_edit2')!==false) {
+            $all_number_edit = General::toMyNumber($this->all_number_edit2);
+            $command->bindParam(':all_number_edit2',$all_number_edit,PDO::PARAM_INT);
+        }
+        if (strpos($sql,':surplus_edit2')!==false) {
+            $surplus_edit = General::toMyNumber($this->surplus_edit2);
+            $command->bindParam(':surplus_edit2',$surplus_edit,PDO::PARAM_INT);
+        }
+        if (strpos($sql,':all_number_edit3')!==false) {
+            $all_number_edit = General::toMyNumber($this->all_number_edit3);
+            $command->bindParam(':all_number_edit3',$all_number_edit,PDO::PARAM_INT);
+        }
+        if (strpos($sql,':surplus_edit3')!==false) {
+            $surplus_edit = General::toMyNumber($this->surplus_edit3);
+            $command->bindParam(':surplus_edit3',$surplus_edit,PDO::PARAM_INT);
         }
 //        print_r('<pre>');
 //        print_r($this->all_number);exit();
