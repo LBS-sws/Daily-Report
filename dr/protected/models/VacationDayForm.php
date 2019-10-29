@@ -178,9 +178,6 @@ class VacationDayForm
         }
         if($row){
             $yearLeave = Yii::app()->params['yearLeave'];
-            var_dump($yearLeave);
-            
-            var_dump($yearLeave === "employee");
             if($row["vaca_type"]==$this->year_type&&$yearLeave === "employee"){
                 $this->remain_bool = true;
                 $this->addEmployeeNum();//年假根據員工信息計算
