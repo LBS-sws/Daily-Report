@@ -17,7 +17,7 @@ class QueueController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('index','view','download','downloadfile'),
+				'actions'=>array('index','view','download','downloadfile','yearTest'),
 				'expression'=>array('QueueController','allowExecute'),
 			),
 			array('deny',  // deny all users
@@ -140,6 +140,17 @@ class QueueController extends Controller
 			}	
 		}
 		return (Yii::app()->user->validFunction('B12') && $rtn);
+	}
+
+
+	public function actionYearTest() {
+		$model = new VacationDayForm();
+		for ($i=32;$i<34;$i++){
+		    $model->setEmployeeList($i);
+		    $sum = $model->getVacationSum();
+		    var_dump($sum);
+		    var_dump($model->getSumDay());
+		}
 	}
 }
 ?>
