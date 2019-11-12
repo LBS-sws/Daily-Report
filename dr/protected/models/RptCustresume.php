@@ -1,5 +1,8 @@
 <?php
-class RptCustresume extends ReportData2 {	public function fields() {		return array(			'lud'=>array('label'=>Yii::t('service','Entry Date'),'width'=>18,'align'=>'C'),
+class RptCustresume extends ReportData2 {
+	public function fields() {
+		return array(
+			'lud'=>array('label'=>Yii::t('service','Entry Date'),'width'=>18,'align'=>'C'),
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
 			'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
 			'service'=>array('label'=>Yii::t('service','Service'),'width'=>40,'align'=>'L'),
@@ -8,12 +11,15 @@ class RptCustresume extends ReportData2 {	public function fields() {		return a
 			'amt_install'=>array('label'=>Yii::t('service','Install Amt'),'width'=>15,'align'=>'C'),
 			'need_install'=>array('label'=>Yii::t('service','Installation'),'width'=>10,'align'=>'C'),
 			'salesman'=>array('label'=>Yii::t('service','Salesman'),'width'=>20,'align'=>'L'),
+            'othersalesman'=>array('label'=>Yii::t('service','OtherSalesman'),'width'=>20,'align'=>'L'),
 			'sign_dt'=>array('label'=>Yii::t('service','Sign Date'),'width'=>18,'align'=>'C'),
 			'ctrt_period'=>array('label'=>Yii::t('service','Contract Period'),'width'=>10,'align'=>'C'),
 			'ctrt_end_dt'=>array('label'=>Yii::t('service','Contract End Date'),'width'=>18,'align'=>'C'),
 			'status_dt'=>array('label'=>Yii::t('service','Resume Date'),'width'=>18,'align'=>'C'),
 			'remarks'=>array('label'=>Yii::t('service','Remarks'),'width'=>40,'align'=>'L'),
-		);	}
+		);
+	}
+
 	public function groups() {
 		return array(
 			array(
@@ -21,7 +27,8 @@ class RptCustresume extends ReportData2 {	public function fields() {		return a
 			),
 		);
 	}
-		public function retrieveData() {
+	
+	public function retrieveData() {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
 		$sql = "select a.*, b.description as nature, c.description as customer_type
@@ -39,7 +46,11 @@ class RptCustresume extends ReportData2 {	public function fields() {		return a
 			if ($where!='') $sql .= $where;	
 		}
 		$sql .= " order by c.description, a.status_dt";
-		$rows = Yii::app()->db->createCommand($sql)->queryAll();		if (count($rows) > 0) {			foreach ($rows as $row) {				$temp = array();				$temp['type'] = $row['customer_type'];
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) {
+				$temp = array();
+				$temp['type'] = $row['customer_type'];
 				$temp['status_dt'] = General::toDate($row['status_dt']);
 				$temp['company_name'] = $row['company_name'];
 				$temp['nature'] = $row['nature'];
@@ -56,12 +67,17 @@ class RptCustresume extends ReportData2 {	public function fields() {		return a
 				$temp['amt_install'] = number_format($row['amt_install'],2,'.','');
 				$temp['need_install'] = ($row['need_install']=='Y') ? Yii::t('misc','Yes') : Yii::t('misc','No');
 				$temp['salesman'] = $row['salesman'];
+                $temp['othersalesman'] = $row['othersalesman'];
 				$temp['sign_dt'] = General::toDate($row['sign_dt']);
 				$temp['ctrt_period'] = $row['ctrt_period'];
 				$temp['ctrt_end_dt'] = General::toDate($row['ctrt_end_dt']);
 				$temp['remarks'] = $row['remarks'];
 				$temp['lud'] = General::toDate($row['lud']);
-				$this->data[] = $temp;			}		}		return true;	}
+				$this->data[] = $temp;
+			}
+		}
+		return true;
+	}
 
 	public function getReportName() {
 		$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';

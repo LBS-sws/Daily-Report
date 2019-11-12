@@ -11,6 +11,7 @@ return array(
 'Paid Amt'=>'服務金額',
 'Install Amt'=>'裝機金額',
 'Salesman'=>'業務員',
+'OtherSalesman'=>'跨區業務員',
 'Sign Date'=>'簽約日期',
 'Contract End Date'=>'合同終止日期',
 'Contract Period'=>'合同年限(月)',
