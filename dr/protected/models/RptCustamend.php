@@ -52,6 +52,7 @@ class RptCustamend extends ReportData2 {
 			),
 			'need_install',
 			'salesman',
+            'othersalesman',
 			'sign_dt',
 			'ctrt_period',
 			'ctrt_end_dt',
