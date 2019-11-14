@@ -141,9 +141,15 @@ class VacationDayForm
             $lcd = date("Y/m/d",strtotime($lcd));
             $statusSql = " and status =  4 and date_format(lcd,'%Y/%m/%d')<='$lcd'";
         }
+        if(!empty($this->vacation_list)){
+            $vacation_id_list = implode(",",$this->vacation_id_list);
+            $statusSql.=" and vacation_id in ($vacation_id_list)";
+        }else{
+            $statusSql.=" and vacation_id in ('".$this->year_type."')";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         $sum = Yii::app()->db->createCommand()->select("sum(log_time)")->from("hr$suffix.hr_employee_leave")
-            ->where("employee_id=:employee_id and vacation_id in ($vacation_id_list) $statusSql and date_format(start_time,'%Y/%m/%d')>:start_time and date_format(start_time,'%Y/%m/%d')<:end_time",
+            ->where("employee_id=:employee_id and $statusSql and date_format(start_time,'%Y/%m/%d')>:start_time and date_format(start_time,'%Y/%m/%d')<:end_time",
                 array(":employee_id"=>$this->employee_id,":start_time"=>$this->start_time,":end_time"=>$this->end_time))->queryScalar();
 
         $this->vacation_sum-=$sum;
@@ -164,6 +170,7 @@ class VacationDayForm
         if ($this->error_bool){
             return false;
         }
+        $yearLeave = Yii::app()->params['yearLeave'];
         $suffix = Yii::app()->params['envSuffix'];
         if(empty($this->vacation_list)){
             $row = Yii::app()->db->createCommand()->select("*")->from("hr$suffix.hr_vacation")
@@ -176,7 +183,6 @@ class VacationDayForm
             $row = $this->vacation_list;
         }
         if($row){
-            $yearLeave = Yii::app()->params['yearLeave'];
             if($row["vaca_type"]==$this->year_type&&$yearLeave === "employee"){
                 $this->remain_bool = true;
                 $this->addEmployeeNum();//年假根據員工信息計算
@@ -185,8 +191,13 @@ class VacationDayForm
                 $this->sumDay=$this->vacation_sum;
             }
             $this->addYearLeaveNum($row);//根據假期種類，分別對待
-        }else{
-            $this->error_bool = true;
+        }else{ //沒有年假配置，但計算方式是員工年假計算
+            if($vacation_id==$this->year_type&&$yearLeave === "employee"){
+                $this->remain_bool = true;
+                $this->addEmployeeNum();//年假根據員工信息計算
+            }else{
+                $this->error_bool = true;
+            }
         }
     }
 
