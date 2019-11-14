@@ -124,7 +124,6 @@ class VacationDayForm
     public function getVacationSum($lcd=''){
         $this->diffBetweenToMonth();//計算時間段
         $this->foreachVacationSum($this->vacation_id);//計算總假期天數
-        $this->sumDay=$this->vacation_sum;
         $this->foreachVacationUse($lcd);//減去已申請的假期
 
         return $this->vacation_sum;
@@ -183,6 +182,7 @@ class VacationDayForm
                 $this->addEmployeeNum();//年假根據員工信息計算
             }else{
                 $this->addRulesNum($row);//假期規則添加天數
+                $this->sumDay=$this->vacation_sum;
             }
             $this->addYearLeaveNum($row);//根據假期種類，分別對待
         }else{
@@ -193,7 +193,12 @@ class VacationDayForm
     //累計年假
     private function addEmployeeNum(){
         if($this->employee_list){
-            $this->vacation_sum=$this->employee_list["year_day"];
+            $this->sumDay=$this->employee_list["year_day"];
+            if($this->diffMonth>=12){
+                $this->vacation_sum=$this->employee_list["year_day"];
+            }else{
+                $this->vacation_sum=0;
+            }
         }
     }
 
@@ -226,6 +231,7 @@ class VacationDayForm
                 $sum = Yii::app()->db->createCommand()->select("sum(add_num)")->from("hr$suffix.hr_staff_year")
                     ->where("employee_id=:employee_id and year=:year",array(":employee_id"=>$this->employee_id,":year"=>$year))->queryScalar();
                 $this->vacation_sum+=$sum;
+                $this->sumDay+=$sum;
                 break;
         }
     }
