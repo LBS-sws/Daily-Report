@@ -38,7 +38,7 @@ class SysBlock {
 		$session = Yii::app()->session;
 		if (isset($session['sysblock'])) {
 			foreach ($session['sysblock'] as $key=>$value) {
-				if (!$value) {
+				if (!$value && isset($this->checkItems[$key])) {
 					if ($this->checkItems[$key]['system']==$systemId) return $this->checkItems[$key]['message'];
 				}
 			}
@@ -80,6 +80,69 @@ class SysBlock {
 		return true;
 	}
 	
+	/** 
+		每月10日, 驗證 用户还没有提交上月营业报告, false: 还没有提交
+	**/
+	public function isSalesSummarySubmitted() {
+		$uid = Yii::app()->user->id;
+		$city = Yii::app()->user->city();
+		$suffix = Yii::app()->params['envSuffix'];
+		$lastdate = date('d')<10 ? date('Y-m-d',strtotime('-2 months')) : date('Y-m-d',strtotime('-1 months'));
+		$year = date("Y", strtotime($lastdate));
+		$month = date("m", strtotime($lastdate));
+		
+		$sql = "select username from security$suffix.sec_user_access 
+				where username='$uid' and system_id='ops' and a_read_write like '%YA01%'
+			";
+		$row = Yii::app()->db->createCommand($sql)->queryRow();
+		if ($row===false) return true;
+
+		$citylist = General::getCityListWithNoDescendant();
+		if (!array_key_exists($city, $citylist)) return true;
+		
+		$sql = "select workflow$suffix.RequestStatus('OPRPT',a.id,a.lcd) as wfstatus
+				from operation$suffix.opr_monthly_hdr a 
+				where a.city='$city' and a.year_no=$year and a.month_no=$month and a.status='Y'
+			";
+		$row = Yii::app()->db->createCommand($sql)->queryRow();
+		return ($row===false || ($row['wfstatus']!='' && $row['wfstatus']!='PS'));
+	}
+		
+	/** 
+		每月10日, 驗證 地区主管未审核营业报告, false: 未审核
+	**/
+	public function isSalesSummaryApproved() {
+		$uid = Yii::app()->user->id;
+		$city = Yii::app()->user->city();
+		$suffix = Yii::app()->params['envSuffix'];
+		$lastdate = date('d')<10 ? date('Y-m-d',strtotime('-2 months')) : date('Y-m-d',strtotime('-1 months'));
+		$year = date("Y", strtotime($lastdate));
+		$month = date("m", strtotime($lastdate));
+		
+		$sql = "select a_control from security$suffix.sec_user_access 
+				where username='$uid' and system_id='ops' and a_read_write like '%YA03%'
+			";
+		$row = Yii::app()->db->createCommand($sql)->queryRow();
+		if ($row===false) {
+			return true;
+		} else {
+			if (strpos($row['a_control'],'YN01')!==false) return true;
+		}
+
+		$wf = new WorkflowOprpt;
+		$wf->connection = Yii::app()->db;
+		$list = $wf->getPendingRequestIdList('OPRPT', 'PH', $uid);
+		if (empty($list)) return true;
+		
+		$sql = "select a.id
+				from operation$suffix.opr_monthly_hdr a 
+				where a.id in ($list) and a.year_no=$year and a.month_no=$month and a.status='Y' 
+				limit 1
+			";
+		$row = Yii::app()->db->createCommand($sql)->queryRow();
+		return ($row===false);
+	}
+
 	public function test() {
 		return false;
 	}
