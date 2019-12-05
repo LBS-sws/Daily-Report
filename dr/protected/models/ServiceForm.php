@@ -23,7 +23,7 @@ class ServiceForm extends CFormModel
     public $technician;
 	public $sign_dt;
 	public $ctrt_end_dt;
-	public $ctrt_period;
+	public $ctrt_period=12;
 	public $cont_info;
 	public $first_dt;
 	public $first_tech;
