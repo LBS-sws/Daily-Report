@@ -432,44 +432,34 @@ class ServiceForm extends CFormModel
 			$command->bindParam(':rtn_equip_qty',$req,PDO::PARAM_INT);
 		}
         if (strpos($sql,':all_number')!==false) {
-            $all_number = General::toMyNumber($this->all_number);
-            $command->bindParam(':all_number',$all_number,PDO::PARAM_INT);
+            $command->bindParam(':all_number',$this->all_number,PDO::PARAM_INT);
         }
         if (strpos($sql,':surplus')!==false) {
-            $surplus = General::toMyNumber($this->surplus);
-            $command->bindParam(':surplus',$surplus,PDO::PARAM_INT);
+            $command->bindParam(':surplus',$this->surplus,PDO::PARAM_INT);
         }
         if (strpos($sql,':all_number_edit0')!==false) {
-            $all_number_edit0 = General::toMyNumber($this->all_number_edit0);
-            $command->bindParam(':all_number_edit0',$all_number_edit0,PDO::PARAM_INT);
+            $command->bindParam(':all_number_edit0',$this->all_number_edit0,PDO::PARAM_INT);
         }
         if (strpos($sql,':surplus_edit0')!==false) {
-            $surplus_edit0 = General::toMyNumber($this->surplus_edit0);
-            $command->bindParam(':surplus_edit0',$surplus_edit0,PDO::PARAM_INT);
+            $command->bindParam(':surplus_edit0',$this->surplus_edit0,PDO::PARAM_INT);
         }
         if (strpos($sql,':all_number_edit1')!==false) {
-            $all_number_edit1 = General::toMyNumber($this->all_number_edit1);
-            $command->bindParam(':all_number_edit1',$all_number_edit1,PDO::PARAM_INT);
+            $command->bindParam(':all_number_edit1',$this->all_number_edit1,PDO::PARAM_INT);
         }
         if (strpos($sql,':surplus_edit1')!==false) {
-            $surplus_edit1 = General::toMyNumber($this->surplus_edit1);
-            $command->bindParam(':surplus_edit1',$surplus_edit1,PDO::PARAM_INT);
+            $command->bindParam(':surplus_edit1',$this->surplus_edit1,PDO::PARAM_INT);
         }
         if (strpos($sql,':all_number_edit2')!==false) {
-            $all_number_edit2 = General::toMyNumber($this->all_number_edit2);
-            $command->bindParam(':all_number_edit2',$all_number_edit2,PDO::PARAM_INT);
+            $command->bindParam(':all_number_edit2',$this->all_number_edit2,PDO::PARAM_INT);
         }
         if (strpos($sql,':surplus_edit2')!==false) {
-            $surplus_edit2 = General::toMyNumber($this->surplus_edit2);
-            $command->bindParam(':surplus_edit2',$surplus_edit2,PDO::PARAM_INT);
+            $command->bindParam(':surplus_edit2',$this->surplus_edit2,PDO::PARAM_INT);
         }
         if (strpos($sql,':all_number_edit3')!==false) {
-            $all_number_edit3 = General::toMyNumber($this->all_number_edit3);
-            $command->bindParam(':all_number_edit3',$all_number_edit3,PDO::PARAM_INT);
+            $command->bindParam(':all_number_edit3',$this->all_number_edit3,PDO::PARAM_INT);
         }
         if (strpos($sql,':surplus_edit3')!==false) {
-            $surplus_edit3 = General::toMyNumber($this->surplus_edit3);
-            $command->bindParam(':surplus_edit3',$surplus_edit3,PDO::PARAM_INT);
+            $command->bindParam(':surplus_edit3',$this->surplus_edit3,PDO::PARAM_INT);
         }
 //        print_r('<pre>');
 //        print_r($this->all_number);exit();
