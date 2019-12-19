@@ -26,7 +26,8 @@ class DocMan {
 
     protected $baseDir;
 
-    private $_allowedFiles = array(
+/*
+    const _allowedFiles = array(
         'bmp'  => 'image/bmp',
         'gif'  => 'image/gif',
         'jpeg' => 'image/jpeg',
@@ -76,6 +77,51 @@ class DocMan {
         'ogg' => 'application/ogg',
         'wma' => 'audio/x-ms-wma',
     );
+*/
+
+    const _allowedFiles = '{[
+        "bmp":"image/bmp",
+        "gif":"image/gif",
+        "jpeg":"image/jpeg",
+        "jpg":"image/jpeg",
+        "png":"image/png",
+        "tif":"image/tiff",
+        "tiff":"image/tiff",
+        "pdf":"application/pdf",
+        "txt":"text/plain",
+        "rtf":"application/rtf",
+        "odt":"application/vnd.oasis.opendocument.text",
+        "ott":"application/vnd.oasis.opendocument.text-template",
+        "odp":"application/vnd.oasis.opendocument.presentation",
+        "otp":"application/vnd.oasis.opendocument.presentation-template",
+        "ods":"application/vnd.oasis.opendocument.spreadsheet",
+        "ots":"application/vnd.oasis.opendocument.spreadsheet-template",
+        "odc":"application/vnd.oasis.opendocument.chart",
+        "odf":"application/vnd.oasis.opendocument.formula",
+        "doc":"application/x-msword",
+        "xls":"application/vnd.ms-excel",
+        "xlsm":"application/vnd.ms-excel.sheet.macroenabled.12",
+        "ppt":"application/vnd.ms-powerpoint",
+        "docx":"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "dotx":"application/vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "xlsx":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "pptx":"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "avi":"video/x-msvideo",
+        "flv":"video/x-flv",
+        "mov":"video/quicktime",
+        "mp4":"video/vnd.objectvideo",
+        "mpg":"video/mpeg",
+        "wmv":"video/x-ms-wmv",
+        "7z":"application/x-7z-compressed",
+        "rar":"application/x-rar-compressed",
+        "zip":"application/x-zip-compressed",
+        "gz":"application/x-gzip",
+        "tar":"application/x-tar",
+        "tgz":"application/gzip",
+        "mp3":"audio/mpeg",
+        "ogg":"application/ogg",
+        "wma":"audio/x-ms-wma",
+    ]}';
 
     public function __construct($type, $id, $form="") {
         $this->docType = $type;
@@ -191,8 +237,9 @@ class DocMan {
             $filename = $data['display_name'];
             $filetype = $data['file_type'];
             if (file_exists($path.'/'.$name)) {
+				$allow = json_decode(self::_allowedFiles, true);
                 $ext = pathinfo($path.'/'.$name,PATHINFO_EXTENSION);
-                $type = (!empty($filetype)) ? $filetype : (isset($this->_allowedFiles[$ext]) ? $this->_allowedFiles[$ext] : '');
+                $type = (!empty($filetype)) ? $filetype : (isset($allow[$ext]) ? $allow[$ext] : '');
 
                 $file = file_get_contents($path.'/'.$name);
                 header("Content-type:".$type);
@@ -462,6 +509,73 @@ class DocMan {
         $sql = "update docman$suffix.dm_master set doc_id=$docId where id=$masterId";
         var_dump($sql);
         $connection->createCommand($sql)->execute();
+    }
+
+/*
+	用日文件類別及日期範圍 , 讀取上載檔案資料
+	
+	參數:	doctype: 文件記錄類別 (array)
+			fromdate: 上載日期開始 (date)
+			todate: 上載日期結束 (date)
+	
+	返回資料包括: (array)
+		id: 上載檔案內部編號
+		docmentType: 文件記錄類別 (如: SERVICE, TAX, VISIT, EMPLOYEE, ...)
+		documentId: 文件記錄編號
+		fileType: 檔案類別
+		fileName: 檔案顯示名稱
+		token: 用以下載檔案配對時使用
+*/
+	public function getFileListByDate($doctype = array(), $fromdate='', $todate='') {
+        $rtn = array();
+		if (!empty($doctype)) {
+			if ($fromdate=='') $fromdate = date('Y-m-d 00:00:00', strtotime('-1 days'));
+			if ($todate=='') $todate = date('Y-m-d 23:59:59');
+			if (strpos($fromdate, ':')===false) $fromdate .= ' 00:00:00';
+			if (strpos($todate, ':')===false) $todate .= ' 23:59:59';
+			
+			$suffix = Yii::app()->params['envSuffix'];
+			$typelist = "'".implode("','",$doctype)."'";
+			$sql = "select a.id, b.doc_type_code as documentType, b.doc_id as documentId, a.file_type as fileType, 
+					a.display_name as fileName, a.phy_file_name as token
+					from docman$suffix.dm_file a, docman$suffix.dm_master b
+					where a.mast_id=b.id and a.lcd >= '$fromdate' and a.lcd <= '$todate'
+					and a.remove='N' and b.remove='N' and b.doc_type_code in ($typelist)
+				";
+			$rows = Yii::app()->db->createCommand($sql)->queryAll();
+			foreach ($rows as $row) {
+				$items = explode('.',$row['token']);
+				if (isset($items[0])) $row['token'] = $items[0];
+				$rtn[] = $row;
+			}
+		}
+		return $rtn;
+	}
+
+    public function fileDownloadByIdName($fileId, $fileName) {
+		$data = self::getFileName($fileId);
+		$path = $data['phy_path_name'];
+		$name = $data['phy_file_name'];
+		$filename = $data['display_name'];
+		$filetype = $data['file_type'];
+		
+		$items = explode('.',$name);
+		$match = isset($items[0]) ? $fileName==$items[0] : $fileName==$name;
+		
+		if ($match && file_exists($path.'/'.$name)) {
+			$allow = json_decode(self::_allowedFiles,true);
+			$ext = pathinfo($path.'/'.$name,PATHINFO_EXTENSION);
+			$type = (!empty($filetype)) ? $filetype : (isset($allow[$ext]) ? $allow[$ext] : '');
+
+			$file = file_get_contents($path.'/'.$name);
+			header("Content-type:".$type);
+			header('Content-Disposition: attachment; filename="'.$filename.'"');
+			header('Content-Length: ' . strlen($file));
+			echo $file;
+			Yii::app()->end();
+		} else {
+			throw new CHttpException(404,'File not found.');
+		}
     }
 
     private function hashDirectory($filename) {
