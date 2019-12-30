@@ -8,6 +8,12 @@ class UserFormEx
 			'onlibuser'=>'string',
 		);
 	}
+
+	public static function fieldsApps() {
+		return array(
+			'appsuser'=>'string',
+		);
+	}
 	
 	public static function roleListOnlib() {
 		return array(

@@ -3,7 +3,7 @@
 <?php 
 	$fieldid = get_class($model).'_rights_'.$idx.'_XX01';
 	$fieldname = get_class($model)."[rights][".$idx."][XX01]";
-	$fieldvalue = $model->rights[$idx]['XX01'];
+	$fieldvalue = isset($model->rights[$idx]['XX01']) ? $model->rights[$idx]['XX01'] : '';
 	echo TbHtml::label($model->functionLabels('System Use'), $fieldid);
 ?>
 	</div>
@@ -19,7 +19,7 @@
 <?php
 	$fieldid = get_class($model).'_extfields_onlibrole_value';
 	$fieldname = get_class($model)."[extfields][onlibrole][value][]";
-	$fieldvalue = $model->extfields['onlibrole']['value'];
+	$fieldvalue = isset($model->extfields['onlibrole']['value']) ? $model->extfields['onlibrole']['value'] : '';
 	echo TbHtml::label(Yii::t('external','User Role'), $fieldid);
 ?>
 	</div>
@@ -32,49 +32,49 @@
 <?php
 	$fieldid = get_class($model).'_extfields_onlibrole_type';
 	$fieldname = get_class($model)."[extfields][onlibrole][type]";
-	$fieldvalue = $model->extfields['onlibrole']['type'];
+	$fieldvalue = isset($model->extfields['onlibrole']['type']) ? $model->extfields['onlibrole']['type'] : '';
 	echo TbHtml::hiddenField($fieldname, $fieldvalue, array('id'=>$fieldid));
 ?>
 <?php
 	$fieldid = get_class($model).'_extfields_onlibuser_value';
 	$fieldname = get_class($model)."[extfields][onlibuser][value]";
-	$fieldvalue = $model->extfields['onlibuser']['value'];
+	$fieldvalue = isset($model->extfields['onlibuser']['value']) ? $model->extfields['onlibuser']['value'] : '';
 	echo TbHtml::hiddenField($fieldname, $fieldvalue, array('id'=>$fieldid));
 ?>
 <?php
 	$fieldid = get_class($model).'_extfields_onlibuser_type';
 	$fieldname = get_class($model)."[extfields][onlibuser][type]";
-	$fieldvalue = $model->extfields['onlibuser']['type'];
+	$fieldvalue = isset($model->extfields['onlibuser']['type']) ? $model->extfields['onlibuser']['type'] : '';
 	echo TbHtml::hiddenField($fieldname, $fieldvalue, array('id'=>$fieldid));
 ?>
 <?php
 	$fieldid = get_class($model).'_oriextfields_onlibuser_type';
 	$fieldname = get_class($model)."[oriextfields][onlibuser][type]";
-	$fieldvalue = $model->oriextfields['onlibuser']['type'];
+	$fieldvalue = isset($model->oriextfields['onlibuser']['type']) ? $model->oriextfields['onlibuser']['type'] : '';
 	echo TbHtml::hiddenField($fieldname, $fieldvalue, array('id'=>$fieldid));
 ?>
 <?php
 	$fieldid = get_class($model).'_oriextfields_onlibuser_value';
 	$fieldname = get_class($model)."[oriextfields][onlibuser][value]";
-	$fieldvalue = $model->oriextfields['onlibuser']['value'];
+	$fieldvalue = isset($model->oriextfields['onlibuser']['value']) ? $model->oriextfields['onlibuser']['value'] : '';
 	echo TbHtml::hiddenField($fieldname, $fieldvalue, array('id'=>$fieldid));
 ?>
 <?php
 	$fieldid = get_class($model).'_oriextfields_onlibrole_type';
 	$fieldname = get_class($model)."[oriextfields][onlibrole][type]";
-	$fieldvalue = $model->oriextfields['onlibrole']['type'];
+	$fieldvalue = isset($model->oriextfields['onlibrole']['type']) ? $model->oriextfields['onlibrole']['type'] : '';
 	echo TbHtml::hiddenField($fieldname, $fieldvalue, array('id'=>$fieldid));
 ?>
 <?php
 	$fieldid = get_class($model).'_oriextfields_onlibrole_value';
 	$fieldname = get_class($model)."[oriextfields][onlibrole][value]";
-	$fieldvalue = json_encode($model->oriextfields['onlibrole']['value']);
+	$fieldvalue = json_encode((isset($model->oriextfields['onlibrole']['value']) ? $model->oriextfields['onlibrole']['value'] : ''));
 	echo TbHtml::hiddenField($fieldname, $fieldvalue, array('id'=>$fieldid));
 ?>
 <?php
 	$fieldid = get_class($model).'_oriextrights_onlib_XX01';
 	$fieldname = get_class($model)."[oriextrights][onlib][XX01]";
-	$fieldvalue = $model->oriextrights['onlib']['XX01'];
+	$fieldvalue = isset($model->oriextrights['onlib']['XX01']) ? $model->oriextrights['onlib']['XX01'] : '';
 	echo TbHtml::hiddenField($fieldname, $fieldvalue, array('id'=>$fieldid));
 ?>
 	</div>
