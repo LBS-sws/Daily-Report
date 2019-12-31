@@ -34,6 +34,7 @@ if (count($this->record['detail'])>0) {
 		$fld_product_desc = $row['service'];
 		$fld_first_dt = $row['first_dt'];
 		$fld_amt_paid = $row['amt_paid'];
+		$fld_paid_type = empty($row['paid_type']) ? '' : '('.$row['paid_type'].')';
 		
 		$line = <<<EOF
 <tr class='detail_$idX' style='display:none;'>
@@ -43,7 +44,7 @@ if (count($this->record['detail'])>0) {
 	<td><strong>$lbl_cust_type_desc:&nbsp;</strong>$fld_cust_type_desc</td>
 	<td><strong>$lbl_product_desc:&nbsp;</strong>$fld_product_desc</td>
 	<td><strong>$lbl_first_dt:&nbsp;</strong>$fld_first_dt</td>
-	<td><strong>$lbl_amt_paid:&nbsp;</strong>$fld_amt_paid</td>
+	<td><strong>$lbl_amt_paid:&nbsp;</strong>$fld_amt_paid $fld_paid_type</td>
 </tr>
 EOF;
 		echo $line;

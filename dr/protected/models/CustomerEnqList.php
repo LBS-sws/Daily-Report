@@ -153,6 +153,10 @@ class CustomerEnqList extends CListPageModel
 							'amt_paid'=>$row['amt_paid'],
 							'cust_type_desc'=>$row['cust_type_desc'],
 							'product_desc'=>$row['product_desc'],
+							'paid_type'=>($row['paid_type']=='M' ? Yii::t('service','Monthly')
+											: ($row['paid_type']=='Y' ? Yii::t('service','Yearly')
+												: ($row['paid_type']=='1' ? Yii::t('service','One time') : ''))
+									),
 						);
 			}
 		} 
