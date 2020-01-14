@@ -220,6 +220,27 @@ class CalcStaff extends Calculation {
 		}
 		return $rtn;
 	}
+
+	public static function sumFlagQty($year, $month) {
+		$rtn = array();
+
+		$suffix = Yii::app()->params['envSuffix'];
+		$start_dt = date("Y-m-d",strtotime("$year-$month-1"));
+		$end_dt = date("Y-m-t",strtotime("$year-$month-1"));
+
+		$sql = "select b.city, sum(a.type_num) as total
+                from hr$suffix.hr_prize a 
+                LEFT JOIN hr$suffix.hr_employee b ON a.employee_id = b.id
+                where a.status=3 and a.prize_date >= '$start_dt' and a.prize_date <= '$end_dt' AND a.id is NOT NULL 
+				and a.prize_type=1 and b.city is not null
+				group by b.city
+			";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) $rtn[$row['city']] = $row['total'];
+		}
+		return $rtn;
+	}
 }
 
 ?>

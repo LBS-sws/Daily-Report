@@ -302,7 +302,6 @@ class CalcService extends Calculation {
 		}
 		return $rtn;
 	}
-
 }
 
 ?>
