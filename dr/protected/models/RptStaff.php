@@ -75,7 +75,7 @@ class RptStaff extends ReportData2 {
 				$temp['year_day'] = $employee['year_day'];
 				$temp['education'] = $employee['education'];
 				$temp['leave_days'] = $employee['leave_days'];
-				$temp['staff_type'] = General::getStaffTypeDesc($employee['staff_type']);
+				$temp['staff_type'] = General::getStaffTypeDesc(strtoupper($employee['staff_type']));
 				
 				$this->data[] = $temp;
 			}
