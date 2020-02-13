@@ -68,7 +68,6 @@ class RptStaff extends ReportData2 {
 				$temp['leave_dt'] = General::toDate($row['leave_dt']);
 				$temp['leave_reason'] = $row['leave_reason'];
 				$temp['remarks'] = $row['remarks'];
-				$temp['staff_type'] = General::getStaffTypeDesc($row['staff_type']);
 				$temp['leader'] = General::getLeaderDesc($row['leader']);
 				$temp['lud'] = General::toDate($row['lud']);
 				
@@ -76,6 +75,7 @@ class RptStaff extends ReportData2 {
 				$temp['year_day'] = $employee['year_day'];
 				$temp['education'] = $employee['education'];
 				$temp['leave_days'] = $employee['leave_days'];
+				$temp['staff_type'] = General::getStaffTypeDesc($employee['staff_type']);
 				
 				$this->data[] = $temp;
 			}
@@ -96,16 +96,17 @@ class RptStaff extends ReportData2 {
             "Doctorate"=>Yii::t("staff","Doctorate")
         );
 		$suffix = Yii::app()->params['envSuffix'];
-		$sql = "select id,year_day, education from hr$suffix.hr_employee where code='$code' limit 1";
+		$sql = "select a.id,a.year_day, a.education,a.staff_type,b.dept_class from hr$suffix.hr_employee a LEFT JOIN hr$suffix.hr_dept b on a.position=b.id where code='$code' limit 1";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		if ($row!==false) {
+			$row['staff_type'] = empty($row['staff_type'])?$row['dept_class']:$row['staff_type'];
 			$model->setEmployeeList($row['id']);
 			$row['leave_days'] = $model->getVacationSum();//剩餘年假天數
 			$row['year_day'] = $model->getSumDay();//總年假天數
 			$row['education'] = $education[$row['education']];
 			return $row;
 		} else {
-			return array('year_day'=>'', 'education'=>'', 'leave_days'=>'');
+			return array('year_day'=>'', 'education'=>'', 'leave_days'=>'', 'staff_type'=>'');
 		}
 	}
 
