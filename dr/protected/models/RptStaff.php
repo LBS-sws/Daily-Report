@@ -96,7 +96,7 @@ class RptStaff extends ReportData2 {
             "Doctorate"=>Yii::t("staff","Doctorate")
         );
 		$suffix = Yii::app()->params['envSuffix'];
-		$sql = "select a.id,a.year_day, a.education,a.staff_type,b.dept_class from hr$suffix.hr_employee a LEFT JOIN hr$suffix.hr_dept b on a.position=b.id where code='$code' limit 1";
+		$sql = "select a.id,a.year_day, a.education,a.staff_type,b.dept_class from hr$suffix.hr_employee a LEFT JOIN hr$suffix.hr_dept b on a.position=b.id where a.code='$code' limit 1";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		if ($row!==false) {
 			$row['staff_type'] = empty($row['staff_type'])?$row['dept_class']:$row['staff_type'];
