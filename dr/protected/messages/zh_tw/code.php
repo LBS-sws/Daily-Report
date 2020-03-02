@@ -54,6 +54,7 @@ return array(
 'Replacement'=>'換機',
 'Puriscent'=>'飄盈香',
 'Perfume'=>'香水',
+'Floor Cleaner'=>'洗地易',
 
 'Start Date'=>'开始日期',
 'End Date'=>'结束日期',

@@ -69,6 +69,7 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
 									'NIL'=>Yii::t('code','Nil'),
 									'PAPER'=>Yii::t('code','Paper'),
 									'SOAP'=>Yii::t('code','Soap'),
+									'FLOOR'=>Yii::t('code','Floor Cleaner'),
 									'MAINT'=>Yii::t('code','Maintenance'),
 									'UNINS'=>Yii::t('code','Uninstallion'),
 									'RELOC'=>Yii::t('code','Relocation'),
