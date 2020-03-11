@@ -285,7 +285,7 @@ class CalcService extends Calculation {
 		$sql = "select a.city, 
 					sum(case a.paid_type
 							when 'Y' then a.amt_paid /
-								(case when a.ctrt_period > 0 then a.ctrt_period else 1 end)
+								(case when a.ctrt_period > 0 then a.ctrt_period else 12 end)
 							when 'M' then a.amt_paid
 							else a.amt_paid
 						end
