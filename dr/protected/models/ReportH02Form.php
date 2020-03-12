@@ -354,16 +354,9 @@ class ReportH02Form extends CReportForm
                 $rows[67]['name']='去年今月利润额';
                 $rows[67]['excel_row']='75';
             }
-            if($year_arr[$i]==2020&&($month_arr[$i]==1||$month_arr[$i]==2)){
-                $rows[68]['data_value']=0;
-                $rows[68]['name']='今月应送洗地易（桶）';
-                $rows[68]['excel_row']='60';
-                $rows[69]['data_value']=0;
-                $rows[69]['name']='今月实际送洗地易（桶）';
-                $rows[69]['excel_row']='61';
-            }
-//            print_r('<pre>');
-//            print_r($rows);
+
+            print_r('<pre>');
+            print_r($rows);
             if(!empty($rows)){
                 $arr[]=$rows;
                 if(count($rows)==64){
