@@ -79,6 +79,13 @@ class RptLogistic extends ReportData2 {	public function fields() {		return arr
 							case 'NIL': $tempd['task_type'] = Yii::t('code','Nil'); break;
 							case 'PAPER': $tempd['task_type'] = Yii::t('code','Paper'); break;
 							case 'SOAP': $tempd['task_type'] = Yii::t('code','Soap'); break;
+							case 'FLOOR': $tempd['task_type'] = Yii::t('code','Floor Cleaner'); break;
+							case 'MAINT': $tempd['task_type'] = Yii::t('code','Maintenance'); break;
+							case 'UNINS': $tempd['task_type'] = Yii::t('code','Uninstallion'); break;
+							case 'RELOC': $tempd['task_type'] = Yii::t('code','Relocation'); break;
+							case 'REPLA': $tempd['task_type'] = Yii::t('code','Replacement'); break;
+							case 'PURIS': $tempd['task_type'] = Yii::t('code','Puriscent'); break;
+							case 'PERFU': $tempd['task_type'] = Yii::t('code','Perfume'); break;
 							case 'OTHER': $tempd['task_type'] = Yii::t('code','Other'); break;
 						};
 						$tempd['qty'] = $drow['qty'];
