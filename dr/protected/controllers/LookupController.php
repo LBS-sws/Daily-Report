@@ -116,7 +116,7 @@ class LookupController extends Controller
 		$searchx = str_replace("'","\'",$search);
 
 		$sql = "select id, concat(name, ' (', code, ')') as value from swo_staff_v
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city in ('".$city."','ZY')
 				and (leave_dt is null or leave_dt=0 or leave_dt > now()) ";
 		$result1 = Yii::app()->db->createCommand($sql)->queryAll();
 
