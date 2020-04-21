@@ -88,15 +88,20 @@ class LookupController extends Controller
 			echo TbHtml::label(Yii::t('dialog','No Record Found'),false);
 		}
 	}
-	
+
 	public function actionStaff($search)
 	{
 		$city = Yii::app()->user->city();
 		$searchx = str_replace("'","\'",$search);
 
 		$sql = "select id, concat(name, ' (', code, ')') as value from swo_staff_v
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city in ('".$city."','ZY')
-				and leave_dt is null or leave_dt=0 or leave_dt > now() ";
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
+				and leave_dt is null or leave_dt=0 or leave_dt > now() 
+				union
+				select id, concat(name, ' (', code, ')') as value from swo_staff_v
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='ZY' and department like '%技术员%'
+				and (leave_dt is null or leave_dt=0 or leave_dt > now())
+				";
 		$result1 = Yii::app()->db->createCommand($sql)->queryAll();
 
 //		$sql = "select id, concat(name, ' (', code, ')',' ".Yii::t('app','(Resign)')."') as value from swo_staff_v
@@ -116,8 +121,13 @@ class LookupController extends Controller
 		$searchx = str_replace("'","\'",$search);
 
 		$sql = "select id, concat(name, ' (', code, ')') as value from swo_staff_v
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city in ('".$city."','ZY')
-				and (leave_dt is null or leave_dt=0 or leave_dt > now()) ";
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
+				and (leave_dt is null or leave_dt=0 or leave_dt > now())
+				union
+				select id, concat(name, ' (', code, ')') as value from swo_staff_v
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='ZY' and department like '%技术员%'
+				and (leave_dt is null or leave_dt=0 or leave_dt > now())
+				 ";
 		$result1 = Yii::app()->db->createCommand($sql)->queryAll();
 
 //		$sql = "select id, concat(name, ' (', code, ')',' ".Yii::t('app','(Resign)')."') as value from swo_staff_v
@@ -144,8 +154,13 @@ class LookupController extends Controller
 		$searchx = str_replace("'","\'",$search);
 
 		$sql = "select id, concat(name, ' (', code, ')') as value from swo_staff_v
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city in ('".$city."','ZY')
-				and (leave_dt is null or leave_dt=0 or leave_dt > now()) ";
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
+				and (leave_dt is null or leave_dt=0 or leave_dt > now()) 
+				union
+				select id, concat(name, ' (', code, ')') as value from swo_staff_v
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='ZY' and department like '%技术员%'
+				and (leave_dt is null or leave_dt=0 or leave_dt > now())
+				";
         $records = Yii::app()->db->createCommand($sql)->queryAll();
 
 //		$sql = "select id, concat(name, ' (', code, ')',' ".Yii::t('app','(Resign)')."') as value from swo_staff_v
@@ -172,7 +187,10 @@ class LookupController extends Controller
 		$searchx = str_replace("'","\'",$search);
 
 		$sql = "select id, concat(name, ' (', code, ')') as value from swo_staff_v
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city in ('".$city."','ZY')
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
+			    union
+				select id, concat(name, ' (', code, ')') as value from swo_staff_v
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='ZY' and department like '%技术员%'		
 			";
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
 
