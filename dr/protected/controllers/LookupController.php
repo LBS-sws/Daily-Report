@@ -99,7 +99,7 @@ class LookupController extends Controller
 				and leave_dt is null or leave_dt=0 or leave_dt > now() 
 				union
 				select id, concat(name, ' (', code, ')') as value from swo_staff_v
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='ZY' and department like '%技术员%'
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='ZY' and department like '%技术%'
 				and (leave_dt is null or leave_dt=0 or leave_dt > now())
 				";
 		$result1 = Yii::app()->db->createCommand($sql)->queryAll();
@@ -125,7 +125,7 @@ class LookupController extends Controller
 				and (leave_dt is null or leave_dt=0 or leave_dt > now())
 				union
 				select id, concat(name, ' (', code, ')') as value from swo_staff_v
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='ZY' and department like '%技术员%'
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='ZY' and department like '%技术%'
 				and (leave_dt is null or leave_dt=0 or leave_dt > now())
 				 ";
 		$result1 = Yii::app()->db->createCommand($sql)->queryAll();
@@ -158,7 +158,7 @@ class LookupController extends Controller
 				and (leave_dt is null or leave_dt=0 or leave_dt > now()) 
 				union
 				select id, concat(name, ' (', code, ')') as value from swo_staff_v
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='ZY' and department like '%技术员%'
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='ZY' and department like '%技术%'
 				and (leave_dt is null or leave_dt=0 or leave_dt > now())
 				";
         $records = Yii::app()->db->createCommand($sql)->queryAll();
@@ -190,7 +190,7 @@ class LookupController extends Controller
 				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
 			    union
 				select id, concat(name, ' (', code, ')') as value from swo_staff_v
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='ZY' and department like '%技术员%'		
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='ZY' and department like '%技术%'		
 			";
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
 
