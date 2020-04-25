@@ -24,10 +24,12 @@ class CListPageModel extends CFormModel
 	
 	public $filter;
 
+	public $dateRangeValue = '1';
+
 	public function rules()
 	{
 		return array(
-			array('attr, pageNum, noOfItem, totalRow,city, searchField, searchValue, orderField, orderType, filter','safe',),
+			array('attr, pageNum, noOfItem, totalRow,city, searchField, searchValue, orderField, orderType, filter, dateRangeValue','safe',),
 		);
 	}
 	
@@ -75,6 +77,7 @@ class CListPageModel extends CFormModel
 			'pageNum'=>$this->pageNum,
 			'filter'=>$this->filter,
             'city'=>$this->city,
+			'dateRangeValue'=>$this->dateRangeValue,
 		);
 	}
 	
@@ -178,5 +181,11 @@ class CListPageModel extends CFormModel
 				break;
 		}
 		return $rtn;
+	}
+
+	public function getDateRangeCondition($field) {
+		if ($this->dateRangeValue=='0') return '';
+		$d = date('Y-m-d', strtotime('-'.$this->dateRangeValue.' months'));
+		return " and $field >= '$d' ";
 	}
 }

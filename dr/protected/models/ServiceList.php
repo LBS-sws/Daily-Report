@@ -72,13 +72,14 @@ class ServiceList extends CListPageModel
 					break;
 			}
 		}
+		$clause .= $this->getDateRangeCondition('a.status_dt');
 		
 		$order = "";
 		if (!empty($this->orderField)) {
 			$order .= " order by ".$this->orderField." ";
 			if ($this->orderType=='D') $order .= "desc ";
 		}else{
-            $order ="order by id desc";
+            $order ="order by status_dt desc";
         }
 
 		$sql = $sql2.$clause;

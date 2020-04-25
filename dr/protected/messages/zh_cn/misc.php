@@ -89,6 +89,11 @@ return array(
 	'Mark Read'=>'标记已读',
 	'Go Top'=>'往页顶',
 	'Announcement'=>'公告',
+
+	'Latest month'=>'1个月內',
+	'3 months'=>'3个月內',
+	'6 months'=>'6个月內',
+	'1 year'=>'1年內',
 );
 
 ?>
