@@ -356,7 +356,7 @@ class General {
 			case 'TECHNICIAN':
 				return Yii::t('staff','Technician');
 				break;
-			case 'OTHER':
+			case 'OTHERS':
 				return Yii::t('staff','Others');
 				break;
 			default:
