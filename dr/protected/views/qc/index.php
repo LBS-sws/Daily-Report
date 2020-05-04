@@ -48,9 +48,8 @@ $this->pageTitle=Yii::app()->name . ' - QC';
 			'model'=>$model,
 				'viewhdr'=>'//qc/_listhdr',
 				'viewdtl'=>'//qc/_listdtl',
-				'gridsize'=>'24',
-				'height'=>'600',
 				'search'=>$search,
+				'hasDateButton'=>true,
 		));
 	?>
 

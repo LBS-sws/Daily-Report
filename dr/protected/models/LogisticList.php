@@ -69,13 +69,14 @@ class LogisticList extends CListPageModel
 					break;
 			}
 		}
+		$clause .= $this->getDateRangeCondition('a.log_dt');
 		
 		$order = "";
 		if (!empty($this->orderField)) {
 			$order .= " order by ".$this->orderField." ";
 			if ($this->orderType=='D') $order .= "desc ";
 		}else{
-            $order ="order by id desc";
+            $order ="order by log_dt desc";
         }
 
 		$sql = $sql2.$clause;
