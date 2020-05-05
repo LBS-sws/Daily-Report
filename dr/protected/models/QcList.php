@@ -56,6 +56,7 @@ class QcList extends CListPageModel
 					break;
 			}
 		}
+		$clause .= $this->getDateRangeCondition('a.entry_dt');
 		
 		$order = "";
 

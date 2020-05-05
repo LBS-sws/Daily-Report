@@ -48,9 +48,8 @@ $this->pageTitle=Yii::app()->name . ' - Product Delivery';
 			'model'=>$model,
 				'viewhdr'=>'//logistic/_listhdr',
 				'viewdtl'=>'//logistic/_listdtl',
-				'gridsize'=>'24',
-				'height'=>'600',
 				'search'=>$search,
+				'hasDateButton'=>true,
 		));
 	?>
 </section>
