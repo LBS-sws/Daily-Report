@@ -26,7 +26,7 @@ class ReportController extends Controller
 				'users'=>array('@'),
 			),
 */
-			array('allow','actions'=>array('all'),'expression'=>array('ReportController','allowAll')),
+			array('allow','actions'=>array('all','allsave'),'expression'=>array('ReportController','allowAll')),
 			array('allow','actions'=>array('custnew'),'expression'=>array('ReportController','allowCustnew')),
 			array('allow','actions'=>array('custrenew'),'expression'=>array('ReportController','allowCustrenew')),
 			array('allow','actions'=>array('custamend'),'expression'=>array('ReportController','allowCustamend')),
@@ -176,7 +176,30 @@ class ReportController extends Controller
 		$this->addQueueItem('RptAll', $criteria, 'A3', $rptname);
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
-	
+
+    public function actionAllSave() {
+        $model = new ReportForm();
+        $model->attributes = $_POST['ReportForm'];
+			if ($model->validate()) {
+				$sql="select * from swo_fixed_queue_value where city = '".$model['city']."'";
+                $records = Yii::app()->db->createCommand($sql)->queryAll();
+                $city=$model['city'];
+				$touser=$model['touser'];
+				$ccuser=json_encode($model['ccuser']);
+                $sql2="select name from securitydev.sec_city where code='CD'";
+                $cityname = Yii::app()->db->createCommand($sql2)->queryScalar();
+             	if(empty($records)){
+                    $sql1="insert into swo_fixed_queue_value (city, touser, ccuser)
+						values('$city', '$touser', '$ccuser')";
+                    $records = Yii::app()->db->createCommand($sql1)->execute();
+				}else{
+             		$sql1="update swo_fixed_queue_value set touser = '$touser',ccuser = '$ccuser' where city='$city'";
+                    $records = Yii::app()->db->createCommand($sql1)->execute();
+				}
+			}
+        $this->render('form_feedback',array('model'=>$model,));
+    }
+
 /*
 	protected function genAll($criteria) {
 		$criteria->name = 'Customer Report - New';

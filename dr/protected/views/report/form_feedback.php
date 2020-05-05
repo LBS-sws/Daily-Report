@@ -28,6 +28,9 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 		<?php echo TbHtml::button(Yii::t('misc','Submit'), array(
 				'submit'=>Yii::app()->createUrl('report/generate'))); 
 		?>
+        <?php echo TbHtml::button(Yii::t('misc','Save'), array(
+            'submit'=>Yii::app()->createUrl('report/allsave')));
+        ?>
 	</div>
 	</div></div>
 
@@ -109,7 +112,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 					<?php echo $form->labelEx($model,'ccuser',array('class'=>"col-sm-2 control-label")); ?>
 					<div class="col-sm-5">
 						<?php 
-							echo $form->listbox($model, 'ccuser', General::getEmailListboxData(), 
+							echo $form->listbox($model, 'ccuser', General::getEmailListboxData(),
 								array('size'=>6,'multiple'=>'multiple')
 							); 
 						?>
