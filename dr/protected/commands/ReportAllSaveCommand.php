@@ -54,13 +54,14 @@ class ReportAllSaveCommand extends CConsoleCommand
 					";
                 $command = $connection->createCommand($sql);
                 if (strpos($sql, ':rpt_desc') !== false)
-                    $command->bindParam(':rpt_desc', 'All Daily Reports', PDO::PARAM_STR);
+                    $command->bindParam(':rpt_desc', $data['RPT_NAME'], PDO::PARAM_STR);
                 if (strpos($sql, ':req_dt') !== false)
                     $command->bindParam(':req_dt', $now, PDO::PARAM_STR);
                 if (strpos($sql, ':username') !== false)
                     $command->bindParam(':username', $uid, PDO::PARAM_STR);
                 if (strpos($sql, ':rpt_type') !== false)
-                    $command->bindParam(':rpt_type', 'FEED', PDO::PARAM_STR);
+                    $feed='FEED';
+                    $command->bindParam(':rpt_type', $feed, PDO::PARAM_STR);
                 $command->execute();
                 $qid = Yii::app()->db->getLastInsertID();
 

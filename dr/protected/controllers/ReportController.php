@@ -186,8 +186,6 @@ class ReportController extends Controller
                 $city=$model['city'];
 				$touser=$model['touser'];
 				$ccuser=json_encode($model['ccuser']);
-                $sql2="select name from securitydev.sec_city where code='CD'";
-                $cityname = Yii::app()->db->createCommand($sql2)->queryScalar();
              	if(empty($records)){
                     $sql1="insert into swo_fixed_queue_value (city, touser, ccuser)
 						values('$city', '$touser', '$ccuser')";
@@ -197,6 +195,7 @@ class ReportController extends Controller
                     $records = Yii::app()->db->createCommand($sql1)->execute();
 				}
 			}
+        Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
         $this->render('form_feedback',array('model'=>$model,));
     }
 
