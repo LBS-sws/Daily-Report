@@ -48,9 +48,8 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Cases';
 			'model'=>$model,
 				'viewhdr'=>'//followup/_listhdr',
 				'viewdtl'=>'//followup/_listdtl',
-				'gridsize'=>'24',
-				'height'=>'600',
 				'search'=>$search,
+				'hasDateButton'=>true,
 		));
 	?>
 </section>
