@@ -8,6 +8,7 @@ class TableView2Widget extends CWidget
 	public $viewdtl;
 	public $height='100';
 	public $codelist = array();
+    public $tableidx = '';
 	
 	protected $record;
 	protected $recordptr;
@@ -15,15 +16,17 @@ class TableView2Widget extends CWidget
 	public function run()
 	{
 		$field=$this->attribute;
+        $idx = $this->tableidx;
 		$layout = "<table id='tblDetail' class='table table-hover'><thead>";
 		$layout .= $this->render($this->viewhdr, null, true);
 		$layout .= "</thead>";
 		$layout .= "<tbody>";
+        $rows = $this->getRecordArray();
 
-		if (count($this->model->$field) > 0)
+		if (count($rows) > 0)
 		{
 			$odd = true;
-			foreach ($this->model->$field as $i=>$row)
+			foreach ($rows as $i=>$row)
 			{
 				$this->record = $row;
 				$this->recordptr = $i;
@@ -36,6 +39,25 @@ class TableView2Widget extends CWidget
 		$layout .= "</tbody></table>";
 		echo $layout;
 	}
+
+    private function getRecordArray() {
+        $field = $this->attribute;
+        $pos = strpos($field,'[');
+        if ($pos!==false) {
+            $tmp = split('[][]',$field);
+            $items = array();
+            foreach ($tmp as $value) {
+                ($value!='') && $items[] = $value;
+            }
+            $obj = $this->model->$items[0];
+            foreach ($items as $i=>$key) {
+                if ($i!=0) $obj = $obj[$key];
+            }
+            return $obj;
+        } else {
+            return $this->model->$field;
+        }
+    }
 
 	public function getFieldName($field)
 	{

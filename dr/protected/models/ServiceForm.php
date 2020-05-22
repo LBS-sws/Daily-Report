@@ -13,6 +13,8 @@ class ServiceForm extends CFormModel
 	public $company_name;
 	public $nature_type;
 	public $cust_type;
+    public $cust_type_name;
+    public $pieces;
 	public $product_id;
 	public $service;
 	public $paid_type;
@@ -125,6 +127,7 @@ class ServiceForm extends CFormModel
             'surplus_edit2'=>Yii::t('service','Surplus edit2'),
             'all_number_edit3'=>Yii::t('service','Number edit3'),
             'surplus_edit3'=>Yii::t('service','Surplus edit3'),
+            'pieces'=>Yii::t('service','Pieces'),
 		);
 	}
 
@@ -252,7 +255,7 @@ class ServiceForm extends CFormModel
 							b4_service, b4_paid_type, b4_amt_paid, 
 							ctrt_period, cont_info, first_dt, first_tech, reason,
 							status, status_dt, remarks, remarks2, ctrt_end_dt,
-							equip_install_dt, org_equip_qty, rtn_equip_qty, 
+							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,
 							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3
 						) values (
 							:company_id, :company_name, :product_id, :service, :nature_type, :cust_type, 
@@ -260,7 +263,7 @@ class ServiceForm extends CFormModel
 							:b4_service, :b4_paid_type, :b4_amt_paid, 
 							:ctrt_period, :cont_info, :first_dt, :first_tech, :reason,
 							:status, :status_dt, :remarks, :remarks2, :ctrt_end_dt,
-							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, 
+							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, :cust_type_name,pieces,
 							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3
 						)";
 				$this->execSql($connection,$sql);
@@ -273,6 +276,8 @@ class ServiceForm extends CFormModel
 							cust_type = :cust_type,
 							product_id = :product_id, 
 							nature_type = :nature_type,
+							cust_type_name=:cust_type_name,
+							pieces=:pieces,
 							service = :service, 
 							paid_type = :paid_type, 
 							amt_paid = :amt_paid, 
@@ -344,6 +349,12 @@ class ServiceForm extends CFormModel
 			$ctid = General::toMyNumber($this->cust_type);
 			$command->bindParam(':cust_type',$ctid,PDO::PARAM_INT);
 		}
+        if (strpos($sql,':cust_type_name')!==false) {
+            $command->bindParam(':cust_type_name',$this->cust_type_name,PDO::PARAM_INT);
+        }
+        if (strpos($sql,':pieces')!==false) {
+            $command->bindParam(':pieces',$this->pieces,PDO::PARAM_INT);
+        }
 		if (strpos($sql,':paid_type')!==false)
 			$command->bindParam(':paid_type',$this->paid_type,PDO::PARAM_STR);
 		if (strpos($sql,':amt_paid')!==false) {
@@ -483,6 +494,19 @@ class ServiceForm extends CFormModel
 			}
 		}
 	}
+
+    public function getCustTypeList($type_group=1) {
+        $city = Yii::app()->user->city();
+        $rtn = array(''=>Yii::t('misc','-- None --'));
+        $sql = "select id, cust_type_name from swo_customer_type_twoname where  cust_type_id=$type_group order by cust_type_name";
+        $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        if (count($rows) > 0) {
+            foreach($rows as $row) {
+                $rtn[$row['id']] = $row['cust_type_name'];
+            }
+        }
+        return $rtn;
+    }
 
 	public function getStatusDesc() {
 		return General::getStatusDesc($this->status);

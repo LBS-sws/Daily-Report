@@ -110,5 +110,7 @@ return array(
 'After'=>'更改後',
 'Difference'=>'差額',
 'Expiry Date'=>'到期日',
+
+'Pieces'=>'產品數量',
 );
 ?>

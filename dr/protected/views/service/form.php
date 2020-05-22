@@ -136,7 +136,21 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 					<?php echo $form->dropDownList($model, 'cust_type', General::getCustTypeList(), array('disabled'=>($model->scenario=='view'))); 
 					?>
 				</div>
+                <div class="col-sm-2">
+                    <?php
+                    $typelist = $model->getCustTypeList((empty($model->cust_type_group) ? 1 : $model->cust_type_group));
+                    echo $form->dropDownList($model, 'cust_type_name', $typelist);
+
+                    ?>
+                </div>
+                <?php echo $form->labelEx($model,'pieces',array('class'=>"col-sm-1 control-label")); ?>
+                <div class="col-sm-2">
+                     <?php echo $form->numberField($model, 'pieces',
+                        array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
 			</div>
+
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'nature_type',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
@@ -542,6 +556,27 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 
 <?php
 Script::genFileUpload($model,$form->id,'SERVICE');
+$link3 = Yii::app()->createAbsoluteUrl("service/getcusttypelist");
+$js = <<<EOF
+$('#ServiceForm_cust_type').on('change',function() {
+	var group = $(this).val();
+	var data = "group="+group;
+	
+	$.ajax({
+		type: 'GET',
+		url: '$link3',
+		data: data,
+		success: function(data) {
+			$('#ServiceForm_cust_type_name').html(data);
+		},
+		error: function(data) { // if error occured
+			var x = 1;
+		},
+		dataType:'html'
+	});
+});	
+EOF;
+Yii::app()->clientScript->registerScript('select2_1',$js,CClientScript::POS_READY);
 
 $js = Script::genLookupSearchEx();
 Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);

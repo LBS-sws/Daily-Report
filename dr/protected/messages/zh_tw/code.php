@@ -66,5 +66,9 @@ return array(
 'Announcement Form'=>'公告表单',
 'Announcement List'=>'公告列表',
 'Announcement'=>'公告',
+
+'Cust Type Name'=>'名稱',
+'Fractiony'=>'單個分數',
+'Toplimit'=>'上限（為0則沒有上限）',
 );
 ?>
