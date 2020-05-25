@@ -144,7 +144,7 @@ class ServiceForm extends CFormModel
 */
 			array('id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, cust_type, 
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
-				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type, need_install','safe'),
+				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'),
 			array('company_name,salesman, service,all_number,surplus, status_dt','required'),
 			array('ctrt_period','numerical','allowEmpty'=>true,'integerOnly'=>true),
@@ -212,6 +212,8 @@ class ServiceForm extends CFormModel
                 $this->all_number_edit2 = $row['all_number_edit2'];
                 $this->surplus_edit3 = $row['surplus_edit3'];
                 $this->all_number_edit3 = $row['all_number_edit3'];
+                $this->cust_type_name = $row['cust_type_name'];
+                $this->pieces = $row['pieces'];
 //                print_r('<pre>');
 //                print_r($this);exit();
 				break;
@@ -327,7 +329,7 @@ class ServiceForm extends CFormModel
 	protected function execSql(&$connection, $sql) {
 		$city = $this->city; 	//Yii::app()->user->city();
 		$uid = Yii::app()->user->id;
-		
+
 		$command=$connection->createCommand($sql);
 		if (strpos($sql,':id')!==false)
 			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
