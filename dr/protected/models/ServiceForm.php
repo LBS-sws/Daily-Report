@@ -166,6 +166,8 @@ class ServiceForm extends CFormModel
 		$city = Yii::app()->user->city_allow();
 		$sql = "select *, docman$suffix.countdoc('SERVICE',id) as no_of_attm from swo_service where id=$index and city in ($city)";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+//		print_r('<pre>');
+//        print_r($rows);
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
 				$this->id = $row['id'];
@@ -212,6 +214,7 @@ class ServiceForm extends CFormModel
                 $this->all_number_edit2 = $row['all_number_edit2'];
                 $this->surplus_edit3 = $row['surplus_edit3'];
                 $this->all_number_edit3 = $row['all_number_edit3'];
+                //var_dump($row['cust_type_name']);
                 $this->cust_type_name = $row['cust_type_name'];
                 $this->pieces = $row['pieces'];
 //                print_r('<pre>');
@@ -242,7 +245,7 @@ class ServiceForm extends CFormModel
 		$sql = array();
 		switch ($this->scenario) {
 			case 'delete':
-				$sql = "delete from swo_service where id = :id and city = :city";
+				$sql = "delete from swo_service where id = :id ";
 				$this->execSql($connection,$sql);
 				break;
 			case 'renew':
@@ -275,10 +278,10 @@ class ServiceForm extends CFormModel
 				$sql = "update swo_service set                      
 							company_id = :company_id, 
 							company_name = :company_name, 
+							cust_type_name=:cust_type_name,
 							cust_type = :cust_type,
 							product_id = :product_id, 
 							nature_type = :nature_type,
-							cust_type_name=:cust_type_name,
 							pieces=:pieces,
 							service = :service, 
 							paid_type = :paid_type, 
@@ -317,7 +320,7 @@ class ServiceForm extends CFormModel
                             all_number_edit3 = :all_number_edit3, 
                             surplus_edit3 = :surplus_edit3, 
 							luu = :luu 
-						where id = :id and city = :city
+						where id = :id 
 						";
 				$this->execSql($connection,$sql);
 				break;
@@ -347,13 +350,13 @@ class ServiceForm extends CFormModel
 			$command->bindParam(':service',$this->service,PDO::PARAM_STR);
 		if (strpos($sql,':nature_type')!==false)
 			$command->bindParam(':nature_type',$this->nature_type,PDO::PARAM_INT);
+        if (strpos($sql,':cust_type_name')!==false) {
+            $command->bindParam(':cust_type_name',$this->cust_type_name,PDO::PARAM_INT);
+        }
 		if (strpos($sql,':cust_type')!==false) {
 			$ctid = General::toMyNumber($this->cust_type);
 			$command->bindParam(':cust_type',$ctid,PDO::PARAM_INT);
 		}
-        if (strpos($sql,':cust_type_name')!==false) {
-            $command->bindParam(':cust_type_name',$this->cust_type_name,PDO::PARAM_INT);
-        }
         if (strpos($sql,':pieces')!==false) {
             $command->bindParam(':pieces',$this->pieces,PDO::PARAM_INT);
         }
