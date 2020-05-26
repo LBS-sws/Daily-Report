@@ -245,7 +245,7 @@ class ServiceForm extends CFormModel
 		$sql = array();
 		switch ($this->scenario) {
 			case 'delete':
-				$sql = "delete from swo_service where id = :id ";
+				$sql = "delete from swo_service where id = :id and city = :city";
 				$this->execSql($connection,$sql);
 				break;
 			case 'renew':
@@ -320,7 +320,7 @@ class ServiceForm extends CFormModel
                             all_number_edit3 = :all_number_edit3, 
                             surplus_edit3 = :surplus_edit3, 
 							luu = :luu 
-						where id = :id 
+						where id = :id and city = :city
 						";
 				$this->execSql($connection,$sql);
 				break;
