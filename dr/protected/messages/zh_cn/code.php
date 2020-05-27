@@ -68,6 +68,7 @@ return array(
 	'Announcement'=>'公告',
 
     'Cust Type Name'=>'名称',
+    'Condition'=>'条件',
     'Fractiony'=>'单个分数',
     'Toplimit'=>'上限（为0则没有上限）',
 );

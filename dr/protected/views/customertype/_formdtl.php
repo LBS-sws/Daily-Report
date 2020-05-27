@@ -8,7 +8,11 @@
         );
         ?>
     </td>
-
+    <td>
+        <?php echo TbHtml::dropDownList($this->getFieldName('conditions'),  $this->record['conditions'], array('1'=>'每个','2'=>'每个新客户','3'=>'每个新客户每个'),
+            array('disabled'=>$this->model->isReadOnly())
+        ); ?>
+    </td>
 	<td>
 		<?php  
 			echo TbHtml::numberField($this->getFieldName('fraction'), $this->record['fraction'],

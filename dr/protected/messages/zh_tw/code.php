@@ -69,6 +69,7 @@ return array(
 
 'Cust Type Name'=>'名稱',
 'Fractiony'=>'單個分數',
+'Condition'=>'條件',
 'Toplimit'=>'上限（為0則沒有上限）',
 );
 ?>
