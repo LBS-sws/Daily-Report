@@ -138,12 +138,12 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 				</div>
                 <div class="col-sm-2">
                     <?php
-                    $typelist = $model->getCustTypeList((empty($model->cust_type_group) ? 1 : $model->cust_type_group));
+                    $typelist = $model->getCustTypeList((empty($model->cust_type) ? 1 : $model->cust_type));
                     echo $form->dropDownList($model, 'cust_type_name', $typelist);
 
                     ?>
                 </div>
-                <?php echo $form->labelEx($model,'pieces',array('class'=>"col-sm-1 control-label")); ?>
+                <?php echo $form->labelEx($model,'pieces',array('class'=>"col-sm-1 control-label"));   ?>
                 <div class="col-sm-2">
                      <?php echo $form->numberField($model, 'pieces',
                         array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))

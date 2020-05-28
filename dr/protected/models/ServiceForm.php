@@ -351,7 +351,8 @@ class ServiceForm extends CFormModel
 		if (strpos($sql,':nature_type')!==false)
 			$command->bindParam(':nature_type',$this->nature_type,PDO::PARAM_INT);
         if (strpos($sql,':cust_type_name')!==false) {
-            $command->bindParam(':cust_type_name',$this->cust_type_name,PDO::PARAM_INT);
+            $cust_type_name= (empty($this->cust_type_name) ? 0 : $this->cust_type_name);
+            $command->bindParam(':cust_type_name',$cust_type_name,PDO::PARAM_INT);
         }
 		if (strpos($sql,':cust_type')!==false) {
 			$ctid = General::toMyNumber($this->cust_type);
@@ -500,10 +501,10 @@ class ServiceForm extends CFormModel
 		}
 	}
 
-    public function getCustTypeList($type_group=1) {
+    public function getCustTypeList($a=1) {
         $city = Yii::app()->user->city();
         $rtn = array(''=>Yii::t('misc','-- None --'));
-        $sql = "select id, cust_type_name from swo_customer_type_twoname where  cust_type_id=$type_group order by cust_type_name";
+        $sql = "select id, cust_type_name from swo_customer_type_twoname where  cust_type_id=$a order by cust_type_name";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         if (count($rows) > 0) {
             foreach($rows as $row) {
