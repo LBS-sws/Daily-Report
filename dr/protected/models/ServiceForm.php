@@ -14,7 +14,7 @@ class ServiceForm extends CFormModel
 	public $nature_type;
 	public $cust_type;
     public $cust_type_name;
-    public $pieces;
+    public $pieces=0;
 	public $product_id;
 	public $service;
 	public $paid_type;
