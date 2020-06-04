@@ -109,7 +109,7 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 				<div class="col-sm-7">
 					<?php echo $form->textField($model, 'resp_staff', 
 						array('size'=>30,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->scenario=='view')))
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Sales'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->scenario=='view')))
 					)); ?>
 				</div>
 			</div>
@@ -119,7 +119,7 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 				<div class="col-sm-7">
 					<?php echo $form->textField($model, 'resp_tech', 
 						array('size'=>30,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Resp. Tech.'),array('name'=>'btnStaffTech','id'=>'btnStaffTech','disabled'=>($model->scenario=='view')))
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Technician'),array('name'=>'btnStaffTech','id'=>'btnStaffTech','disabled'=>($model->scenario=='view')))
 					)); ?>
 				</div>
 			</div>
@@ -152,7 +152,7 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 				<div class="col-sm-5">
 					<?php echo $form->textField($model, 'follow_staff', 
 						array('size'=>30,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Follow-up Staff'),array('name'=>'btnStaffFollow','id'=>'btnStaffFollow','disabled'=>($model->scenario=='view')))
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Technician'),array('name'=>'btnStaffFollow','id'=>'btnStaffFollow','disabled'=>($model->scenario=='view')))
 					)); ?>
 				</div>
 				<?php echo $form->labelEx($model,'leader',array('class'=>"col-sm-2 control-label")); ?>
@@ -168,7 +168,7 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 				<div class="col-sm-7">
 					<?php echo $form->textField($model, 'follow_tech', 
 						array('size'=>30,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Follow-up Tech.'),array('name'=>'btnStaffFollowTech','id'=>'btnStaffFollowTech','disabled'=>($model->scenario=='view')))
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Technician'),array('name'=>'btnStaffFollowTech','id'=>'btnStaffFollowTech','disabled'=>($model->scenario=='view')))
 					)); ?>
 				</div>
 			</div>
@@ -241,7 +241,7 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 				</div>
 			</div>
 
-		<legend><?php echo Yii::t('followup','Follow Up After Finish'); ?></legend>
+		<legend><?php echo Yii::t('followup','Follow Up After Complaint'); ?></legend>
 
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'fp_fin_dt',array('class'=>"col-sm-2 control-label")); ?>

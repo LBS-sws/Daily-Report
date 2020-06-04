@@ -44,6 +44,13 @@ return array(
 'Dear All'=>'各位',
 'Also'=>'另外',
 'user'=>'用戶',
-'the user (login id {ac})'=>'帳號 {ac} 的用戶'
+'the user (login id {ac})'=>'帳號 {ac} 的用戶',
+
+'Sales Dep. Score'=>'銷售部分數',
+'Tech. Dep. Score'=>'外勤部分數',
+'Acc. Dep. Score'=>'財務部分數',
+'Ops. Dep. Score'=>'營運部分數',
+'HR Dep. Score'=>'人事部分數',
+'Total Score'=>'總分',
 );
 ?>

@@ -6,6 +6,12 @@ class MonthList extends CListPageModel
 		return array(
 			'year_no'=>Yii::t('report','Year'),
 			'month_no'=>Yii::t('report','Month'),
+            'sales dep'=>Yii::t('report','Sales Dep. Score'),
+            'tech. dep'=>Yii::t('report','Tech. Dep. Score'),
+            'acc. dep'=>Yii::t('report','Acc. Dep. Score'),
+            'ops. dep'=>Yii::t('report','Ops. Dep. Score'),
+            'hr. dep'=>Yii::t('report','HR Dep. Score'),
+            'total score'=>Yii::t('report','Total Score'),
 		);
 	}
 

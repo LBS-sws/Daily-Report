@@ -12,7 +12,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('report','月报表数据分析 '); ?></strong>
+		<strong><?php echo Yii::t('app','Monthly Report Analysis'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -54,45 +54,45 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 
 		<?php if ($model->showField('end_dt')): ?>
 			<div class="form-group">
-				<?php echo $form->labelEx($model,'起止日期',array('class'=>"col-sm-2 control-label")); ?>
+				<?php echo $form->labelEx($model,'from',array('class'=>"col-sm-2 control-label")); ?>
 				<div >
                     <select id="city" class="select" name="ReportH02Form[start_dt]" style="width:80px;height: 35px">
                         <?php foreach ($model->date as $v){?>
-                            <option value="<?php echo $v;?>"><?php echo $v;?>年</option>
+                            <option value="<?php echo $v;?>"><?php echo $v;?></option>
                         <?php }?>
                     </select>
                                 <select id="city" class="select" name="ReportH02Form[start_dt1]"  style="width:50px;height: 35px">
-                                    <option value="1">1月</option>
-                                    <option value="2">2月</option>
-                                    <option value="3">3月</option>
-                                    <option value="4">4月</option>
-                                    <option value="5">5月</option>
-                                    <option value="6">6月</option>
-                                    <option value="7">7月</option>
-                                    <option value="8">8月</option>
-                                    <option value="9">9月</option>
-                                    <option value="10">10月</option>
-                                    <option value="11">11月</option>
-                                    <option value="12">12月</option>
-                                </select> --至--
+                                    <option value="1"><?php echo Yii::t('code','Jan');?></option>
+                                    <option value="2"><?php echo Yii::t('code','Feb');?></option>
+                                    <option value="3"><?php echo Yii::t('code','Mar');?></option>
+                                    <option value="4"><?php echo Yii::t('code','Apr');?></option>
+                                    <option value="5"><?php echo Yii::t('code','May');?></option>
+                                    <option value="6"><?php echo Yii::t('code','Jun');?></option>
+                                    <option value="7"><?php echo Yii::t('code','Jul');?></option>
+                                    <option value="8"><?php echo Yii::t('code','Aug');?></option>
+                                    <option value="9"><?php echo Yii::t('code','Sept');?></option>
+                                    <option value="10"><?php echo Yii::t('code','Oct');?></option>
+                                    <option value="11"><?php echo Yii::t('code','Nov');?></option>
+                                    <option value="12"><?php echo Yii::t('code','Dec');?></option>
+                                </select><?php echo Yii::t('code','To');?>
                     <select id="city" class="select" name="ReportH02Form[end_dt]"  style="width:80px;height: 35px" id="year" onchange="test()">
                         <?php foreach ($model->date as $v){?>
-                        <option value="<?php echo $v;?>" "><?php echo $v;?>年</option>
+                        <option value="<?php echo $v;?>" "><?php echo $v;?></option>
                         <?php }?>
                     </select>
                     <select id="city" class="select" name="ReportH02Form[end_dt1]" style="width:50px;height: 35px">
-                        <option value="1">1月</option>
-                        <option value="2">2月</option>
-                        <option value="3">3月</option>
-                        <option value="4">4月</option>
-                        <option value="5">5月</option>
-                        <option value="6">6月</option>
-                        <option value="7">7月</option>
-                        <option value="8">8月</option>
-                        <option value="9">9月</option>
-                        <option value="10">10月</option>
-                        <option value="11">11月</option>
-                        <option value="12">12月</option>
+                        <option value="1"><?php echo Yii::t('code','Jan');?></option>
+                        <option value="2"><?php echo Yii::t('code','Feb');?></option>
+                        <option value="3"><?php echo Yii::t('code','Mar');?></option>
+                        <option value="4"><?php echo Yii::t('code','Apr');?></option>
+                        <option value="5"><?php echo Yii::t('code','May');?></option>
+                        <option value="6"><?php echo Yii::t('code','Jun');?></option>
+                        <option value="7"><?php echo Yii::t('code','Jul');?></option>
+                        <option value="8"><?php echo Yii::t('code','Aug');?></option>
+                        <option value="9"><?php echo Yii::t('code','Sept');?></option>
+                        <option value="10"><?php echo Yii::t('code','Oct');?></option>
+                        <option value="11"><?php echo Yii::t('code','Nov');?></option>
+                        <option value="12"><?php echo Yii::t('code','Dec');?></option>
                     </select>
 
 				</div>

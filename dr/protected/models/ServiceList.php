@@ -15,8 +15,8 @@ class ServiceList extends CListPageModel
 			'nature_desc'=>Yii::t('service','Nature'),
 			'service'=>Yii::t('service','Service'),
 			'cont_info'=>Yii::t('service','Contact'),
-			'status'=>Yii::t('service','Status'),
-			'status_dt'=>Yii::t('service','Status Date'),
+			'status'=>Yii::t('service','Record Type'),
+			'status_dt'=>Yii::t('service','Record Date'),
 			'city_name'=>Yii::t('misc','City'),
 		);
 	}

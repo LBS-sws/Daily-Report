@@ -16,6 +16,7 @@ class QcList extends CListPageModel
 			'team'=>Yii::t('qc','Team'),
 			'qc_dt'=>Yii::t('qc','QC Date'),
 			'qc_staff'=>Yii::t('qc','Staff-QC'),
+            'qc_result'=>Yii::t('qc','Score'),
 			'city_name'=>Yii::t('misc','City'),
 		);
 	}

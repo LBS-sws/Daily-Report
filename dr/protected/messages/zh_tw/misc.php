@@ -14,7 +14,7 @@ return array(
 'ZongJie'=>'總結',
 'Add'=>'新增',
 'Add New'=>'新增',
-'Add Record'=>'新增紀錄',
+'New Record'=>'新增紀錄',
 'Add Another'=>'新增另一紀錄',
 'Record'=>'記錄',
 '-- None --'=>'-- 無 --',

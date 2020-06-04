@@ -46,7 +46,7 @@ return array(
 	'Type'=>'类别',
 	'Currency'=>'货币',
 	
-	'Taxpayer No.'=>'纳税人登记号',
+	'SSM No.'=>'纳税人登记号',
 	
 	'Maintenance'=>'维修',
 	'Uninstallion'=>'拆机',
@@ -71,5 +71,21 @@ return array(
     'Condition'=>'条件',
     'Fractiony'=>'单个分数',
     'Toplimit'=>'上限（为0则没有上限）',
+    'From'=>'起止日期',
+    'To'=>'至',
+    'Jan'=>'1月',
+    'Feb'=>'2月',
+    'Mar'=>'3月',
+    'Apr'=>'4月',
+    'May'=>'5月',
+    'Jun'=>'6月',
+    'Jul'=>'7月',
+    'Aug'=>'8月',
+    'Sept'=>'9月',
+    'Oct'=>'10月',
+    'Nov'=>'11月',
+    'Dec'=>'12月',
+    'No data available'=>'暂无数据',
+    'Monthly Report Data Analysis'=>'月报表数据分析',
 );
 ?>

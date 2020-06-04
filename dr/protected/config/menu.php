@@ -135,7 +135,7 @@ return array(
             ),
 		),
 	),
-    '月报表'=>array(
+    'Monthly Report'=>array(
         'access'=>'H',
 		'icon'=>'fa-calendar',
         'items'=>array(
@@ -143,7 +143,7 @@ return array(
                 'access'=>'H01',
                 'url'=>'/month/index',
             ),
-            '月报表分析'=>array(
+            'Monthly Report Analysis'=>array(
                 'access'=>'H02',
                 'url'=>'/mfx/index',
             ),

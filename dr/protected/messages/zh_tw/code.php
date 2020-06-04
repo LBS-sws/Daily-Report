@@ -46,7 +46,7 @@ return array(
 'Type'=>'類別',
 'Currency'=>'貨幣',
 
-'Taxpayer No.'=>'納稅人登記號',
+'SSM No.'=>'納稅人登記號',
 
 'Maintenance'=>'維修',
 'Uninstallion'=>'拆機',
@@ -71,5 +71,22 @@ return array(
 'Fractiony'=>'單個分數',
 'Condition'=>'條件',
 'Toplimit'=>'上限（為0則沒有上限）',
+
+'From'=>'起止日期',
+'To'=>'至',
+'Jan'=>'1月',
+'Feb'=>'2月',
+'Mar'=>'3月',
+'Apr'=>'4月',
+'May'=>'5月',
+'Jun'=>'6月',
+'Jul'=>'7月',
+'Aug'=>'8月',
+'Sept'=>'9月',
+'Oct'=>'10月',
+'Nov'=>'11月',
+'Dec'=>'12月',
+'No data available'=>'暫無數據',
+'Monthly Report Data Analysis'=>'月報表數據分析',
 );
 ?>

@@ -41,7 +41,8 @@ return array(
 'Monthly Report Data'=>'月報表數據',
 'Monthly Report Input'=>'月報數據輸入',
 'LBS Customer Enquiry'=>'史偉莎客戶查詢',
- 'Comprehensive data comparative analysis'=>'综合数据对比分析',
+'Comprehensive data comparative analysis'=>'综合数据对比分析',
+'Monthly Report Analysis'=>'月報表分析',
 
 'All'=>'全部',
 'All Daily Reports'=>'日報表總匯',

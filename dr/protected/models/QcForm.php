@@ -119,7 +119,7 @@ class QcForm extends CFormModel
 			'cust_score1'=>Yii::t('qc','Customer Score').'('.$this->maxscore('cust_score').')',
 			'cust_comment'=>Yii::t('qc','Customer Comment'),
 			'qc_comment'=>Yii::t('qc','QC Comment'),
-			'qc_result'=>Yii::t('qc','QC Result'),
+			'qc_result'=>Yii::t('qc','Score'),
 			'env_grade'=>Yii::t('qc','Env. Grade').' ABC',
 			'qc_dt'=>Yii::t('qc','QC Date'),
 			'cust_sign'=>Yii::t('qc','Signature'),

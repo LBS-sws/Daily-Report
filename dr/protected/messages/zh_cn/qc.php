@@ -21,7 +21,7 @@ return array(
 	'Customer Score'=>'客户评分',
 	'Customer Comment'=>'客户意见',
 	'QC Comment'=>'质检员意见',
-	'QC Result'=>'质检成绩',
+	'Score'=>'质检成绩',
 	'Env. Grade'=>'现场质检环境',
 	'Signatures'=>'签名',
 	'Signature'=>'客户签名',

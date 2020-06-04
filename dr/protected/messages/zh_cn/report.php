@@ -45,6 +45,14 @@ return array(
 	'Dear All'=>'各位',
 	'Also'=>'另外',
 	'user'=>'用户',
-	'the user (login id {ac})'=>'帐号 {ac} 的用户'
+	'the user (login id {ac})'=>'帐号 {ac} 的用户',
+
+    'Sales Dep. Score'=>'销售部分数',
+	'Tech. Dep. Score'=>'外勤部分数',
+    'Acc. Dep. Score'=>'财务部分数',
+	'Ops. Dep. Score'=>'营运部分数',
+    'HR Dep. Score'=>'人事部分数',
+	'Total Score'=>'总分',
+
 );
 ?>

@@ -19,7 +19,7 @@
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('总分').$this->drawOrderArrow('qc_result'),'#',$this->createOrderLink('qc-list','qc_result'))
+		<?php echo TbHtml::link($this->getLabelName('qc_result').$this->drawOrderArrow('qc_result'),'#',$this->createOrderLink('qc-list','qc_result'))
 			;
 		?>
 	</th>

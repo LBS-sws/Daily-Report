@@ -22,7 +22,6 @@ return array(
 'Nature'=>'性質',
 'Service'=>'服務',
 'Frequency'=>'服務次數',
-'Frequency'=>'服務次數',
 'Monthly Amt'=>'月金額',
 'Sign Date'=>'簽約日期',
 'Contract Period'=>'合同年限',
@@ -36,5 +35,7 @@ return array(
 'bank'=>'付款賬戶',
 'amount'=>'金額',
 'item_desc'=>'擇要',
+'Company Details'=>'基本資料',
+'Transaction Record'=>'付款記錄',
 );
 ?>

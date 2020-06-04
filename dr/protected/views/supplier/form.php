@@ -49,8 +49,8 @@ $this->pageTitle=Yii::app()->name . ' - Supplier Form';
         </div></div>
 
     <div class="btn-group">
-        <button id="hide" type="button" class="btn btn-default" style="width: 555px;font-size: 16px">基本资料</button>
-        <button id="show" type="button" class="btn btn-default" style="width: 555px;font-size: 16px"">付款记录</button>
+        <button id="hide" type="button" class="btn btn-default" style="width: 555px;font-size: 16px"><?php echo Yii::t('supplier','Company Details');?></button>
+        <button id="show" type="button" class="btn btn-default" style="width: 555px;font-size: 16px""><?php echo Yii::t('supplier','Transaction Record');?></button>
     </div>
 
     <div class="box box-info" id="p">

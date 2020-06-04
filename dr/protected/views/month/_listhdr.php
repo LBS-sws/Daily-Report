@@ -1,7 +1,7 @@
 <tr>
 	<th></th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('城市'))
+        <?php echo TbHtml::link($this->getLabelName('city'))
         ;
         ?>
     </th>
@@ -16,32 +16,32 @@
 		?>
 	</th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('销售部分数'))
+        <?php echo TbHtml::link($this->getLabelName('sales dep'))
         ;
         ?>
     </th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('外勤部分数'))
+        <?php echo TbHtml::link($this->getLabelName('tech. dep'))
         ;
         ?>
     </th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('财务部分数'))
+        <?php echo TbHtml::link($this->getLabelName('acc. dep'))
         ;
         ?>
     </th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('营运部分数'))
+        <?php echo TbHtml::link($this->getLabelName('ops. dep'))
         ;
         ?>
     </th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('人事部分数'))
+        <?php echo TbHtml::link($this->getLabelName('hr. dep'))
         ;
         ?>
     </th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('总分'))
+        <?php echo TbHtml::link($this->getLabelName('total score'))
         ;
         ?>
     </th>

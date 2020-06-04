@@ -27,7 +27,7 @@ $this->pageTitle=Yii::app()->name . ' - QC';
 	<div class="btn-group" role="group">
 		<?php 
 			if (Yii::app()->user->validRWFunction('A06'))
-				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Record'), array(
+				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','New Record'), array(
 					'name'=>'btnAdd','id'=>'btnAdd','data-toggle'=>'modal','data-target'=>'#addrecdialog',)
 				); 
 			 echo TbHtml::button('dummyButton', array('style'=>'display:none','disabled'=>true,'submit'=>'#',));

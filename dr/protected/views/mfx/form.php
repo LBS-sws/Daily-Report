@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('monthly','月报表数据分析'); ?></strong>
+		<strong><?php echo Yii::t('code','Monthly Report Data Analysis'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -134,7 +134,7 @@ $this->pageTitle=Yii::app()->name . ' - Month Report';
     </div>
     </div>
 </section>
-<?php } else{echo "<br/><h1>暂无数据</h1>";}?>
+<?php } else{echo "<br/><h1> ".Yii::t('code','No data available')."</h1>";}?>
 <?php
 //	echo $form->hiddenField($model,'pageNum');
 //	echo $form->hiddenField($model,'totalRow');

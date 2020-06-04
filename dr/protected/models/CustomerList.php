@@ -12,8 +12,8 @@ class CustomerList extends CListPageModel
 		return array(	
 			'id'=>Yii::t('customer','ID'),
 			'code'=>Yii::t('customer','Code'),
-			'name'=>Yii::t('customer','Name'),
-			'full_name'=>Yii::t('customer','Full Name'),
+			'name'=>Yii::t('customer','Customer Name'),
+			'full_name'=>Yii::t('customer','Registered Company Name'),
 			'cont_name'=>Yii::t('customer','Contact Name'),
 			'cont_phone'=>Yii::t('customer','Contact Phone'),
 			'city_name'=>Yii::t('misc','City'),

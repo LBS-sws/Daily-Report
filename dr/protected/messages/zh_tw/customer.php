@@ -14,8 +14,8 @@ return array(
 
 'Code'=>'客戶編號',
 'Type'=>'類別',
-'Name'=>'名稱',
-'Full Name'=>'全稱',
+'Customer Name'=>'名稱',
+'Registered Company Name'=>'全稱',
 'Contact Name'=>'客戶聯繫',
 'Contact Phone'=>'客戶電話',
 'Nature'=>'性質',
