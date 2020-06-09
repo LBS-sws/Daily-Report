@@ -64,7 +64,7 @@ class FollowupForm extends CFormModel
 			'svc_cust_name'=>Yii::t('followup','Customer Name'),
 			'svc_comment'=>Yii::t('followup','Comment'),
 			'fp_fin_dt'=>Yii::t('followup','Finish Date').' '.Yii::t('misc','(Y/M/D)'),
-			'fp_call_dt'=>Yii::t('followup','Call Date').' '.Yii::t('misc','(Y/M/D)'),
+			'fp_call_dt'=>Yii::t('followup','Follow up Date').' '.Yii::t('misc','(Y/M/D)'),
 			'fp_cust_name'=>Yii::t('followup','Customer Name'),
 			'fp_comment'=>Yii::t('followup','Comment'),
 			'mcard_remarks'=>Yii::t('followup','Contend of Update to Job Card'),

@@ -906,12 +906,18 @@ class ReportG02Form extends CReportForm
                 }
 
             }
-            $last_names = array_column($arrs[$i],'value');
-            array_multisort($last_names,SORT_DESC,$arrs[$i]);
-          //  $arr[$i]=$arr[$i]/abs($business[$i]==0?1:$business[$i]);
-          //  $arr[$i]=(round( $arr[$i],4)*100)."%";
-            $model[$i]['max']=$arrs[$i][0]['value']." (".$arrs[$i][0]['city'].")";
-            $model[$i]['end']=$arrs[$i][$o-1]['value']." (".$arrs[$i][$o-1]['city'].")";
+            if(empty($arrs)){
+                $model[$i]['max']='暂无数据';
+                $model[$i]['end']='暂无数据';
+            }else{
+                $last_names = array_column($arrs[$i],'value');
+                array_multisort($last_names,SORT_DESC,$arrs[$i]);
+                //  $arr[$i]=$arr[$i]/abs($business[$i]==0?1:$business[$i]);
+                //  $arr[$i]=(round( $arr[$i],4)*100)."%";
+                $model[$i]['max']=$arrs[$i][0]['value']." (".$arrs[$i][0]['city'].")";
+                $model[$i]['end']=$arrs[$i][$o-1]['value']." (".$arrs[$i][$o-1]['city'].")";
+            }
+
         }
         return $model;
     }
