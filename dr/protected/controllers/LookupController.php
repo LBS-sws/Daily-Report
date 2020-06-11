@@ -59,7 +59,7 @@ class LookupController extends Controller
 			foreach ($records as $k=>$record) {
 				$result[] = array(
 						'id'=>$record['id'],
-						'value'=>substr($record['code'].str_repeat(' ',8),0,8).$record['name'],
+						'value'=>$record['code'].' '.$record['name'],
 						'contact'=>trim($record['cont_name']).'/'.trim($record['cont_phone']),
 						'address'=>$record['address'],
 					);
