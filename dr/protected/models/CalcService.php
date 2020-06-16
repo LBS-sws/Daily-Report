@@ -2,6 +2,7 @@
 
 class CalcService extends Calculation {
 
+//今月新（IA，IB）服务合同数目
 	public static function countCaseIAIB($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter 
@@ -25,6 +26,7 @@ class CalcService extends Calculation {
 		$rtn = CalcService::countCaseIAIB($ly, $lm);
 	}
 
+//今月新IA服务合同数目
 	public static function countCaseIA($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter 
@@ -41,6 +43,7 @@ class CalcService extends Calculation {
 		return $rtn;
 	}
 
+//今月新IA需安装服务合同数目
 	public static function countCaseIAWithInstall($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter 
@@ -73,6 +76,7 @@ class CalcService extends Calculation {
 		return $rtn;
 	}
 
+//5天成功安装机器合同数目
 	public static function countInstallIn5Days($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter 
@@ -90,6 +94,7 @@ class CalcService extends Calculation {
 		return $rtn;
 	}
 
+//7天成功安排首次合同数目
 	public static function countFirstTimeIn7Days($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter 
@@ -107,6 +112,7 @@ class CalcService extends Calculation {
 		return $rtn;
 	}
 
+//今月新（IA，IB）服务年生意额 
 	public static function sumAmountIAIB($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, 
@@ -137,6 +143,7 @@ class CalcService extends Calculation {
 		$rtn = CalcService::sumAmountIAIB($ly, $lm);
 	}
 
+//今月新业务年生意额
 	public static function sumAmountNEW($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, 
@@ -168,6 +175,7 @@ class CalcService extends Calculation {
 		$rtn = CalcService::sumAmountNEW($ly, $lm);
 	}
 
+//今月餐饮年生意额 
 	public static function sumAmountRestaurant($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, 
@@ -192,6 +200,7 @@ class CalcService extends Calculation {
 		return $rtn;
 	}
 
+//今月非餐饮年生意额 
 	public static function sumAmountNonRestaurant($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, 
@@ -216,6 +225,7 @@ class CalcService extends Calculation {
 		return $rtn;
 	}
 
+// 今月生意净增长 （年生意额
 	public static function sumAmountNetGrowth($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, a.status, 
@@ -280,6 +290,7 @@ class CalcService extends Calculation {
 		$rtn = CalcService::sumAmountNetGrowth($ly, $lm);
 	}
 
+//今月停单月生意额
 	public static function sumAmountTerminate($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, 

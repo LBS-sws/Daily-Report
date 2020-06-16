@@ -2,6 +2,7 @@
 
 class CalcComplaint extends Calculation {
 
+//今月客诉数目
 	public static function countCase($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter from swo_followup a
@@ -14,14 +15,15 @@ class CalcComplaint extends Calculation {
 		}
 		return $rtn;
 	}
-	
+
 	public static function countCaseLastMonth($year, $month) {
 		$d = strtotime('-1 month', strtotime($year.'-'.$month.'-1'));
 		$ly = date('Y', $d);
 		$lm = date('m', $d);
 		$rtn = CalcComplaint::countCase($ly, $lm);
 	}
-	
+
+//当月解决客诉数目	
 	public static function countFinishCase($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter from swo_followup a
@@ -37,6 +39,7 @@ class CalcComplaint extends Calculation {
 		return $rtn;
 	}
 
+//2天内解决客诉数目
 	public static function countFinishCaseIn2Days($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter from swo_followup a
@@ -52,6 +55,7 @@ class CalcComplaint extends Calculation {
 		return $rtn;
 	}
 
+//客诉后7天内电话客户回访数目
 	public static function countCallIn7days($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter from swo_followup a
@@ -67,6 +71,7 @@ class CalcComplaint extends Calculation {
 		return $rtn;
 	}
 
+//队长/组长跟客诉技术员面谈数目
 	public static function countNotifyLeader($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter from swo_followup a
@@ -81,6 +86,7 @@ class CalcComplaint extends Calculation {
 		return $rtn;
 	}
 
+//问题客户需要队长/组长跟进数目
 	public static function countLeaderHandle($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter from swo_followup a

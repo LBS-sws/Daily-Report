@@ -2,6 +2,7 @@
 
 class CalcQc extends Calculation {
 
+//今月质检客户数量
 	public static function countCase($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter from swo_qc a
@@ -14,7 +15,8 @@ class CalcQc extends Calculation {
 		}
 		return $rtn;
 	}
-	
+
+//低于70分质检客户数量	
 	public static function countResultBelow70($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter from swo_qc a
@@ -37,6 +39,7 @@ class CalcQc extends Calculation {
 		return $rtn;
 	}
 
+//质检拜访平均分数最高同事
 	public static function listHighestMarkStaff($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, a.job_staff, avg(cast(a.qc_result as decimal(8,2))) as score from swo_qc a
