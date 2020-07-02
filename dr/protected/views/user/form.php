@@ -45,6 +45,14 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 		);
 	?>
 <?php endif ?>
+				<?php 
+					if ($model->scenario!='new' && $model->scenario!='view'
+						&& $model->lock==Yii::t('misc','Yes')) {
+						echo TbHtml::button(Yii::t('user','Unlock'), array(
+							'name'=>'btnUnlock','id'=>'btnUnlock','onclick'=>'unlockRecord();return false;')
+						);
+					}
+				?>
 	</div>
 	</div></div>
 
@@ -114,14 +122,6 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 				<?php echo $form->labelEx($model,'lock',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
 				<?php echo $form->textField($model, 'lock', array('size'=>5,'readonly'=>true)); ?>
-				<?php 
-					if ($model->scenario!='new' && $model->scenario!='view'
-						&& $model->lock==Yii::t('misc','Yes')) {
-						echo CHtml::Button(Yii::t('user','Unlock'), array(
-							'name'=>'btnUnlock','id'=>'btnUnlock')
-						);
-					}
-				?>
 				</div>
 			</div>
 <?php endif; ?>		
@@ -347,16 +347,16 @@ Yii::app()->clientScript->registerScript('lookupTemplate',$js,CClientScript::POS
 $js = Script::genDeleteData(Yii::app()->createUrl('user/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
-if (Yii::app()->params['noOfLoginRetry']>0 && $model->lock==Yii::t('misc','Yes')) {
+//if (Yii::app()->params['noOfLoginRetry']>0 && $model->lock==Yii::t('misc','Yes')) {
 	$js = "
-$('#btnUnlock').on('click',function() {
+function unlockRecord() {
 	$(\"[id*='fail_count']\").attr('value','0');
 	var elm=$('#btnUnlock');
 	jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('user/save')."',{});
-});
-	";
 }
-Yii::app()->clientScript->registerScript('unlockRecord',$js,CClientScript::POS_READY);
+	";
+	Yii::app()->clientScript->registerScript('unlockRecord',$js,CClientScript::POS_HEAD);
+//}
 
 $js = Script::genLookupSearchEx();
 Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);

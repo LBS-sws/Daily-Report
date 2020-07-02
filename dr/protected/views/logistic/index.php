@@ -30,6 +30,7 @@ $this->pageTitle=Yii::app()->name . ' - Product Delivery';
 				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','New Record'), array(
 					'submit'=>Yii::app()->createUrl('logistic/new'), 
 				)); 
+			 echo TbHtml::button('dummyButton', array('style'=>'display:none','disabled'=>true,'submit'=>'#',));
 		?>
 	</div>
 	</div></div>
