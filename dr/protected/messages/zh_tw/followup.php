@@ -22,7 +22,7 @@ return array(
 'Previous Follow-up Tech.'=>'曾致電過跟進的技術員',
 'Finish Date'=>'完成日期',
 'Follow-up Action'=>'跟進完成後之安排',
-'Update with Tech.r'=>'與相關同事面談',
+'Update with Tech.'=>'與相關同事面談',
 'Change Follow-up Tech.'=>'轉人安排',
 'Staff of Change Arrangement.'=>'已通知下一位技術員之同事',
 'Next Service Date'=>'下次服務日期',
