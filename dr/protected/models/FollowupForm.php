@@ -145,11 +145,19 @@ class FollowupForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveFollowup($connection);
+			$this->updateDmsUnitedLink($connection);
 			$transaction->commit();
 		}
 		catch(Exception $e) {
 			$transaction->rollback();
 			throw new CHttpException(404,'Cannot update.');
+		}
+	}
+
+	protected function updateDmsUnitedLink(&$connection) {
+		if ($this->scenario=='delete') {
+			$sql = "delete from swo_followup_dms_united where dms_id=".$this->id;
+			$connection->createCommand($sql)->execute();
 		}
 	}
 
