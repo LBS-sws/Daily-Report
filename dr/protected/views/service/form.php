@@ -328,9 +328,9 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 				<?php echo $form->labelEx($model,'salesman',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
 					<?php 
-						echo $form->textField($model, 'salesman', 
+						echo $form->textField($model, 'salesman',
 							array('size'=>60,'maxlength'=>1000,'readonly'=>true,
-							'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Salesman'),array('name'=>'btnSalesman','id'=>'btnSalesman','disabled'=>($model->scenario=='view'))),
+							'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnSalesman','id'=>'btnSalesman','disabled'=>($model->scenario=='view'))),
 						)); 
 					?>
 				</div>
@@ -341,7 +341,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php
                     echo $form->textField($model, 'othersalesman',
                         array('size'=>60,'maxlength'=>1000,'readonly'=>true,
-                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Salesman'),array('name'=>'btnOtherSalesman','id'=>'btnOtherSalesman','disabled'=>($model->scenario=='view'))),
+                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnOtherSalesman','id'=>'btnOtherSalesman','disabled'=>($model->scenario=='view'))),
                         ));
                     ?>
                 </div>
@@ -352,7 +352,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php
                     echo $form->textField($model, 'technician',
                         array('size'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'),
-                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Technician'),array('name'=>'btnTechnician','id'=>'btnTechnician','disabled'=>($model->scenario=='view'))),
+                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Tech.'),array('name'=>'btnTechnician','id'=>'btnTechnician','disabled'=>($model->scenario=='view'))),
                         ));
                     ?>
                 </div>

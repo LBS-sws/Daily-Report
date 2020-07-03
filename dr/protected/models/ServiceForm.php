@@ -91,7 +91,7 @@ class ServiceForm extends CFormModel
 			'amt_install'=>Yii::t('service','Installation Fee'),
 			'need_install'=>Yii::t('service','Installation'),
 			'salesman'=>Yii::t('service','Resp. Sales'),
-            'othersalesman'=>Yii::t('service','othersalesman'),
+            'othersalesman'=>Yii::t('service','OtherSalesman'),
             'technician'=>Yii::t('service','Resp. Tech.'),
 			'sign_dt'=>Yii::t('service','Sign Date'),
 			'ctrt_end_dt'=>Yii::t('service','Contract End Date'),
