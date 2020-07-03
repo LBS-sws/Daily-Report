@@ -231,12 +231,20 @@ class ServiceForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveService($connection);
+			$this->updateServiceContract($connection);
 			$this->updateDocman($connection,'SERVICE');
 			$transaction->commit();
 		}
 		catch(Exception $e) {
 			$transaction->rollback();
 			throw new CHttpException(404,'Cannot update.');
+		}
+	}
+
+	protected function updateServiceContract(&$connection) {
+		if ($this->scenario=='delete') {
+			$sql = "delete from swo_service_contract_no where service_id=".$this->id;
+			$connection->createCommand($sql)->execute();
 		}
 	}
 
