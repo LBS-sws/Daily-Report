@@ -24,6 +24,7 @@ return array(
 	'Description'=>'名称',
 	'Code'=>'编号',
 	'Name'=>'名称',
+    'Taxpayer No.'=>'纳税人登记号',
 	
 	'City'=>'城市',
 	'City Form'=>'城市表单',

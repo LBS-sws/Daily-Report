@@ -422,7 +422,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 				<div class="col-sm-7">
 					<?php echo $form->textField($model, 'first_tech', 
 						array('size'=>80,'maxlength'=>1000,'readonly'=>($model->scenario=='view'),
-						'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','First Technician'),array('name'=>'btnFirstTech','id'=>'btnFirstTech','disabled'=>($model->scenario=='view')))
+						'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','First Service Tech.'),array('name'=>'btnFirstTech','id'=>'btnFirstTech','disabled'=>($model->scenario=='view')))
 					)); ?>
 				</div>
 			</div>

@@ -55,6 +55,7 @@ return array(
 'Puriscent'=>'飄盈香',
 'Perfume'=>'香水',
 'Floor Cleaner'=>'洗地易',
+'Taxpayer No.'=>'納稅人登記號',
 
 'Start Date'=>'开始日期',
 'End Date'=>'结束日期',
