@@ -1093,7 +1093,15 @@ WHERE hdr_id = '".$model['id']."'";
 
         $objPHPExcel = $objReader->load($path);
         foreach ($model->record as $arr ){
-            $objPHPExcel->getActiveSheet()->setCellValue('B'.$arr['excel_row'], $arr['datavalueold']) ;
+            if(count($model->record)==70){//因为洗涤液插入中间，之前版本需要重新调整
+                $objPHPExcel->getActiveSheet()->setCellValue('B'.$arr['excel_row'], $arr['datavalueold']) ;
+            }else{
+                if($arr['excel_row']>59){
+                    $arr['excel_row']=$arr['excel_row']-2;
+                }
+                $objPHPExcel->getActiveSheet()->setCellValue('B'.$arr['excel_row'], $arr['datavalueold']) ;
+            }
+
         }
 //print_r("<pre>");
 //        print_r(count($model->record));

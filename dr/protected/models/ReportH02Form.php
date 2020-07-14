@@ -83,6 +83,9 @@ class ReportH02Form extends CReportForm
 
             for($i=0;$i<$model->ccuser;$i++){
                 foreach ($model->five[$i] as $arr ){
+                    if($arr['excel_row']>59){
+                        $arr['excel_row']=$arr['excel_row']-2;
+                    }
                     $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].$arr['excel_row'], $arr['data_value']) ;
                 }
                 for($a=80;$a<132;$a++){
@@ -245,6 +248,9 @@ class ReportH02Form extends CReportForm
 
             for($i=0;$i<$model->ccuser;$i++){
                 foreach ($model->five[$i] as $arr ){
+                    if($arr['excel_row']>59){
+                        $arr['excel_row']=$arr['excel_row']-2;
+                    }
                     $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].$arr['excel_row'], $arr['data_value']) ;
                 }
                 for($a=76;$a<125;$a++){
