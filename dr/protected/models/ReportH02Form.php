@@ -69,6 +69,7 @@ class ReportH02Form extends CReportForm
         include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
         $objPHPExcel = new PHPExcel;
         $objReader  = PHPExcel_IOFactory::createReader('Excel2007');
+        print_r(count($model->five[0]));exit();
         if(count($model->five[0])==68){
             $path = Yii::app()->basePath.'/commands/template/month_more_lirun.xlsx';
             $objPHPExcel = $objReader->load($path);
