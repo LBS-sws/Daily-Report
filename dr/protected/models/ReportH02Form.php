@@ -69,7 +69,6 @@ class ReportH02Form extends CReportForm
         include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
         $objPHPExcel = new PHPExcel;
         $objReader  = PHPExcel_IOFactory::createReader('Excel2007');
-        print_r(count($model->five[0]));exit();
         if(count($model->five[0])==68){
             $path = Yii::app()->basePath.'/commands/template/month_more_lirun.xlsx';
             $objPHPExcel = $objReader->load($path);
@@ -153,7 +152,7 @@ class ReportH02Form extends CReportForm
                 }
                 $objPHPExcel->getActiveSheet()->getColumnDimension($excel_m[$i])->setWidth(17);
             }
-        }if(count($model->five[0])==70){
+        }elseif(count($model->five[0])==70){
             $path = Yii::app()->basePath.'/commands/template/month_more_xidi.xlsx';
             $objPHPExcel = $objReader->load($path);
             $excel_m=array('C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
@@ -233,8 +232,7 @@ class ReportH02Form extends CReportForm
                 }
                 $objPHPExcel->getActiveSheet()->getColumnDimension($excel_m[$i])->setWidth(17);
             }
-        }
-        else{
+        }elseif(count($model->five[0])==65){
             $path = Yii::app()->basePath.'/commands/template/month_more_ones.xlsx';
             $objPHPExcel = $objReader->load($path);
             $excel_m=array('C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
