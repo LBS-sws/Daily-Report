@@ -116,6 +116,28 @@ $this->pageTitle=Yii::app()->name . ' - Customer Form';
 				</div>
 			</div>
 
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'group_id',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-2">
+					<?php echo $form->textField($model, 'group_id', 
+						array('maxlength'=>20,'readonly'=>($model->scenario=='view'))
+					); ?>
+				</div>
+				<div class="col-sm-5">
+					<?php echo $form->textField($model, 'group_name', 
+						array('maxlength'=>200,'readonly'=>($model->scenario=='view'))
+					); ?>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'status',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-2">
+					<?php echo $form->dropDownList($model, 'status', $model->getStatusList(), array('disabled'=>($model->scenario=='view'))); 
+					?>
+				</div>
+			</div>
+
 		</div>
 	</div>
 </section>

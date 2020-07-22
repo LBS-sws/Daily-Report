@@ -41,5 +41,11 @@ return array(
 'Terminated'=>'停止服務',
 'Unknown'=>'不明',
 'All'=>'全部',
+
+'In Service'=>'服務中',
+'Stop Service'=>'停止服務',
+'Others'=>'其他',
+'Group ID'=>'集團編號',
+'Group Name'=>'集團名稱',
 );
 ?>

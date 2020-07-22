@@ -13,6 +13,9 @@ class CustomerForm extends CFormModel
 	public $nature;
 	public $address;
 	public $tax_reg_no;
+	public $group_id;
+	public $group_name;
+	public $status;
 
 	public $service = array();
 	
@@ -32,6 +35,9 @@ class CustomerForm extends CFormModel
 			'cont_phone'=>Yii::t('customer','Contact Phone'),
 			'address'=>Yii::t('customer','Address'),
 			'tax_reg_no'=>Yii::t('code','SSM No.'),
+			'group_id'=>Yii::t('customer','Group ID'),
+			'group_name'=>Yii::t('customer','Group Name'),
+			'status'=>Yii::t('customer','Status'),
 		);
 	}
 	
@@ -41,7 +47,7 @@ class CustomerForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, full_name, cont_name, cont_phone, address, tax_reg_no','safe'),
+			array('id, full_name, cont_name, cont_phone, address, tax_reg_no, group_id, group_name, status','safe'),
 			array('name, code','required'),
 /*
 			array('code','unique','allowEmpty'=>true,
@@ -90,6 +96,9 @@ class CustomerForm extends CFormModel
 				$this->cont_phone = $row['cont_phone'];
 				$this->address = $row['address'];
 				$this->tax_reg_no = $row['tax_reg_no'];
+				$this->group_id = $row['group_id'];
+				$this->group_name = $row['group_name'];
+				$this->status = $row['status'];
 				break;
 			}
 		}
@@ -121,9 +130,11 @@ class CustomerForm extends CFormModel
 			case 'new':
 				$sql = "insert into swo_company(
 							code, name, full_name, tax_reg_no, cont_name, cont_phone, address,
+							group_id, group_name, status,
 							city, luu, lcu
 						) values (
 							:code, :name, :full_name, :tax_reg_no, :cont_name, :cont_phone, :address,
+							:group_id, :group_name, :status,
 							:city, :luu, :lcu
 						)";
 				break;
@@ -136,6 +147,9 @@ class CustomerForm extends CFormModel
 							cont_name = :cont_name, 
 							cont_phone = :cont_phone, 
 							address = :address, 
+							group_id = :group_id,
+							group_name = :group_name,
+							status = :status,
 							luu = :luu 
 						where id = :id and city = :city
 						";
@@ -164,6 +178,12 @@ class CustomerForm extends CFormModel
 			$command->bindParam(':address',$this->address,PDO::PARAM_STR);
 		if (strpos($sql,':city')!==false)
 			$command->bindParam(':city',$city,PDO::PARAM_STR);
+		if (strpos($sql,':group_id')!==false)
+			$command->bindParam(':group_id',$this->group_id,PDO::PARAM_STR);
+		if (strpos($sql,':group_name')!==false)
+			$command->bindParam(':group_name',$this->group_name,PDO::PARAM_STR);
+		if (strpos($sql,':status')!==false)
+			$command->bindParam(':status',$this->status,PDO::PARAM_INT);
 		if (strpos($sql,':lcu')!==false)
 			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
@@ -173,5 +193,14 @@ class CustomerForm extends CFormModel
 		if ($this->scenario=='new')
 			$this->id = Yii::app()->db->getLastInsertID();
 		return true;
+	}
+	
+	public function getStatusList() {
+		return array(
+			0=>Yii::t('customer','Unknown'),
+			1=>Yii::t('customer','In Service'),
+			2=>Yii::t('customer','Stop Service'),
+			3=>Yii::t('customer','Others'),
+		);
 	}
 }
