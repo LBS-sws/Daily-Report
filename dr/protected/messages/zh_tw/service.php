@@ -113,5 +113,6 @@ return array(
 'Expiry Date'=>'到期日',
 
 'Pieces'=>'產品數量',
+'Prepay Month'=>'預付月數',
 );
 ?>

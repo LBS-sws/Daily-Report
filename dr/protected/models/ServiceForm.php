@@ -57,6 +57,7 @@ class ServiceForm extends CFormModel
 	public $othersalesman;
 	public $status_desc;
 	public $backlink;
+	public $prepay_month;
 	
 	public $files;
 
@@ -128,6 +129,7 @@ class ServiceForm extends CFormModel
             'all_number_edit3'=>Yii::t('service','Number edit3'),
             'surplus_edit3'=>Yii::t('service','Surplus edit3'),
             'pieces'=>Yii::t('service','Pieces'),
+            'prepay_month'=>Yii::t('service','Prepay Month'),
 		);
 	}
 
@@ -142,7 +144,7 @@ class ServiceForm extends CFormModel
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
 */
-			array('id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, cust_type, 
+			array('id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, cust_type, prepay_month,
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
 				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'),
@@ -217,6 +219,7 @@ class ServiceForm extends CFormModel
                 //var_dump($row['cust_type_name']);
                 $this->cust_type_name = $row['cust_type_name'];
                 $this->pieces = $row['pieces'];
+                $this->prepay_month = $row['prepay_month'];
 //                print_r('<pre>');
 //                print_r($this);exit();
 				break;
@@ -269,7 +272,7 @@ class ServiceForm extends CFormModel
 							ctrt_period, cont_info, first_dt, first_tech, reason,
 							status, status_dt, remarks, remarks2, ctrt_end_dt,
 							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,
-							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3
+							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,prepay_month
 						) values (
 							:company_id, :company_name, :product_id, :service, :nature_type, :cust_type, 
 							:paid_type, :amt_paid, :amt_install, :need_install, :salesman,:othersalesman,:technician, :sign_dt, :b4_product_id,
@@ -277,7 +280,7 @@ class ServiceForm extends CFormModel
 							:ctrt_period, :cont_info, :first_dt, :first_tech, :reason,
 							:status, :status_dt, :remarks, :remarks2, :ctrt_end_dt,
 							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, :cust_type_name,:pieces,
-							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3
+							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3,:prepay_month
 						)";
 				$this->execSql($connection,$sql);
 				$this->id = Yii::app()->db->getLastInsertID();
@@ -327,6 +330,7 @@ class ServiceForm extends CFormModel
                             surplus_edit2 = :surplus_edit2, 
                             all_number_edit3 = :all_number_edit3, 
                             surplus_edit3 = :surplus_edit3, 
+                            prepay_month = :prepay_month,                        
 							luu = :luu 
 						where id = :id 
 						";
@@ -486,8 +490,11 @@ class ServiceForm extends CFormModel
         if (strpos($sql,':surplus_edit3')!==false) {
             $command->bindParam(':surplus_edit3',$this->surplus_edit3,PDO::PARAM_INT);
         }
+        if (strpos($sql,':prepay_month')!==false) {
+            $command->bindParam(':prepay_month',$this->prepay_month,PDO::PARAM_INT);
+        }
 //        print_r('<pre>');
-//        print_r($this->all_number);exit();
+//        print_r($this->prepay_month);exit();
 		$command->execute();
 	}
 	

@@ -109,14 +109,22 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 				?>
 				<div class="col-sm-3">
 					<div class="input-group date">
-						<div class="input-group-addon">
-							<i class="fa fa-calendar"></i>
-						</div>
-						<?php echo $form->textField($model, 'status_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),)); 
-						?>
-					</div>
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php echo $form->textField($model, 'status_dt',
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
+                        ?>
+                    </div>
 				</div>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'prepay_month',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'prepay_month',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                </div>
 			</div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'company_name',array('class'=>"col-sm-2 control-label")); ?>
