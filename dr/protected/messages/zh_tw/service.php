@@ -114,5 +114,7 @@ return array(
 
 'Pieces'=>'產品數量',
 'Prepay Month'=>'預付月數',
+'Prepay Start'=>'預付起始月',
+'Contract No'=>'合同編號',
 );
 ?>

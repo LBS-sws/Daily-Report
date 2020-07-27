@@ -58,6 +58,8 @@ class ServiceForm extends CFormModel
 	public $status_desc;
 	public $backlink;
 	public $prepay_month;
+	public $prepay_start;
+    public $contract_no;
 	
 	public $files;
 
@@ -130,6 +132,8 @@ class ServiceForm extends CFormModel
             'surplus_edit3'=>Yii::t('service','Surplus edit3'),
             'pieces'=>Yii::t('service','Pieces'),
             'prepay_month'=>Yii::t('service','Prepay Month'),
+            'prepay_start'=>Yii::t('service','Prepay Start'),
+            'contract_no'=>Yii::t('service','Contract No'),
 		);
 	}
 
@@ -144,7 +148,7 @@ class ServiceForm extends CFormModel
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
 */
-			array('id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, cust_type, prepay_month,
+			array('id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, cust_type, prepay_month,prepay_start,contract_no
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
 				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'),
@@ -166,7 +170,9 @@ class ServiceForm extends CFormModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
-		$sql = "select *, docman$suffix.countdoc('SERVICE',id) as no_of_attm from swo_service where id=$index and city in ($city)";
+		$sql = "select a.*, docman$suffix.countdoc('SERVICE',a.id) as no_of_attm,b.contract_no from swo_service a
+        left outer join swo_service_contract_no b on a.id=b.service_id 
+        where a.id=$index and a.city in ($city)";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 //		print_r('<pre>');
 //        print_r($rows);
@@ -220,6 +226,8 @@ class ServiceForm extends CFormModel
                 $this->cust_type_name = $row['cust_type_name'];
                 $this->pieces = $row['pieces'];
                 $this->prepay_month = $row['prepay_month'];
+                $this->prepay_start = $row['prepay_start'];
+                $this->contract_no = $row['contract_no'];
 //                print_r('<pre>');
 //                print_r($this);exit();
 				break;
@@ -233,6 +241,7 @@ class ServiceForm extends CFormModel
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
+            $this->updateContractNoContract($connection);
 			$this->saveService($connection);
 			$this->updateServiceContract($connection);
 			$this->updateDocman($connection,'SERVICE');
@@ -250,6 +259,16 @@ class ServiceForm extends CFormModel
 			$connection->createCommand($sql)->execute();
 		}
 	}
+
+    protected function updateContractNoContract(&$connection) {
+        if (empty($this->contract_no)) {
+            $sql = "delete from swo_service_contract_no where service_id=".$this->id;
+            $connection->createCommand($sql)->execute();
+        }else{
+            $sql = "update  swo_service_contract_no set contract_no = '$this->contract_no'  where service_id=".$this->id;
+            $connection->createCommand($sql)->execute();
+        }
+    }
 
 	protected function saveService(&$connection)
 	{
@@ -272,7 +291,7 @@ class ServiceForm extends CFormModel
 							ctrt_period, cont_info, first_dt, first_tech, reason,
 							status, status_dt, remarks, remarks2, ctrt_end_dt,
 							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,
-							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,prepay_month
+							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,prepay_month,prepay_start
 						) values (
 							:company_id, :company_name, :product_id, :service, :nature_type, :cust_type, 
 							:paid_type, :amt_paid, :amt_install, :need_install, :salesman,:othersalesman,:technician, :sign_dt, :b4_product_id,
@@ -280,7 +299,7 @@ class ServiceForm extends CFormModel
 							:ctrt_period, :cont_info, :first_dt, :first_tech, :reason,
 							:status, :status_dt, :remarks, :remarks2, :ctrt_end_dt,
 							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, :cust_type_name,:pieces,
-							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3,:prepay_month
+							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3,:prepay_month,:prepay_start
 						)";
 				$this->execSql($connection,$sql);
 				$this->id = Yii::app()->db->getLastInsertID();
@@ -330,7 +349,8 @@ class ServiceForm extends CFormModel
                             surplus_edit2 = :surplus_edit2, 
                             all_number_edit3 = :all_number_edit3, 
                             surplus_edit3 = :surplus_edit3, 
-                            prepay_month = :prepay_month,                        
+                            prepay_month = :prepay_month, 
+                            prepay_start = :prepay_start,                  
 							luu = :luu 
 						where id = :id 
 						";
@@ -493,6 +513,9 @@ class ServiceForm extends CFormModel
         if (strpos($sql,':prepay_month')!==false) {
             $command->bindParam(':prepay_month',$this->prepay_month,PDO::PARAM_INT);
         }
+         if (strpos($sql,':prepay_start')!==false) {
+             $command->bindParam(':prepay_start',$this->prepay_start,PDO::PARAM_INT);
+         }
 //        print_r('<pre>');
 //        print_r($this->prepay_month);exit();
 		$command->execute();

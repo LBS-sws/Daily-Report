@@ -89,11 +89,17 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'status',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-2">
+				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'status_desc', 
 						array('class'=>'form-control','maxlength'=>15,'readonly'=>true,)); 
 					?>
 				</div>
+                <?php echo $form->labelEx($model,'contract_no',array('class'=>"col-sm-1 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->textField($model, 'contract_no',
+                        array('class'=>'form-control','maxlength'=>15,));
+                    ?>
+                </div>
 			</div>
 			<div class="form-group">
 				<?php 
@@ -105,7 +111,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 						case 'R': $dt_name = 'resume_dt'; break;
 						case 'T': $dt_name = 'terminate_dt'; break;
 					}
-					echo $form->labelEx($model,$dt_name,array('class'=>"col-sm-2 control-label")); 
+					echo $form->labelEx($model,$dt_name,array('class'=>"col-sm-2 control-label"));
 				?>
 				<div class="col-sm-3">
 					<div class="input-group date">
@@ -117,14 +123,21 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                         ?>
                     </div>
 				</div>
-                <div class="form-group">
-                    <?php echo $form->labelEx($model,'prepay_month',array('class'=>"col-sm-2 control-label")); ?>
-                    <div class="col-sm-2">
+                <div class="form-group" style="height: 20px;">
+                    <?php echo $form->labelEx($model,'prepay_month',array('class'=>"col-sm-1 control-label")); ?>
+                    <div class="col-sm-1">
                         <?php echo $form->numberField($model, 'prepay_month',
                             array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
                         ); ?>
                     </div>
+                    <?php echo $form->labelEx($model,'prepay_start',array('class'=>"col-sm-1 control-label")); ?>
+                    <div class="col-sm-1">
+                        <?php echo $form->numberField($model, 'prepay_start',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
                 </div>
+
 			</div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'company_name',array('class'=>"col-sm-2 control-label")); ?>
