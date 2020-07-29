@@ -148,6 +148,10 @@ class LookupController extends Controller
 		
 		$records = array_merge($result1, $result3, $result2);
 		if (count($records) > 0) {
+            $result[] = array(
+                'id'=>0,
+                'value'=>'',
+            );
 			foreach ($records as $k=>$record) {
 				$result[] = array(
 						'id'=>$record['id'],
