@@ -241,10 +241,10 @@ class ServiceForm extends CFormModel
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-            $this->updateContractNoContract($connection);
 			$this->saveService($connection);
 			$this->updateServiceContract($connection);
 			$this->updateDocman($connection,'SERVICE');
+            $this->updateContractNoContract($connection);
 			$transaction->commit();
 		}
 		catch(Exception $e) {
@@ -264,12 +264,11 @@ class ServiceForm extends CFormModel
         if (empty($this->contract_no)&&$this->scenario=='edit') {
             $sql = "delete from swo_service_contract_no where service_id=".$this->id;
             $connection->createCommand($sql)->execute();
-        }else{
+        }elseif(!empty($this->contract_no)){
             $sql = "insert into swo_service_contract_no(contract_no,service_id,status_dt,status)
              values('$this->contract_no','$this->id','$this->status_dt','$this->status') on duplicate 
             key update contract_no='$this->contract_no', status_dt='$this->status_dt', status='$this->status'";
             $connection->createCommand($sql)->execute();
-
         }
     }
 
