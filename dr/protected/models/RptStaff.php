@@ -28,31 +28,62 @@ class RptStaff extends ReportData2 {
 		$city = $this->criteria->city;
 		$cutoff = isset($this->criteria->end_dt) ? $this->criteria->end_dt : date("Y/m/d");
 		
-		$sql = "select a.* from swo_staff_v a ";
-		$where = "where a.city='".$city."'";
-		if (isset($this->criteria)) {
-			$where_leave_dt = '';
-			$where_start_dt = '';
-			if (isset($this->criteria->start_dt)) {
-				$where_leave_dt = "a.leave_dt>='".General::toDate($this->criteria->start_dt)." 00:00:00'";
-			}
-			if (isset($this->criteria->end_dt)) {
-				$where_start_dt = "a.join_dt is null or a.join_dt<='".General::toDate($this->criteria->end_dt)." 23:59:59'";
-//				$where_leave_dt .= (($where_leave_dt=='') ? " " : " and ")
-//					."leave_dt<='".General::toDate($this->criteria->end_dt)." 23:59:59'";
-			}
-			$where .= (($where=='where') ? " " : " and ")
-				. " (a.leave_dt is null"
-				. (($where_leave_dt=='') ? ")" : " or (".$where_leave_dt."))")
-				. (($where_start_dt=='') ? "" : " and (".$where_start_dt.")");
-		} else 
-			$where .= (($where=='where') ? " " : " and ")." a.leave_dt is null";
-
-		if ($where!='where') $sql .= $where;	
-		$sql .= " order by a.lud desc";
+		$start_dt = isset($this->criteria->start_dt) ? $this->criteria->start_dt : '2000-01-01';
+		$end_dt = isset($this->criteria->end_dt) ? $this->criteria->end_dt : date('Y-m-d');
+		
+		$sql = "select
+					e.id,
+					e.code,
+					e.name,
+					z.name AS position,
+					e.staff_type,
+					if((e.staff_leader='Group Leader'),'GROUP',if((e.staff_leader='Team Leader'),'TEAM','NIL')) AS leader,
+					if((isnull(e.entry_time) or (e.entry_time='')),NULL,ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d'))) AS join_dt,
+					e.start_time AS ctrt_start_dt,
+					timestampdiff(MONTH,e.start_time,(ifnull(str_to_date(e.end_time,'%Y/%m/%d'),str_to_date(e.end_time,'%Y-%m-%d')) + interval 1 day)) AS ctrt_period,
+					if((isnull(e.end_time) or (e.end_time='')),NULL,(ifnull(str_to_date(e.end_time,'%Y/%m/%d'),str_to_date(e.end_time,'%Y-%m-%d')) + interval 1 day)) AS ctrt_renew_dt,
+					e.email,
+					if((isnull(e.leave_time) or (e.leave_time='')),NULL,ifnull(str_to_date(e.leave_time,'%Y/%m/%d'),str_to_date(e.leave_time,'%Y-%m-%d'))) AS leave_dt,
+					e.leave_reason,
+					e.remark AS remarks,
+					e.city,
+					y.name AS department,
+					e.lcu,
+					e.luu,
+					e.lcd,
+					e.lud,
+					z.dept_class
+				from (
+					select 
+						a.id, a.code, a.name, a.position, a.staff_type, a.staff_leader, a.entry_time, a.start_time, a.end_time, a.email, 
+						a.leave_time, a.leave_reason, a.remark, a.city, a.department, a.lcu, a.luu, a.lcd, a.lud
+					from hr$suffix.hr_employee a
+					where a.lud <= '$end_dt 23:59:59'
+				union
+					select 
+						b.id, b.code, b.name, b.position, b.staff_type, b.staff_leader, b.entry_time, b.start_time, b.end_time, b.email, 
+						b.leave_time, b.leave_reason, b.remark, b.city, b.department, b.lcu, b.luu, b.lcd, b.lud
+					from hr$suffix.hr_employee_operate b
+					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
+						and c.lud <= '$end_dt 23:59:59'
+					where b.employee_id not in (
+						select d.id
+						from hr$suffix.hr_employee d
+						where d.lud <= '$end_dt 23:59:59'
+					) and c.id is null and b.lud <= '$end_dt 23:59:59'
+				) e
+				left join hr$suffix.hr_dept z on e.position = z.id 
+				left join hr$suffix.hr_dept y on e.department = y.id
+				where (ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) is null or 
+				ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) < date_add('$start_dt', interval 1 month))
+				and (ifnull(str_to_date(e.leave_time,'%Y/%m/%d'),str_to_date(e.leave_time,'%Y-%m-%d')) is null or 
+				ifnull(str_to_date(e.leave_time,'%Y/%m/%d'),str_to_date(e.leave_time,'%Y-%m-%d')) >= date_add('$start_dt', interval 1 month))
+				and e.city='$city'
+				order by e.lud desc
+		";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
-            		$model = new VacationDayForm();
+       		$model = new VacationDayForm();
 			foreach ($rows as $row) {
 				$temp = array();
 				$temp['code'] = $row['code'];
@@ -75,7 +106,9 @@ class RptStaff extends ReportData2 {
 				$temp['year_day'] = $employee['year_day'];
 				$temp['education'] = $employee['education'];
 				$temp['leave_days'] = $employee['leave_days'];
-				$temp['staff_type'] = General::getStaffTypeDesc(strtoupper($employee['staff_type']));
+//				$temp['staff_type'] = General::getStaffTypeDesc(strtoupper($employee['staff_type']));
+				$staff_type = empty($row['staff_type'])?$row['dept_class']:$row['staff_type'];
+				$temp['staff_type'] = General::getStaffTypeDesc(strtoupper($staff_type));
 				
 				$this->data[] = $temp;
 			}

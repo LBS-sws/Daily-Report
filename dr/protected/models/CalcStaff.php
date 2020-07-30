@@ -59,11 +59,11 @@ class CalcStaff extends Calculation {
 */
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select e.city, count(e.code) as counter from (
-					select a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud
+					select a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position
 						from hr$suffix.hr_employee a
 						where a.lud <= '$d2 23:59:59'
 					union
-					select b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud
+					select b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position
 						from hr$suffix.hr_employee_operate b
 						left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
 							and c.lud <= '$d2 23:59:59'
@@ -73,11 +73,12 @@ class CalcStaff extends Calculation {
 								where d.lud <= '$d2 23:59:59'
 						) and c.id is null and b.lud <= '$d2 23:59:59'
 				) e
+				left join hr$suffix.hr_dept z on e.position = z.id 
 				where (ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) is null or 
 					ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) < date_add('$d1', interval 1 month))
 					and (ifnull(str_to_date(e.leave_time,'%Y/%m/%d'),str_to_date(e.leave_time,'%Y-%m-%d')) is null or 
 					ifnull(str_to_date(e.leave_time,'%Y/%m/%d'),str_to_date(e.leave_time,'%Y-%m-%d')) >= date_add('$d1', interval 1 month))
-					and upper(e.staff_type)='$stafftype'
+					and (upper(e.staff_type)='$stafftype' or (e.staff_type='' and z.dept_class='$stafftype'))
 				group by e.city
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
