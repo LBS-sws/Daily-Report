@@ -261,12 +261,15 @@ class ServiceForm extends CFormModel
 	}
 
     protected function updateContractNoContract(&$connection) {
-        if (empty($this->contract_no)) {
+        if (empty($this->contract_no)&&$this->scenario=='edit') {
             $sql = "delete from swo_service_contract_no where service_id=".$this->id;
             $connection->createCommand($sql)->execute();
         }else{
-            $sql = "insert into swo_service_contract_no(contract_no,service_id,status_dt,status) values('$this->contract_no','$this->id','$this->status_dt','$this->status') on duplicate key update contract_no='$this->contract_no', status_dt='$this->status_dt', status='$this->status'";
+            $sql = "insert into swo_service_contract_no(contract_no,service_id,status_dt,status)
+             values('$this->contract_no','$this->id','$this->status_dt','$this->status') on duplicate 
+            key update contract_no='$this->contract_no', status_dt='$this->status_dt', status='$this->status'";
             $connection->createCommand($sql)->execute();
+
         }
     }
 

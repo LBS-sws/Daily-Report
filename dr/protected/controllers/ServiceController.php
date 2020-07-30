@@ -427,7 +427,7 @@ class ServiceController extends Controller
 	public static function allowReadWrite() {
 		return Yii::app()->user->validRWFunction('A02');
 	}
-	
+
 	public static function allowReadOnly() {
 		return Yii::app()->user->validFunction('A02');
 	}

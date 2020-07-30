@@ -154,7 +154,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'cust_type',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php echo $form->dropDownList($model, 'cust_type', General::getCustTypeList(), array('disabled'=>($model->scenario=='view'))); 
+					<?php echo $form->dropDownList($model, 'cust_type', General::getCustTypeList(), array('disabled'=>($model->scenario=='view')));
 					?>
 				</div>
                 <div class="col-sm-2">
@@ -175,7 +175,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'nature_type',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php echo $form->dropDownList($model, 'nature_type', General::getNatureList(), array('disabled'=>($model->scenario=='view'))); 
+					<?php echo $form->dropDownList($model, 'nature_type', General::getNatureList(), array('disabled'=>($model->scenario=='view')));
 					?>
 				</div>
 			</div>
