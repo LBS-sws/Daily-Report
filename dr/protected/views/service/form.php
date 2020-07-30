@@ -579,6 +579,37 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 Script::genFileUpload($model,$form->id,'SERVICE');
 $link3 = Yii::app()->createAbsoluteUrl("service/getcusttypelist");
 $js = <<<EOF
+    document.getElementById("ServiceForm_all_number").addEventListener("input",function(event){
+           event.target.value = event.target.value.replace(/\-/g,""); 
+        });
+    document.getElementById("ServiceForm_surplus").addEventListener("input",function(event){
+       event.target.value = event.target.value.replace(/\-/g,""); 
+    });
+    document.getElementById("ServiceForm_all_number_edit0").addEventListener("input",function(event){
+       event.target.value = event.target.value.replace(/\-/g,""); 
+    });
+    document.getElementById("ServiceForm_all_number_edit1").addEventListener("input",function(event){
+       event.target.value = event.target.value.replace(/\-/g,""); 
+    });
+    document.getElementById("ServiceForm_all_number_edit2").addEventListener("input",function(event){
+       event.target.value = event.target.value.replace(/\-/g,""); 
+    });
+    document.getElementById("ServiceForm_all_number_edit3").addEventListener("input",function(event){
+       event.target.value = event.target.value.replace(/\-/g,""); 
+    });
+    document.getElementById("ServiceForm_surplus_edit0").addEventListener("input",function(event){
+       event.target.value = event.target.value.replace(/\-/g,""); 
+    });
+    document.getElementById("ServiceForm_surplus_edit1").addEventListener("input",function(event){
+       event.target.value = event.target.value.replace(/\-/g,""); 
+    });
+    document.getElementById("ServiceForm_surplus_edit2").addEventListener("input",function(event){
+       event.target.value = event.target.value.replace(/\-/g,""); 
+    });
+    document.getElementById("ServiceForm_surplus_edit3").addEventListener("input",function(event){
+       event.target.value = event.target.value.replace(/\-/g,""); 
+    });
+
 $('#ServiceForm_cust_type').on('change',function() {
 	var group = $(this).val();
 	var data = "group="+group;
