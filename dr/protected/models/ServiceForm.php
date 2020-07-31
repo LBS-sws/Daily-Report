@@ -57,7 +57,7 @@ class ServiceForm extends CFormModel
 	public $othersalesman;
 	public $status_desc;
 	public $backlink;
-	public $prepay_mont=0;
+	public $prepay_month=0;
 	public $prepay_start=0;
     public $contract_no;
 	

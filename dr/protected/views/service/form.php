@@ -763,6 +763,9 @@ if ($model->scenario!='view') {
 	Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 }
 
+$js = Script::genReadonlyField();
+Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
+
 if ($model->status=='T') {
     $js = "
 	 document.getElementById('ServiceForm_all_number').addEventListener('input',function(event){
@@ -796,18 +799,15 @@ if ($model->status=='T') {
        event.target.value = event.target.value.replace(/\-/g,''); 
     });
 	";
-    Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
+    Yii::app()->clientScript->registerScript('surplus',$js,CClientScript::POS_READY);
 }else{
     $js = "
 	 document.getElementById('ServiceForm_all_number').addEventListener('input',function(event){
            event.target.value = event.target.value.replace(/\-/g,''); 
         }); 
 	";
-    Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
+    Yii::app()->clientScript->registerScript('surplus',$js,CClientScript::POS_READY);
 }
-
-$js = Script::genReadonlyField();
-Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
 ?>
 
 <?php $this->endWidget(); ?>
