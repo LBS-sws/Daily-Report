@@ -32,7 +32,7 @@ class RptStaff extends ReportData2 {
 		$end_dt = isset($this->criteria->end_dt) ? $this->criteria->end_dt : date('Y-m-d');
 		
 		$sql = "select
-					e.id,
+					e.employee_id as id,
 					e.code,
 					e.name,
 					z.name AS position,
@@ -43,8 +43,16 @@ class RptStaff extends ReportData2 {
 					timestampdiff(MONTH,e.start_time,(ifnull(str_to_date(e.end_time,'%Y/%m/%d'),str_to_date(e.end_time,'%Y-%m-%d')) + interval 1 day)) AS ctrt_period,
 					if((isnull(e.end_time) or (e.end_time='')),NULL,(ifnull(str_to_date(e.end_time,'%Y/%m/%d'),str_to_date(e.end_time,'%Y-%m-%d')) + interval 1 day)) AS ctrt_renew_dt,
 					e.email,
-					if((isnull(e.leave_time) or (e.leave_time='')),NULL,ifnull(str_to_date(e.leave_time,'%Y/%m/%d'),str_to_date(e.leave_time,'%Y-%m-%d'))) AS leave_dt,
-					e.leave_reason,
+					if((isnull(f.leave_time) or (f.leave_time='')),
+						NULL,
+						if(ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) < date_add('$start_dt', interval 1 month),
+							ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')),NULL)
+					) AS leave_dt,
+					if((isnull(f.leave_time) or (f.leave_time='')),
+						'',
+						if(ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) < date_add('$start_dt', interval 1 month),
+							f.leave_reason, '')
+					) AS leave_reason,
 					e.remark AS remarks,
 					e.city,
 					y.name AS department,
@@ -55,13 +63,13 @@ class RptStaff extends ReportData2 {
 					z.dept_class
 				from (
 					select 
-						a.id, a.code, a.name, a.position, a.staff_type, a.staff_leader, a.entry_time, a.start_time, a.end_time, a.email, 
+						a.id as employee_id, a.code, a.name, a.position, a.staff_type, a.staff_leader, a.entry_time, a.start_time, a.end_time, a.email, 
 						a.leave_time, a.leave_reason, a.remark, a.city, a.department, a.lcu, a.luu, a.lcd, a.lud
 					from hr$suffix.hr_employee a
 					where a.lud <= '$end_dt 23:59:59'
 				union
 					select 
-						b.id, b.code, b.name, b.position, b.staff_type, b.staff_leader, b.entry_time, b.start_time, b.end_time, b.email, 
+						b.employee_id, b.code, b.name, b.position, b.staff_type, b.staff_leader, b.entry_time, b.start_time, b.end_time, b.email, 
 						b.leave_time, b.leave_reason, b.remark, b.city, b.department, b.lcu, b.luu, b.lcd, b.lud
 					from hr$suffix.hr_employee_operate b
 					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
@@ -72,12 +80,13 @@ class RptStaff extends ReportData2 {
 						where d.lud <= '$end_dt 23:59:59'
 					) and c.id is null and b.lud <= '$end_dt 23:59:59'
 				) e
+				inner join hr$suffix.hr_employee f on f.id = e.employee_id
 				left join hr$suffix.hr_dept z on e.position = z.id 
 				left join hr$suffix.hr_dept y on e.department = y.id
 				where (ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) is null or 
 				ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) < date_add('$start_dt', interval 1 month))
-				and (ifnull(str_to_date(e.leave_time,'%Y/%m/%d'),str_to_date(e.leave_time,'%Y-%m-%d')) is null or 
-				ifnull(str_to_date(e.leave_time,'%Y/%m/%d'),str_to_date(e.leave_time,'%Y-%m-%d')) >= date_add('$start_dt', interval 1 month))
+				and (ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) is null or 
+				ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) >= '$start_dt')
 				and e.city='$city'
 				order by e.lud desc
 		";
