@@ -57,8 +57,8 @@ class ServiceForm extends CFormModel
 	public $othersalesman;
 	public $status_desc;
 	public $backlink;
-	public $prepay_month;
-	public $prepay_start;
+	public $prepay_mont=0;
+	public $prepay_start=0;
     public $contract_no;
 	
 	public $files;
@@ -512,8 +512,14 @@ class ServiceForm extends CFormModel
         if (strpos($sql,':surplus_edit3')!==false) {
             $command->bindParam(':surplus_edit3',$this->surplus_edit3,PDO::PARAM_INT);
         }
+        if(empty($this->prepay_month)){
+            $this->prepay_month=0;
+        }
         if (strpos($sql,':prepay_month')!==false) {
             $command->bindParam(':prepay_month',$this->prepay_month,PDO::PARAM_INT);
+        }
+        if(empty($this->prepay_start)){
+            $this->prepay_start=0;
         }
          if (strpos($sql,':prepay_start')!==false) {
              $command->bindParam(':prepay_start',$this->prepay_start,PDO::PARAM_INT);
