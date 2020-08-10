@@ -41,7 +41,7 @@ class LookupController extends Controller
 	public function actionCompany($search) {
 		$city = Yii::app()->user->city();
 		$searchx = str_replace("'","\'",$search);
-		$sql = "select id, concat(left(concat(code,space(8)),8),name) as value from swo_company
+		$sql = "select id, concat(code,name) as value from swo_company
 				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'";
 		$result = Yii::app()->db->createCommand($sql)->queryAll();
 		$data = TbHtml::listData($result, 'id', 'value');
@@ -59,7 +59,8 @@ class LookupController extends Controller
 			foreach ($records as $k=>$record) {
 				$result[] = array(
 						'id'=>$record['id'],
-						'value'=>$record['code'].' '.$record['name'],
+//						'value'=>$record['code'].' '.$record['name'],
+						'value'=>$record['code'].$record['name'],
 						'contact'=>trim($record['cont_name']).'/'.trim($record['cont_phone']),
 						'address'=>$record['address'],
 					);
@@ -78,7 +79,8 @@ class LookupController extends Controller
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
-				$result[$record['id']] = substr($record['code'].str_repeat(' ',8),0,8).$record['name'];
+//				$result[$record['id']] = substr($record['code'].str_repeat(' ',8),0,8).$record['name'];
+				$result[$record['id']] = $record['code'].$record['name'];
 				$hidden .= TbHtml::hiddenField('otherfld_'.$record['id'].'_contact',trim($record['cont_name']).'/'.trim($record['cont_phone']));
 				$hidden .= TbHtml::hiddenField('otherfld_'.$record['id'].'_address',$record['address']);
 			}
