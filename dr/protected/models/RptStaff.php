@@ -43,7 +43,7 @@ class RptStaff extends ReportData2 {
 					timestampdiff(MONTH,e.start_time,(ifnull(str_to_date(e.end_time,'%Y/%m/%d'),str_to_date(e.end_time,'%Y-%m-%d')) + interval 1 day)) AS ctrt_period,
 					if((isnull(e.end_time) or (e.end_time='')),NULL,(ifnull(str_to_date(e.end_time,'%Y/%m/%d'),str_to_date(e.end_time,'%Y-%m-%d')) + interval 1 day)) AS ctrt_renew_dt,
 					e.email,
-					if((isnull(f.leave_time) or (f.leave_time='')),
+				if((isnull(f.leave_time) or (f.leave_time='')),
 						NULL,
 						if(ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) < date_add('$start_dt', interval 1 month),
 							ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')),NULL)

@@ -132,7 +132,7 @@ class CalcStaff extends Calculation {
 								where d.lud <= '$d2 23:59:59'
 						) and c.id is null and b.lud <= '$d2 23:59:59'
 				) e
-				inner join hr$suffix.hr_employee f on f.id = e.employee_id
+					inner join hr$suffix.hr_employee f on f.id = e.employee_id
 				where (ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) is null or 
 					ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) < date_add('$d1', interval 1 month))
 					and (ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) is null or 
@@ -174,9 +174,9 @@ class CalcStaff extends Calculation {
 								where d.lud <= '$d2 23:59:59'
 						) and c.id is null and b.lud <= '$d2 23:59:59'
 				) e
-				inner join hr$suffix.hr_employee f on f.id = e.employee_id
+					inner join hr$suffix.hr_employee f on f.id = e.employee_id
 				where (ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) < date_add('$d1', interval -1 month))
-					and (ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) is null or 
+				and (ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) is null or 
 					ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) >= date_add('$d1', interval 1 month))
 					and e.start_time is null
 				group by e.city

@@ -5,16 +5,6 @@ class DatatxnCommand extends CConsoleCommand {
 	protected $year;
 	protected $month;
 
-	public function run($args) {
-		$suffix = Yii::app()->params['envSuffix'];
-		$sql = "select * from datatxn.txnrecord where status='P' order by id";
-		$rows = Yii::app()->db->createCommand($sql)->queryAll();
-		if (count($rows) > 0) {
-			foreach ($rows as $row) {
-				
-			}
-		}
-	}
 
 	public function run($args) {
 		$flags = array();
@@ -30,7 +20,7 @@ class DatatxnCommand extends CConsoleCommand {
 				echo $mesg;
 				if (!isset($flags[$cat]) || $flags[$cat]) $flags[$cat] = ($row['status']=='P');
 				if ($flags[$cat]) {
-					$this->
+
 				} else {
 					echo "... Not Process\n";
 				}

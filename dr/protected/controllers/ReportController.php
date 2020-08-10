@@ -156,6 +156,7 @@ class ReportController extends Controller
 		$this->function_id = 'B11';
 		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUIFeedback('all', 'All Daily Reports');
+
 	}
 
 	protected function genAll($criteria) {
@@ -514,6 +515,12 @@ class ReportController extends Controller
 		$model->name = $name;
 		if (Yii::app()->user->isSingleCity())
 			$model->city = Yii::app()->user->city();
+			$sql="select * from swo_fixed_queue_value where city = '".$model->city ."'";
+			$records = Yii::app()->db->createCommand($sql)->queryRow();
+			if(!empty($records)){
+                $model->touser=$records['touser'];
+                $model->ccuser=json_encode($records['ccuser']);
+			}
 //		else {
 //			$items = explode(",",str_replace("'","",Yii::app()->user->city_allow()));
 //			$model->city = $items[0];
