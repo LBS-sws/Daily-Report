@@ -519,7 +519,7 @@ class ReportController extends Controller
 			$records = Yii::app()->db->createCommand($sql)->queryRow();
 			if(!empty($records)){
                 $model->touser=$records['touser'];
-                $model->ccuser=json_encode($records['ccuser']);
+                $model->ccuser=json_decode($records['ccuser']);
 			}
 //		else {
 //			$items = explode(",",str_replace("'","",Yii::app()->user->city_allow()));
