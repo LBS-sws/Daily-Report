@@ -184,7 +184,7 @@ class ReportH02Form extends CReportForm
                     $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'90',$model->excel[$i]['c84']."(".$model->excel[$i]['e84'].")") ;
                     $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'91',$model->excel[$i]['c85']."(".$model->excel[$i]['e85'].")") ;
                     $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'92',$model->excel[$i]['c86']."(".$model->excel[$i]['e86'].")") ;
-                    $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'93',$model->excel[$i]['c88']."(".$model->excel[$i]['e88'].")") ;
+                    $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'94',$model->excel[$i]['c88']."(".$model->excel[$i]['e88'].")") ;
                     $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'95',$model->excel[$i]['c89']."(".$model->excel[$i]['e89'].")") ;
                     $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'96',$model->excel[$i]['c90']."(".$model->excel[$i]['e90'].")") ;
                     $objPHPExcel->getActiveSheet()->setCellValue($excel_m[$i].'97',$model->excel[$i]['c91']."(".$model->excel[$i]['e91'].")") ;
