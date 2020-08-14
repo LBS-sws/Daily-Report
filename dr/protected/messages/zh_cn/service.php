@@ -11,7 +11,7 @@ return array(
 	'Paid Amt'=>'服务金额',
 	'Installation Fee'=>'装机金额',
 	'Resp. Sales'=>'业务员',
-    'OtherSalesman'=>'跨区业务员',
+    'OtherSalesman'=>'被跨区业务员',
     'Resp. Tech.'=>'技术员',
 	'Sign Date'=>'签约日期',
 	'Contract End Date'=>'合同终止日期',
@@ -82,7 +82,7 @@ return array(
 	
 	'Type'=>'类别',
 	'Source'=>'接收来源',
-	'othersalesman'=>'跨区业务员',
+	'othersalesman'=>'被跨区业务员',
 	'Resp. Tech.'=>'负责技术员',
 	'Notify Manager'=>'经理知悉',
 	'Schedule Date'=>'安排跟进日期',
