@@ -56,7 +56,7 @@ class ExtsysQueueCommand extends CConsoleCommand {
 	protected function markStatus($id, $ts, $sts) {
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = ($sts=='C' || $sts=='F') 
-			? "update security$suffix.sec_extsys_queue set fin_dt=now(), status=:status where id=:id and ts=:ts";
+			? "update security$suffix.sec_extsys_queue set fin_dt=now(), status=:status where id=:id and ts=:ts"
 			: "update security$suffix.sec_extsys_queue set status=:status where id=:id and ts=:ts";
 		$command=Yii::app()->db->createCommand($sql);
 		if (strpos($sql,':id')!==false)
