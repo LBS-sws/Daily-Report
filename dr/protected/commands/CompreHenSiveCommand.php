@@ -18,7 +18,7 @@ class CompreHenSiveCommand extends CConsoleCommand
                     $city_allow = City::model()->getDescendantList($city);
                     //城市
                     if(empty($city_allow)){
-                        $arr['ReportG02Form']=array ( 'city' => $city, 'start_dt' => $year, 'start_dt1' => $month, 'end_dt' => $year, 'end_dt1' =>$month );
+                        $arr['_scenario']=array ( 'city' => $city, 'start_dt' => $year, 'start_dt1' => $month, 'end_dt' => $year, 'end_dt1' =>$month );
 //                        $model=new ReportG02Form($arr['ReportG02Form']);
                         $model=$this->retrieveData($arr);
                         $email=$this->email($city,'CN12');
@@ -110,9 +110,9 @@ class CompreHenSiveCommand extends CConsoleCommand
 EOF;
 
                     }else{
-                        $arr['ReportG02Form']=array ( 'city' => $city, 'start_dt' => $year, 'start_dt1' => $month, 'end_dt' => $year, 'end_dt1' =>$month );
-                        $model=new ReportG02Form($arr['ReportG02Form']);
-                        $model->retrieveData($model);
+                        $arr['_scenario']=array ( 'city' => $city, 'start_dt' => $year, 'start_dt1' => $month, 'end_dt' => $year, 'end_dt1' =>$month );
+//                        $model=new ReportG02Form($arr['ReportG02Form']);
+                        $model=$this->retrieveData($arr);
                         $from_addr = "it@lbsgroup.com.hk";
                         $subject=$model['city'][$model['scenario']['city']]."-综合数据对比分析".$year."/".$month;
                         $description='';
@@ -358,6 +358,7 @@ EOF;
         $signingYear=$this->signingYear($year_arr,$month_arr,$city_allow);
         $signingmax=$this->signingmax($year_arr,$month_arr,$city_allow);
         $arr=array();
+        $array=array();
 //                 print_r('<pre>');
 //        print_r($reportmax);exit();
         for ($i=0;$i<count($month_arr);$i++){
@@ -401,7 +402,8 @@ EOF;
             $arr[$i]['signingYear']=$signingYear[$i];
             $arr[$i]['signingmax']=$signingmax[$i];
         }
-        $model['excel']=$arr;
+        $array['excel']=$arr;
+        return $array;
 
     }
     //提取月报表数据
