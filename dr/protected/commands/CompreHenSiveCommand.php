@@ -20,7 +20,7 @@ class CompreHenSiveCommand extends CConsoleCommand
                     $city_allow = City::model()->getDescendantList($city);
                     //城市
                     if(empty($city_allow)){
-                        $arr=array ( 'city' => 'SH', 'start_dt' => '2019', 'start_dt1' => '4', 'end_dt' => '2019', 'end_dt1' =>'4' );
+                        $arr=array ( 'city' => $city, 'start_dt' => $year, 'start_dt1' => $month, 'end_dt' => $year, 'end_dt1' =>$month );
 //                        $model=new ReportG02Form($arr['ReportG02Form']);
                         $model=$this->retrieveData($arr);
                         $email=$this->email($city,'CN12');
@@ -112,11 +112,11 @@ class CompreHenSiveCommand extends CConsoleCommand
 EOF;
 
                     }else{
-                        $arr['scenario']=array ( 'city' => $city, 'start_dt' => $year, 'start_dt1' => $month, 'end_dt' => $year, 'end_dt1' =>$month );
+                        $arr=array ( 'city' => $city, 'start_dt' => $year, 'start_dt1' => $month, 'end_dt' => $year, 'end_dt1' =>$month );
 //                        $model=new ReportG02Form($arr['ReportG02Form']);
                         $model=$this->retrieveData($arr);
                         $from_addr = "it@lbsgroup.com.hk";
-                        $subject=$model['city'][$model['scenario']['city']]."-综合数据对比分析".$year."/".$month;
+                        $subject=$arr['city']."-综合数据对比分析".$year."/".$month;
                         $description='';
                         if($city=='CN'){
                             $s=array();
