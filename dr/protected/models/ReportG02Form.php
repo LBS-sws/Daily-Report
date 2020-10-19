@@ -1325,12 +1325,12 @@ class ReportG02Form extends CReportForm
                 }
             }
             $count=(count($arr)-$o)==0?1:(count($arr)-$o);
-            if(in_array("'JM'", $city)){
-                $count=9;
-                if(in_array("'HN'", $city)){
-                    $count=19;
-                }
-            }
+//            if(in_array("'JM'", $city)){
+//                $count=9;
+//                if(in_array("'HN'", $city)){
+//                    $count=19;
+//                }
+//            }
             $arrs[]=round((array_sum($arr))/$count,2);
         }
         return $arrs;
@@ -1359,12 +1359,7 @@ class ReportG02Form extends CReportForm
                 }
             }
             $count=(count($arr)-$o)==0?1:(count($arr)-$o);
-            if(in_array("'JM'", $city)){
-                $count=9;
-                if(in_array("'HN'", $city)){
-                    $count=19;
-                }
-            }
+
             $arrs[]=round((array_sum($arr))/$count,2);
         }
         return $arrs;
@@ -1387,12 +1382,6 @@ class ReportG02Form extends CReportForm
                 }
             }
             $count=(count($arr)-$o)==0?1:(count($arr)-$o);
-            if(in_array("'JM'", $city)){
-                $count=9;
-                if(in_array("'HN'", $city)){
-                    $count=19;
-                }
-            }
             $arrs[]=round((array_sum($arr))/$count,2);
         }
         return $arrs;
