@@ -1,6 +1,8 @@
  <?php
 class CompreHenSiveCommand extends CConsoleCommand
 {
+    public $no_city=array('TY','KS','TN','TC','HK','TP','ZS1','HN','MY','ZY','HXHB','MO','HD','JMS','XM','CS','HX','H-N','HD1','RN','HN1','HN2','CN','HB');
+
     public function run()
     {
         $suffix = Yii::app()->params['envSuffix'];
@@ -18,13 +20,13 @@ class CompreHenSiveCommand extends CConsoleCommand
                     $city_allow = City::model()->getDescendantList($city);
                     //城市
                     if(empty($city_allow)){
-                        $arr['scenario']=array ( 'city' => $city, 'start_dt' => $year, 'start_dt1' => $month, 'end_dt' => $year, 'end_dt1' =>$month );
+                        $arr=array ( 'city' => 'SH', 'start_dt' => '2019', 'start_dt1' => '4', 'end_dt' => '2019', 'end_dt1' =>'4' );
 //                        $model=new ReportG02Form($arr['ReportG02Form']);
                         $model=$this->retrieveData($arr);
                         $email=$this->email($city,'CN12');
                         $to_addr = json_encode($email);
                         $from_addr = "it@lbsgroup.com.hk";
-                        $subject=$model['city'][$model['scenario']['city']]."-综合数据对比分析".$year."/".$month;
+                        $subject=$arr['city']."-综合数据对比分析".$year."/".$month;
                         $description='';
                         $lastcity1=$this->lastcity($city);
                         $lastemail1=$this->email($lastcity1,'CN13');
@@ -49,7 +51,7 @@ class CompreHenSiveCommand extends CConsoleCommand
                             </colgroup>
                             <tbody>
                                <tr height="102" style="height:77.00pt;">
-                                    <td class="et4" height="102" style="height:77.00pt;width:100.50pt;" width="134" >{$model['city'][$model['scenario']['city']]}</td>
+                                    <td class="et4" height="102" style="height:77.00pt;width:100.50pt;" width="134" >1</td>
                                     <td class="et4" height="102" style="height:77.00pt;width:100.50pt;" width="134" ></td>
                                     <td class="et5" style="width:112.50pt;" width="150" >生意额增长<br />
                                     （比上月/去年当月的数据为正是增长，为负是降低）</td>
@@ -152,7 +154,7 @@ EOF;
                             </colgroup>
                             <tbody>
                                 <tr height="100" style="height:75.00pt;">
-                                    <td class="et5" height="100" style="height:75.00pt;width:100.50pt;" width="134" >{$model['city'][$model['scenario']['city']]}</td>
+                                    <td class="et5" height="100" style="height:75.00pt;width:100.50pt;" width="134" >1</td>
                                     <td class="et5" style="width:95.65pt;" width="127">&nbsp;</td>
                                     <td class="et6" style="width:112.45pt;" width="149" >生意额增长<br />
                                     （比上月/去年当月的数据为正是增长，为负是降低）</td>
@@ -268,8 +270,8 @@ EOF;
 
     public function retrieveData($model){
         //获取月份
-        $start_date = $model['scenario']['start_dt']."-".$model['scenario']['start_dt1']."-1"; // 自动为00:00:00 时分秒
-        $end_date = $model['scenario']['end_dt']."-".$model['scenario']['end_dt1']."-1";
+        $start_date = $model['start_dt']."-".$model['start_dt1']."-1"; // 自动为00:00:00 时分秒
+        $end_date = $model['end_dt']."-".$model['end_dt1']."-1";
         $start_arr = explode("-", $start_date);
         $end_arr = explode("-", $end_date);
         $start_year = intval($start_arr[0]);
@@ -304,10 +306,10 @@ EOF;
                 }
             }
         }
-        $city_allow = City::model()->getDescendantList($model['scenario']['city']);
+        $city_allow = City::model()->getDescendantList($model['city']);
 
         if(empty($city_allow)){
-            $city_allow="'".$model['scenario']['city']."'";
+            $city_allow="'".$model['city']."'";
         }
         //生意额增长 本月/上月/去年当月
         $business=$this->business($year_arr,$month_arr,$city_allow);
@@ -1378,10 +1380,15 @@ EOF;
                      $o=$o+1;
                  }
              }
-             $last_names = array_column($arrs[$i],'value');
-             array_multisort($last_names,SORT_DESC,$arrs[$i]);
-             $model[$i]['max']=$arrs[$i][0]['value']." (".$arrs[$i][0]['city'].")";
-             $model[$i]['end']=$arrs[$i][$o-1]['value']." (".$arrs[$i][$o-1]['city'].")";
+             if(empty($arrs)){
+                 $model[$i]['max']='暂无数据';
+                 $model[$i]['end']='暂无数据';
+             }else {
+                 $last_names = array_column($arrs[$i], 'value');
+                 array_multisort($last_names, SORT_DESC, $arrs[$i]);
+                 $model[$i]['max'] = $arrs[$i][0]['value'] . " (" . $arrs[$i][0]['city'] . ")";
+                 $model[$i]['end'] = $arrs[$i][$o - 1]['value'] . " (" . $arrs[$i][$o - 1]['city'] . ")";
+             }
          }
          return $model;
      }
@@ -1489,10 +1496,15 @@ EOF;
                      $o=$o+1;
                  }
              }
-             $last_names = array_column($arrs[$i],'value');
-             array_multisort($last_names,SORT_DESC,$arrs[$i]);
-             $model[$i]['max']=$arrs[$i][0]['value']." (".$arrs[$i][0]['city'].")";
-             $model[$i]['end']=$arrs[$i][$o-1]['value']." (".$arrs[$i][$o-1]['city'].")";
+             if(empty($arrs)){
+                 $model[$i]['max']='暂无数据';
+                 $model[$i]['end']='暂无数据';
+             }else {
+                 $last_names = array_column($arrs[$i], 'value');
+                 array_multisort($last_names, SORT_DESC, $arrs[$i]);
+                 $model[$i]['max'] = $arrs[$i][0]['value'] . " (" . $arrs[$i][0]['city'] . ")";
+                 $model[$i]['end'] = $arrs[$i][$o - 1]['value'] . " (" . $arrs[$i][$o - 1]['city'] . ")";
+             }
          }
          return $model;
      }
@@ -1766,10 +1778,15 @@ EOF;
                      $o=$o+1;
                  }
              }
-             $last_names = array_column($arrs[$i],'value');
-             array_multisort($last_names,SORT_DESC,$arrs[$i]);
-             $model[$i]['max']=$arrs[$i][0]['value']." (".$arrs[$i][0]['city'].")";
-             $model[$i]['end']=$arrs[$i][$o-1]['value']." (".$arrs[$i][$o-1]['city'].")";
+             if(empty($arrs)){
+                 $model[$i]['max']='暂无数据';
+                 $model[$i]['end']='暂无数据';
+             }else {
+                 $last_names = array_column($arrs[$i], 'value');
+                 array_multisort($last_names, SORT_DESC, $arrs[$i]);
+                 $model[$i]['max'] = $arrs[$i][0]['value'] . " (" . $arrs[$i][0]['city'] . ")";
+                 $model[$i]['end'] = $arrs[$i][$o - 1]['value'] . " (" . $arrs[$i][$o - 1]['city'] . ")";
+             }
          }
          return $model;
      }
