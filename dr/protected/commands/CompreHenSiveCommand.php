@@ -18,7 +18,7 @@ class CompreHenSiveCommand extends CConsoleCommand
                     $city_allow = City::model()->getDescendantList($city);
                     //城市
                     if(empty($city_allow)){
-                        $arr['_scenario']=array ( 'city' => $city, 'start_dt' => $year, 'start_dt1' => $month, 'end_dt' => $year, 'end_dt1' =>$month );
+                        $arr['scenario']=array ( 'city' => $city, 'start_dt' => $year, 'start_dt1' => $month, 'end_dt' => $year, 'end_dt1' =>$month );
 //                        $model=new ReportG02Form($arr['ReportG02Form']);
                         $model=$this->retrieveData($arr);
                         $email=$this->email($city,'CN12');
@@ -110,7 +110,7 @@ class CompreHenSiveCommand extends CConsoleCommand
 EOF;
 
                     }else{
-                        $arr['_scenario']=array ( 'city' => $city, 'start_dt' => $year, 'start_dt1' => $month, 'end_dt' => $year, 'end_dt1' =>$month );
+                        $arr['scenario']=array ( 'city' => $city, 'start_dt' => $year, 'start_dt1' => $month, 'end_dt' => $year, 'end_dt1' =>$month );
 //                        $model=new ReportG02Form($arr['ReportG02Form']);
                         $model=$this->retrieveData($arr);
                         $from_addr = "it@lbsgroup.com.hk";
@@ -268,8 +268,8 @@ EOF;
 
     public function retrieveData($model){
         //获取月份
-        $start_date = $model['_scenario']['start_dt']."-".$model['_scenario']['start_dt1']."-1"; // 自动为00:00:00 时分秒
-        $end_date = $model['_scenario']['end_dt']."-".$model['_scenario']['end_dt1']."-1";
+        $start_date = $model['scenario']['start_dt']."-".$model['scenario']['start_dt1']."-1"; // 自动为00:00:00 时分秒
+        $end_date = $model['scenario']['end_dt']."-".$model['scenario']['end_dt1']."-1";
         $start_arr = explode("-", $start_date);
         $end_arr = explode("-", $end_date);
         $start_year = intval($start_arr[0]);
