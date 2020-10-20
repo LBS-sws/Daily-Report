@@ -252,7 +252,7 @@ EOF;
         $suffix = Yii::app()->params['envSuffix'];
         $sql="select email from security$suffix.sec_user  a
               left outer join security$suffix.sec_user_access  b on a.username=b.username
-              where a.city='$city' and b.system_id='acct' and b.a_control like '%$cn%'
+              where a.city='$city' and b.system_id='dr' and b.a_control like '%$cn%'
 ";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         $email_addr=array();
