@@ -56,7 +56,7 @@ class CompreHenSiveCommand extends CConsoleCommand
                             </colgroup>
                             <tbody>
                                <tr height="102" style="height:77.00pt;">
-                                    <td class="et4" height="102" style="height:77.00pt;width:100.50pt;" width="134" >{$model['city'][$model['scenario']['city']]}</td>
+                                    <td class="et4" height="102" style="height:77.00pt;width:100.50pt;" width="134" >{$rows}</td>
                                     <td class="et4" height="102" style="height:77.00pt;width:100.50pt;" width="134" ></td>
                                     <td class="et5" style="width:112.50pt;" width="150" >生意额增长<br />
                                     （比上月/去年当月的数据为正是增长，为负是降低）</td>
@@ -162,7 +162,7 @@ EOF;
                             </colgroup>
                             <tbody>
                                 <tr height="100" style="height:75.00pt;">
-                                    <td class="et5" height="100" style="height:75.00pt;width:100.50pt;" width="134" >{$model['city'][$model['scenario']['city']]}</td>
+                                    <td class="et5" height="100" style="height:75.00pt;width:100.50pt;" width="134" >{$rows}</td>
                                     <td class="et5" style="width:95.65pt;" width="127">&nbsp;</td>
                                     <td class="et6" style="width:112.45pt;" width="149" >生意额增长<br />
                                     （比上月/去年当月的数据为正是增长，为负是降低）</td>
