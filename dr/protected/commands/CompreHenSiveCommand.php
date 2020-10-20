@@ -29,7 +29,9 @@ class CompreHenSiveCommand extends CConsoleCommand
                         $email=$this->email($city,'CN12');
                         $to_addr = json_encode($email);
                         $from_addr = "it@lbsgroup.com.hk";
-                        $subject=$model['city'][$model['scenario']['city']]."-综合数据对比分析".$year."/".$month;
+                        $sql="select name from security$suffix.sec_city where code='$city'";
+                        $rows = Yii::app()->db->createCommand($sql)->queryScalar();
+                        $subject=$rows."-综合数据对比分析".$year."/".$month;
                         $description='';
                         $lastcity1=$this->lastcity($city);
                         $lastemail1=$this->email($lastcity1,'CN13');
@@ -119,7 +121,9 @@ EOF;
                         $model=new ComperHenSiveForm;
                         $model=$model->retrieveData($arr);
                         $from_addr = "it@lbsgroup.com.hk";
-                        $subject=$model['city'][$model['scenario']['city']]."-综合数据对比分析".$year."/".$month;
+                        $sql="select name from security$suffix.sec_city where code='$city'";
+                        $rows = Yii::app()->db->createCommand($sql)->queryScalar();
+                        $subject=$rows."-综合数据对比分析".$year."/".$month;
                         $description='';
                         if($city=='CN'){
                             $s=array();

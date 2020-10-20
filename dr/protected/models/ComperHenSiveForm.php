@@ -213,6 +213,7 @@ class ComperHenSiveForm extends CReportForm
            $arr[$i]['signingmax']=$signingmax[$i];
         }
             $model['excel']=$arr;
+        return $model;
 
     }
     //提取月报表数据
