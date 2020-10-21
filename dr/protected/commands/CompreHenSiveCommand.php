@@ -58,10 +58,9 @@ class CompreHenSiveCommand extends CConsoleCommand
                                <tr height="102" style="height:77.00pt;">
                                     <td class="et4" height="102" style="height:77.00pt;width:100.50pt;" width="134" >{$rows}</td>
                                     <td class="et4" height="102" style="height:77.00pt;width:100.50pt;" width="134" ></td>
-                                    <td class="et5" style="width:112.50pt;" width="150" >生意额增长<br />
-                                    （比上月/去年当月的数据为正是增长，为负是降低）</td>
-                                    <td class="et6" style="width:112.50pt;" width="150" >纯利润增长<br />
-                                    （比上月/去年当月的数据为正是增长，为负是降低）</td>
+                                    <td class="et5" style="width:112.50pt;" width="150" >生意额增长
+                                </td>
+                                    <td class="et6" style="width:112.50pt;" width="150" >纯利润增长<</td>
                                     <td class="et7" style="width:90.00pt;" width="120" >停单比例</td>
                                     <td class="et7" style="width:90.00pt;" width="120" >收款率</td>
                                     <td class="et7" style="width:115.45pt;" width="131" >技术员平均生产力</td>
@@ -130,7 +129,7 @@ EOF;
                             $email=$this->email($city,'CN14');
                             $to_addr = json_encode($email);
 //                            $s[]='flam@lbsgroup.com.hk';
-                            $s[]='bella.cd@lbsgroup.com.cn';
+                            $s[]='flam@lbsgroup.com.hk';
                             $cc_addr=json_encode($s);
                         }else{
                             $email=$this->email($city,'CN13');
@@ -164,10 +163,10 @@ EOF;
                                 <tr height="100" style="height:75.00pt;">
                                     <td class="et5" height="100" style="height:75.00pt;width:100.50pt;" width="134" >{$rows}</td>
                                     <td class="et5" style="width:95.65pt;" width="127">&nbsp;</td>
-                                    <td class="et6" style="width:112.45pt;" width="149" >生意额增长<br />
-                                    （比上月/去年当月的数据为正是增长，为负是降低）</td>
-                                    <td class="et7" style="width:115.25pt;" width="153" >纯利润增长<br />
-                                    （比上月/去年当月的数据为正是增长，为负是降低）</td>
+                                    <td class="et6" style="width:112.45pt;" width="149" >生意额增长
+                                    </td>
+                                    <td class="et7" style="width:115.25pt;" width="153" >纯利润增长
+                                    </td>
                                     <td class="et7" style="width:90.00pt;" width="120" >停单比例</td>
                                     <td class="et7" style="width:90.00pt;" width="120" >收款率</td>
                                     <td class="et7" style="width:115.45pt;" width="131" >技术员平均生产力</td>
