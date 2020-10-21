@@ -1087,7 +1087,8 @@ class ComperHenSiveForm extends CReportForm
                 $end=$arr17[$i][$o]['hdr_id'];
                 $sql="select a.name,a.code from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
                 $cityname = Yii::app()->db->createCommand($sql)->queryRow();
-                if (in_array($cityname['code'], $this->no_city, true)) {
+                $a=str_replace("'", '',$cityname['code']);
+                if (in_array($a, $this->no_city, true)) {
                  }else{
                     $arrs[$i][$o]['value'] = $arr17[$i][$o]['data_value'] / abs($arr02[$i][$o]['data_value'] == 0 ? 1 : $arr02[$i][$o]['data_value']);
                     $arrs[$i][$o]['value']=(round(  $arrs[$i][$o]['value'],4)*100)."%";
@@ -1180,7 +1181,8 @@ class ComperHenSiveForm extends CReportForm
                 $end=$arr21[$i][$o]['hdr_id'];
                 $sql="select a.name,a.code from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
                 $cityname = Yii::app()->db->createCommand($sql)->queryRow();
-                if (in_array($cityname['code'], $this->no_city, true)) {
+                $a=str_replace("'", '',$cityname['code']);
+                if (in_array($a, $this->no_city, true)) {
                 }else{
                     $arrs[$i][$o]['value'] = $arr21[$i][$o]['data_value'] / abs($arr01[$i][$o]['data_value'] == 0 ? 1 : $arr01[$i][$o]['data_value']);
                     $arrs[$i][$o]['value'] = (round($arrs[$i][$o]['value'], 4) * 100) . "%";
@@ -1297,7 +1299,8 @@ class ComperHenSiveForm extends CReportForm
                 $end=$arr[$i][$o]['hdr_id'];
                 $sql="select a.name,a.code from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
                 $cityname = Yii::app()->db->createCommand($sql)->queryRow();
-                if (in_array($cityname['code'], $this->no_city, true)) {
+                $a=str_replace("'", '',$cityname['code']);
+                if (in_array($a, $this->no_city, true)) {
                  }else{
                     $arrs[$i][$o]['city'] = $cityname['name'];
                     $arrs[$i][$o]['value'] = $arr[$i][$o]['data_value'];
@@ -1325,7 +1328,8 @@ class ComperHenSiveForm extends CReportForm
             $o=0;
             $arr=array();
             foreach ($city as $c){
-                if (in_array($c, $this->no_city, true)) {
+                $a=str_replace("'", '',$c);
+                if (in_array($a, $this->no_city, true)) {
                     $rows=0;
                 }else{
                     $rows=$this-> fenshu($c,$year[$i],$month[$i]);
@@ -1353,7 +1357,8 @@ class ComperHenSiveForm extends CReportForm
             }
             foreach ($city as $c){
                 //每个月的所有城市
-                if (in_array($c, $this->no_city, true)) {
+                $a=str_replace("'", '',$c);
+                if (in_array($a, $this->no_city, true)) {
                     $rows=0;
                 }else{
                     $rows=$this-> fenshu($c,$year[$i],$month[$i]);
@@ -1375,7 +1380,8 @@ class ComperHenSiveForm extends CReportForm
             $arr=array();
             $year[$i]=$year[$i]-1;
             foreach ($city as $c){
-                if (in_array($c, $this->no_city, true)) {
+                $a=str_replace("'", '',$c);
+                if (in_array($a, $this->no_city, true)) {
                      $rows=0;
                 }else{
                     $rows=$this-> fenshu($c,$year[$i],$month[$i]);
@@ -1396,7 +1402,8 @@ class ComperHenSiveForm extends CReportForm
             $o=0;
             $suffix = Yii::app()->params['envSuffix'];
             foreach ($city as $c){
-                if (in_array($c, $this->no_city, true)) {
+                $a=str_replace("'", '',$c);
+                if (in_array($a, $this->no_city, true)) {
                 }else{
                         $rows=$this-> fenshu($c,$year[$i],$month[$i]);
                         $arr[$i][$o]['value']=$rows;
@@ -1485,7 +1492,8 @@ class ComperHenSiveForm extends CReportForm
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
             foreach ($city as $c){
-                if (in_array($c, $this->no_city, true)) {
+                $a=str_replace("'", '',$c);
+                if (in_array($a, $this->no_city, true)) {
                  }else {
                         $sql = "select  
 			    sum(case when a.status='Y' and datediff(a.feedback_dt,a.request_dt) < 2 then 1 else 0 end) as counter 
@@ -1561,7 +1569,8 @@ class ComperHenSiveForm extends CReportForm
                 $end=$arr[$i][$o]['hdr_id'];
                 $sql="select a.name,a.code from security$suffix.sec_city a ,swo_monthly_hdr b  where a.code=b.city and b.id='".$end."'";
                 $cityname = Yii::app()->db->createCommand($sql)->queryRow();
-                if (in_array($cityname['code'], $this->no_city, true)) {
+                $a=str_replace("'", '',$cityname['code']);
+                if (in_array($a, $this->no_city, true)) {
                 }else{
                     $arrs[$i][$o]['city'] = $cityname['name'];
                     $arrs[$i][$o]['value'] = $arr[$i][$o]['data_value'];
@@ -1653,7 +1662,8 @@ class ComperHenSiveForm extends CReportForm
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
             foreach ($city as $c) {
-                if (in_array($c, $this->no_city, true)) {
+                $a=str_replace("'", '',$c);
+                if (in_array($a, $this->no_city, true)) {
                 }else {
                         $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c ";
                         $rows = Yii::app()->db->createCommand($sql)->queryScalar();
@@ -1789,7 +1799,8 @@ class ComperHenSiveForm extends CReportForm
             $start=$year[$i]."-".$month[$i]."-1" ;
             $end=$year[$i]."-".$month[$i]."-31" ;
             foreach ($city as $c) {
-                if (in_array($c, $this->no_city, true)) {
+                $a=str_replace("'", '',$c);
+                if (in_array($a, $this->no_city, true)) {
                   }else {
                         $sql = "select count(id) as number from sales$suffix.sal_visit where visit_dt>='$start' and visit_dt<='$end' and city =$c and  visit_obj like '%10%'";
                         $row = Yii::app()->db->createCommand($sql)->queryScalar();
