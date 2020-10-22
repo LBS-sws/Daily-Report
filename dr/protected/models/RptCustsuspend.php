@@ -67,7 +67,7 @@ class RptCustsuspend extends ReportData2 {
 				$temp['ctrt_period'] = $row['ctrt_period'];
 				$temp['ctrt_end_dt'] = General::toDate($row['ctrt_end_dt']);
 				$temp['reason'] = $row['reason'];
-				$temp['lud'] = General::toDate($row['lud']);
+				$temp['lud'] = General::toDate($row['lcd']);
 				$temp['org_equip_qty'] = $row['org_equip_qty'];
 				$temp['rtn_equip_qty'] = $row['rtn_equip_qty'];
 				$temp['diff_equip_qty'] = $row['rtn_equip_qty'] - $row['org_equip_qty'];
