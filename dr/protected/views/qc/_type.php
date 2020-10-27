@@ -8,7 +8,7 @@
 					'header'=>Yii::t('misc','Add Record'),
 					'content'=>$content,
 					'footer'=>array(
-						TbHtml::button(Yii::t('dialog','OK'), 
+						TbHtml::button(Yii::t('dialog','OK'),
 								array(
 									'id'=>'btnOk',
 									'data-dismiss'=>'modal',
