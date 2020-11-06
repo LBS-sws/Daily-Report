@@ -48,8 +48,10 @@ return array(
 'Return Equip. Qty'=>'拆回數量',
 
 'Diff. Qty'=>'相差數量',
-'Diff. btw Contract Date'=>'簽約跟裝機器日期差',
-'Diff. btw First Service Date'=>'簽約跟首次日期差',
+//'Diff. btw Contract Date'=>'簽約跟裝機器日期差',
+//'Diff. btw First Service Date'=>'簽約跟首次日期差',
+'Diff. btw Contract Date'=>'新增日期跟裝機器日期差',
+'Diff. btw First Service Date'=>'新增日期跟首次日期差',
 
 'Monthly'=>'月金額',
 'Yearly'=>'年金額',
