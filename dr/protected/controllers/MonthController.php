@@ -133,6 +133,8 @@ class MonthController extends Controller
         $total=$_POST['MonthForm']['total'];
 //        print_r('<pre/>');
 //        print_r($total);exit();
+        $model->excel['f74']=$total;
+        $model->saveData();
         $model->sendDate($model,$total,$city);
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Ok'));
         $this->render('summarize',array('model'=>$model,));
