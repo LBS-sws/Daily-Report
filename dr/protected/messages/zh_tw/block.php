@@ -5,5 +5,7 @@ return array(
 	=>'在使用其他功能前，請先完成營運系統-營業報告審核。 ',
 	'Please complete Operation System - Sales Summary Report Submission before using other functions.'
 	=>'在使用其他功能前，請先完成營運系統-營業報告提交。 ',
+    'Please complete Report System - Sales Summary Report Submission before using other functions.'
+    =>'在使用其他功能前，請先完成日报表系统-月报表总结提交。',
 );
 ?>

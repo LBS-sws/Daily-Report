@@ -50,8 +50,8 @@ return array(
 	'Diff. Qty'=>'相差数量',
 //	'Diff. btw Contract Date'=>'签约跟装机器日期差',
 //	'Diff. btw First Service Date'=>'签约跟首次日期差',
-	'Diff. btw Contract Date'=>'新增日期跟装机器日期差',
-	'Diff. btw First Service Date'=>'新增日期跟首次日期差',
+    'Diff. btw Contract Date'=>'新增日期跟装机器日期差',
+    'Diff. btw First Service Date'=>'新增日期跟首次日期差',
 	
 	'Monthly'=>'月金额',
 	'Yearly'=>'年金额',

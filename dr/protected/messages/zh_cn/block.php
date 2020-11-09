@@ -5,5 +5,7 @@ return array(
 	=>'在使用其他功能前，请先完成营运系统-营业报告审核。',
 	'Please complete Operation System - Sales Summary Report Submission before using other functions.'
 	=>'在使用其他功能前，请先完成营运系统-营业报告提交。',
+    'Please complete Report System - Sales Summary Report Submission before using other functions.'
+    =>'在使用其他功能前，请先完成日报表系统-月报表总结提交。',
 );
 ?>

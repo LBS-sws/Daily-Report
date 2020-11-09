@@ -1007,7 +1007,7 @@ WHERE hdr_id = '".$model['id']."'";
             $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."'),('".$qid."','".$b[1]."'),('".$qid."','".$b[2]."'),('".$qid."','".$b[3]."'),('".$qid."','".$b[4]."'),('".$qid."','".$b[5]."')";
         }
         $aa = Yii::app()->db->createCommand($sqlb)->execute();
-        $from_addr = "it@lbsgroup.com.hk";
+        $from_addr = Yii::app()->user->email();
         $to_addr=json_encode($a);
         $subject = "月报表总汇-" .$time;
         $description = $time."<br/>月报表总分：".$total."    &nbsp;&nbsp;&nbsp;&nbsp;城市：".$cityname[0]['name']."<br/>内容分析";
