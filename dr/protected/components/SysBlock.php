@@ -220,7 +220,7 @@ class SysBlock {
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if ($row===false) return true;
         $subject="月报表总汇-" .$year.'/'.$month;
-        $sql = "select a.id from swoper$suffix.swo_email_queue               
+        $sql = "select a.id from swoper$suffix.swo_month_email               
                 where from_addr='$email' and  request_dt<= '$lastdate' and subject='$subject'
 				limit 1
 			";

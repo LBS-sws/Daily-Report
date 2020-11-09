@@ -1027,6 +1027,14 @@ WHERE hdr_id = '".$model['id']."'";
             'lcu' => $lcu,
             'lcd' => date('Y-m-d H:i:s'),
         ));
+        $aaa = Yii::app()->db->createCommand()->insert("swo_month_email", array(
+            'request_dt' => date('Y-m-d H:i:s'),
+            'from_addr' => $from_addr,
+            'subject' => $subject,//郵件主題
+            'description' => $description,//郵件副題
+            'lcu' => $lcu,
+            'lcd' => date('Y-m-d H:i:s'),
+        ));
         $model->excel['f74']=$total;
 //        print_r('<pre/>');
 //        print_r($msg_url);
