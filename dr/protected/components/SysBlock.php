@@ -211,7 +211,7 @@ class SysBlock {
         $city = Yii::app()->user->city();
         $suffix = Yii::app()->params['envSuffix'];
         $email=Yii::app()->user->email();
-        $lastdate = date('d')<10 ? date('Y-m-d',strtotime('-2 months')) : date('Y-m-d',strtotime('last day of previous month'));
+        $lastdate = date('d')<3 ? date('Y-m-d',strtotime('-2 months')) : date('Y-m-d',strtotime('last day of previous month'));
         $year = date("Y", strtotime($lastdate));
         $month = date("m", strtotime($lastdate));
         $sql = "select a_control from security$suffix.sec_user_access 
@@ -220,15 +220,22 @@ class SysBlock {
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if ($row===false) return true;
         $subject="月报表总汇-" .$year.'/'.$month;
+        if($month=1){
+            $months=12;
+            $years=$year-1;
+       }else{
+            $months=$month-1;
+            $years=$year;
+        }
+        $subjectlast="月报表总汇-" .$years.'/'.$months;
         $sql = "select id from swoper$suffix.swo_month_email               
-                where from_addr='$email' and  request_dt<= '$lastdate' and subject='$subject'
-				limit 1
+                where from_addr='$email' and  request_dt<= '$lastdate' and (subject='$subject' or subject='$subjectlast')	
 			";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
-       if(empty($row)){
-           return false;
-       }else{
+       if(count($row)==2){
            return true;
+       }else{
+           return false;
        }
     }
 
