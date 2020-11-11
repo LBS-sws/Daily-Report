@@ -231,7 +231,7 @@ class SysBlock {
         $sql = "select id from swoper$suffix.swo_month_email               
                 where from_addr='$email' and  request_dt<= '$lastdate' and (subject='$subject' or subject='$subjectlast')	
 			";
-        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        $row = Yii::app()->db->createCommand($sql)->queryAll();
        if(count($row)==2){
            return true;
        }else{
