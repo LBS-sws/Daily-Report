@@ -220,7 +220,7 @@ class SysBlock {
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if ($row===false) return true;
         $subject="月报表总汇-" .$year.'/'.$month;
-        if($month=1){
+        if($month==1){
             $months=12;
             $years=$year-1;
        }else{
@@ -232,7 +232,7 @@ class SysBlock {
                 where from_addr='$email' and  request_dt<= '$lastdate' and (subject='$subject' or subject='$subjectlast')	
 			";
         $row = Yii::app()->db->createCommand($sql)->queryAll();
-       if(count($row)==2){
+       if(count($row)>=2){
            return true;
        }else{
            return false;

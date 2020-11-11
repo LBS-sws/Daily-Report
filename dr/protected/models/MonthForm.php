@@ -966,8 +966,8 @@ WHERE hdr_id = '".$model['id']."'";
             $arr[] = $a7[0]['email'];
         }
         $a=General::dedupToEmailList($arr);
-        $sql = "select a.year_no, a.month_no, b.id, b.hdr_id, b.data_field, b.data_value, c.name, c.upd_type, c.field_type, b.manual_input , c.excel_row  
-				from swo_monthly_hdr a, swo_monthly_dtl b, swo_monthly_field c 
+        $sql = "select a.year_no, a.month_no, b.id, b.hdr_id, b.data_field, b.data_value, c.name, c.upd_type, c.field_type, b.manual_input , c.excel_row
+				from swo_monthly_hdr a, swo_monthly_dtl b, swo_monthly_field c
 				where a.id=$index and a.city='$city'
 				and a.id=b.hdr_id and b.data_field=c.code
 				and c.status='Y'
@@ -1027,8 +1027,9 @@ WHERE hdr_id = '".$model['id']."'";
             'lcu' => $lcu,
             'lcd' => date('Y-m-d H:i:s'),
         ));
+        $times = date("Y-m-d H:i:s", strtotime($model['year_no'].'-'.$model['month_no']));
         $aaa = Yii::app()->db->createCommand()->insert("swo_month_email", array(
-            'request_dt' => date('Y-m-d H:i:s'),
+            'request_dt' => $times,
             'from_addr' => $from_addr,
             'subject' => $subject,//郵件主題
             'description' => $description,//郵件副題
