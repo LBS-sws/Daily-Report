@@ -213,7 +213,7 @@ class SysBlock {
         $email=Yii::app()->user->email();
         $lastdate = date('d')<3 ? date('Y-m-d',strtotime('-3 months')) : date('Y-m-d',strtotime('-2 months'));
         $year = date("Y", strtotime($lastdate));
-        $month = date("m", strtotime($lastdate));
+        $month = date("n", strtotime($lastdate));
         $sql = "select a_control from security$suffix.sec_user_access 
 				where username='$uid' and system_id='drs' and a_read_write like '%H01%'
 			";
@@ -227,12 +227,12 @@ class SysBlock {
             $months=$month-1;
             $years=$year;
         }
-//        print_r($subject);exit();
         $subjectlast="月报表总汇-" .$years.'/'.$months;
         $sql = "select id from swoper$suffix.swo_month_email               
                 where from_addr='$email' and  request_dt<= '$lastdate' and (subject='$subject' or subject='$subjectlast')	
 			";
         $row = Yii::app()->db->createCommand($sql)->queryAll();
+//                print_r($subject);exit();
        if(count($row)>=2){
            return true;
        }else{
