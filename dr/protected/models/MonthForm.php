@@ -1032,6 +1032,7 @@ WHERE hdr_id = '".$model['id']."'";
             'request_dt' => $times,
             'from_addr' => $from_addr,
             'subject' => $subject,//郵件主題
+            'city' => $city,//城市
             'description' => $description,//郵件副題
             'lcu' => $lcu,
             'lcd' => date('Y-m-d H:i:s'),
