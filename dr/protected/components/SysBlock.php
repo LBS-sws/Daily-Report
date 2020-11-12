@@ -211,7 +211,7 @@ class SysBlock {
         $city = Yii::app()->user->city();
         $suffix = Yii::app()->params['envSuffix'];
         $email=Yii::app()->user->email();
-        $lastdate = date('d')<3 ? date('Y-m-d',strtotime('-2 months')) : date('Y-m-d',strtotime('last day of previous month'));
+        $lastdate = date('d')<3 ? date('Y-m-d',strtotime('-3 months')) : date('Y-m-d',strtotime('-2 months'));
         $year = date("Y", strtotime($lastdate));
         $month = date("m", strtotime($lastdate));
         $sql = "select a_control from security$suffix.sec_user_access 
@@ -227,6 +227,7 @@ class SysBlock {
             $months=$month-1;
             $years=$year;
         }
+//        print_r($subject);exit();
         $subjectlast="月报表总汇-" .$years.'/'.$months;
         $sql = "select id from swoper$suffix.swo_month_email               
                 where from_addr='$email' and  request_dt<= '$lastdate' and (subject='$subject' or subject='$subjectlast')	
