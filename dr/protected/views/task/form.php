@@ -82,6 +82,24 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
 					); ?>
 				</div>
 			</div>
+
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'sales_products',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'sales_products',
+                        array(
+                            'paper'=>Yii::t('code','Paper'),//纸
+                            'disinfectant'=>Yii::t('code','Disinfectant'),//消毒液
+                            'purification'=>Yii::t('code','Purification'),//空气净化
+                            'chemical'=>Yii::t('code','Chemical'),//化学剂
+                            'aromatherapy'=>Yii::t('code','Aromatherapy'),//香薰
+                            'pestcontrol'=>Yii::t('code','Pest control'),//虫控
+                            'other'=>Yii::t('code','Other'),//其他
+                        ),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
 		</div>
 	</div>
 </section>

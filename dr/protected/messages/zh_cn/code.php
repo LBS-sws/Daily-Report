@@ -56,6 +56,13 @@ return array(
 	'Puriscent'=>'飘盈香',
 	'Perfume'=>'香水',
 	'Floor Cleaner'=>'洗地易',
+    'Sales Products'=>'销售产品分类',
+
+    'Disinfectant'=>'消毒液',
+    'Purification'=>'空气净化',
+    'Chemical'=>'化学剂',
+    'Aromatherapy'=>'香薰',
+    'Pest control'=>'虫控',
 	
 	'Start Date'=>'开始日期',
 	'End Date'=>'结束日期',

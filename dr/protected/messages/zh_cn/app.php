@@ -108,5 +108,6 @@ return array(
     'Integrated data email (region)'=>'综合数据电邮（地区）',
     'Integrated data email (regional)'=>'综合数据电邮（区域）',
     'Integrated data email (all)'=>'综合数据电邮（全部）',
+
 );
 ?>

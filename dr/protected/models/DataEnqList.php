@@ -21,7 +21,7 @@ class DataEnqList extends CListPageModel
 		$this->year_to = date("Y", $lastm);
 		$this->month_to = date("m", $lastm);
 
-		$this->data_list = array();
+		$this->data_list = array(
 							'DataTurnoverGrowth'=>array(
 													'name'=>Yii::t('report','Turnover Growth'),
 												),

@@ -6,7 +6,7 @@ class TaskForm extends CFormModel
 	public $id;
 	public $description;
 	public $task_type;
-
+    public $sales_products;
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -17,6 +17,7 @@ class TaskForm extends CFormModel
 		return array(
 			'description'=>Yii::t('code','Description'),
 			'task_type'=>Yii::t('code','Type'),
+            'sales_products'=>Yii::t('code','Sales Products'),
 		);
 	}
 
@@ -26,7 +27,7 @@ class TaskForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('description, task_type','required'),
+			array('description, task_type,sales_products','required'),
 			array('id','safe'), 
 		);
 	}
@@ -43,6 +44,7 @@ class TaskForm extends CFormModel
 				$this->id = $row['id'];
 				$this->description = $row['description'];
 				$this->task_type = $row['task_type'];
+                $this->sales_products = $row['sales_products'];
 				break;
 			}
 		}
@@ -72,11 +74,12 @@ class TaskForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_task(
-						description, task_type, city, luu, lcu) values (
-						:description, :task_type, :city, :luu, :lcu)";
+						sales_products,description, task_type, city, luu, lcu) values (
+						:sales_products,:description, :task_type, :city, :luu, :lcu)";
 				break;
 			case 'edit':
 				$sql = "update swo_task set 
+                    sales_products=:sales_products,
 					description = :description, 
 					task_type = :task_type,
 					luu = :luu
@@ -94,6 +97,8 @@ class TaskForm extends CFormModel
 			$command->bindParam(':description',$this->description,PDO::PARAM_STR);
 		if (strpos($sql,':task_type')!==false)
 			$command->bindParam(':task_type',$this->task_type,PDO::PARAM_STR);
+        if (strpos($sql,':sales_products')!==false)
+            $command->bindParam(':sales_products',$this->sales_products,PDO::PARAM_STR);
 		if (strpos($sql,':city')!==false)
 			$command->bindParam(':city',$city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
