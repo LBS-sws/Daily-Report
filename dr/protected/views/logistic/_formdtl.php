@@ -10,6 +10,12 @@
 				'size'=>'10', 'maxlength'=>'10',)
 		); ?>
 	</td>
+    <td>
+        <?php echo TbHtml::textField($this->getFieldName('money'), $this->record['money'],
+            array('readonly'=>!Yii::app()->user->validRWFunction('A05'),
+                'size'=>'10', 'maxlength'=>'10',)
+        ); ?>
+    </td>
 	<td>
 		<?php echo TbHtml::textField($this->getFieldName('deadline'), $this->record['deadline'], 
 			array('readonly'=>!Yii::app()->user->validRWFunction('A05'), 

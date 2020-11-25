@@ -20,11 +20,13 @@ class LogisticForm extends CFormModel
 	public $finish;
 	public $deadline;
 	public $reason;
+    public $salesman;
 	public $detail = array(
 				array('id'=>0,
 					'logid'=>0,
 					'task'=>0,
 					'qty'=>'',
+                    'money'=>'',
 					'deadline'=>'',
 					'finish'=>'N',
 					'uflag'=>'N',
@@ -57,6 +59,8 @@ class LogisticForm extends CFormModel
 			'address'=>Yii::t('logistic','Address'),
 			'repair'=>Yii::t('logistic','Repair Items'),
 			'remarks'=>Yii::t('logistic','Remarks'),
+            'salesman'=>Yii::t('service','Resp. Sales'),
+            'money'=>Yii::t('customer','Amount'),
 		);
 	}
 
@@ -66,9 +70,9 @@ class LogisticForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, follow_staff, company_id, pay_method, location_dtl, finish, deadline,
+			array('id, follow_staff, company_id, pay_method, location_dtl, finish, deadline,salesman
 				reason, address, repair, remarks','safe'),
-			array('company_name, location, log_dt','required'),
+			array('company_name, location, log_dt,salesman','required'),
 			array('seq','numerical','allowEmpty'=>true,'integerOnly'=>true),
 			array('seq','in','range'=>range(0,100)),
 			array('log_dt','date','allowEmpty'=>false,
@@ -122,20 +126,23 @@ class LogisticForm extends CFormModel
 				$this->address = $row['address'];
 				$this->repair = $row['repair'];
 				$this->remarks = $row['remarks'];
+                $this->salesman = $row['salesman'];
 				break;
 			}
 		}
-		
+
 		$sql = "select * from swo_logistic_dtl where log_id=$index and city in($city)";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			$this->detail = array();
 			foreach ($rows as $row) {
+
 				$temp = array();
 				$temp['id'] = $row['id'];
 				$temp['logid'] = $row['log_id'];
 				$temp['task'] = $row['task'];
-				$temp['qty'] = $row['qty'];
+				$temp['money'] = $row['money'];
+                $temp['qty'] = $row['qty'];
 				$temp['deadline'] = General::toDate($row['deadline']);
 				$temp['finish'] = $row['finish'];
 				$temp['uflag'] = 'N';
@@ -169,11 +176,11 @@ class LogisticForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_logistic(
-							log_dt, seq, company_id, company_name, follow_staff, pay_method,
+							log_dt, seq, company_id, company_name, follow_staff, pay_method,salesman,
 							location, location_dtl, finish, deadline, reason, address, repair, remarks,
 							city, luu, lcu
 						) values (
-							:log_dt, :seq, :company_id, :company_name, :follow_staff, :pay_method,
+							:log_dt, :seq, :company_id, :company_name, :follow_staff, :pay_method,:salesman,
 							:location, :location_dtl, :finish, :deadline, :reason, :address, :repair, :remarks,
 							:city, :luu, :lcu
 						)";
@@ -188,6 +195,7 @@ class LogisticForm extends CFormModel
 							pay_method = :pay_method, 
 							location = :location, 
 							location_dtl = :location_dtl, 
+							salesman=:salesman,
 							finish = :finish, 
 							deadline = :deadline, 
 							reason = :reason, 
@@ -221,6 +229,8 @@ class LogisticForm extends CFormModel
 		}
 		if (strpos($sql,':company_name')!==false)
 			$command->bindParam(':company_name',$this->company_name,PDO::PARAM_STR);
+        if (strpos($sql,':salesman')!==false)
+            $command->bindParam(':salesman',$this->salesman,PDO::PARAM_STR);
 		if (strpos($sql,':follow_staff')!==false)
 			$command->bindParam(':follow_staff',$this->follow_staff,PDO::PARAM_STR);
 		if (strpos($sql,':pay_method')!==false)
@@ -268,10 +278,10 @@ class LogisticForm extends CFormModel
 				case 'new':
 					if ($row['uflag']=='Y') {
 						$sql = "insert into swo_logistic_dtl(
-									log_id, task, qty, finish, deadline,
+									log_id, task, qty, finish, deadline,money,
 									city, luu, lcu
 								) values (
-									:log_id, :task, :qty, :finish, :deadline,
+									:log_id, :task, :qty, :finish, :deadline,:money,
 									:city, :luu, :lcu
 								)";
 					}
@@ -285,10 +295,10 @@ class LogisticForm extends CFormModel
 							$sql = ($row['id']==0)
 									?
 									"insert into swo_logistic_dtl(
-										log_id, task, qty, deadline, finish, 
+										log_id, task, qty, deadline, finish, money,
 										city, luu, lcu
 									) values (
-										:log_id, :task, :qty, :deadline, :finish,
+										:log_id, :task, :qty, :deadline, :finish,:money,
 										:city, :luu, :lcu
 									)
 									"
@@ -296,6 +306,7 @@ class LogisticForm extends CFormModel
 									"update swo_logistic_dtl set
 										log_id = :log_id,
 										task = :task, 
+										money=:money,
 										qty = :qty,
 										deadline = :deadline,
 										finish = :finish,
@@ -321,6 +332,10 @@ class LogisticForm extends CFormModel
 					$qty = General::toMyNumber($row['qty']);
 					$command->bindParam(':qty',$qty,PDO::PARAM_INT);
 				}
+                if (strpos($sql,':money')!==false) {
+                    $money = General::toMyNumber($row['money']);
+                    $command->bindParam(':money',$money,PDO::PARAM_INT);
+                }
 				if (strpos($sql,':deadline')!==false) {
 					$dead = General::toMyDate($row['deadline']);
 					$command->bindParam(':deadline',$dead,PDO::PARAM_STR);

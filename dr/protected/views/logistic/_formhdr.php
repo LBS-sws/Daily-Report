@@ -5,6 +5,9 @@
 	<th>
 		<?php echo TbHtml::label($this->getLabelName('qty'), false); ?>
 	</th>
+    <th>
+        <?php echo TbHtml::label($this->getLabelName('money'), false); ?>
+    </th>
 	<th>
 		<?php echo TbHtml::label($this->getLabelName('deadline'), false); ?>
 	</th>
