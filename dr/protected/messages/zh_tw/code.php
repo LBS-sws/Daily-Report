@@ -74,7 +74,7 @@ return array(
 'Announcement Form'=>'公告表单',
 'Announcement List'=>'公告列表',
 'Announcement'=>'公告',
-
+'-- None --'=>'无',
 'Cust Type Name'=>'名稱',
 'Fractiony'=>'單個分數',
 'Condition'=>'條件',

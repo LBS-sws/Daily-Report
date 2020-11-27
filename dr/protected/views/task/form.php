@@ -88,6 +88,7 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'sales_products',
                         array(
+                            'wu'=>Yii::t('code','-- None --'),//无
                             'paper'=>Yii::t('code','Paper'),//纸
                             'disinfectant'=>Yii::t('code','Disinfectant'),//消毒液
                             'purification'=>Yii::t('code','Purification'),//空气净化

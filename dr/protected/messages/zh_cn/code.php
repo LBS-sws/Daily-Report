@@ -57,6 +57,7 @@ return array(
 	'Perfume'=>'香水',
 	'Floor Cleaner'=>'洗地易',
     'Sales Products'=>'销售产品分类',
+    '-- None --'=>'无',
 
     'Disinfectant'=>'消毒液及皂液系列',
     'Purification'=>'空气净化系列',
