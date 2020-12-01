@@ -66,19 +66,19 @@ class RptStaff extends ReportData2 {
 						a.id as employee_id, a.code, a.name, a.position, a.staff_type, a.staff_leader, a.entry_time, a.start_time, a.end_time, a.email, 
 						a.leave_time, a.leave_reason, a.remark, a.city, a.department, a.lcu, a.luu, a.lcd, a.lud
 					from hr$suffix.hr_employee a
-					where a.lud <= '$end_dt 23:59:59'
+					where a.city='$city' and a.id not in (
+						select w.employee_id
+						from hr$suffix.hr_employee_operate w
+						left outer join hr$suffix.hr_employee_operate x on w.employee_id=x.employee_id and x.id > w.id
+						where x.id is null and w.lud > '$end_dt 23:59:59' and w.city='$city'
+					)
 				union
 					select 
 						b.employee_id, b.code, b.name, b.position, b.staff_type, b.staff_leader, b.entry_time, b.start_time, b.end_time, b.email, 
 						b.leave_time, b.leave_reason, b.remark, b.city, b.department, b.lcu, b.luu, b.lcd, b.lud
 					from hr$suffix.hr_employee_operate b
 					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
-						and c.lud <= '$end_dt 23:59:59'
-					where b.employee_id not in (
-						select d.id
-						from hr$suffix.hr_employee d
-						where d.lud <= '$end_dt 23:59:59'
-					) and c.id is null and b.lud <= '$end_dt 23:59:59'
+					where c.id is null and b.lud > '$end_dt 23:59:59' and b.city='$city'
 				) e
 				inner join hr$suffix.hr_employee f on f.id = e.employee_id
 				left join hr$suffix.hr_dept z on e.position = z.id 
@@ -87,7 +87,6 @@ class RptStaff extends ReportData2 {
 				ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) < date_add('$start_dt', interval 1 month))
 				and (ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) is null or 
 				ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) >= '$start_dt')
-				and e.city='$city'
 				order by e.lud desc
 		";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();

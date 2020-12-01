@@ -60,18 +60,18 @@ class CalcStaff extends Calculation {
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select e.city, count(e.code) as counter from (
 					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position
-						from hr$suffix.hr_employee a
-						where a.lud <= '$d2 23:59:59'
-					union
+					from hr$suffix.hr_employee a
+					where a.id not in (
+						select w.employee_id
+						from hr$suffix.hr_employee_operate w
+						left outer join hr$suffix.hr_employee_operate x on w.employee_id=x.employee_id and x.id > w.id
+						where x.id is null and w.lud > '$d2 23:59:59'
+					)
+				union
 					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position
-						from hr$suffix.hr_employee_operate b
-						left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
-							and c.lud <= '$d2 23:59:59'
-						where b.employee_id not in (
-							select d.id
-								from hr$suffix.hr_employee d
-								where d.lud <= '$d2 23:59:59'
-						) and c.id is null and b.lud <= '$d2 23:59:59'
+					from hr$suffix.hr_employee_operate b
+					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
+					where c.id is null and b.lud > '$d2 23:59:59'
 				) e
 				inner join hr$suffix.hr_employee f on f.id = e.employee_id
 				left join hr$suffix.hr_dept z on e.position = z.id 
@@ -118,19 +118,19 @@ class CalcStaff extends Calculation {
 */
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select e.city, count(e.code) as counter from (
-					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.staff_leader
-						from hr$suffix.hr_employee a
-						where a.lud <= '$d2 23:59:59'
-					union
-					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.staff_leader
-						from hr$suffix.hr_employee_operate b
-						left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
-							and c.lud <= '$d2 23:59:59'
-						where b.employee_id not in (
-							select d.id
-								from hr$suffix.hr_employee d
-								where d.lud <= '$d2 23:59:59'
-						) and c.id is null and b.lud <= '$d2 23:59:59'
+					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position
+					from hr$suffix.hr_employee a
+					where a.id not in (
+						select w.employee_id
+						from hr$suffix.hr_employee_operate w
+						left outer join hr$suffix.hr_employee_operate x on w.employee_id=x.employee_id and x.id > w.id
+						where x.id is null and w.lud > '$d2 23:59:59'
+					)
+				union
+					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position
+					from hr$suffix.hr_employee_operate b
+					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
+					where c.id is null and b.lud > '$d2 23:59:59'
 				) e
 					inner join hr$suffix.hr_employee f on f.id = e.employee_id
 				where (ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) is null or 
@@ -160,19 +160,19 @@ class CalcStaff extends Calculation {
 */
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select e.city, count(e.code) as counter from (
-					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.start_time, a.lud
-						from hr$suffix.hr_employee a
-						where a.lud <= '$d2 23:59:59'
-					union
-					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.start_time, b.lud
-						from hr$suffix.hr_employee_operate b
-						left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
-							and c.lud <= '$d2 23:59:59'
-						where b.employee_id not in (
-							select d.id
-								from hr$suffix.hr_employee d
-								where d.lud <= '$d2 23:59:59'
-						) and c.id is null and b.lud <= '$d2 23:59:59'
+					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position
+					from hr$suffix.hr_employee a
+					where a.id not in (
+						select w.employee_id
+						from hr$suffix.hr_employee_operate w
+						left outer join hr$suffix.hr_employee_operate x on w.employee_id=x.employee_id and x.id > w.id
+						where x.id is null and w.lud > '$d2 23:59:59'
+					)
+				union
+					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position
+					from hr$suffix.hr_employee_operate b
+					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
+					where c.id is null and b.lud > '$d2 23:59:59'
 				) e
 					inner join hr$suffix.hr_employee f on f.id = e.employee_id
 				where (ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) < date_add('$d1', interval -1 month))
@@ -195,21 +195,19 @@ class CalcStaff extends Calculation {
 			";
 */
 		$sql = "select e.city, count(e.code) as counter from (
-					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.start_time, a.lud,
-							if((isnull(a.end_time) or (a.end_time = '')),NULL,(ifnull(str_to_date(a.end_time,'%Y/%m/%d'),str_to_date(a.end_time,'%Y-%m-%d')) + interval 1 day)) AS ctrt_renew_dt
-						from hr$suffix.hr_employee a
-						where a.lud <= '$d2 23:59:59'
-					union
-					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.start_time, b.lud,
-							if((isnull(b.end_time) or (b.end_time = '')),NULL,(ifnull(str_to_date(b.end_time,'%Y/%m/%d'),str_to_date(b.end_time,'%Y-%m-%d')) + interval 1 day)) AS ctrt_renew_dt
-						from hr$suffix.hr_employee_operate b
-						left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
-							and c.lud <= '$d2 23:59:59'
-						where b.employee_id not in (
-							select d.id
-								from hr$suffix.hr_employee d
-								where d.lud <= '$d2 23:59:59'
-						) and c.id is null and b.lud <= '$d2 23:59:59'
+					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position
+					from hr$suffix.hr_employee a
+					where a.id not in (
+						select w.employee_id
+						from hr$suffix.hr_employee_operate w
+						left outer join hr$suffix.hr_employee_operate x on w.employee_id=x.employee_id and x.id > w.id
+						where x.id is null and w.lud > '$d2 23:59:59'
+					)
+				union
+					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position
+					from hr$suffix.hr_employee_operate b
+					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
+					where c.id is null and b.lud > '$d2 23:59:59'
 				) e
 				inner join hr$suffix.hr_employee f on f.id = e.employee_id
 				where e.start_time < e.ctrt_renew_dt and e.ctrt_renew_dt < date_add('$d1', interval -1 month)
