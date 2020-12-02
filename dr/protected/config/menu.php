@@ -47,6 +47,16 @@ return array(
 			),
 		),
 	),
+    'Quality'=>array(
+        'access'=>'E',
+        'icon'=>'fa-file-text-o',
+        'items'=>array(
+            'Average score of quality inspection'=>array(
+                'access'=>'E01',
+                'url'=>'/quality/index',
+            ),
+        ),
+    ),
 	'Report'=>array(
 		'access'=>'B',
 		'icon'=>'fa-file-text-o',
@@ -191,6 +201,7 @@ return array(
 				'url'=>'/servicetype/index',
 				'tag'=>'@',
 			),
+
 		),
 	),
 	'Security'=>array(
