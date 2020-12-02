@@ -11,6 +11,10 @@ return array(
 'QC Date'=>'質檢日期',
 'Staff-QC'=>'質檢部同事',
 'QC Result'=>'總分',
+'Job Staff'=>'外勤人員',
+'Result'=>'當月平均分',
+'Average score of quality inspection List'=>'質檢平均分列表',
+'Average score of quality inspection'=>'質檢平均分',
 
 'Entry Date'=>'輸入日期',
 'Team'=>'小組',

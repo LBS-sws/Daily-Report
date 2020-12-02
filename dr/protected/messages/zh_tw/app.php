@@ -44,6 +44,8 @@ return array(
 'LBS Customer Enquiry'=>'史偉莎客戶查詢',
 'Comprehensive data comparative analysis'=>'综合数据对比分析',
 'Monthly Report Analysis'=>'月報表分析',
+'Quality'=>'質檢',
+'Average score of quality inspection'=>'質檢平均分',
 
 'All'=>'全部',
 'All Daily Reports'=>'日報表總匯',
