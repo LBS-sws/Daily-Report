@@ -23,23 +23,18 @@ $this->pageTitle=Yii::app()->name . ' - Quality';
 </section>
 
 <section class="content">
-<!--	<div class="box"><div class="box-body">-->
-<!--	<div class="btn-group" role="group">-->
-<!--		--><?php
-//			if (Yii::app()->user->validRWFunction('A03'))
-//				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','New Record'), array(
-//					'submit'=>Yii::app()->createUrl('followup/new'),
-//				));
-//			 echo TbHtml::button('dummyButton', array('style'=>'display:none','disabled'=>true,'submit'=>'#',));
-//		?>
-<!--	</div>-->
-<!--	</div>-->
-<!--    </div>-->
+
+    <div class="btn-group" role="group">
+        <?php
+        echo TbHtml::button('dummyButton',array('style'=>'display:none','disabled'=>true,'submit'=>'#',));
+        ?>
+    </div>
+
 	<?php 
 		$search = array(
 						'dt',
 						'city',
-						'job_staff',
+						'job_staff'
 					);
 		$this->widget('ext.layout.ListPageWidget', array(
 			'title'=>Yii::t('qc','Average score of quality inspection List'),

@@ -25,22 +25,17 @@ class QualityList extends CListPageModel
 		$sql1 = "select
                    date_format(qc_dt, '%Y-%m') as dt
                   ,avg(qc_result) as  result,job_staff,city
-                    from swo_qc  where city in ($city)
-                    group by
-                     dt,job_staff
-
+                        from swo_qc  where city in ($city)           
 			";
 		$sql2 = "select count(*) count from (select count(*)
-                    from swo_qc  where city in ($city)
-                    group by
-                    date_format(qc_dt, '%Y-%m'),job_staff) temp
+                    from swo_qc  where city in ($city)                  
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
 				case 'dt':
-					$clause .= General::getSqlConditionClause('dt',$svalue);
+					$clause .= General::getSqlConditionClause('date_format(qc_dt, \'%Y-%m\')',$svalue);
 					break;
 				case 'job_staff':
 					$clause .= General::getSqlConditionClause('job_staff',$svalue);
@@ -58,15 +53,16 @@ class QualityList extends CListPageModel
 		}else{
             $order ="order by qc_dt desc";
         }
-
-		$sql = $sql2.$clause;
+        $clause.="";
+		$sql = $sql2.$clause."group by  date_format(qc_dt, '%Y-%m'),job_staff ) temp";
 		$this->totalRow = Yii::app()->db->createCommand($sql)->queryScalar();
 
-		$sql = $sql1.$clause.$order;
+		$sql = $sql1.$clause." group by  date_format(qc_dt, '%Y-%m'),job_staff ".$order;
 		$sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
+		$sql.="";
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
-//       print_r('<pre>');
-      // print_r($this->totalRow);
+       //print_r('<pre>');
+      //  print_r($sql);
 		$list = array();
 		$this->attr = array();
 		if (count($records) > 0) {
