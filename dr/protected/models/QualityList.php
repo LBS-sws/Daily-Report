@@ -58,7 +58,7 @@ class QualityList extends CListPageModel
 		$sql.="";
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
        //print_r('<pre>');
-        print_r($sql);
+        //print_r($sql);
 		$list = array();
 		$this->attr = array();
 		if (count($records) > 0) {
