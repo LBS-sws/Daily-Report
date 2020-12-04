@@ -81,7 +81,7 @@ class RptCustnew extends ReportData2 {
 				$temp['remarks'] = $row['remarks'];
 				$temp['equip_install_dt'] = General::toDate($row['equip_install_dt']);
 				$temp['diff_ctrt_dt'] = (empty($temp['equip_install_dt']) || empty($temp['status_dt'])) ? '' :
-					(strtotime($row['equip_install_dt'])-strtotime($row['sign_dt']))/86400;
+					(strtotime($row['equip_install_dt'])-strtotime($row['status_dt']))/86400;
 				$temp['diff_first_dt'] = (empty($temp['status_dt']) || empty($temp['first_dt'])) ? '' :
 					(strtotime($temp['first_dt'])-strtotime($temp['status_dt']))/86400;
 
