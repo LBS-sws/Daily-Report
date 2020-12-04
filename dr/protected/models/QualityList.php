@@ -22,11 +22,7 @@ class QualityList extends CListPageModel
 		$user = Yii::app()->user->id;
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
-		$sql1 = "select
-                   any_value(date_format(qc_dt, '%Y-%m')) as dt
-                  ,avg(qc_result) as  result,job_staff,any_value(city)
-                        from swo_qc  where city in ($city)           
-			";
+		$sql1 = "select city, job_staff, date_format(qc_dt,'%Y-%m') as dt, avg(qc_result) as result from swo_qc where city in ($city) ";
 		$sql2 = "select count(*) count from (select count(*)
                     from swo_qc  where city in ($city)                  
 			";
@@ -57,12 +53,12 @@ class QualityList extends CListPageModel
 		$sql = $sql2.$clause."group by  date_format(qc_dt, '%Y-%m'),job_staff ) temp";
 		$this->totalRow = Yii::app()->db->createCommand($sql)->queryScalar();
 
-		$sql = $sql1.$clause." group by  dt,job_staff ".$order;
+		$sql = $sql1.$clause." group by city, job_staff, date_format(qc_dt,'%Y-%m') ".$order;
 		$sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
 		$sql.="";
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
        //print_r('<pre>');
-      //  print_r($sql);
+        print_r($sql);
 		$list = array();
 		$this->attr = array();
 		if (count($records) > 0) {
