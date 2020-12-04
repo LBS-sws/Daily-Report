@@ -23,8 +23,8 @@ class QualityList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
 		$sql1 = "select
-                   date_format(qc_dt, '%Y-%m') as dt
-                  ,avg(qc_result) as  result,job_staff,city
+                   any_value(date_format(qc_dt, '%Y-%m')) as dt
+                  ,avg(qc_result) as  result,job_staff,any_value(city)
                         from swo_qc  where city in ($city)           
 			";
 		$sql2 = "select count(*) count from (select count(*)
@@ -57,7 +57,7 @@ class QualityList extends CListPageModel
 		$sql = $sql2.$clause."group by  date_format(qc_dt, '%Y-%m'),job_staff ) temp";
 		$this->totalRow = Yii::app()->db->createCommand($sql)->queryScalar();
 
-		$sql = $sql1.$clause." group by  date_format(qc_dt, '%Y-%m'),job_staff ".$order;
+		$sql = $sql1.$clause." group by  dt,job_staff ".$order;
 		$sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
 		$sql.="";
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
