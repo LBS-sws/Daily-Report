@@ -25,8 +25,8 @@ class LogisticForm extends CFormModel
 				array('id'=>0,
 					'logid'=>0,
 					'task'=>0,
-					'qty'=>'',
-                    'money'=>'',
+					'qty'=>'0',
+                    'money'=>'0',
 					'deadline'=>'',
 					'finish'=>'N',
 					'uflag'=>'N',
@@ -72,7 +72,7 @@ class LogisticForm extends CFormModel
 		return array(
 			array('id, follow_staff, company_id, pay_method, location_dtl, finish, deadline,salesman
 				reason, address, repair, remarks','safe'),
-			array('company_name, location, log_dt,salesman','required'),
+			array('company_name, location, log_dt,salesman,','required'),
 			array('seq','numerical','allowEmpty'=>true,'integerOnly'=>true),
 			array('seq','in','range'=>range(0,100)),
 			array('log_dt','date','allowEmpty'=>false,
@@ -95,6 +95,8 @@ class LogisticForm extends CFormModel
 						$this->addError($attribute, Yii::t('logistic','Invalid quantity').' '.$row['qty']);
 					if (empty($row['task'])||$row['task']==0)
 						$this->addError($attribute, Yii::t('logistic','Task cannot be empty'));
+                    if (empty($row['money'])||$row['money']==0)
+                        $this->addError($attribute, Yii::t('logistic','Money cannot be empty'));
 					if (!empty($row['deadline'])&&!General::isDate($row['deadline']))
 						$this->addError($attribute, Yii::t('logistic','Invalid deadline'));
 				}
