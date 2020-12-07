@@ -14,7 +14,7 @@ return array(
 'Quantity'=>'數量',
 'Finished'=>'是否完成',
 'Deadline'=>'完成日期',
-'Invalid quantity '=>'數量不正確',
+'Invalid quantity'=>'數量不正確',
 'Task cannot be empty'=>'任務不能空白',
 'Money cannot be empty'=>'總金額不能空白',
 'Job Status'=>'工作單情況',
