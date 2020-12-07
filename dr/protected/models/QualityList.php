@@ -22,8 +22,8 @@ class QualityList extends CListPageModel
 		$user = Yii::app()->user->id;
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
-		$sqls="set sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERRIR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';";
-        $recd = Yii::app()->db->createCommand($sqls)->execute();
+//		$sqls="set sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERRIR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';";
+//        $recd = Yii::app()->db->createCommand($sqls)->execute();
 		$sql1 = "select city, job_staff, date_format(qc_dt,'%Y-%m') as dt, avg(qc_result) as result from swo_qc where city in ($city) ";
 		$sql2 = "select count(*) count from (select count(*)
                     from swo_qc  where city in ($city)                  
@@ -60,7 +60,7 @@ class QualityList extends CListPageModel
 		$sql.="";
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
        //print_r('<pre>');
-        print_r($sql);
+       // print_r($sql);
 		$list = array();
 		$this->attr = array();
 		if (count($records) > 0) {

@@ -140,7 +140,7 @@ class LogisticForm extends CFormModel
 			foreach ($rows as $row) {
 
 				$temp = array();
-				$temp['id'] = $row['id'];
+                $temp['id'] = $row['id'];
 				$temp['logid'] = $row['log_id'];
 				$temp['task'] = $row['task'];
 				$temp['money'] = $row['money'];
