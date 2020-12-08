@@ -43,13 +43,13 @@ class QualityList extends CListPageModel
 					break;
 			}
 		}
-		$clause .= $this->getDateRangeCondition('qc_dt');
+		$clause .= $this->getDateRangeCondition("date_format(qc_dt,'%Y-%m')");
 		$order = "";
 		if (!empty($this->orderField)) {
 			$order .= " order by ".$this->orderField." ";
 			if ($this->orderType=='D') $order .= "desc ";
 		}else{
-            $order ="order by qc_dt desc";
+            $order ="order by date_format(qc_dt,'%Y-%m') desc";
         }
         $clause.="";
 		$sql = $sql2.$clause."group by  date_format(qc_dt, '%Y-%m'),job_staff ) temp";
@@ -60,7 +60,7 @@ class QualityList extends CListPageModel
 		$sql.="";
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
        //print_r('<pre>');
-       // print_r($sql);
+        //print_r($sql);
 		$list = array();
 		$this->attr = array();
 		if (count($records) > 0) {
