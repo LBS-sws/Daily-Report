@@ -25,8 +25,8 @@ class LogisticForm extends CFormModel
 				array('id'=>0,
 					'logid'=>0,
 					'task'=>0,
-					'qty'=>0,
-                    'money'=>'',
+					'qty'=>'0',
+                    'money'=>'0',
 					'deadline'=>'',
 					'finish'=>'N',
 					'uflag'=>'N',
@@ -335,8 +335,7 @@ class LogisticForm extends CFormModel
 					$command->bindParam(':qty',$qty,PDO::PARAM_INT);
 				}
                 if (strpos($sql,':money')!==false) {
-                    $money = General::toMyNumber($row['money']);
-                    $command->bindParam(':money',$money,PDO::PARAM_INT);
+                    $command->bindParam(':money',$row['money'],PDO::PARAM_INT);
                 }
 				if (strpos($sql,':deadline')!==false) {
 					$dead = General::toMyDate($row['deadline']);
