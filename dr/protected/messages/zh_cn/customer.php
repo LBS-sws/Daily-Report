@@ -35,7 +35,7 @@ return array(
 	'Type'=>'类型',
 	'Product'=>'服务',
 	'First Date'=>'首次日期',
-	'Amount'=>'总金额',
+	'Amount'=>'金额',
 	
 	'Active'=>'生效中',
 	'Terminated'=>'停止服务',
