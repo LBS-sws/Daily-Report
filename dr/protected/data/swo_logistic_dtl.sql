@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2020-11-25 10:00:41
+Date: 2020-12-24 09:33:32
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,7 +23,7 @@ CREATE TABLE `swo_logistic_dtl` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `log_id` int(10) unsigned NOT NULL,
   `task` int(10) unsigned NOT NULL,
-  `money` int(10) DEFAULT NULL,
+  `money` decimal(11,2) DEFAULT NULL,
   `qty` int(10) unsigned DEFAULT NULL,
   `finish` char(1) DEFAULT 'N',
   `deadline` datetime DEFAULT NULL,
@@ -38,9 +38,9 @@ CREATE TABLE `swo_logistic_dtl` (
 -- ----------------------------
 -- Records of swo_logistic_dtl
 -- ----------------------------
-INSERT INTO `swo_logistic_dtl` VALUES ('93', '95', '87', null, '12', 'N', null, 'SH', 'LOGSH1', 'LOGSH1', '2016-05-03 17:06:08', '2016-06-17 14:34:10');
-INSERT INTO `swo_logistic_dtl` VALUES ('94', '95', '83', null, '14', 'N', null, 'SH', 'LOGSH1', 'LOGSH1', '2016-05-03 17:06:08', '2016-06-17 14:34:10');
-INSERT INTO `swo_logistic_dtl` VALUES ('96', '97', '92', null, '13', 'N', null, 'SH', 'LOGSH1', 'LOGSH1', '2016-05-03 17:15:00', '2016-06-17 15:16:28');
+INSERT INTO `swo_logistic_dtl` VALUES ('93', '95', '57', '1.50', '12', 'N', null, 'SH', 'LOGSH1', 'test', '2016-05-03 17:06:08', '2020-12-24 09:32:10');
+INSERT INTO `swo_logistic_dtl` VALUES ('94', '95', '58', '0.00', '14', 'N', null, 'SH', 'LOGSH1', 'test', '2016-05-03 17:06:08', '2020-12-10 14:52:35');
+INSERT INTO `swo_logistic_dtl` VALUES ('96', '97', '62', '3000.00', '13', 'N', null, 'SH', 'LOGSH1', 'LOGSH1', '2016-05-03 17:15:00', '2020-12-03 09:38:06');
 INSERT INTO `swo_logistic_dtl` VALUES ('101', '101', '85', null, '15', 'N', null, 'SH', 'LOGSH1', 'LOGSH1', '2016-05-03 17:18:24', '2016-06-17 14:34:37');
 INSERT INTO `swo_logistic_dtl` VALUES ('108', '119', '83', null, '15', 'N', null, 'SH', 'LOGSH1', 'LOGSH1', '2016-05-03 17:24:38', '2016-06-17 14:35:36');
 INSERT INTO `swo_logistic_dtl` VALUES ('118', '128', '79', null, '211', 'N', null, 'SH', 'LOGSH1', 'JoeY', '2016-05-03 17:34:45', '2017-03-24 16:30:18');
