@@ -8,6 +8,7 @@ return array(
 'Record ID'=>'代碼',
 'Code'=>'編號',
 'Name' => '姓名',
+'Department'=>'部門',
 'Position'=>'崗位',
 'Email'=>'電郵',
 'Join Date'=>'入職日期',
