@@ -67,7 +67,8 @@ return array(
     'No. of Current Month QC customers Ratio（Compared with the standard monthly customer visits）'=>'当月质检客户数量效率 （跟标准每月客户拜访数目比较）',
     '（It is estimated that each customer RM1500 / month，Local service customer amount / Customer value valuation= Approximate number of customers，Approximate Number of customers divided by 6（Hope Visit customers every 12 months），Equal standard monthly customer visits  amount）'=>'（估计客户每个约￥1500/月，当地服务客户金额/客户金额估值=客户约数量，客户约数量除6（希望每12个月拜访客户一次），等于标准每月客户拜访数目）',
     'Quality issue customer Ratio'=>'质检问题客户数量比例',
-    '（Quality issue customer ： No. of Below 70 QC mark customers。Quality issue customer / No. of Current Month QC customers =Quality issue customer Ratio）'=>'（问题客户 ： 质检拜访客户分数低于70分。问题客户/当月质检拜访客户 = 质检问题客户数量比例）',
+    '（Quality issue customer ： No. of Below 70 QC mark customers。Quality issue customer / No. of Current Month QC customers =Quality issue customer Ratio）'=>'质检问题客户数量比例                                         今月质检客户数量/今月（IA/IB）服务数目小于或大于10%时
+（问题客户 ： 质检拜访客户分数低于70分。问题客户/当月质检拜访客户 = 质检问题客户数量比例）',
     'Satisfied performance technician（QC Highest Avg. score Technicain）'=>'表现满意技术员 (质检拜访表平均分数最高同事） ',
     'Customer complaint handling'=>'客诉处理                                               ',
     'Compare Current Month complaint cases（Current Month complaint cases - Last Month complaint cases / Last Month complaint cases）'=>'当月客诉数目比较（当月客诉数目 - 上月客诉数目 / 上月客诉数目）',
