@@ -5,6 +5,7 @@ class RptStaff extends ReportData2 {
 			'lud'=>array('label'=>Yii::t('staff','Entry Date'),'width'=>18,'align'=>'L'),
 			'code'=>array('label'=>Yii::t('staff','Code'),'width'=>15,'align'=>'L'),
 			'name'=>array('label'=>Yii::t('staff','Name'),'width'=>30,'align'=>'L'),
+			'department'=>array('label'=>Yii::t('staff','Department'),'width'=>30,'align'=>'L'),
 			'position'=>array('label'=>Yii::t('staff','Position'),'width'=>30,'align'=>'L'),
 			'staff_type'=>array('label'=>Yii::t('staff','Staff Type'),'width'=>20,'align'=>'C'),
 			'leader'=>array('label'=>Yii::t('staff','Team/Group Leader'),'width'=>20,'align'=>'C'),
@@ -97,6 +98,7 @@ class RptStaff extends ReportData2 {
 				$temp['code'] = $row['code'];
 				$temp['name'] = $row['name'];
 				$temp['position'] = $row['position'];
+				$temp['department'] = $row['department'];
 				$temp['join_dt'] = General::toDate($row['join_dt']);
 				$temp['ctrt_start_dt'] = General::toDate($row['ctrt_start_dt']);
 				$temp['ctrt_period'] = $row['ctrt_period'];
