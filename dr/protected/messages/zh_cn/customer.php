@@ -36,6 +36,7 @@ return array(
 	'Product'=>'服务',
 	'First Date'=>'首次日期',
 	'Amount'=>'金额',
+	'Unit Price'=>'单价',
 	
 	'Active'=>'生效中',
 	'Terminated'=>'停止服务',

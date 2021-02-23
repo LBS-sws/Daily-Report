@@ -60,7 +60,7 @@ class LogisticForm extends CFormModel
 			'repair'=>Yii::t('logistic','Repair Items'),
 			'remarks'=>Yii::t('logistic','Remarks'),
             'salesman'=>Yii::t('service','Resp. Sales'),
-            'money'=>Yii::t('customer','Amount'),
+            'money'=>Yii::t('customer','Unit Price'),
 		);
 	}
 
