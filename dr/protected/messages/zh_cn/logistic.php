@@ -29,5 +29,7 @@ return array(
 	'Free'=>'免费',
 	
 	'Record ID'=>'代码',
+    'Please refer to the standard here.'=>'洗涤易请参考此处标准录入',
+    'Click to view picture'=>'点击查看图片',
 );
 ?>

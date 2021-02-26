@@ -196,7 +196,16 @@ $this->pageTitle=Yii::app()->name . ' - Product Delivery Form';
 			</div>
 <div class="box">
 <div class="box-body table-responsive">
-			<legend><?php echo Yii::t('logistic','Task'); ?></legend>
+			<legend><?php echo Yii::t('logistic','Task'); ?>
+    <span class="text-red" style="font-size: 15px;">
+			<?php
+            echo Yii::t('logistic','Please refer to the standard here.');
+            echo CHtml::link(' ('.Yii::t('logistic','Click to view picture').')','#',
+                array('onclick'=>'showHelp();return false;'));
+            ?>
+
+		</span>
+            </legend>
 			<?php $this->widget('ext.layout.TableView2Widget', array(
 					'model'=>$model,
 					'attribute'=>'detail',
@@ -211,7 +220,7 @@ $this->pageTitle=Yii::app()->name . ' - Product Delivery Form';
 		</div>
 	</div>
 </section>
-
+<?php $this->renderPartial('//logistic/help'); ?>
 <?php $this->renderPartial('//site/removedialog'); ?>
 <?php $this->renderPartial('//site/lookup'); ?>
 
@@ -302,7 +311,12 @@ $('#btnAddRow').on('click',function() {
 
 $js = Script::genDeleteData(Yii::app()->createUrl('logistic/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
-
+$js = <<<EOF
+function showHelp() {
+	$('#helpdialog').modal('show');
+}
+EOF;
+Yii::app()->clientScript->registerScript('helpClick',$js,CClientScript::POS_HEAD);
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
 ?>

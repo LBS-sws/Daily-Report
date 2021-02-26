@@ -29,5 +29,7 @@ return array(
 'Free'=>'免費',
 
 'Record ID'=>'代碼',
+'Please refer to the standard here.'=>'洗滌易請參考此處標準錄入',
+'Click to view picture'=>'點擊查看圖片',
 );
 ?>
