@@ -194,7 +194,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 //						echo $form->dropDownList($model, 'qc_staff', array(), 
 //							array('class'=>'form-control select2', 'disabled'=>($model->scenario=='view')));
 						echo $form->textField($model, 'qc_staff', 
-							array('size'=>50,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
+							array('size'=>50,'maxlength'=>500,'readonly'=>'',
 							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','QC Staff'),array('name'=>'btnStaffQc','id'=>'btnStaffQc','disabled'=>($model->scenario=='view')))
 						)); 
 					?>

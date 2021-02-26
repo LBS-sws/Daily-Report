@@ -89,7 +89,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-7">
 					<?php 
 						echo $form->textField($model, 'qc_staff', 
-							array('size'=>50,'maxlength'=>500,'readonly'=>'readonly',
+							array('size'=>50,'maxlength'=>500,'readonly'=>'',
 							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','QC Staff'),
 											array('name'=>'btnStaffQc','id'=>'btnStaffQc',
 												'disabled'=>($model->readonlySP())
