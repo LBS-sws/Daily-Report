@@ -37,10 +37,11 @@ class RptCustterminate extends ReportData2 {
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
-		$sql = "select a.*, b.description as nature, c.description as customer_type
+		$sql = "select a.*, b.description as nature, c.description as customer_type, d.cont_name, d.cont_phone, d.address
 					from swo_service a
 					left outer join swo_nature b on a.nature_type=b.id 
 					left outer join swo_customer_type c on a.cust_type=c.id
+					left outer join swo_company d on a.company_id=d.id
 				where a.status='T' and a.city='".$city."' 
 		";
 		if (isset($this->criteria)) {
@@ -55,16 +56,16 @@ class RptCustterminate extends ReportData2 {
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
-				$contact_name = $row['contact_name'];
-				$contact_phone = $row['contact_phone'];
+				$contact_name = $row['cont_name'];
+				$contact_phone = $row['cont_phone'];
 				$address = $row['address'];
-				if (empty($row['contact_name']) && empty($row['contact_phone']) && empty($row['address'])) {
+				if (empty($row['cont_name']) && empty($row['cont_phone']) && empty($row['address'])) {
 					$company_name = $row['company_name'];
 					$sql1 = "select * from swo_company where '$company_name' regexp code and city='$city' limit 1";
 					$rec = Yii::app()->db->createCommand($sql1)->queryRow();
 					if ($rec!==false) {
-						$contact_name = $rec['contact_name'];
-						$contact_phone = $rec['contact_phone'];
+						$contact_name = $rec['cont_name'];
+						$contact_phone = $rec['cont_phone'];
 						$address = $rec['address'];
 					}
 				}
