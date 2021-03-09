@@ -6,6 +6,7 @@ class RptCustnew extends ReportData2 {
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
 			'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
 			'service'=>array('label'=>Yii::t('service','Service'),'width'=>40,'align'=>'L'),
+			'prepay_month'=>array('label'=>Yii::t('service','Prepay Month'),'width'=>10,'align'=>'C'),
 			'amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C'),
 			'amt_year'=>array('label'=>Yii::t('service','Yearly'),'width'=>15,'align'=>'C'),
 			'amt_install'=>array('label'=>Yii::t('service','Installation Fee'),'width'=>15,'align'=>'C'),
@@ -61,6 +62,7 @@ class RptCustnew extends ReportData2 {
 				$temp['company_name'] = $row['company_name'];
 				$temp['nature'] = $row['nature'];
 				$temp['service'] = $row['service'];
+				$temp['prepay_month'] = $row['prepay_month'];
 				$temp['amt_month'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:
 										($row['paid_type']=='M'?$row['amt_paid']:round($row['amt_paid']/($row['ctrt_period']>0?$row['ctrt_period']:1),2)))
 									,2,'.','');
