@@ -62,7 +62,7 @@ class RptCustterminate extends ReportData2 {
 				if (empty($row['cont_name']) && empty($row['cont_phone']) && empty($row['address'])) {
 					$company_name = $row['company_name'];
 					$sql1 = "select * from swo_company where :company_name regexp code and city='$city' limit 1";
-					$command=$connection->createCommand($sql);
+					$command=Yii::app()->db->createCommand($sql1);
 					$command->bindParam(':company_name',$company_name,PDO::PARAM_STR);
 					$rec = $command->execute();
 /*
