@@ -64,7 +64,7 @@ class RptCustsuspend extends ReportData2 {
 					$sql1 = "select * from swo_company where :company_name regexp code and city='$city' limit 1";
 					$command=Yii::app()->db->createCommand($sql1);
 					$command->bindParam(':company_name',$company_name,PDO::PARAM_STR);
-					$rec = $command->execute();
+					$rec = $command->queryRow();
 /*
 					$sql1 = "select * from swo_company where '$company_name' regexp code and city='$city' limit 1";
 					$rec = Yii::app()->db->createCommand($sql1)->queryRow();
