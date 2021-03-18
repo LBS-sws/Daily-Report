@@ -42,7 +42,7 @@ SELECT case when count(a.id)=0 then 'U'
 FROM swo_service a
 LEFT OUTER JOIN swo_service b ON a.company_name=b.company_name AND a.status_dt < b.status_dt AND a.cust_type=b.cust_type
 WHERE b.id IS NULL AND a.city=p_city
-AND (a.company_id=p_id OR a.company_name like concat(p_code,'%') OR a.company_name like concat('%',p_name))
+AND (a.company_id=p_id OR a.company_name like concat(p_code,' %') OR a.company_name like concat('%',p_name))
 );
 RETURN status;
 

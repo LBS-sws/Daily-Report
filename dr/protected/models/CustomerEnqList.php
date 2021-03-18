@@ -139,7 +139,7 @@ class CustomerEnqList extends CListPageModel
 				left outer join swo_customer_type c on a.cust_type=c.id 
 				left outer join swo_product d on a.product_id=d.id 
 				where b.id is null and a.city='$city'
-				and (a.company_id=$id or a.company_name like concat('$code','%') 
+				and (a.company_id=$id or a.company_name like concat('$code',' %') 
 				or a.company_name like concat('%','$name'));
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
