@@ -5,6 +5,7 @@ class RptComplaint extends ReportData2 {
 			'entry_dt'=>array('label'=>Yii::t('followup','Date'),'width'=>18,'align'=>'C'),
 			'type'=>array('label'=>Yii::t('followup','Type'),'width'=>8,'align'=>'C'),
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>22,'align'=>'L'),
+			'address'=>array('label'=>Yii::t('customer','Address'),'width'=>40,'align'=>'L'),
 			'content'=>array('label'=>Yii::t('followup','Content'),'width'=>20,'align'=>'L'),
 			'cont_info'=>array('label'=>Yii::t('followup','Contact'),'width'=>23,'align'=>'L'),
 			'resp_staff'=>array('label'=>Yii::t('followup','Resp. Sales'),'width'=>15,'align'=>'L'),
@@ -38,6 +39,7 @@ class RptComplaint extends ReportData2 {
 			'entry_dt',
 			'type',
 			'company_name',
+			'address',
 			'content',
 			'cont_info',
 			'resp_staff',
@@ -117,6 +119,14 @@ class RptComplaint extends ReportData2 {
 				$temp['entry_dt'] = General::toDate($row['entry_dt']);
 				$temp['type'] = $row['type'];
 				$temp['company_name'] = $row['company_name'];
+				
+				$company_name = $row['company_name'];
+				$sql1 = "select * from swo_company where :company_name regexp code and city='$city' limit 1";
+				$command=Yii::app()->db->createCommand($sql1);
+				$command->bindParam(':company_name',$company_name,PDO::PARAM_STR);
+				$rec = $command->queryRow();
+				$temp['address'] = $rec===false ? '' : $rec['address'];
+
 				$temp['content'] = $row['content'];
 				$temp['cont_info'] = $row['cont_info'];
 				$temp['resp_staff'] = $row['resp_staff'];
