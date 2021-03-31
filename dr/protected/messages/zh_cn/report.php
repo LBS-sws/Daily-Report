@@ -53,6 +53,7 @@ return array(
 	'Ops. Dep. Score'=>'营运部分数',
     'HR Dep. Score'=>'人事部分数',
 	'Total Score'=>'总分',
+    'State'=>'状态',
 
 );
 ?>

@@ -52,5 +52,6 @@ return array(
 'Ops. Dep. Score'=>'營運部分數',
 'HR Dep. Score'=>'人事部分數',
 'Total Score'=>'總分',
+'State'=>'狀態',
 );
 ?>

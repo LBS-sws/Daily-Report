@@ -51,10 +51,16 @@ $this->pageTitle=Yii::app()->name . ' - Month Report Form';
 				</div>
 				<?php echo $form->labelEx($model,'month_no',array('class'=>"col-sm-1 control-label")); ?>
 				<div class="col-sm-2">
-					<?php echo $form->textField($model, 'month_no', 
+					<?php echo $form->textField($model, 'month_no',
 						array('size'=>10,'readonly'=>true)
 					); ?>
 				</div>
+                <?php echo $form->labelEx($model,'state',array('class'=>"col-sm-1 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->textField($model, 'state',
+                        array('size'=>10,'readonly'=>true)
+                    ); ?>
+                </div>
 			</div>
 			<legend>&nbsp;</legend>
             <input name="MonthForm[total]" id="MonthForm_year_no" class="input-10 form-control readonly" type="text" value="<?php echo $model->excel['f74'];?>" style="display: none" >
