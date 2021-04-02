@@ -15,6 +15,7 @@ return array(
 'Result'=>'當月平均分',
 'Average score of quality inspection List'=>'質檢平均分列表',
 'Average score of quality inspection'=>'質檢平均分',
+'Below 70**'=>'低於70分帶**',
 
 'Entry Date'=>'輸入日期',
 'Team'=>'小組',
