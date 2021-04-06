@@ -230,10 +230,12 @@ class SysBlock {
 //        $subjectlast="月报表总汇-" .$years.'/'.$months;
         $star = date("Y-m-01", strtotime($lastdate));
         $end = date("Y-m-31", strtotime($lastdate));
-        $sql = "select id from swoper$suffix.swo_month_email               
+        $sql = "select * from swoper$suffix.swo_month_email               
                 where city='$city' and  request_dt>= '$star' and  request_dt>= '$end' and subject='$subject' 	
 			";
         $row = Yii::app()->db->createCommand($sql)->queryAll();
+        print_r('<pre>');
+        print_r($row);
        if(count($row)>=1){
            return true;
        }else{
