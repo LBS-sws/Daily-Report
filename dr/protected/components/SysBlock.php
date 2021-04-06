@@ -231,11 +231,9 @@ class SysBlock {
         $star = date("Y-m-01", strtotime($lastdate));
         $end = date("Y-m-31", strtotime($lastdate));
         $sql = "select * from swoper$suffix.swo_month_email               
-                where city='$city' and  request_dt>= '$star' and  request_dt>= '$end' and subject='$subject' 	
+                where city='$city' and  request_dt>= '$star' and  request_dt<= '$end' and subject='$subject' 	
 			";
         $row = Yii::app()->db->createCommand($sql)->queryAll();
-        print_r('<pre>');
-        print_r($row);exit();
        if(count($row)>=1){
            return true;
        }else{
