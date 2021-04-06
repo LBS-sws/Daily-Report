@@ -235,7 +235,7 @@ class SysBlock {
 			";
         $row = Yii::app()->db->createCommand($sql)->queryAll();
         print_r('<pre>');
-        print_r($row);
+        print_r($row);exit();
        if(count($row)>=1){
            return true;
        }else{
