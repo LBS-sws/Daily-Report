@@ -12,6 +12,8 @@ class RptCustterminate extends ReportData2 {
 			'reason'=>array('label'=>Yii::t('service','Reason'),'width'=>30,'align'=>'L'),
 			'amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C'),
 			'amt_year'=>array('label'=>Yii::t('service','Yearly'),'width'=>15,'align'=>'C'),
+            'all_number'=>array('label'=>Yii::t('service','All Number'),'width'=>15,'align'=>'C'),
+            'surplus'=>array('label'=>Yii::t('service','Surplus'),'width'=>15,'align'=>'C'),
 			'salesman'=>array('label'=>Yii::t('service','Resp. Sales'),'width'=>20,'align'=>'L'),
             'othersalesman'=>array('label'=>Yii::t('service','OtherSalesman'),'width'=>20,'align'=>'L'),
             'technician'=>array('label'=>Yii::t('service','Resp. Tech.'),'width'=>20,'align'=>'L'),
@@ -87,6 +89,8 @@ class RptCustterminate extends ReportData2 {
 				$temp['service'] = $row['service'];
 				$temp['amt_month'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:($row['paid_type']=='M'?$row['amt_paid']:round($row['amt_paid']/($row['ctrt_period']>0?$row['ctrt_period']:12),2))),2,'.','');
 				$temp['amt_year'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:($row['paid_type']=='M'?$row['amt_paid']*($row['ctrt_period']<12&&!empty($row['ctrt_period'])?$row['ctrt_period']:12):$row['amt_paid'])),2,'.','');
+                $temp['all_number'] = $row['all_number'];
+                $temp['surplus'] = $row['surplus'];
 				$temp['salesman'] = $row['salesman'];
                 $temp['othersalesman'] = $row['othersalesman'];
                 $temp['technician'] = $row['technician'];

@@ -118,5 +118,7 @@ return array(
     'Prepay Month'=>'预付月数',
     'Prepay Start'=>'预付起始月',
     'Contract No'=>'合同编号',
+    'All Number'=>'服务总次数',
+    'Surplus'=>'剩余次数',
 );
 ?>
