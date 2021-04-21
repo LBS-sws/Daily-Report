@@ -27,6 +27,9 @@ return array(
 	'COD'=>'货到付款',
 	'CBD'=>'款到发货',
 	'Free'=>'免费',
+	'Salesman'=>'业务员',
+    'Money'=>'单价',
+    'All Money'=>'金额',
 	
 	'Record ID'=>'代码',
     'Please refer to the standard here.'=>'洗涤易请参考此处标准录入',

@@ -87,7 +87,7 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 				?>
 				</div>
 			</div>
-			
+
 			
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
@@ -162,11 +162,11 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 					$out .= TbHtml::label($model->functionLabels($fname), $fieldid);
 					$out .= '</div>';
 					$out .= '<div class="col-sm-2">';
-					$option = ($gname=='zzcontrol') 
+					$option = ($gname=='zzcontrol')
 						? array('CN'=>Yii::t('misc','On'),
 								'NA'=>Yii::t('misc','Off'),
 							)
-						: ((strpos($fid,'B')===false) 
+						: ((strpos($fid,'B')===false)
 						? array('RW'=>Yii::t('misc','Read-Write'),
 								'RO'=>Yii::t('misc','Read-only'),
 								'NA'=>Yii::t('misc','Off'),
