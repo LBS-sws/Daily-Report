@@ -32,7 +32,7 @@ return array(
     'All Money'=>'金额',
 	
 	'Record ID'=>'代码',
-    'Please refer to the standard here.'=>'洗涤易请参考此处标准录入',
+    'Please refer to the standard here.'=>'洗地易请参考此处标准录入',
     'Click to view picture'=>'点击查看图片',
 );
 ?>
