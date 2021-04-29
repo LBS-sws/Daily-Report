@@ -234,7 +234,6 @@ class SysBlock {
                 where city='$city' and  request_dt>= '$star' and  request_dt<= '$end' and subject='$subject' 	
 			";
         $row = Yii::app()->db->createCommand($sql)->queryAll();
-        print_r($row);exit();
        if(count($row)>=1){
            return true;
        }else{
