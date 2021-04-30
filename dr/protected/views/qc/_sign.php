@@ -5,7 +5,7 @@
 <div class='row'>
 	<div class='col-sm-7'>
 		$hidden
-		<canvas id='qc-signature' class='signature-pad' style='border:1px solid black; width:300px; height:150px'></canvas>
+		<canvas id='qc-signature' class='signature-pad' style='border:1px solid black; width:330px; height:200px'></canvas>
 		$button
 	</div>
 </div>
