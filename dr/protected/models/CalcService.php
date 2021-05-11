@@ -115,6 +115,7 @@ class CalcService extends Calculation {
 //今月新（IA，IB）服务年生意额 
 	public static function sumAmountIAIB($year, $month) {
 		$rtn = array();
+/*
 		$sql = "select a.city, 
 					sum(case a.paid_type
 							when 'Y' then a.amt_paid
@@ -129,6 +130,45 @@ class CalcService extends Calculation {
 				and a.status='N' 
 				group by a.city
 			";
+*/
+		$sql = "select 
+					a.city, 
+					sum(
+						(case a.paid_type
+							when 'Y' then a.amt_paid
+							when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+							else a.amt_paid
+						end) 
+						- if(a.status='N', 0, 
+							(case a.b4_paid_type
+								when 'Y' then ifnull(a.b4_amt_paid,0)
+								when 'M' then ifnull(a.b4_amt_paid,0) * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else ifnull(a.b4_amt_paid,0)
+							end)
+						)
+					) as sum_amount
+				from 
+					swo_service a, swo_customer_type b 
+				where 
+					year(a.first_dt)=$year and month(a.first_dt)=$month and 
+					a.cust_type=b.id and b.rpt_cat in ('IA','IB') and 
+					(a.status='N' or 
+						(a.status='A' and 
+							(case a.paid_type
+								when 'Y' then a.amt_paid
+								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else a.amt_paid
+							end) >
+							(case a.b4_paid_type
+								when 'Y' then ifnull(a.b4_amt_paid,0)
+								when 'M' then ifnull(a.b4_amt_paid,0) * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else ifnull(a.b4_amt_paid,0)
+							end)
+						)
+					) 
+				group by
+					a.city
+		";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','');
@@ -146,6 +186,7 @@ class CalcService extends Calculation {
 //今月新业务年生意额
 	public static function sumAmountNEW($year, $month) {
 		$rtn = array();
+/*
 		$sql = "select a.city, 
 					sum(case a.paid_type
 							when 'Y' then a.amt_paid
@@ -161,6 +202,46 @@ class CalcService extends Calculation {
 				and a.status='N' 
 				group by a.city
 			";
+*/
+		$sql = "select 
+					a.city, 
+					sum(
+						(case a.paid_type
+							when 'Y' then a.amt_paid
+							when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+							else a.amt_paid
+						end) 
+						- if(a.status='N', 0, 
+							(case a.b4_paid_type
+								when 'Y' then ifnull(a.b4_amt_paid,0)
+								when 'M' then ifnull(a.b4_amt_paid,0) * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else ifnull(a.b4_amt_paid,0)
+							end)
+						)
+					) as sum_amount
+				from 
+					swo_service a, swo_customer_type b 
+				where 
+					year(a.first_dt)=$year and month(a.first_dt)=$month and 
+					a.cust_type=b.id and 
+					b.rpt_cat in ('NEW', 'IC') and
+					(a.status='N' or 
+						(a.status='A' and 
+							(case a.paid_type
+								when 'Y' then a.amt_paid
+								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else a.amt_paid
+							end) >
+							(case a.b4_paid_type
+								when 'Y' then ifnull(a.b4_amt_paid,0)
+								when 'M' then ifnull(a.b4_amt_paid,0) * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else ifnull(a.b4_amt_paid,0)
+							end)
+						)
+					) 
+				group by
+					a.city
+		";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','');
@@ -178,6 +259,7 @@ class CalcService extends Calculation {
 //今月餐饮年生意额 
 	public static function sumAmountRestaurant($year, $month) {
 		$rtn = array();
+/*
 		$sql = "select a.city, 
 					sum(case a.paid_type
 							when 'Y' then a.amt_paid
@@ -193,6 +275,46 @@ class CalcService extends Calculation {
 				and a.cust_type=c.id and c.rpt_cat <> 'INV'  
 				group by a.city
 			";
+*/
+		$sql = "select 
+					a.city, 
+					sum(
+						(case a.paid_type
+							when 'Y' then a.amt_paid
+							when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+							else a.amt_paid
+						end) 
+						- if(a.status='N', 0, 
+							(case a.b4_paid_type
+								when 'Y' then ifnull(a.b4_amt_paid,0)
+								when 'M' then ifnull(a.b4_amt_paid,0) * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else ifnull(a.b4_amt_paid,0)
+							end)
+						)
+					) as sum_amount
+				from 
+					swo_service a, swo_customer_type b, swo_nature c 
+				where 
+					year(a.first_dt)=$year and month(a.first_dt)=$month and 
+					a.cust_type=b.id and b.rpt_cat <> 'INV' and 
+					a.nature_type=c.id and c.rpt_cat='A01' and
+					(a.status='N' or 
+						(a.status='A' and 
+							(case a.paid_type
+								when 'Y' then a.amt_paid
+								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else a.amt_paid
+							end) >
+							(case a.b4_paid_type
+								when 'Y' then ifnull(a.b4_amt_paid,0)
+								when 'M' then ifnull(a.b4_amt_paid,0) * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else ifnull(a.b4_amt_paid,0)
+							end)
+						)
+					) 
+				group by
+					a.city
+		";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','');
@@ -203,6 +325,7 @@ class CalcService extends Calculation {
 //今月非餐饮年生意额 
 	public static function sumAmountNonRestaurant($year, $month) {
 		$rtn = array();
+/*
 		$sql = "select a.city, 
 					sum(case a.paid_type
 							when 'Y' then a.amt_paid
@@ -218,6 +341,46 @@ class CalcService extends Calculation {
 				and a.cust_type=c.id and c.rpt_cat <> 'INV'  
 				group by a.city
 			";
+*/
+		$sql = "select 
+					a.city, 
+					sum(
+						(case a.paid_type
+							when 'Y' then a.amt_paid
+							when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+							else a.amt_paid
+						end) 
+						- if(a.status='N', 0, 
+							(case a.b4_paid_type
+								when 'Y' then ifnull(a.b4_amt_paid,0)
+								when 'M' then ifnull(a.b4_amt_paid,0) * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else ifnull(a.b4_amt_paid,0)
+							end)
+						)
+					) as sum_amount
+				from 
+					swo_service a, swo_customer_type b, swo_nature c 
+				where 
+					year(a.first_dt)=$year and month(a.first_dt)=$month and 
+					a.cust_type=b.id and b.rpt_cat <> 'INV' and 
+					a.nature_type=c.id and c.rpt_cat='B01' and
+					(a.status='N' or 
+						(a.status='A' and 
+							(case a.paid_type
+								when 'Y' then a.amt_paid
+								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else a.amt_paid
+							end) >
+							(case a.b4_paid_type
+								when 'Y' then ifnull(a.b4_amt_paid,0)
+								when 'M' then ifnull(a.b4_amt_paid,0) * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else ifnull(a.b4_amt_paid,0)
+							end)
+						)
+					) 
+				group by
+					a.city
+		";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','');
@@ -293,6 +456,7 @@ class CalcService extends Calculation {
 //今月停单月生意额
 	public static function sumAmountTerminate($year, $month) {
 		$rtn = array();
+/*
 		$sql = "select a.city, 
 					sum(case a.paid_type
 							when 'Y' then a.amt_paid /
@@ -307,6 +471,51 @@ class CalcService extends Calculation {
 				and a.cust_type=b.id and b.rpt_cat <> 'INV'  
 				group by a.city
 			";
+*/
+		$sql = "select 
+					a.city, 
+					sum(
+						if(a.status='T',
+							(case a.paid_type
+								when 'Y' then a.amt_paid
+								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else a.amt_paid
+							end),
+							(case a.b4_paid_type
+								when 'Y' then ifnull(a.b4_amt_paid,0)
+								when 'M' then ifnull(a.b4_amt_paid,0) * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else ifnull(a.b4_amt_paid,0)
+							end) -
+							(case a.paid_type
+								when 'Y' then a.amt_paid
+								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else a.amt_paid
+							end) 
+						)
+					) as sum_amount
+				from 
+					swo_service a, swo_customer_type b 
+				where 
+					year(a.first_dt)=$year and month(a.first_dt)=$month and 
+					a.cust_type=b.id and 
+					b.rpt_cat <> 'INV' and
+					(a.status='T' or 
+						(a.status='A' and 
+							(case a.paid_type
+								when 'Y' then a.amt_paid
+								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else a.amt_paid
+							end) <
+							(case a.b4_paid_type
+								when 'Y' then ifnull(a.b4_amt_paid,0)
+								when 'M' then ifnull(a.b4_amt_paid,0) * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								else ifnull(a.b4_amt_paid,0)
+							end)
+						)
+					) 
+				group by
+					a.city
+		";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','');
