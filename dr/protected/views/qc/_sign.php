@@ -1,5 +1,6 @@
 <?php
 	$button = TbHtml::button(Yii::t('qc','Clear'), array('name'=>'btnClearSignature','id'=>'btnClearSignature','class'=>'btn-sm',));
+	$button .= TbHtml::button(Yii::t('qc','Adjust'), array('name'=>'btnAlign','id'=>'btnAlign','class'=>'btn-sm',));
 	$hidden = TbHtml::hiddenField('sign_target_field','');
 	$content = <<<EOF
 <div class='row'>
@@ -38,8 +39,20 @@ EOF;
 <?php
 $js = <<<EOF
 var signaturePad = new SignaturePad(document.getElementById('qc-signature'));
+function resizeCanvas() {
+	var canvas = document.getElementById('qc-signature');
+    var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+    signaturePad.clear(); // otherwise isEmpty() might return incorrect value
+}
+
 $('#btnClearSignature').on('click',function(){
 	signaturePad.clear();
+});
+$('#btnAlign').on('click',function(){
+	resizeCanvas();
 });
 $('#btnOkSignature').on('click',function(){
 	var inputid = $('#sign_target_field').val();
@@ -49,6 +62,10 @@ $('#btnOkSignature').on('click',function(){
 	$('#'+inputid+'_img').attr('src',data);
 	signaturePad.clear();
 });
+
+//window.addEventListener("resize", resizeCanvas);
+//resizeCanvas();
+//window.onresize = resizeCanvas;
 EOF;
 Yii::app()->clientScript->registerScript('signatureDialog',$js,CClientScript::POS_READY);
 ?>
