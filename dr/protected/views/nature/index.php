@@ -28,7 +28,7 @@ $this->pageTitle=Yii::app()->name . ' - Nature';
 		<?php 
 			if (Yii::app()->user->validRWFunction('C01'))
 				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Record'), array(
-					'submit'=>Yii::app()->createUrl('city/new'), 
+					'submit'=>Yii::app()->createUrl('nature/new'), 
 				)); 
 		?>
 	</div>
