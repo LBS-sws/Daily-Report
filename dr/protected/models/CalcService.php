@@ -150,10 +150,9 @@ class CalcService extends Calculation {
 				from 
 					swo_service a, swo_customer_type b 
 				where 
-					year(a.first_dt)=$year and month(a.first_dt)=$month and 
 					a.cust_type=b.id and b.rpt_cat in ('IA','IB') and 
-					(a.status='N' or 
-						(a.status='A' and 
+					((a.status='N' and year(a.first_dt)=$year and month(a.first_dt)=$month) or 
+						(a.status='A' and year(a.status_dt)=$year and month(a.status_dt)=$month and
 							(case a.paid_type
 								when 'Y' then a.amt_paid
 								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
@@ -222,11 +221,10 @@ class CalcService extends Calculation {
 				from 
 					swo_service a, swo_customer_type b 
 				where 
-					year(a.first_dt)=$year and month(a.first_dt)=$month and 
 					a.cust_type=b.id and 
 					b.rpt_cat in ('NEW', 'IC') and
-					(a.status='N' or 
-						(a.status='A' and 
+					((a.status='N' and year(a.first_dt)=$year and month(a.first_dt)=$month) or 
+						(a.status='A' and year(a.status_dt)=$year and month(a.status_dt)=$month and 
 							(case a.paid_type
 								when 'Y' then a.amt_paid
 								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
@@ -295,11 +293,11 @@ class CalcService extends Calculation {
 				from 
 					swo_service a, swo_customer_type b, swo_nature c 
 				where 
-					year(a.first_dt)=$year and month(a.first_dt)=$month and 
+					 
 					a.cust_type=b.id and b.rpt_cat <> 'INV' and 
 					a.nature_type=c.id and c.rpt_cat='A01' and
-					(a.status='N' or 
-						(a.status='A' and 
+					((a.status='N' and year(a.first_dt)=$year and month(a.first_dt)=$month) or 
+						(a.status='A' and year(a.status_dt)=$year and month(a.status_dt)=$month and
 							(case a.paid_type
 								when 'Y' then a.amt_paid
 								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
@@ -361,11 +359,11 @@ class CalcService extends Calculation {
 				from 
 					swo_service a, swo_customer_type b, swo_nature c 
 				where 
-					year(a.first_dt)=$year and month(a.first_dt)=$month and 
+					
 					a.cust_type=b.id and b.rpt_cat <> 'INV' and 
 					a.nature_type=c.id and c.rpt_cat='B01' and
-					(a.status='N' or 
-						(a.status='A' and 
+					((a.status='N' and year(a.first_dt)=$year and month(a.first_dt)=$month) or 
+						(a.status='A' and year(a.status_dt)=$year and month(a.status_dt)=$month and 
 							(case a.paid_type
 								when 'Y' then a.amt_paid
 								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
@@ -496,7 +494,7 @@ class CalcService extends Calculation {
 				from 
 					swo_service a, swo_customer_type b 
 				where 
-					year(a.first_dt)=$year and month(a.first_dt)=$month and 
+					year(a.status_dt)=$year and month(a.status_dt)=$month and 
 					a.cust_type=b.id and 
 					b.rpt_cat <> 'INV' and
 					(a.status='T' or 
