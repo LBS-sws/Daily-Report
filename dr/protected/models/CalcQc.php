@@ -6,7 +6,11 @@ class CalcQc extends Calculation {
 	public static function countCase($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter from swo_qc a
+				left outer join swo_qc_info b on a.id=b.qc_id and b.field_id='sign_cust'
+				left outer join swo_qc_info c on a.id=c.qc_id and c.field_id='sign_qc'
+				left outer join swo_qc_info d on a.id=d.qc_id and d.field_id='sign_tech'
 				where year(a.qc_dt)=$year and month(a.qc_dt)=$month 
+				and (b.field_blob<>'' or c.field_blob<>'' or d.field_blob<>'')
 				group by a.city
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
@@ -20,10 +24,14 @@ class CalcQc extends Calculation {
 	public static function countResultBelow70($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, count(a.id) as counter from swo_qc a
+				left outer join swo_qc_info b on a.id=b.qc_id and b.field_id='sign_cust'
+				left outer join swo_qc_info c on a.id=c.qc_id and c.field_id='sign_qc'
+				left outer join swo_qc_info d on a.id=d.qc_id and d.field_id='sign_tech'
 				where year(a.qc_dt)=$year and month(a.qc_dt)=$month 
 				and a.qc_result is not null and a.qc_result <> '' 
 				and (a.qc_result*1<>0 or a.qc_result in ('000','0','0.0','0.00','0.000','000.000'))
 				and a.qc_result*1 < 70
+				and (b.field_blob<>'' or c.field_blob<>'' or d.field_blob<>'')
 				group by a.city
 			";
 //		$sql = "select a.city, count(a.id) as counter from swo_qc a
@@ -43,8 +51,12 @@ class CalcQc extends Calculation {
 	public static function listHighestMarkStaff($year, $month) {
 		$rtn = array();
 		$sql = "select a.city, a.job_staff, avg(cast(a.qc_result as decimal(8,2))) as score from swo_qc a
+				left outer join swo_qc_info b on a.id=b.qc_id and b.field_id='sign_cust'
+				left outer join swo_qc_info c on a.id=c.qc_id and c.field_id='sign_qc'
+				left outer join swo_qc_info d on a.id=d.qc_id and d.field_id='sign_tech'
 				where year(a.qc_dt)=$year and month(a.qc_dt)=$month 
 				and a.qc_result is not null and a.qc_result <> '' 
+				and (b.field_blob<>'' or c.field_blob<>'' or d.field_blob<>'')
 				group by a.city, a.job_staff
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
