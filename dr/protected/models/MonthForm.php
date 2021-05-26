@@ -78,7 +78,6 @@ class MonthForm extends CFormModel
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         $sql="select * from swo_monthly_comment where hdr_id=$index";
         $ros = Yii::app()->db->createCommand($sql)->queryAll();
-        var_dump(count($rows));die();
         if(count($rows)==64){
             $b3=intval($rows[0]['data_value']);
             $b4=intval($rows[1]['data_value']);
