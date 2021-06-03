@@ -272,7 +272,7 @@ class General {
 	public static function getServiceTypeList($descOnly=false)
 	{
 		$list = array();
-		$sql = "select id, description from swo_service_type order by description";
+		$sql = "select id, description from swo_service_type where rpt_cat in ('IA','IB') order by description";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
