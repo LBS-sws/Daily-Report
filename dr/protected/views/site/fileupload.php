@@ -33,44 +33,75 @@ $this->beginWidget('bootstrap.widgets.TbModal', array(
 <?php
 echo CHtml::hiddenField(get_class($model).'[removeFileId]['.strtolower($doc->docType).']',$model->removeFileId[strtolower($doc->docType)], array('id'=>get_class($model).'_removeFileId_'.strtolower($doc->docType),));
 ?>
-<div id="inputFile">
-    <?php
-    if (!$ronly) {
-        $warning = Yii::t('dialog','Exceeds file upload limit.');
-        $this->widget('CMultiFileUpload', array(
-            'name'=>$doc->inputName,
-            'model'=>$model,
-            'attribute'=>'files',
-            'accept'=>'jpeg|jpg|gif|png|xlsx|xls|docx|doc|pdf|tif',
-            'remove'=>Yii::t('dialog','Remove'),
-            'file'=>' $file',
-            'options'=>array(
-                'list'=>'#'.$doc->listName,
-//			'onFileSelect'=>'function(e, v, m){ alert("onFileSelect - "+v) }',
-                'afterFileSelect'=>'function(e ,v ,m){
-					var fileSize = e.files[0].size;
-					if(fileSize>'.$doc->docMaxSize.'){ 
-						alert("'.$warning.' ('.$doc->docMaxSize.' Bytes)");
-							$(".MultiFile-remove").last().click(); 
-					}                      
-					return true;
 
-                }',
-//        'onFileAppend'=>'function(e, v, m){ alert("onFileAppend - "+v) }',
-//        'afterFileAppend'=>'function(e, v, m){ alert("afterFileAppend - "+v) }',
-//        'onFileRemove'=>'function(e, v, m){ alert("onFileRemove - "+v) }',
-//        'afterFileRemove'=>'function(e, v, m){ alert("afterFileRemove - "+v) }',
-            ),
-//		'htmlOptions'=>array(
-//			'style'=>'height:100%; position:absolute; top:0; right:10; z-index:99; ',
-//		),
-        ));
-    }
-    ?>
-</div>
-<div id="<?php echo $doc->listName; ?>" style="max-height: 100px; overflow-y: auto;">
-</div>
+<?php
+if (!$ronly) echo TbHtml::fileField($doc->inputName, '', array('multiple'=>true));
+?>
 
 <?php
 $this->endWidget();
+?>
+
+<?php
+if (!$ronly) {
+	$modelname = get_class($model);
+	$formId = $form->id;
+	$typeid = strtolower($doctype);
+	$ctrlname = Yii::app()->controller->id;
+	$link = Yii::app()->createAbsoluteUrl($ctrlname."/fileupload",array('doctype'=>$doctype));
+
+	$warning1 = Yii::t('dialog','Exceeds file upload limit.');
+	$warning2 = Yii::t('dialog','Invalid file type.');
+
+	$tblid = $doc->tableName;
+	$buttonId = '#'.$doc->inputName;
+	$maxSize = $doc->docMaxSize;
+
+	$jscript = <<<EOF
+$('$buttonId').on('change',function() {
+	var errmsg = '';
+	$(this).files.forEach(file => {
+		if (file.size > $maxSize) errmsg += '$warning1 ($maxSize Bytes) -' + file.name + "\\n";
+		let elm = file.name.split('.');
+		if ('jpeg|jpg|gif|png|xlsx|xls|docx|doc|pdf|tif|'.indexOf(elm[elm.length - 1].toLowerCase()+'|')==-1)
+			errmsg += '$warning2 -' + file.name + "\\n";
+	});
+	if (errmsg!='') {
+		alert(errmsg);
+	} else {
+		var form = document.getElementById('$formId');
+		var formdata = new FormData(form);
+		$.ajax({
+			type: 'POST',
+			url: '$link',
+		data: formdata,
+		mimeType: 'multipart/form-data',
+		contentType: false,
+		processData: false,
+		success: function(data) {
+			if (data!='NIL') {
+				$('#$tblid').find('tbody').empty().append(data);
+				$('input:file').MultiFile('reset')
+				attmno = '$modelname'+'_no_of_attm_'+'$typeid';
+				counter = $('#'+attmno).val();
+				var d = $('#doc$typeid');
+				if (counter==undefined || counter==0) {
+					d.removeClass();
+					d.html('');
+				} else {
+					d.removeClass().addClass('label').addClass('label-info');
+					d.html(counter);
+				}
+			}
+		},
+		error: function(data) { // if error occured
+			alert('Error occured.please try again');
+		}
+	});
+		
+	}
+});
+EOF;
+	Yii::app()->clientScript->registerScript('fileUpload2'.$doctype,$jscript,CClientScript::POS_READY);
+}
 ?>
