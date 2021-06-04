@@ -3,8 +3,16 @@ $doc = new DocMan($doctype,$model->id,get_class($model));
 if (isset($model->uploadMaxSize) && $model->uploadMaxSize > 0) $doc->docMaxSize = $model->uploadMaxSize;
 $doc->masterId = $model->docMasterId[strtolower($doc->docType)];
 
+$modelname = get_class($model);
+$formId = $form->id;
+$typeid = strtolower($doctype);
+$ctrlname = Yii::app()->controller->id;
+$tblid = $doc->tableName;
+$buttonId = $doc->inputName;
+$closeId = $doc->closeButtonName;
+
 $ftrbtn = array();
-if (!$ronly) {$ftrbtn[] = TbHtml::button(Yii::t('dialog','Upload'), array('id'=>$doc->uploadButtonName,));}
+//if (!$ronly) {$ftrbtn[] = TbHtml::button(Yii::t('dialog','Upload'), array('id'=>$doc->uploadButtonName,));}
 $ftrbtn[] = TbHtml::button(Yii::t('dialog','Close'), array('id'=>$doc->closeButtonName,'data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY));
 
 $this->beginWidget('bootstrap.widgets.TbModal', array(
@@ -35,7 +43,10 @@ echo CHtml::hiddenField(get_class($model).'[removeFileId]['.strtolower($doc->doc
 ?>
 
 <?php
-if (!$ronly) echo TbHtml::fileField($doc->inputName, '', array('multiple'=>true));
+if (!$ronly) {
+	echo TbHtml::fileField($doc->inputName.'[]', '', array('id'=>$doc->inputName,'multiple'=>true));
+	echo "<span id='msgblock$typeid' class='text-red'></span>";
+}
 ?>
 
 <?php
@@ -44,33 +55,35 @@ $this->endWidget();
 
 <?php
 if (!$ronly) {
-	$modelname = get_class($model);
-	$formId = $form->id;
-	$typeid = strtolower($doctype);
-	$ctrlname = Yii::app()->controller->id;
 	$link = Yii::app()->createAbsoluteUrl($ctrlname."/fileupload",array('doctype'=>$doctype));
 
 	$warning1 = Yii::t('dialog','Exceeds file upload limit.');
 	$warning2 = Yii::t('dialog','Invalid file type.');
+	$message1 = Yii::t('dialog','Saving').'...';
 
-	$tblid = $doc->tableName;
-	$buttonId = '#'.$doc->inputName;
 	$maxSize = $doc->docMaxSize;
 
 	$jscript = <<<EOF
-$('$buttonId').on('change',function() {
+$('#$buttonId').on('change',function() {
 	var errmsg = '';
-	$(this).files.forEach(file => {
-		if (file.size > $maxSize) errmsg += '$warning1 ($maxSize Bytes) -' + file.name + "\\n";
-		let elm = file.name.split('.');
+	var fileInput = document.getElementById('$buttonId');
+	var closeButton = document.getElementById('$closeId');
+	var msgBlock = document.getElementById('msgblock$typeid');
+	var selectedFiles = [...fileInput.files];
+	for (var i=0; i<selectedFiles.length; i++) {
+		if (selectedFiles[i].size > $maxSize) errmsg += '$warning1 ($maxSize Bytes) -' + selectedFiles[i].name + "\\n";
+		let elm = selectedFiles[i].name.split('.');
 		if ('jpeg|jpg|gif|png|xlsx|xls|docx|doc|pdf|tif|'.indexOf(elm[elm.length - 1].toLowerCase()+'|')==-1)
-			errmsg += '$warning2 -' + file.name + "\\n";
-	});
+			errmsg += '$warning2 -' + selectedFiles[i].name + "\\n";
+	};
 	if (errmsg!='') {
 		alert(errmsg);
 	} else {
 		var form = document.getElementById('$formId');
 		var formdata = new FormData(form);
+		fileInput.disabled = true;
+		closeButton.disabled = true;
+		msgBlock.innerHTML = '<center><i>$message1</i></center>';
 		$.ajax({
 			type: 'POST',
 			url: '$link',
@@ -81,7 +94,6 @@ $('$buttonId').on('change',function() {
 		success: function(data) {
 			if (data!='NIL') {
 				$('#$tblid').find('tbody').empty().append(data);
-				$('input:file').MultiFile('reset')
 				attmno = '$modelname'+'_no_of_attm_'+'$typeid';
 				counter = $('#'+attmno).val();
 				var d = $('#doc$typeid');
@@ -93,8 +105,16 @@ $('$buttonId').on('change',function() {
 					d.html(counter);
 				}
 			}
+			msgBlock.innerHTML = '';
+			fileInput.disabled = false;
+			fileInput.value = null;
+			closeButton.disabled = false;
 		},
 		error: function(data) { // if error occured
+			msgBlock.innerHTML = '';
+			fileInput.disabled = false;
+			fileInput.value = null;
+			closeButton.disabled = false;
 			alert('Error occured.please try again');
 		}
 	});
