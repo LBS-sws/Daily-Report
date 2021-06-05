@@ -3,6 +3,8 @@ $doc = new DocMan($doctype,$model->id,get_class($model));
 if (isset($model->uploadMaxSize) && $model->uploadMaxSize > 0) $doc->docMaxSize = $model->uploadMaxSize;
 $doc->masterId = $model->docMasterId[strtolower($doc->docType)];
 
+if(isset($delBtn)) $nodelete = !$delBtn;
+
 $modelname = get_class($model);
 $formId = $form->id;
 $typeid = strtolower($doctype);
