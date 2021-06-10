@@ -121,7 +121,7 @@ class RptComplaint extends ReportData2 {
 				$temp['company_name'] = $row['company_name'];
 				
 				$company_name = $row['company_name'];
-				$sql1 = "select * from swo_company where :company_name regexp code and city='$city' limit 1";
+				$sql1 = "select * from swo_company where :company_name regexp code and :company_name regexp name and city='$city' limit 1";
 				$command=Yii::app()->db->createCommand($sql1);
 				$command->bindParam(':company_name',$company_name,PDO::PARAM_STR);
 				$rec = $command->queryRow();
