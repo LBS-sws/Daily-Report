@@ -36,7 +36,8 @@ $this->pageTitle=Yii::app()->name . ' - Task';
 	<?php 
 		$search = array(
 						'description',
-						'type'
+						'type',
+						'sales_products',
 					);
 		if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
 		$this->widget('ext.layout.ListPageWidget', array(
@@ -44,8 +45,6 @@ $this->pageTitle=Yii::app()->name . ' - Task';
 			'model'=>$model,
 				'viewhdr'=>'//task/_listhdr',
 				'viewdtl'=>'//task/_listdtl',
-				'gridsize'=>'24',
-				'height'=>'600',
 				'search'=>$search,
 		));
 	?>

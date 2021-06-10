@@ -5,4 +5,5 @@
 <?php endif ?>
 	<td><?php echo $this->record['description']; ?></td>
 	<td><?php echo $this->record['type']; ?></td>
+	<td><?php echo $this->record['sales_products']; ?></td>
 </tr>

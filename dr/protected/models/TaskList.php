@@ -13,6 +13,7 @@ class TaskList extends CListPageModel
 			'description'=>Yii::t('code','Description'),
 			'city_name'=>Yii::t('misc','City'),
 			'type'=>Yii::t('code','Type'),
+            'sales_products'=>Yii::t('code','Sales Products'),
 		);
 	}
 	
@@ -41,6 +42,21 @@ class TaskList extends CListPageModel
 				case 'type':
 					$clause .= General::getSqlConditionClause('a.task_type',$svalue);
 					break;
+				case 'sales_products':
+					$fld = 
+"(select case sales_products
+when 'wu' then '".Yii::t('code','-- None --')."' 
+when 'paper' then '".Yii::t('code','Paper')."' 
+when 'disinfectant' then '".Yii::t('code','Disinfectant')."' 
+when 'purification' then '".Yii::t('code','Purification')."' 
+when 'chemical' then '".Yii::t('code','Chemical')."' 
+when 'aromatherapy' then '".Yii::t('code','Aromatherapy')."' 
+when 'pestcontrol' then '".Yii::t('code','Pest control')."' 
+when 'other' then '".Yii::t('code','Other')."' 
+end)
+";
+					$clause .= General::getSqlConditionClause($fld,$svalue);
+					break;
 			}
 		}
 		
@@ -60,6 +76,17 @@ class TaskList extends CListPageModel
 		$sql = $sql1.$clause.$order;
 		$sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
+
+		$prodlist = array(
+			'wu'=>Yii::t('code','-- None --'),//无
+			'paper'=>Yii::t('code','Paper'),//纸
+			'disinfectant'=>Yii::t('code','Disinfectant'),//消毒液
+			'purification'=>Yii::t('code','Purification'),//空气净化
+			'chemical'=>Yii::t('code','Chemical'),//化学剂
+			'aromatherapy'=>Yii::t('code','Aromatherapy'),//香薰
+			'pestcontrol'=>Yii::t('code','Pest control'),//虫控
+			'other'=>Yii::t('code','Other'),//其他
+		);
 		
 		$list = array();
 		$this->attr = array();
@@ -83,6 +110,7 @@ class TaskList extends CListPageModel
 					'description'=>$record['description'],
 					'type'=>$type,
 					'city_name'=>$record['city_name'],
+					'sales_products'=>isset($prodlist[$record['sales_products']]) ? $prodlist[$record['sales_products']] : '',
 				);
 			}
 		}
