@@ -163,8 +163,19 @@ class ServiceForm extends CFormModel
 			array('status_dt','date','allowEmpty'=>false,
 				'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
 			),
+            array('status_dt','validateVisitDt','on'=>array('new')),
 		);
 	}
+
+    public function validateVisitDt($attribute, $params) {
+        $visit_dt = date("Y-m-d",strtotime($this->status_dt));
+        $nowDate = date("Y-m-d");
+        $firstDate = date("Y-m-01",strtotime($nowDate));
+        $firstDate = date("Y-m-01",strtotime("$firstDate - 2 month"));
+        if($visit_dt<$firstDate){
+            $this->addError($attribute, "新增日期必须大于".$firstDate);
+        }
+    }
 
 	public function retrieveData($index)
 	{
