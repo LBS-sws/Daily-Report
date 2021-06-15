@@ -3,6 +3,9 @@
         <?php echo TbHtml::label($this->getLabelName('cust_type_name'), false); ?>
     </th>
     <th>
+        <?php echo TbHtml::label($this->getLabelName('single'), false); ?>
+    </th>
+    <th>
         <?php echo TbHtml::label($this->getLabelName('conditions'), false); ?>
     </th>
 	<th>

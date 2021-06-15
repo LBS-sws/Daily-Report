@@ -9,6 +9,11 @@
         ?>
     </td>
     <td>
+        <?php echo TbHtml::dropDownList($this->getFieldName('single'),  $this->record['single'], array('0'=>'非一次性服务','1'=>'一次性服务'),
+            array('disabled'=>$this->model->isReadOnly())
+        ); ?>
+    </td>
+    <td>
         <?php echo TbHtml::dropDownList($this->getFieldName('conditions'),  $this->record['conditions'], array('1'=>'每个','2'=>'每个新客户','3'=>'每个新客户订购一包','4'=>'每个新客户每桶','5'=>'每个新客户每箱','6'=>'每月'),
             array('disabled'=>$this->model->isReadOnly())
         ); ?>

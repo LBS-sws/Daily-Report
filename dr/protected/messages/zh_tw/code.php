@@ -96,5 +96,6 @@ return array(
 'Dec'=>'12月',
 'No data available'=>'暫無數據',
 'Monthly Report Data Analysis'=>'月報表數據分析',
+    'service type'=>'服務類型',
 );
 ?>

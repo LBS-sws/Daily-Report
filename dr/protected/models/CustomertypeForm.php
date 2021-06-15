@@ -10,6 +10,7 @@ class CustomertypeForm extends CFormModel
         array('id'=>0,
             'cust_type_name'=>'',
             'conditions'=>'',
+            'single'=>0,//是否是一次性服务 0：非一次性  1：一次性
             'fraction'=>0,
             'toplimit'=>0,
             'uflag'=>'N',
@@ -26,6 +27,7 @@ class CustomertypeForm extends CFormModel
             'description'=>Yii::t('code','Description'),
             'rpt_cat'=>Yii::t('code','Report Category'),
             'cust_type_name'=>Yii::t('code','Cust Type Name'),
+            'single'=>Yii::t('code','service type'),
             'conditions'=>Yii::t('code','Condition'),
             'fraction'=>Yii::t('code','Fractiony'),
             'toplimit'=>Yii::t('code','Toplimit'),
@@ -66,7 +68,8 @@ class CustomertypeForm extends CFormModel
                 $temp = array();
                 $temp['id'] = $row['id'];
                 $temp['cust_type_name'] = $row['cust_type_name'];
-                 $temp['conditions'] = $row['conditions'];
+                $temp['conditions'] = $row['conditions'];
+                $temp['single'] = $row['single'];
                 $temp['fraction'] = $row['fraction'];
                 $temp['toplimit'] = $row['toplimit'];
                 $temp['uflag'] = 'N';
@@ -148,10 +151,10 @@ class CustomertypeForm extends CFormModel
                 case 'new':
                     if ($row['uflag']=='Y') {
                         $sql = "insert into swo_customer_type_twoname(
-									cust_type_id, cust_type_name, fraction, toplimit, conditions,
+									cust_type_id, cust_type_name, single, fraction, toplimit, conditions,
 									 luu, lcu
 								) values (
-									:cust_type_id, :cust_type_name, :fraction, :toplimit, :conditions,
+									:cust_type_id, :cust_type_name, :single, :fraction, :toplimit, :conditions,
 									 :luu, :lcu
 								)";
                     }
@@ -165,10 +168,10 @@ class CustomertypeForm extends CFormModel
                             $sql = ($row['id']==0)
                                 ?
                                 "insert into swo_customer_type_twoname(
-										cust_type_id, cust_type_name, fraction, toplimit, conditions,
+										cust_type_id, cust_type_name, single, fraction, toplimit, conditions,
 										 luu, lcu
 									) values (
-										:cust_type_id, :cust_type_name, :fraction, :toplimit,:conditions,
+										:cust_type_id, :cust_type_name, :single, :fraction, :toplimit,:conditions,
 										:luu, :lcu
 									)
 									"
@@ -176,6 +179,7 @@ class CustomertypeForm extends CFormModel
                                 "update swo_customer_type_twoname set
 										cust_type_id = :cust_type_id,
 										cust_type_name = :cust_type_name, 
+										single = :single,
 										conditions = :conditions,
 										fraction = :fraction,									
 										toplimit = :toplimit,
@@ -193,6 +197,8 @@ class CustomertypeForm extends CFormModel
                     $command->bindParam(':id',$row['id'],PDO::PARAM_INT);
                 if (strpos($sql,':cust_type_id')!==false)
                     $command->bindParam(':cust_type_id',$this->id,PDO::PARAM_INT);
+                if (strpos($sql,':single')!==false)
+                    $command->bindParam(':single',$row['single'],PDO::PARAM_INT);
                 if (strpos($sql,':cust_type_name')!==false)
                     $command->bindParam(':cust_type_name',$row['cust_type_name'],PDO::PARAM_STR);
                 if (strpos($sql,':conditions')!==false)
