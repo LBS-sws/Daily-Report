@@ -1,5 +1,5 @@
 <?php
-	$typelist = General::getServiceTypeList(true);
+	$typelist = General::getServiceTypeList(true, true);
 	$listbox = TbHtml::dropDownList('lsttypelookup', '', $typelist);
 	$label = TbHtml::label(Yii::t('qc','Service Type'),false,array('class'=>"col-sm-2 control-label"));
 	$content = "<div class=\"row\">$label<div class=\"col-sm-10\">$listbox</div></div>";
