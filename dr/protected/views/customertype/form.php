@@ -72,6 +72,18 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type Form';
 				</div>
 			</div>
 
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'single',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-2">
+                    <?php echo $form->dropDownList($model,'single', array('0'=>'非一次性服务','1'=>'一次性服务'),
+                        array('disabled'=>$model->scenario=='view')
+                    ); ?>
+				</div>
+                <div class="col-sm-5">
+                    <p class="form-control-static text-danger">仅适用于该类型的“无”状态</p>
+				</div>
+			</div>
+
             <div class="box">
                 <div class="box-body table-responsive">
                     <?php

@@ -6,6 +6,7 @@ class CustomertypeForm extends CFormModel
     public $id;
     public $description;
     public $rpt_cat;
+    public $single;
     public $detail = array(
         array('id'=>0,
             'cust_type_name'=>'',
@@ -42,7 +43,7 @@ class CustomertypeForm extends CFormModel
     {
         return array(
             array('description','required'),
-            array('id,rpt_cat','safe'),
+            array('id,rpt_cat,single','safe'),
         );
     }
 
@@ -57,6 +58,7 @@ class CustomertypeForm extends CFormModel
                 $this->id = $row['id'];
                 $this->description = $row['description'];
                 $this->rpt_cat = $row['rpt_cat'];
+                $this->single = $row['single'];
                 break;
             }
         }
@@ -103,13 +105,14 @@ class CustomertypeForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into swo_customer_type(
-						description, rpt_cat, luu, lcu) values (
-						:description, :rpt_cat, :luu, :lcu)";
+						description, rpt_cat,single, luu, lcu) values (
+						:description, :rpt_cat,:single, :luu, :lcu)";
                 break;
             case 'edit':
                 $sql = "update swo_customer_type set 
 					description = :description, 
 					rpt_cat = :rpt_cat,
+					single = :single,
 					luu = :luu
 					where id = :id";
                 break;
@@ -122,6 +125,8 @@ class CustomertypeForm extends CFormModel
             $command->bindParam(':id',$this->id,PDO::PARAM_INT);
         if (strpos($sql,':description')!==false)
             $command->bindParam(':description',$this->description,PDO::PARAM_STR);
+        if (strpos($sql,':single')!==false)
+            $command->bindParam(':single',$this->single,PDO::PARAM_INT);
         if (strpos($sql,':rpt_cat')!==false)
             $command->bindParam(':rpt_cat',$this->rpt_cat,PDO::PARAM_STR);
         if (strpos($sql,':luu')!==false)
