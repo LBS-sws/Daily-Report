@@ -27,6 +27,7 @@ return array(
 	'Contract Period'=>'合同年限',
 	'Status' => '状态',
 	'Address'=>'客户地址',
+    'Email'=>'电邮',
 	
 	'Customer Code'=>'客户编号',
 	'Customer Name'=>'客户名字',
@@ -48,5 +49,6 @@ return array(
 	'Others'=>'其他',
 	'Group ID'=>'集团编号',
 	'Group Name'=>'编号名称',
+
 );
 ?>

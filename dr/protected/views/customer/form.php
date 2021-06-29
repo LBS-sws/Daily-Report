@@ -106,7 +106,14 @@ $this->pageTitle=Yii::app()->name . ' - Customer Form';
 					); ?>
 				</div>
 			</div>
-
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'email',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'email',
+                        array('size'=>15,'maxlength'=>30,'readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'address',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">

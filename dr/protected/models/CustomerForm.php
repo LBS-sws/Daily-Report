@@ -16,6 +16,7 @@ class CustomerForm extends CFormModel
 	public $group_id;
 	public $group_name;
 	public $status;
+	public $email;
 
 	public $service = array();
 	
@@ -37,6 +38,7 @@ class CustomerForm extends CFormModel
 			'tax_reg_no'=>Yii::t('code','SSM No.'),
 			'group_id'=>Yii::t('customer','Group ID'),
 			'group_name'=>Yii::t('customer','Group Name'),
+            'email'=>Yii::t('customer','Email'),
 			'status'=>Yii::t('customer','Status'),
 		);
 	}
@@ -47,7 +49,7 @@ class CustomerForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, full_name, cont_name, cont_phone, address, tax_reg_no, group_id, group_name, status','safe'),
+			array('id, full_name, cont_name, cont_phone, address, tax_reg_no, group_id, group_name, status,email','safe'),
 			array('name, code','required'),
 /*
 			array('code','unique','allowEmpty'=>true,
@@ -84,6 +86,7 @@ class CustomerForm extends CFormModel
 		$city = Yii::app()->user->city_allow();
 		$sql = "select * from swo_company where id=".$index." and city in ($city)";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
@@ -99,6 +102,7 @@ class CustomerForm extends CFormModel
 				$this->group_id = $row['group_id'];
 				$this->group_name = $row['group_name'];
 				$this->status = $row['status'];
+                $this->email = $row['email'];
 				break;
 			}
 		}
@@ -146,6 +150,7 @@ class CustomerForm extends CFormModel
 							tax_reg_no = :tax_reg_no, 
 							cont_name = :cont_name, 
 							cont_phone = :cont_phone, 
+							email = :email,
 							address = :address, 
 							group_id = :group_id,
 							group_name = :group_name,
@@ -174,6 +179,8 @@ class CustomerForm extends CFormModel
 			$command->bindParam(':cont_name',$this->cont_name,PDO::PARAM_STR);
 		if (strpos($sql,':cont_phone')!==false)
 			$command->bindParam(':cont_phone',$this->cont_phone,PDO::PARAM_STR);
+        if (strpos($sql,':email')!==false)
+            $command->bindParam(':email',$this->email,PDO::PARAM_STR);
 		if (strpos($sql,':address')!==false)
 			$command->bindParam(':address',$this->address,PDO::PARAM_STR);
 		if (strpos($sql,':city')!==false)
