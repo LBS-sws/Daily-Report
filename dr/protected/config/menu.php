@@ -201,6 +201,10 @@ return array(
 				'url'=>'/servicetype/index',
 				'tag'=>'@',
 			),
+            'Service Endreason'=>array(
+                'access'=>'C08',
+                'url'=>'/serviceendreason/index',
+            ),
 
 		),
 	),

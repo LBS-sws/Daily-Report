@@ -53,9 +53,17 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 	<?php
 		$counter = ($model->no_of_attm['service'] > 0) ? ' <span id="docservice" class="label label-info">'.$model->no_of_attm['service'].'</span>' : ' <span id="docservice"></span>';
 		echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-			'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadservice',)
+        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadservice',)
 		);
+
 	?>
+<?php if ($model->status=='T'|| $model->status=='S'): ?>
+    <?php echo TbHtml::button('<span class="fa fa-send"></span> '.Yii::t('misc','Send Email'), array(
+            'name'=>'btnSendemail','id'=>'btnSendemail','data-toggle'=>'modal','data-target'=>'#sendemail',)
+    );
+    ?>
+<?php endif ?>
+
 	</div>
 	</div></div>
 
@@ -97,7 +105,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 <?php echo $form->labelEx($model,'contract_no',array('class'=>"col-sm-1 control-label")); ?>
                 <div class="col-sm-2">
                     <?php echo $form->textField($model, 'contract_no',
-                        array('class'=>'form-control','maxlength'=>30,));
+                        array('class'=>'form-control','maxlength'=>15,));
                     ?>
                 </div>
 			</div>
@@ -564,7 +572,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 					'show'=>false,
 				));
 ?>
-
+<?php $this->renderPartial('//site/sendemail'); ?>
 <?php $this->renderPartial('//site/removedialog'); ?>
 <?php $this->renderPartial('//site/lookup'); ?>
 <?php $this->renderPartial('//site/fileupload',array('model'=>$model,
@@ -574,6 +582,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 													'ronly'=>($model->scenario=='view'),
 													));
 ?>
+
 
 <?php
 Script::genFileUpload($model,$form->id,'SERVICE');

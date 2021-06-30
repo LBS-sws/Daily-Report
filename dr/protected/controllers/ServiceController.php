@@ -30,7 +30,7 @@ class ServiceController extends Controller
 			),
 */
 			array('allow', 
-				'actions'=>array('new','edit','amend','suspend','resume','renew','save','delete','terminate','fileupload','fileremove','filedownload','getcusttypelist'),
+				'actions'=>array('new','edit','amend','suspend','resume','renew','save','delete','terminate','fileupload','fileremove','filedownload','getcusttypelist','endsendemail'),
 				'expression'=>array('ServiceController','allowReadWrite'),
 			),
 			array('allow', 
@@ -395,7 +395,12 @@ class ServiceController extends Controller
         }
         echo $rtn;
     }
-	
+	//发送邮件
+    public function actionEndsendemail(){
+	    $service = new ServiceForm();
+	    $result = $service->sendemail($_POST['reason'],date('m',strtotime($_POST['ServiceForm']['status_dt'])),$_POST['ServiceForm']['company_name']);
+	    echo $result;
+    }
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
