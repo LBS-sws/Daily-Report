@@ -111,5 +111,7 @@ return array(
     'Integrated data email (regional)'=>'综合数据电邮（区域）',
     'Integrated data email (all)'=>'综合数据电邮（全部）',
 
+    'Service Endreason'=>'服务结束原因',
+
 );
 ?>
