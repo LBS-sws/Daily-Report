@@ -1,0 +1,1 @@
+alter table swo_company add column email varchar(100) after address;
