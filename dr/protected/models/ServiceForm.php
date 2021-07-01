@@ -163,7 +163,7 @@ class ServiceForm extends CFormModel
 			array('status_dt','date','allowEmpty'=>false,
 				'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
 			),
-            array('status_dt','validateVisitDt','on'=>array('new')),
+           // array('status_dt','validateVisitDt','on'=>array('new')),
 		);
 	}
     public function validateVisitDt($attribute, $params) {

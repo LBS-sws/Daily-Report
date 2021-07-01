@@ -65,25 +65,28 @@ class ServiceController extends Controller
 		if (isset($_POST['ServiceForm'])) {
 			$model = new ServiceForm($_POST['ServiceForm']['scenario']);
 			$model->attributes = $_POST['ServiceForm'];
-            $xianzhi = false;
-            if (($_POST['ServiceForm']['scenario']=='new' && date('Y-m',strtotime($_POST['ServiceForm']['first_dt']))<=date('Y-m',strtotime("-2 month"))) || ($_POST['ServiceForm']['scenario']!='new' && date('Y-m',strtotime($_POST['ServiceForm']['status_dt']))<=date('Y-m',strtotime("-2 month")))){
+			//新增限制修改日期
+            $xianzhi = false;// || ($_POST['ServiceForm']['scenario']!='new' && date('Y-m',strtotime($_POST['ServiceForm']['status_dt']))<=date('Y-m',strtotime("-2 month")))
+            if ($_POST['ServiceForm']['status_desc']=='新增' && date('Y-m',strtotime($_POST['ServiceForm']['first_dt']))<=date('Y-m',strtotime("-2 month"))){
                 $xianzhi = true;
             }
 			if ($xianzhi){
-                $message ="只能新增和更改最近两个月的数据";
+                $message ="首次日期不能早于".date('Y-m-01',strtotime("-1 month"));
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));
-            }
-			if ($model->validate()) {
-				$model->saveData();
+            }else{
+                if ($model->validate()) {
+                    $model->saveData();
 //				$model->scenario = 'edit';
-				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-				$this->redirect(Yii::app()->createUrl('service/edit',array('index'=>$model->id)));
-			} else {
-				$message = CHtml::errorSummary($model);
-				Dialog::message(Yii::t('dialog','Validation Message'), $message);
-				$this->render('form',array('model'=>$model,));
-			}
+                    Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
+                    $this->redirect(Yii::app()->createUrl('service/edit',array('index'=>$model->id)));
+                } else {
+                    $message = CHtml::errorSummary($model);
+                    Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                    $this->render('form',array('model'=>$model,));
+                }
+            }
+
 		}
 	}
 
