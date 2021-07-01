@@ -71,7 +71,7 @@ class ServiceController extends Controller
                 $xianzhi = true;
             }
 			if ($xianzhi){
-                $message ="首次日期不能早于".date('Y-m-01',strtotime("-1 month"));
+                $message ="该月资料不允许修改，以免影响过往积分数据导致激励点变动";
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));
             }else{
