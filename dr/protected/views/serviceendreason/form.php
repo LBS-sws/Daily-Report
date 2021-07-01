@@ -60,7 +60,14 @@ $this->pageTitle=Yii::app()->name . ' - Service Type Form';
 					); ?>
 				</div>
 			</div>
-
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'content',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-7">
+                    <?php echo $form->textArea($model, 'content',
+                        array('rows'=>5,'cols'=>60,'maxlength'=>5000,'readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
 
 		</div>
 	</div>

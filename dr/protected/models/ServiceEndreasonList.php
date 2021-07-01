@@ -7,6 +7,7 @@ class ServiceEndreasonList extends CListPageModel
 		return array(	
 			'id'=>Yii::t('endreason','Id'),
 			'reason'=>Yii::t('endreason','Reason'),
+            'content'=>Yii::t('endreason','Content'),
 		);
 	}
 	
@@ -60,7 +61,7 @@ class ServiceEndreasonList extends CListPageModel
 		return true;
 	}
 	public function getlist(){
-        $sql = "select reason from swo_service_end_reasons order by id desc ";
+        $sql = "select * from swo_service_end_reasons order by id desc ";
         $records = Yii::app()->db->createCommand($sql)->queryAll();
         return json_decode( json_encode( $records),true);
     }

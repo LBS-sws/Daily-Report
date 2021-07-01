@@ -2,7 +2,7 @@
 $records = ServiceEndreasonList::getlist();
 $content = "<p>原因：<select name='reason'>";
 foreach ($records as $value) {
-        $content .= "<option value='".$value['reason']."'>".$value['reason']."</option>";
+        $content .= "<option value='".$value['id']."'>".$value['reason']."</option>";
 }
 $content.="</select></p>";
 $this->widget('bootstrap.widgets.TbModal', array(

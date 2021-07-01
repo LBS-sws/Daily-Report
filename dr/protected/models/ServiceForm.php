@@ -581,7 +581,7 @@ class ServiceForm extends CFormModel
 		}
 	}
 	//发送邮件
-    public function sendemail($reason,$month,$company){
+    public function sendemail($reason_id,$month,$company){
         $suffix = Yii::app()->params['envSuffix'];
         //发送邮箱
         $sql1 = "SELECT email FROM swo_company WHERE  concat(`code`,`name`) = '".$company."' order by id desc limit 1";
@@ -590,12 +590,15 @@ class ServiceForm extends CFormModel
         if (empty($email)){
             return "<script language=javascript>alert('客户邮箱不存在');history.back();</script>";
         }
+        //原因内容
+        $sql2 = "SELECT * FROM swo_service_end_reasons WHERE  id=".$reason_id;
+        $reason = Yii::app()->db->createCommand($sql2)->queryRow();
+        $content = $reason['content'];
 //        $this->webroot = Yii::app()->params['webroot'];
         $subject = "史伟莎服务暂停或终止邮件通知".date('Y-m-d');
         $message = <<<EOF
-<p> 尊敬的客户：</p>
 <p style="text-indent:2em;">
-贵店由于{$reason}，服务从{$month}月份停止，请知悉。感谢您选择史伟莎服务，如有需要改善的地方，请您提出您的宝贵意见，我们将细心聆听，不断改进与创新，给你带来更加优质的服务。</p>
+{$content}</p>
 EOF;
 //        	<tr height="36">
 //			<td colspan="6" height="36" style="height:36px;width:663px;" x:num="44275"><span style="font-size:14px;">{$subject}</span></td>

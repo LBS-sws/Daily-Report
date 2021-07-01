@@ -5,6 +5,7 @@ class ServiceEndreasonFrom extends CFormModel
 	/* User Fields */
 	public $id;
 	public $reason;
+	public $content;
 
 	/**
 	 * Declares customized attribute labels.
@@ -16,6 +17,7 @@ class ServiceEndreasonFrom extends CFormModel
 		return array(
             'id'=>Yii::t('endreason','Id'),
             'reason'=>Yii::t('endreason','Reason'),
+            'content'=>Yii::t('endreason','Content'),
 		);
 	}
 
@@ -25,7 +27,7 @@ class ServiceEndreasonFrom extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('reason','required'),
+			array('reason,content','required'),
 			array('id','safe'),
 		);
 	}
@@ -41,6 +43,7 @@ class ServiceEndreasonFrom extends CFormModel
 			{
 				$this->id = $row['id'];
 				$this->reason = $row['reason'];
+				$this->content = $row['content'];
 				break;
 			}
 		}
@@ -70,12 +73,12 @@ class ServiceEndreasonFrom extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_service_end_reasons(
-						reason) values (
-						:reason)";
+						reason,content) values (
+						:reason,:content)";
 				break;
 			case 'edit':
 				$sql = "update swo_service_end_reasons set 
-					reason = :reason  
+					reason = :reason ,content = :content 
 					where id = :id";
 				break;
 		}
@@ -86,6 +89,8 @@ class ServiceEndreasonFrom extends CFormModel
 			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
 		if (strpos($sql,':reason')!==false)
 			$command->bindParam(':reason',$this->reason,PDO::PARAM_STR);
+        if (strpos($sql,':content')!==false)
+            $command->bindParam(':content',$this->content,PDO::PARAM_STR);
 		$command->execute();
 
 		if ($this->scenario=='new')
