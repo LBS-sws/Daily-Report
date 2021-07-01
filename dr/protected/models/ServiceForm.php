@@ -163,8 +163,18 @@ class ServiceForm extends CFormModel
 			array('status_dt','date','allowEmpty'=>false,
 				'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
 			),
+            array('status_dt','validateVisitDt','on'=>array('new')),
 		);
 	}
+    public function validateVisitDt($attribute, $params) {
+        $visit_dt = date("Y-m-d",strtotime($this->status_dt));
+        $nowDate = date("Y-m-d");
+        $firstDate = date("Y-m-01",strtotime($nowDate));
+        $firstDate = date("Y-m-01",strtotime("$firstDate - 2 month"));
+        if($visit_dt<$firstDate){
+            $this->addError($attribute, "新增日期必须大于".$firstDate);
+        }
+    }
 
 	public function retrieveData($index)
 	{
@@ -581,11 +591,11 @@ class ServiceForm extends CFormModel
             return "<script language=javascript>alert('客户邮箱不存在');history.back();</script>";
         }
 //        $this->webroot = Yii::app()->params['webroot'];
-        $subject = "暂停服务或终止服务".date('Y-m-d');
+        $subject = "服务暂停或终止邮件通知".date('Y-m-d');
         $message = <<<EOF
 <p> 尊敬的客户：</p>
 <p style="text-indent:2em;">
-贵店由于{$reason}（原因），服务从{$month}月份停止，请知悉。感谢您选择史伟莎服务，如有需要改善的地方，请您提出您的宝贵意见，我们将细心聆听，不断改进与创新，给你带来更加优质的服务。</p>
+贵店由于{$reason}，服务从{$month}月份停止，请知悉。感谢您选择史伟莎服务，如有需要改善的地方，请您提出您的宝贵意见，我们将细心聆听，不断改进与创新，给你带来更加优质的服务。</p>
 EOF;
 //        	<tr height="36">
 //			<td colspan="6" height="36" style="height:36px;width:663px;" x:num="44275"><span style="font-size:14px;">{$subject}</span></td>

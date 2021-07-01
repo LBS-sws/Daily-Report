@@ -65,6 +65,15 @@ class ServiceController extends Controller
 		if (isset($_POST['ServiceForm'])) {
 			$model = new ServiceForm($_POST['ServiceForm']['scenario']);
 			$model->attributes = $_POST['ServiceForm'];
+            $xianzhi = false;
+            if (($_POST['ServiceForm']['scenario']=='new' && date('Y-m',strtotime($_POST['ServiceForm']['first_dt']))<=date('Y-m',strtotime("-2 month"))) || ($_POST['ServiceForm']['scenario']!='new' && date('Y-m',strtotime($_POST['ServiceForm']['status_dt']))<=date('Y-m',strtotime("-2 month")))){
+                $xianzhi = true;
+            }
+			if ($xianzhi){
+                $message ="只能新增和更改最近两个月的数据";
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->render('form',array('model'=>$model,));
+            }
 			if ($model->validate()) {
 				$model->saveData();
 //				$model->scenario = 'edit';
