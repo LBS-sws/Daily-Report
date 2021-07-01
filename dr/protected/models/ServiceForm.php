@@ -591,7 +591,7 @@ class ServiceForm extends CFormModel
             return "<script language=javascript>alert('客户邮箱不存在');history.back();</script>";
         }
 //        $this->webroot = Yii::app()->params['webroot'];
-        $subject = "服务暂停或终止邮件通知".date('Y-m-d');
+        $subject = "史伟莎服务暂停或终止邮件通知".date('Y-m-d');
         $message = <<<EOF
 <p> 尊敬的客户：</p>
 <p style="text-indent:2em;">
