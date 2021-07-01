@@ -69,9 +69,14 @@ class ServiceController extends Controller
             $xianzhi = false;// || ($_POST['ServiceForm']['scenario']!='new' && date('Y-m',strtotime($_POST['ServiceForm']['status_dt']))<=date('Y-m',strtotime("-2 month")))
             if ($_POST['ServiceForm']['status_desc']=='新增' && date('Y-m',strtotime($_POST['ServiceForm']['first_dt']))<=date('Y-m',strtotime("-2 month"))){
                 $xianzhi = true;
+                if ($_POST['ServiceForm']['scenario']=='new'){
+                    $message ="首次日期不能早于".date('Y-m-01',strtotime("-1 month"));
+                }else{
+                    $message ="该月资料不允许修改，以免影响过往积分数据导致激励点变动";
+                }
             }
 			if ($xianzhi){
-                $message ="该月资料不允许修改，以免影响过往积分数据导致激励点变动";
+
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));
             }else{
