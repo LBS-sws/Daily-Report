@@ -600,7 +600,8 @@ class ServiceForm extends CFormModel
         $message = <<<EOF
         <p>尊敬的客户: </p>
 <p style="text-indent:2em;">
-贵店由于{$reason}，服务将从{$year}年{$month}月开始暂停，请知悉！{$content}</p>
+贵店由于{$reason}，服务将从{$year}年{$month}月开始暂停，请知悉！</p>
+<p style="text-indent:2em;">{$content}</p>
 EOF;
 //        	<tr height="36">
 //			<td colspan="6" height="36" style="height:36px;width:663px;" x:num="44275"><span style="font-size:14px;">{$subject}</span></td>
