@@ -222,7 +222,7 @@ class CalcService extends Calculation {
 					swo_service a, swo_customer_type b 
 				where 
 					a.cust_type=b.id and 
-					b.rpt_cat in ('NEW', 'IC') and
+					b.rpt_cat in ('NEW', 'IC', 'ID') and
 					((a.status='N' and year(a.first_dt)=$year and month(a.first_dt)=$month) or 
 						(a.status='A' and year(a.status_dt)=$year and month(a.status_dt)=$month and 
 							(case a.paid_type
