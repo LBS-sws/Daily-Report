@@ -566,8 +566,9 @@ class General {
 					$pathid = end(explode('/',$systems[$key]['webroot']));
 					$msgFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath)
 						.'/messages/'.$lang.'/app.php';
-					$tmp = require($msgFile);
-					$rtn = array_merge($rtn, $tmp);
+//					$tmp = require($msgFile);
+//					$rtn = array_merge($rtn, $tmp);
+					$rtn[$key] = require($msgFile);
 				}
 			}
 		}

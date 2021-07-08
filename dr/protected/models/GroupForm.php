@@ -117,8 +117,8 @@ class GroupForm extends CFormModel
 		return $rtn;
 	}
 
-	public function functionLabels($key) {
-		return (!empty($this->localelabels) && isset($this->localelabels[$key]) ? $this->localelabels[$key] : $key);
+	public function functionLabels($sid, $key) {
+		return (!empty($this->localelabels[$sid]) && isset($this->localelabels[$sid][$key]) ? $this->localelabels[$sid][$key] : $key);
 	}
 
 	public function installedSystem() {
@@ -140,7 +140,7 @@ class GroupForm extends CFormModel
 	public function installedSystemItems($systemId, $groupName) {
 		$rtn = array();
 		foreach($this->systems[$systemId]['item'][$groupName] as $id=>$value) {
-			$rtn[$id] = $this->functionLabels($value['name']).' '.$value['tag'];
+			$rtn[$id] = $this->functionLabels($systemId, $value['name']).' '.$value['tag'];
 		}
 		return $rtn;
 	}

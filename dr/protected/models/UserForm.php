@@ -122,8 +122,8 @@ class UserForm extends CFormModel
 		}
 	}
 
-	public function functionLabels($key) {
-		return (!empty($this->localelabels) && isset($this->localelabels[$key]) ? $this->localelabels[$key] : $key);
+	public function functionLabels($sid, $key) {
+		return (!empty($this->localelabels[$sid]) && isset($this->localelabels[$sid][$key]) ? $this->localelabels[$sid][$key] : $key);
 	}
 
 	public function installedSystem() {
@@ -145,7 +145,7 @@ class UserForm extends CFormModel
 	public function installedSystemItems($systemId, $groupName) {
 		$rtn = array();
 		foreach($this->systems[$systemId]['item'][$groupName] as $id=>$value) {
-			$rtn[$id] = $this->functionLabels($value['name']).' '.$value['tag'];
+			$rtn[$id] = $this->functionLabels($systemId, $value['name']).' '.$value['tag'];
 		}
 		return $rtn;
 	}
@@ -288,7 +288,7 @@ class UserForm extends CFormModel
 			$this->saveUser($connection);
 			$this->saveRights($connection);
 			foreach($this->systems as $id=>$value) {
-				if (isset($value['item']['zzexternal']['XX01']['update'])) {
+				if (isset($value['item']['zzexternal']['XX01']['update']) && !empty($value['item']['zzexternal']['XX01']['update'])) {
 					$func = 'UserFormEx::'.$value['item']['zzexternal']['XX01']['update'];
 					if (!call_user_func_array($func, array(&$connection, &$this))) {
 						throw new Exception('Update external system fail.');

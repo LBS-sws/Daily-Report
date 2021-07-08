@@ -87,7 +87,7 @@ $this->pageTitle=Yii::app()->name . ' - Template Form';
 		$style = ($sid==$model->system_id) ? "" : "style='display:none'";
 		echo "<div id='reg_$sid' $style>";
 		foreach($model->installedSystemGroup($sid) as $gname) {
-			$groupname = ($gname=='zzcontrol' || $gname=='zzexternal') ? Yii::t('app','Misc') : $model->functionLabels($gname);
+			$groupname = ($gname=='zzcontrol' || $gname=='zzexternal') ? Yii::t('app','Misc') : $model->functionLabels($sid,$gname);
 			echo "<legend>".$groupname."</legend>";
 			if ($gname=='zzexternal') {
 				echo $this->renderPartial('//group/'.$model->getExternalSystemLayout($sid),array('model'=>$model,'idx'=>$idx),true);
@@ -102,7 +102,7 @@ $this->pageTitle=Yii::app()->name . ' - Template Form';
 					if ($cnt==0) echo "<div class='form-group'>";
 
 					echo "<div class='col-sm-2'>";
-					echo TbHtml::label($fname, $fieldid);
+					echo TbHtml::label($model->functionLabels($sid,$fname), $fieldid);
 					echo "</div>";
 					echo "<div class='col-sm-2'>";
 					$option = ($gname=='zzcontrol') 

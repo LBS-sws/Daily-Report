@@ -144,7 +144,7 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 	foreach($model->installedSystem() as $sid=>$sname) {
 		$content = TbHtml::button(Yii::t('user','Apply Template'),array('name'=>'btnTemp_'.$sid,'id'=>'btnTemp_'.$sid,'class'=>'pull-right'));
 		foreach($model->installedSystemGroup($sid) as $gname) {
-			$groupname = ($gname=='zzcontrol' || $gname=='zzexternal') ? Yii::t('app','Misc') : $model->functionLabels($gname);
+			$groupname = ($gname=='zzcontrol' || $gname=='zzexternal') ? Yii::t('app','Misc') : $model->functionLabels($sid,$gname);
 			$content .= "<legend>".$groupname."</legend>";
 			if ($gname=='zzexternal') {
 				$content .= $this->renderPartial('//user/'.$model->getExternalSystemLayout($sid),array('model'=>$model,'idx'=>$idx),true);
@@ -159,7 +159,7 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 					if ($cnt==0) $out .= '<div class="form-group">';
 
 					$out .= '<div class="col-sm-2">';
-					$out .= TbHtml::label($model->functionLabels($fname), $fieldid);
+					$out .= TbHtml::label($model->functionLabels($sid,$fname), $fieldid);
 					$out .= '</div>';
 					$out .= '<div class="col-sm-2">';
 					$option = ($gname=='zzcontrol')

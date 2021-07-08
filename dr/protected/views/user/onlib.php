@@ -4,7 +4,7 @@
 	$fieldid = get_class($model).'_rights_'.$idx.'_XX01';
 	$fieldname = get_class($model)."[rights][".$idx."][XX01]";
 	$fieldvalue = isset($model->rights[$idx]['XX01']) ? $model->rights[$idx]['XX01'] : '';
-	echo TbHtml::label($model->functionLabels('System Use'), $fieldid);
+	echo TbHtml::label($model->functionLabels('drs','System Use'), $fieldid);
 ?>
 	</div>
 	<div class="col-sm-2">
