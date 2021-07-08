@@ -361,7 +361,7 @@ class CalcService extends Calculation {
 				where 
 					
 					a.cust_type=b.id and b.rpt_cat <> 'INV' and 
-					a.nature_type=c.id and c.rpt_cat='B01' and
+					a.nature_type=c.id and c.rpt_cat in ('B01','C01') and
 					((a.status='N' and year(a.first_dt)=$year and month(a.first_dt)=$month) or 
 						(a.status='A' and year(a.status_dt)=$year and month(a.status_dt)=$month and 
 							(case a.paid_type
