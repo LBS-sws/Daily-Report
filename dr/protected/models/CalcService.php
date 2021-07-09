@@ -475,18 +475,18 @@ class CalcService extends Calculation {
 					sum(
 						if(a.status='T',
 							(case a.paid_type
-								when 'Y' then a.amt_paid
-								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								when 'Y' then a.amt_paid / (case when a.ctrt_period > 0 then a.ctrt_period else 12 end)
+								when 'M' then a.amt_paid
 								else a.amt_paid
 							end),
 							(case a.b4_paid_type
-								when 'Y' then ifnull(a.b4_amt_paid,0)
-								when 'M' then ifnull(a.b4_amt_paid,0) * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								when 'Y' then ifnull(a.b4_amt_paid,0) / (case when a.ctrt_period > 0 then a.ctrt_period else 12 end)
+								when 'M' then ifnull(a.b4_amt_paid,0)
 								else ifnull(a.b4_amt_paid,0)
 							end) -
 							(case a.paid_type
-								when 'Y' then a.amt_paid
-								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								when 'Y' then a.amt_paid / (case when a.ctrt_period > 0 then a.ctrt_period else 12 end)
+								when 'M' then a.amt_paid
 								else a.amt_paid
 							end) 
 						)
@@ -500,13 +500,13 @@ class CalcService extends Calculation {
 					(a.status='T' or 
 						(a.status='A' and 
 							(case a.paid_type
-								when 'Y' then a.amt_paid
-								when 'M' then a.amt_paid * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								when 'Y' then a.amt_paid / (case when a.ctrt_period > 0 then a.ctrt_period else 12 end)
+								when 'M' then a.amt_paid
 								else a.amt_paid
 							end) <
 							(case a.b4_paid_type
-								when 'Y' then ifnull(a.b4_amt_paid,0)
-								when 'M' then ifnull(a.b4_amt_paid,0) * (case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
+								when 'Y' then ifnull(a.b4_amt_paid,0) / (case when a.ctrt_period > 0 then a.ctrt_period else 12 end)
+								when 'M' then ifnull(a.b4_amt_paid,0)
 								else ifnull(a.b4_amt_paid,0)
 							end)
 						)
