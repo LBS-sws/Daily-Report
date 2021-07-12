@@ -415,7 +415,7 @@ class ServiceController extends Controller
 	//发送邮件
     public function actionEndsendemail(){
 	    $service = new ServiceForm();
-	    $result = $service->sendemail($_POST['reason'],date('Y',strtotime($_POST['ServiceForm']['status_dt'])),date('m',strtotime($_POST['ServiceForm']['status_dt'])),$_POST['ServiceForm']['company_name']);
+	    $result = $service->sendemail($_POST['reason'],date('Y',strtotime($_POST['ServiceForm']['status_dt'])),date('m',strtotime($_POST['ServiceForm']['status_dt'])),$_POST['ServiceForm']['company_name'],$_POST['ServiceForm']['id']);
 	    echo $result;
     }
 	/**

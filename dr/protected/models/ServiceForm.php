@@ -76,6 +76,7 @@ class ServiceForm extends CFormModel
 	public function init() {
 		$this->city = Yii::app()->user->city();
 	}
+	public $send;
 	
 	/**
 	 * Declares customized attribute labels.
@@ -238,6 +239,7 @@ class ServiceForm extends CFormModel
                 $this->prepay_month = $row['prepay_month'];
                 $this->prepay_start = $row['prepay_start'];
                 $this->contract_no = $row['contract_no'];
+                $this->send = $row['send'];
 //                print_r('<pre>');
 //                print_r($this);exit();
 				break;
@@ -581,7 +583,7 @@ class ServiceForm extends CFormModel
 		}
 	}
 	//发送邮件
-    public function sendemail($reason_id,$year,$month,$company){
+    public function sendemail($reason_id,$year,$month,$company,$service_id){
         $suffix = Yii::app()->params['envSuffix'];
         //发送邮箱
         $sql1 = "SELECT email FROM swo_company WHERE  concat(`code`,`name`) = '".$company."' order by id desc limit 1";
@@ -622,6 +624,10 @@ EOF;
             'lcu' => $lcu,
             'lcd' => date('Y-m-d H:i:s'),
         ));
+
+        //改变服务邮箱发送状态
+        $sql_s="update swo_service set send ='Y'  where id='$service_id'";
+        $record = Yii::app()->db->createCommand($sql_s)->execute();
         return "<script language=javascript>alert('发送成功');history.back();</script>";
 
     }

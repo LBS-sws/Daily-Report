@@ -58,9 +58,12 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 
 	?>
 <?php if ($model->status=='T'|| $model->status=='S'): ?>
-    <?php echo TbHtml::button('<span class="fa fa-send"></span> '.Yii::t('misc','Send Email'), array(
-            'name'=>'btnSendemail','id'=>'btnSendemail','data-toggle'=>'modal','data-target'=>'#sendemail',)
-    );
+  <?php   if ($model->send=='Y'){
+        echo TbHtml::button('<span class="fa fa-send"></span> '."重新发送", array('name'=>'btnSendemail','id'=>'btnSendemail','data-toggle'=>'modal','data-target'=>'#sendemail','color'=>TbHtml::BUTTON_COLOR_PRIMARY));
+    }else{
+        echo TbHtml::button('<span class="fa fa-send"></span> '.Yii::t('misc','Send Email'), array('name'=>'btnSendemail','id'=>'btnSendemail','data-toggle'=>'modal','data-target'=>'#sendemail',));
+    }
+
     ?>
 <?php endif ?>
 
