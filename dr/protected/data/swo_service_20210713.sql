@@ -1,0 +1,1 @@
+alter table swo_service add column send char(1) not null default 'N' after prepay_start;
