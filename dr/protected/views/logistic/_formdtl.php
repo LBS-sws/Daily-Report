@@ -1,7 +1,7 @@
 <tr>
 	<td>
 		<?php echo TbHtml::dropDownList($this->getFieldName('task'),  $this->record['task'], General::getTaskList(),
-			array('disabled'=>!Yii::app()->user->validRWFunction('A05'),'class'=>'select2')
+			array('disabled'=>!Yii::app()->user->validRWFunction('A05'),'class'=>'select2','style'=>'width: 100%')
 		); ?>
 	</td>
 	<td>

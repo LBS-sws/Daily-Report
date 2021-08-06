@@ -273,6 +273,7 @@ $(document).ready(function(){
 		tags: false,
 		language: '$lang',
 		disabled: $disabled,
+		width: 'resolve',
 	});
 });
 
@@ -313,6 +314,7 @@ $('#btnAddRow').on('click',function() {
 			tags: false,
 			language: '$lang',
 			disabled: $disabled,
+			width: 'resolve',
 		});
 	}
 });
