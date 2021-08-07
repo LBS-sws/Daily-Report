@@ -8,5 +8,6 @@ return array(
 'Operation'=>'營運部',
 'IT'=>'IT部',
 'All'=>'全部',
+'User ID'=>'帳號',
 );
 ?>

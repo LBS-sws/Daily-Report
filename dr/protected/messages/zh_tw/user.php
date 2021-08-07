@@ -20,5 +20,6 @@ return array(
 'Apply Template'=>'權限範本套用',
 'Signature'=>'簽名檔',
 'Misc'=>'雜項',
+'Unlock'=>'解鎖',
 );
 ?>
