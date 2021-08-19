@@ -160,7 +160,7 @@ class CalcStaff extends Calculation {
 */
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select e.city, count(e.code) as counter from (
-					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position
+					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position, b.start_time
 					from hr$suffix.hr_employee a
 					where a.id not in (
 						select w.employee_id
@@ -169,7 +169,7 @@ class CalcStaff extends Calculation {
 						where x.id is null and w.lud > '$d2 23:59:59'
 					)
 				union
-					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position
+					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position, b.start_time
 					from hr$suffix.hr_employee_operate b
 					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
 					where c.id is null and b.lud > '$d2 23:59:59'
@@ -195,7 +195,7 @@ class CalcStaff extends Calculation {
 			";
 */
 		$sql = "select e.city, count(e.code) as counter from (
-					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position
+					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position, b.start_time
 					from hr$suffix.hr_employee a
 					where a.id not in (
 						select w.employee_id
@@ -204,7 +204,7 @@ class CalcStaff extends Calculation {
 						where x.id is null and w.lud > '$d2 23:59:59'
 					)
 				union
-					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position
+					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position, b.start_time
 					from hr$suffix.hr_employee_operate b
 					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
 					where c.id is null and b.lud > '$d2 23:59:59'
