@@ -68,5 +68,6 @@ return array(
 'TiJiao'=>'提交',
 'Saving' => '保存中',
 'Invalid file type.'=>'無效的文件類型.',
+'Advice'=>'温馨提示',
 );
 ?>

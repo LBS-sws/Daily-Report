@@ -70,5 +70,6 @@ return array(
     'Saving' => '保存中',
     'Invalid file type.'=>'无效的文件类型.',
     'Send Email'=>'发送邮件',
+	'Advice'=>'温馨提示',
 );
 ?>
