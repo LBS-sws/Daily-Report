@@ -5,7 +5,7 @@ class ReportG02Form extends CReportForm
 {
 	public $staffs;
 	public $staffs_desc;
-	public $no_city=array('TY','KS','TN','TC','HK','TP','ZS1','HN','MY','ZY','HXHB','MO','HD','JMS','XM','CS','HX','H-N','HD1','RN','RW','HN1','HN2','CN','HB');
+	public $no_city=array('TY','KS','TN','TC','HK','TP','ZS1','HN','MY','ZY','HXHB','MO','HD','JMS','XM','CS','HX','H-N','HD1','RN','RW','HN1','HN2','CN','HB','WL');
 
 
     protected function labelsEx() {
