@@ -304,7 +304,8 @@ class QcForm extends CFormModel
 	public function retrieveData($index)
 	{
 		$user = Yii::app()->user->id;
-		$allcond = Yii::app()->user->validFunction('CN02') ? "" : "and lcu='$user'";
+		$staffcode = $this->getStaffCode();
+		$allcond = Yii::app()->user->validFunction('CN02') ? "" : (empty($staffcode) ? "and lcu='$user'" : "and (lcu='$user' or job_staff like '%$staffcode%')");
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
 		$sql = "select *,docman$suffix.countdoc('QC',id) as no_of_attm, docman$suffix.countdoc('QCPHOTO',id) as no_of_photo from swo_qc where id=$index and city in ($city) $allcond ";
@@ -584,5 +585,18 @@ class QcForm extends CFormModel
 		} else {
 			return ($this->scenario=='view');
 		}
+	}
+
+	protected function getStaffCode() {
+		$user = Yii::app()->user->id;
+		$city = Yii::app()->user->city();
+		$suffix = Yii::app()->params['envSuffix'];
+		$sql = "select b.code from hr$suffix.hr_binding a, hr$suffix.hr_employee b
+				where a.user_id='$user' and a.employee_id=b.id and a.city='$city'
+				order by a.id
+				limit 1
+		";
+		$row = Yii::app()->db->createCommand($sql)->queryRow();
+		return $row===false ? '' : $row['code'];
 	}
 }

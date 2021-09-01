@@ -24,7 +24,8 @@ class QcList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$user = Yii::app()->user->id;
-		$allcond = Yii::app()->user->validFunction('CN02') ? "" : "and a.lcu='$user'";
+		$staffcode = $this->getStaffCode();
+		$allcond = Yii::app()->user->validFunction('CN02') ? "" : (empty($staffcode) ? "and a.lcu='$user'" : "and (a.lcu='$user' or a.job_staff like '%$staffcode%')");
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
 		$sql1 = "select a.*, b.name as city_name,
@@ -122,4 +123,16 @@ where b.field_blob='' or c.field_blob='' or d.field_blob='' and a.id=''";
 		return true;
 	}
 
+	protected function getStaffCode() {
+		$user = Yii::app()->user->id;
+		$city = Yii::app()->user->city();
+		$suffix = Yii::app()->params['envSuffix'];
+		$sql = "select b.code from hr$suffix.hr_binding a, hr$suffix.hr_employee b
+				where a.user_id='$user' and a.employee_id=b.id and a.city='$city'
+				order by a.id
+				limit 1
+		";
+		$row = Yii::app()->db->createCommand($sql)->queryRow();
+		return $row===false ? '' : $row['code'];
+	}
 }
