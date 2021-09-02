@@ -112,5 +112,8 @@ return array(
 'Integrated data email (regional)'=>'綜合數據電郵（區域）',
 'Integrated data email (all)'=>'綜合數據電郵（全部）',
 
+    'Customer Type ID'=>'ID類別',
+    'Customer Service ID'=>'ID客戶服務',
+    'Pay Week'=>'付款週期',
 );
 ?>

@@ -17,6 +17,10 @@ return array(
 				'access'=>'A02',
 				'url'=>'/service/index',
 			),
+			'Customer Service ID'=>array(
+				'access'=>'A11',
+				'url'=>'/serviceID/index',
+			),
 			'Complaint Cases'=>array(
 				'access'=>'A03',
 				'url'=>'/followup/index',
@@ -173,6 +177,16 @@ return array(
 				'url'=>'/customertype/index',
 				'tag'=>'@',
 			),
+			'Customer Type ID'=>array(
+				'access'=>'C10',
+				'url'=>'/customertypeID/edit?index=1',
+				'tag'=>'@',
+			),
+            'Pay Week'=>array(//付款周期
+                'access'=>'C09',
+                'url'=>'/payWeek/index',
+                'tag'=>'@',
+            ),
 //			'Supplier Type'=>array(
 //				'access'=>'C08',
 //				'url'=>'/suppliertype/index',

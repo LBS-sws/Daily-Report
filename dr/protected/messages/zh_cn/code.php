@@ -98,5 +98,6 @@ return array(
     'Monthly Report Data Analysis'=>'月报表数据分析',
 
     'service type'=>'服务类型',
+    'index num'=>'栏位级别',
 );
 ?>

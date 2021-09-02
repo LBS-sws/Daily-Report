@@ -97,5 +97,6 @@ return array(
 'No data available'=>'暫無數據',
 'Monthly Report Data Analysis'=>'月報表數據分析',
     'service type'=>'服務類型',
+    'index num'=>'欄位級別',
 );
 ?>

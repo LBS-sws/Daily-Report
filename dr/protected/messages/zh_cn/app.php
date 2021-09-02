@@ -114,5 +114,9 @@ return array(
 
     'Service Endreason'=>'服务结束原因',
 
+    'Customer Type ID'=>'ID类别',
+    'Customer Service ID'=>'ID客户服务',
+    'Pay Week'=>'付款周期',
+
 );
 ?>
