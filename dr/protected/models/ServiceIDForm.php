@@ -364,6 +364,7 @@ class ServiceIDForm extends CFormModel
             $this->updateDocman($connection,'SERVICEID');
             $transaction->commit();
         }catch(Exception $e) {
+            var_dump($e);
             $transaction->rollback();
             throw new CHttpException(404,'Cannot update.');
         }
