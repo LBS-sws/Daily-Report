@@ -30,7 +30,7 @@ class ServiceIDForm extends CFormModel
     public $b4_amt_money;//总金额(更改前)
     public $b4_pieces;//机器数量(更改前)
     public $b4_cust_type_end;//机器型号(更改前)
-    public $amt_install;//押金金额
+    public $amt_install=0;//押金金额
     public $need_install;//是否需要押金
     public $salesman_id;
     public $salesman;//业务员
@@ -462,7 +462,7 @@ class ServiceIDForm extends CFormModel
             $arr["cust_type_four"] = $this->cust_type_four;
             $arr["cust_type_end"] = $this->cust_type_end;
         }
-        $arr["pieces"] = $this->pieces;
+        $arr["pieces"] = empty($this->pieces)?0:$this->pieces;
         $arr["product_id"] = $this->product_id;
         $arr["service"] = $this->service;
         $arr["pay_week"] = empty($this->pay_week)?0:$this->pay_week;
@@ -478,7 +478,7 @@ class ServiceIDForm extends CFormModel
             $arr["all_number"] = $this->all_number;
             $arr["surplus"] = $this->surplus;
         }
-        $arr["amt_install"] = $this->amt_install;
+        $arr["amt_install"] = empty($this->amt_install)?0:$this->amt_install;
         $arr["need_install"] = $this->need_install;
         $arr["salesman_id"] = $this->salesman_id;
         $arr["salesman"] = $this->salesman;
@@ -495,8 +495,8 @@ class ServiceIDForm extends CFormModel
         $arr["status_dt"] = $this->status_dt;
         $arr["remarks"] = $this->remarks;
         $arr["remarks2"] = $this->remarks2;
-        $arr["prepay_month"] = $this->prepay_month;
-        $arr["prepay_start"] = $this->prepay_start;
+        $arr["prepay_month"] = empty($this->prepay_month)?0:$this->prepay_month;
+        $arr["prepay_start"] = empty($this->prepay_start)?0:$this->prepay_start;
         return $arr;
     }
 
