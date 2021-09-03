@@ -61,6 +61,14 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 );
                 ?>
             </div>
+            <?php if ($model->scenario!='new'&&!empty($model->service_new_id)): ?>
+            <div class="btn-group pull-right" role="group">
+                <?php echo TbHtml::button('<span class="fa fa-map-o"></span> '.Yii::t('service','Service List'), array(
+                        'data-toggle'=>'modal','data-target'=>'#historydialog')
+                );
+                ?>
+            </div>
+            <?php endif ?>
         </div></div>
 
     <?php
@@ -640,6 +648,9 @@ $this->widget('bootstrap.widgets.TbModal', array(
 ));
 ?>
 
+<?php if ($model->scenario!='new'&&!empty($model->service_new_id)): ?>
+    <?php $this->renderPartial('//serviceID/historydialog',array('model'=>$model)); ?>
+<?php endif ?>
 <?php $this->renderPartial('//site/removedialog'); ?>
 <?php $this->renderPartial('//site/lookup'); ?>
 <?php $this->renderPartial('//site/fileupload',array('model'=>$model,

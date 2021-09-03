@@ -266,6 +266,20 @@ class ServiceIDForm extends CFormModel
         }
     }
 
+    public static function getServiceIDHistory($id){
+        //service_new_id
+        $city = Yii::app()->user->city_allow();
+        $row = Yii::app()->db->createCommand()
+            ->select("g.name as company_name,a.id,a.service_no,a.status,a.status_dt,f.cust_type_name,b.description")
+            ->from("swo_serviceid a")
+            ->leftJoin("swo_company g","g.id=a.company_id")
+            ->leftJoin("swo_customer_type_id b","b.id=a.cust_type")
+            ->leftJoin("swo_customer_type_info f","f.id=a.cust_type_end")
+            ->where("(a.service_new_id=:id or a.id=:id) and a.city in ($city)",array(":id"=>$id))
+            ->order("a.status_dt asc,a.id asc")->queryAll();
+        return $row;
+    }
+
     public function retrieveData($index)
     {
         $suffix = Yii::app()->params['envSuffix'];
@@ -276,6 +290,7 @@ class ServiceIDForm extends CFormModel
 //        print_r($rows);
         if ($row) {
             $this->id = $row['id'];
+            $this->service_new_id = $row['service_new_id'];
             $this->company_id = $row['company_id'];
             $this->company_name = $row['company_name'];
             $this->nature_type = $row['nature_type'];
