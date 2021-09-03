@@ -289,8 +289,11 @@ class ServiceIDForm extends CFormModel
 //		print_r('<pre>');
 //        print_r($rows);
         if ($row) {
-            $this->id = $row['id'];
-            $this->service_new_id = $row['service_new_id'];
+            if($this->getScenario()!="new"){
+                $this->id = $row['id'];
+                $this->service_new_id = $row['service_new_id'];
+                $this->no_of_attm['serviceid'] = $row['no_of_attm'];
+            }
             $this->company_id = $row['company_id'];
             $this->company_name = $row['company_name'];
             $this->nature_type = $row['nature_type'];
@@ -327,7 +330,6 @@ class ServiceIDForm extends CFormModel
             $this->remarks = $row['remarks'];
             $this->remarks2 = $row['remarks2'];
             $this->need_install = $row['need_install'];
-            $this->no_of_attm['serviceid'] = $row['no_of_attm'];
             $this->city = $row['city'];
             $this->surplus = $row['surplus'];
             //var_dump($row['cust_type_name']);
