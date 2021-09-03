@@ -332,6 +332,7 @@ class ServiceIDForm extends CFormModel
             $this->need_install = $row['need_install'];
             $this->city = $row['city'];
             $this->surplus = $row['surplus'];
+            $this->all_number = $row['all_number'];
             //var_dump($row['cust_type_name']);
             $this->pieces = $row['pieces'];
             $this->prepay_month = $row['prepay_month'];
