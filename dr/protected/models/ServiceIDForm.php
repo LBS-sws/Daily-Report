@@ -448,7 +448,7 @@ class ServiceIDForm extends CFormModel
                 ctrt_end_dt,ctrt_period,cont_info,first_dt,status,status_dt,
                 remarks,remarks2,surplus,prepay_month,prepay_start";*/
         //$arr["service_no"] = $this->service_no;
-        $arr["nature_type"] = $this->nature_type;
+        $arr["nature_type"] = empty($this->nature_type)?0:$this->nature_type;
         if($this->getScenario()=="new"){ //客戶及客戶類型進新增允許修改
             $arr["service_new_id"] = $this->service_new_id;
             $arr["company_id"] = $this->company_id;
@@ -462,7 +462,7 @@ class ServiceIDForm extends CFormModel
         $arr["pieces"] = $this->pieces;
         $arr["product_id"] = $this->product_id;
         $arr["service"] = $this->service;
-        $arr["pay_week"] = $this->pay_week;
+        $arr["pay_week"] = empty($this->pay_week)?0:$this->pay_week;
         $arr["amt_paid"] = $this->amt_paid;
         $arr["amt_money"] = $this->amt_money;
         if($this->status == "A"){//更改
@@ -479,9 +479,9 @@ class ServiceIDForm extends CFormModel
         $arr["need_install"] = $this->need_install;
         $arr["salesman_id"] = $this->salesman_id;
         $arr["salesman"] = $this->salesman;
-        $arr["technician_id"] = $this->technician_id;
+        $arr["technician_id"] = empty($this->technician_id)?0:$this->technician_id;
         $arr["technician"] = $this->technician;
-        $arr["othersalesman_id"] = $this->othersalesman_id;
+        $arr["othersalesman_id"] = empty($this->othersalesman_id)?0:$this->othersalesman_id;
         $arr["othersalesman"] = $this->othersalesman;
         $arr["sign_dt"] = $this->sign_dt;
         $arr["ctrt_end_dt"] = $this->ctrt_end_dt;
