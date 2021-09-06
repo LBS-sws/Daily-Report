@@ -451,53 +451,61 @@ class ServiceIDForm extends CFormModel
                 ctrt_end_dt,ctrt_period,cont_info,first_dt,status,status_dt,
                 remarks,remarks2,surplus,prepay_month,prepay_start";*/
         //$arr["service_no"] = $this->service_no;
-        $arr["nature_type"] = empty($this->nature_type)?0:$this->nature_type;
+        $this->setEmptyToArr($arr,"nature_type",true);
         if($this->getScenario()=="new"){ //客戶及客戶類型進新增允許修改
-            $arr["service_new_id"] = $this->service_new_id;
-            $arr["company_id"] = $this->company_id;
-            $arr["company_name"] = $this->company_name;
-            $arr["cust_type"] = $this->cust_type;
-            $arr["cust_type_name"] = $this->cust_type_name;
-            $arr["cust_type_three"] = $this->cust_type_three;
-            $arr["cust_type_four"] = $this->cust_type_four;
-            $arr["cust_type_end"] = $this->cust_type_end;
+            $this->setEmptyToArr($arr,"service_new_id");
+            $this->setEmptyToArr($arr,"company_id");
+            $this->setEmptyToArr($arr,"company_name");
+            $this->setEmptyToArr($arr,"cust_type",true);
+            $this->setEmptyToArr($arr,"cust_type_name",true);
+            $this->setEmptyToArr($arr,"cust_type_three",true);
+            $this->setEmptyToArr($arr,"cust_type_four",true);
+            $this->setEmptyToArr($arr,"cust_type_end",true);
         }
-        $arr["pieces"] = empty($this->pieces)?0:$this->pieces;
-        $arr["product_id"] = $this->product_id;
-        $arr["service"] = $this->service;
-        $arr["pay_week"] = empty($this->pay_week)?0:$this->pay_week;
-        $arr["amt_paid"] = $this->amt_paid;
-        $arr["amt_money"] = $this->amt_money;
+        $this->setEmptyToArr($arr,"pieces",true);
+        $this->setEmptyToArr($arr,"product_id");
+        $this->setEmptyToArr($arr,"service");
+        $this->setEmptyToArr($arr,"pay_week",true);
+        $this->setEmptyToArr($arr,"amt_paid");
+        $this->setEmptyToArr($arr,"amt_money");
         if($this->status == "A"){//更改
-            $arr["b4_amt_paid"] = $this->b4_amt_paid;
-            $arr["b4_amt_money"] = $this->b4_amt_money;
-            $arr["b4_pieces"] = $this->b4_pieces;
-            $arr["b4_cust_type_end"] = $this->b4_cust_type_end;
+            $this->setEmptyToArr($arr,"b4_amt_paid");
+            $this->setEmptyToArr($arr,"b4_amt_money");
+            $this->setEmptyToArr($arr,"b4_pieces");
+            $this->setEmptyToArr($arr,"b4_cust_type_end");
         }
         if($this->status == "T"){//终止
-            $arr["all_number"] = $this->all_number;
-            $arr["surplus"] = $this->surplus;
+            $this->setEmptyToArr($arr,"all_number");
+            $this->setEmptyToArr($arr,"surplus");
         }
-        $arr["amt_install"] = empty($this->amt_install)?0:$this->amt_install;
-        $arr["need_install"] = $this->need_install;
-        $arr["salesman_id"] = $this->salesman_id;
-        $arr["salesman"] = $this->salesman;
-        $arr["technician_id"] = empty($this->technician_id)?0:$this->technician_id;
-        $arr["technician"] = $this->technician;
-        $arr["othersalesman_id"] = empty($this->othersalesman_id)?0:$this->othersalesman_id;
-        $arr["othersalesman"] = $this->othersalesman;
-        $arr["sign_dt"] = $this->sign_dt;
-        $arr["ctrt_end_dt"] = $this->ctrt_end_dt;
-        $arr["ctrt_period"] = $this->ctrt_period;
-        $arr["cont_info"] = $this->cont_info;
-        $arr["first_dt"] = $this->first_dt;
-        $arr["status"] = $this->status;
-        $arr["status_dt"] = $this->status_dt;
-        $arr["remarks"] = $this->remarks;
-        $arr["remarks2"] = $this->remarks2;
-        $arr["prepay_month"] = empty($this->prepay_month)?0:$this->prepay_month;
-        $arr["prepay_start"] = empty($this->prepay_start)?0:$this->prepay_start;
+        $this->setEmptyToArr($arr,"amt_install",true);
+        $this->setEmptyToArr($arr,"salesman_id",true);
+        $this->setEmptyToArr($arr,"technician_id",true);
+        $this->setEmptyToArr($arr,"othersalesman_id",true);
+        $this->setEmptyToArr($arr,"need_install");
+        $this->setEmptyToArr($arr,"salesman");
+        $this->setEmptyToArr($arr,"technician");
+        $this->setEmptyToArr($arr,"othersalesman");
+        $this->setEmptyToArr($arr,"sign_dt");
+        $this->setEmptyToArr($arr,"ctrt_end_dt");
+        $this->setEmptyToArr($arr,"ctrt_period");
+        $this->setEmptyToArr($arr,"cont_info");
+        $this->setEmptyToArr($arr,"first_dt");
+        $this->setEmptyToArr($arr,"remarks");
+        $this->setEmptyToArr($arr,"remarks2");
+        $this->setEmptyToArr($arr,"status");
+        $this->setEmptyToArr($arr,"status_dt");
+        $this->setEmptyToArr($arr,"prepay_month",true);
+        $this->setEmptyToArr($arr,"prepay_start",true);
         return $arr;
+    }
+
+    protected function setEmptyToArr(&$arr,$str,$bool=false){
+        if($this->$str!==""){
+            $arr[$str] = $this->$str;
+        }elseif($bool){
+            $arr[$str] = 0;
+        }
     }
 
     protected function saveServiceID(&$connection)
