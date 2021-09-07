@@ -139,5 +139,8 @@ return array(
     'shortcuts'=>'快捷操作',
     'surplus month'=>'剩余月数',
     'Add Record'=>'新增',
+
+    'Note: Deposit is not included'=>'注:不包括押金',
+    'Contract Start Date'=>'合同开始日期',
 );
 ?>

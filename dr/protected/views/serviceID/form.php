@@ -12,6 +12,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 <style>
     input[readonly]{pointer-events: none;}
     select[readonly]{pointer-events: none;}
+    .text-nowrap.control-label{ min-width: 135px;}
 </style>
 <section class="content-header">
     <h1>
@@ -62,12 +63,12 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 ?>
             </div>
             <?php if ($model->scenario!='new'&&!empty($model->service_new_id)): ?>
-            <div class="btn-group pull-right" role="group">
-                <?php echo TbHtml::button('<span class="fa fa-map-o"></span> '.Yii::t('service','Service List'), array(
-                        'data-toggle'=>'modal','data-target'=>'#historydialog')
-                );
-                ?>
-            </div>
+                <div class="btn-group pull-right" role="group">
+                    <?php echo TbHtml::button('<span class="fa fa-map-o"></span> '.Yii::t('service','Service List'), array(
+                            'data-toggle'=>'modal','data-target'=>'#historydialog')
+                    );
+                    ?>
+                </div>
             <?php endif ?>
         </div></div>
 
@@ -100,14 +101,14 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 <?php endif ?>
             </div>
             <?php if ($model->status!='N'&&$model->scenario=='new'): ?>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'service_new_id',array('class'=>"col-sm-2 control-label"));   ?>
-                <div class="col-sm-7">
-                    <?php echo $form->dropDownList($model, 'service_new_id',$model->getServiceAllForNew(),
-                        array('readonly'=>($model->scenario=='view'),"id"=>'service_new_id')
-                    ); ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'service_new_id',array('class'=>"col-sm-2 control-label"));   ?>
+                    <div class="col-sm-7">
+                        <?php echo $form->dropDownList($model, 'service_new_id',$model->getServiceAllForNew(),
+                            array('readonly'=>($model->scenario=='view'),"id"=>'service_new_id')
+                        ); ?>
+                    </div>
                 </div>
-            </div>
                 <script>
                     $(function () {
                         $("#service_new_id").on("change",function () {
@@ -138,7 +139,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php echo $form->textField($model, 'status_dt',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),'autocomplete'=>'off'));
                         ?>
                     </div>
                 </div>
@@ -257,7 +258,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php echo $form->labelEx($model,'b4_pieces',array('class'=>"col-sm-2 control-label"));   ?>
                     <div class="col-sm-2">
                         <?php echo $form->numberField($model, 'b4_pieces',
-                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                            array('size'=>4,'min'=>0,'readonly'=>(true))
                         ); ?>
                     </div>
                     <?php echo $form->labelEx($model,'b4_cust_type_end',array('class'=>"col-sm-2 control-label"));   ?>
@@ -274,11 +275,21 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php
                     echo $form->numberField($model, 'amt_paid',
                         array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'),
-                            'prepend'=>'<span class="fa '.$sign.'"></span>')
+                            'prepend'=>'<span class="fa '.$sign.'"></span>',"class"=>"changeOutMoney")
                     );
                     ?>
                 </div>
-                <?php echo $form->labelEx($model,"amt_money",array('class'=>"col-sm-2 control-label")); ?>
+                <?php if ($model->status!='A'): ?>
+                    <?php echo $form->labelEx($model,'ctrt_period',array('class'=>"col-sm-1 control-label text-nowrap")); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'ctrt_period',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'),'class'=>"changeOutMonth",'autocomplete'=>'off')
+                        ); ?>
+                    </div>
+                    <?php echo $form->labelEx($model,"amt_money",array('class'=>"col-sm-1 control-label text-nowrap")); ?>
+                    <?php else: ?>
+                    <?php echo $form->labelEx($model,"amt_money",array('class'=>"col-sm-2 control-label")); ?>
+                <?php endif ?>
                 <div class="col-sm-2">
                     <?php
                     echo $form->numberField($model, 'amt_money',
@@ -289,20 +300,20 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 </div>
             </div>
             <?php if ($model->status=='A'): ?>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'pieces',array('class'=>"col-sm-2 control-label"));   ?>
-                <div class="col-sm-2">
-                    <?php echo $form->numberField($model, 'pieces',
-                        array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
-                    ); ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'pieces',array('class'=>"col-sm-2 control-label"));   ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'pieces',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                    <?php echo $form->labelEx($model,'cust_type_end',array('class'=>"col-sm-2 control-label"));   ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->textField($model, 'cust_type_end',
+                            array('readonly'=>(true),"id"=>"cust_type_end")
+                        ); ?>
+                    </div>
                 </div>
-                <?php echo $form->labelEx($model,'cust_type_end',array('class'=>"col-sm-2 control-label"));   ?>
-                <div class="col-sm-2">
-                    <?php echo $form->textField($model, 'cust_type_end',
-                        array('readonly'=>(true),"id"=>"cust_type_end")
-                    ); ?>
-                </div>
-            </div>
             <?php endif ?>
             <?php if ($model->status=="T"): ?>
                 <div class="form-group">
@@ -345,6 +356,64 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
             </div>
 
             <div class="form-group">
+                <?php echo $form->labelEx($model,'sign_dt',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php echo $form->textField($model, 'sign_dt',
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),'autocomplete'=>'off'));
+                        ?>
+                    </div>
+                </div>
+                <?php if ($model->status=='A'): ?>
+                    <?php echo $form->labelEx($model,'ctrt_period',array('class'=>"col-sm-1 control-label text-nowrap")); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'ctrt_period',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'),'class'=>"changeOutMonth",'autocomplete'=>'off')
+                        ); ?>
+                    </div>
+                    <?php echo $form->labelEx($model,'ctrt_end_dt',array('class'=>"col-sm-1 control-label text-nowrap")); ?>
+                <?php else: ?>
+                    <?php echo $form->labelEx($model,'ctrt_end_dt',array('class'=>"col-sm-2 control-label")); ?>
+                <?php endif ?>
+                <div class="col-sm-2">
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php echo $form->textField($model, 'ctrt_end_dt',
+                            array('class'=>'form-control pull-right','readonly'=>$model->scenario=='view','autocomplete'=>'off'));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'equip_install_dt',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php echo $form->textField($model, 'equip_install_dt',
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),'autocomplete'=>'off'));
+                        ?>
+                    </div>
+                </div>
+                <?php echo $form->labelEx($model,'first_dt',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php echo $form->textField($model, 'first_dt',
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),'autocomplete'=>'off'));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'salesman',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-7">
                     <?php
@@ -381,58 +450,11 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'sign_dt',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <div class="input-group date">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
-                        </div>
-                        <?php echo $form->textField($model, 'sign_dt',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
-                        ?>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'ctrt_period',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-2">
-                    <?php echo $form->numberField($model, 'ctrt_period',
-                        array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'),'class'=>"changeOutMonth")
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'ctrt_end_dt',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <div class="input-group date">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
-                        </div>
-                        <?php echo $form->textField($model, 'ctrt_end_dt',
-                            array('class'=>'form-control pull-right','readonly'=>$model->scenario=='view',));
-                        ?>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
                 <?php echo $form->labelEx($model,'cont_info',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-7">
                     <?php echo $form->textField($model, 'cont_info',
                         array('size'=>60,'maxlength'=>500,'readonly'=>($model->scenario=='view'))
                     ); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'first_dt',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <div class="input-group date">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
-                        </div>
-                        <?php echo $form->textField($model, 'first_dt',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
-                        ?>
-                    </div>
                 </div>
             </div>
             <div class="form-group">
@@ -447,7 +469,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 <?php echo $form->labelEx($model,'remarks',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-7">
                     <?php echo $form->textArea($model, 'remarks',
-                        array('rows'=>3,'cols'=>60,'maxlength'=>2000,'readonly'=>($model->scenario=='view'))
+                        array('rows'=>3,'cols'=>60,'maxlength'=>2000,'readonly'=>(true))
                     ); ?>
                 </div>
             </div>
@@ -519,7 +541,32 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
             trObj.find("[id*=\"_out_month\"]").val(maxMonth);
         });
     }
-    $("body").delegate(".changeOutMonth","change",changeOutMonth);
+    function changeOutMoney() {
+        var money = $("#ServiceIDForm_amt_paid").val();
+        if(money!=""&&money!=0&&!isNaN(money)){
+            money = parseInt(money,10);
+            $("#tblDetail>tbody>tr").each(function (index,tr) {
+                var backMoney = $(this).find("[id*=\"_back_money\"]").val();
+                backMoney = parseInt(backMoney,10);
+                var month = Math.floor(backMoney/money);
+                if(month>1){
+                    $(this).find("[id*=\"_put_month\"]").val(month);
+                }
+            });
+        }
+        changeOutMonth();
+    }
+    $("body").delegate(".changeOutMonth","change keyup",changeOutMonth);
+    $("body").delegate(".changeOutMoney","change keyup",changeOutMoney);
+    $("#ServiceIDForm_amt_paid,#ServiceIDForm_ctrt_period").on("change keyup",function () {
+        var money = $("#ServiceIDForm_amt_paid").val();
+        var month = $("#ServiceIDForm_ctrt_period").val();
+        if(money&&month&&!isNaN(money)&&!isNaN(month)){
+            money = parseInt(money,10);
+            month = parseInt(month,10);
+            $("#ServiceIDForm_amt_money").val(money*month);
+        }
+    });
 </script>
 <?php
 $language = Yii::app()->language;
@@ -683,10 +730,10 @@ Yii::app()->clientScript->registerScript('lookupService',$js,CClientScript::POS_
 
 $js = Script::genLookupButtonEx('btnSalesman', 'staff', 'ServiceIDForm_salesman_id', 'ServiceIDForm_salesman');
 Yii::app()->clientScript->registerScript('lookupSalesman',$js,CClientScript::POS_READY);
-
+/*
 $js = Script::genLookupButtonEx('btnOtherSalesman', 'staff', 'ServiceIDForm_othersalesman_id', 'ServiceIDForm_othersalesman');
 Yii::app()->clientScript->registerScript('lookupOtherSalesman',$js,CClientScript::POS_READY);
-
+*/
 $js = Script::genLookupButtonEx('btnTechnician', 'staff', 'ServiceIDForm_technician_id', 'ServiceIDForm_technician');
 Yii::app()->clientScript->registerScript('lookupTechnician',$js,CClientScript::POS_READY);
 
@@ -697,39 +744,29 @@ $js = Script::genLookupSelect();
 Yii::app()->clientScript->registerScript('lookupSelect',$js,CClientScript::POS_READY);
 
 $js = "
-$('#ServiceIDForm_ctrt_period').on('change',function() {
-	var end_dt = $('#ServiceIDForm_ctrt_end_dt').val();
+$('#ServiceIDForm_ctrt_period,#ServiceIDForm_sign_dt').on('change',function() {
 	var sign_dt = $('#ServiceIDForm_sign_dt').val();
-	var p = $(this).val();
-	if (!end_dt && sign_dt && p) {
-		var m = parseInt($('#ServiceIDForm_ctrt_period').val());
+	var p = $('#ServiceIDForm_ctrt_period').val();
+	if (sign_dt && p) {
+		var m = parseInt(p,10);
 		var x = sign_dt.replace(/\//g,'-')
 		var sd = new Date(x);
-		$('#ServiceIDForm_ctrt_end_dt').val(addMonth(sd,parseInt(m)));
-	}
-});
-
-$('#ServiceIDForm_sign_dt').on('change',function() {
-	var end_dt = $('#ServiceIDForm_ctrt_end_dt').val();
-	var period = $('#ServiceIDForm_ctrt_period').val();
-	if (!end_dt && period) {
-		var sd = new Date($('#ServiceIDForm_sign_dt').val().replace(/\//g,'-'));
-		$('#ServiceIDForm_ctrt_end_dt').val(addMonth(sd,parseInt(period)));
+		$('#ServiceIDForm_ctrt_end_dt').val(addMonth(sd,m));
 	}
 });
 
 function addMonth(d, m) {
-	var t = new Date(d);
-	if (isNaN(t)) return '';
-	var result = new Date(t.setMonth(t.getMonth()+m));;
-	if (d.getDate()>28) {
-		var t1 = new Date(d.getFullYear()+'-'+(d.getMonth()+1)+'-1');
-		var t2 = new Date(t1.setMonth(t1.getMonth()+m));
-		if (t2.getMonth()!=result.getMonth()) {
-			result = new Date(result.setDate(0));
-		}
-	}
-	return (result.getFullYear()+'/'+(result.getMonth()+1)+'/'+result.getDate());
+    if (isNaN(d)) return '';
+    d.setMonth(d.getMonth() + m);
+    d.setDate(d.getDate() - 1);
+    var Year=d.getFullYear();
+    var Month=d.getMonth()+1;
+    var Date=d.getDate();
+    var result = Year+'/';
+	result+=Month<10?'0'+Month:Month;
+	result+='/';
+	result+=Date<10?'0'+Date:Date;
+	return result;
 }
 //addrecdialog
 $('.btnChangeAdd').on('click',function(){

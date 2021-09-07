@@ -38,6 +38,7 @@ class ServiceIDForm extends CFormModel
     public $technician;//负责技术员
     public $othersalesman_id;
     public $othersalesman;//被跨区业务员
+    public $equip_install_dt;//签约日期
     public $sign_dt;//合同开始日期
     public $ctrt_end_dt;//合同月份
     public $ctrt_period=12;//合同终止日期
@@ -99,7 +100,7 @@ class ServiceIDForm extends CFormModel
             'salesman'=>Yii::t('service','Resp. Sales'),
             'othersalesman'=>Yii::t('service','OtherSalesman'),
             'technician'=>Yii::t('service','Resp. Tech.'),
-            'sign_dt'=>Yii::t('service','Sign Date'),
+            'sign_dt'=>Yii::t('service','Contract Start Date'),
             'ctrt_end_dt'=>Yii::t('service','Contract End Date'),
             'ctrt_period'=>Yii::t('service','Contract Period'),
             'cont_info'=>Yii::t('service','Contact'),
@@ -113,7 +114,7 @@ class ServiceIDForm extends CFormModel
             'b4_service'=>Yii::t('service','Service (Before)'),
             'af_service'=>Yii::t('service','Service (After)'),
             'af_amt_paid'=>Yii::t('service','Paid Amt (After)'),
-            'equip_install_dt'=>Yii::t('service','Installation Date'),
+            'equip_install_dt'=>Yii::t('service','Sign Date'),
             'new_dt'=>Yii::t('service','New Date'),
             'renew_dt'=>Yii::t('service','Renew Date'),
             'amend_dt'=>Yii::t('service','Amend Date'),
@@ -174,7 +175,7 @@ class ServiceIDForm extends CFormModel
                 service,pay_week,b4_amt_paid,amt_paid,b4_amt_money,amt_money,amt_install,need_install,salesman_id,
                 salesman,technician_id,technician,othersalesman_id,othersalesman,sign_dt,
                 ctrt_end_dt,ctrt_period,cont_info,first_dt,status,status_dt,
-                b4_cust_type_end,b4_pieces,all_number,
+                b4_cust_type_end,b4_pieces,all_number,equip_install_dt,
                 remarks,remarks2,surplus,prepay_month,prepay_start,service_info','safe'),
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
             array('company_name,amt_paid,amt_money,salesman, service,status_dt,sign_dt,ctrt_period,ctrt_end_dt','required'),
@@ -217,6 +218,7 @@ class ServiceIDForm extends CFormModel
                     break;
                 case "A":
                     $this->b4_cust_type_end = $row["cust_type_end"];
+                    $this->b4_pieces = $row["pieces"];
                     break;
                 default:
             }
@@ -320,6 +322,7 @@ class ServiceIDForm extends CFormModel
             $this->technician = $row['technician'];
             $this->service_no = $row['service_no'];
             $this->pay_week = $row['pay_week'];
+            $this->equip_install_dt = General::toDate($row['equip_install_dt']);
             $this->sign_dt = General::toDate($row['sign_dt']);
             $this->ctrt_end_dt = General::toDate($row['ctrt_end_dt']);
             $this->ctrt_period = $row['ctrt_period'];
@@ -478,6 +481,7 @@ class ServiceIDForm extends CFormModel
             $this->setEmptyToArr($arr,"all_number");
             $this->setEmptyToArr($arr,"surplus");
         }
+        $this->setEmptyToArr($arr,"equip_install_dt");
         $this->setEmptyToArr($arr,"amt_install",true);
         $this->setEmptyToArr($arr,"salesman_id",true);
         $this->setEmptyToArr($arr,"technician_id",true);

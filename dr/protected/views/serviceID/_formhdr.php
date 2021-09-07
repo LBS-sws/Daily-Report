@@ -3,7 +3,7 @@
         <?php echo TbHtml::label($this->getLabelName('back_date'), false); ?>
     </th>
     <th>
-        <?php echo TbHtml::label($this->getLabelName('back_money'), false); ?>
+        <?php echo TbHtml::label($this->getLabelName('back_money')." <small class='text-danger'>".Yii::t("service","Note: Deposit is not included")."</small>", false); ?>
     </th>
     <th>
         <?php echo TbHtml::label($this->getLabelName('put_month'), false); ?>

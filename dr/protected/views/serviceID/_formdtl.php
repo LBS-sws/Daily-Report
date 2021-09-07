@@ -4,7 +4,8 @@
         echo TbHtml::textField($this->getFieldName('back_date'), $this->record['back_date'],
             array('readonly'=>($this->model->isReadOnly()),
                 'prepend'=>'<span class="fa fa-calendar"></span>',
-                'class'=>'deadline changeOutMonth'
+                'class'=>'deadline changeOutMonth',
+                'autocomplete'=>'off'
             )
         );
         ?>
@@ -14,7 +15,8 @@
         echo TbHtml::numberField($this->getFieldName('back_money'), $this->record['back_money'],
             array('size'=>10,'min'=>0,
                 'readonly'=>($this->model->isReadOnly()),
-                'prepend'=>'<span class="fa '.$this->model->sign.'"></span>'
+                'prepend'=>'<span class="fa '.$this->model->sign.'"></span>',
+                'class'=>'changeOutMoney'
             )
         );
         ?>
