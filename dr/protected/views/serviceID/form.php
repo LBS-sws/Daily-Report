@@ -549,7 +549,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 var backMoney = $(this).find("[id*=\"_back_money\"]").val();
                 backMoney = parseInt(backMoney,10);
                 var month = Math.floor(backMoney/money);
-                if(month>1){
+                if(month>=1){
                     $(this).find("[id*=\"_put_month\"]").val(month);
                 }
             });
