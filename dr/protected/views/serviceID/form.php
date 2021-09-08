@@ -493,7 +493,22 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
     </div>
 </section>
 <script>
-    $("#surplus").on("keyup",function () {
+    $("#ServiceIDForm_status_dt,#ServiceIDForm_ctrt_end_dt").on("change",function () {
+        var endDate = $("#ServiceIDForm_status_dt").val();
+        var stopDate = $("#ServiceIDForm_ctrt_end_dt").val();
+        var day = 0;
+        stopDate = stopDate.replace(/\//g,'-');
+        endDate = endDate.replace(/\//g,'-');
+        if(stopDate&&endDate&&stopDate>endDate){
+            stopDate = new Date(stopDate);
+            endDate = new Date(endDate);
+            day=stopDate.getTime() - endDate.getTime();
+            day =Math.floor(day / (24 * 3600 * 1000));
+        }
+        $("#surplus").val(day);
+        $("#surplus").trigger("change");
+    });
+    $("#surplus").on("keyup change",function () {
         var day = $(this).val();
         day = parseInt(day,10);
         var month = Math.floor(day/30);
@@ -506,7 +521,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
         }
         $("#surplus_label").html(str);
     });
-    $("#surplus").trigger("keyup")
+    $("#ServiceIDForm_status_dt").trigger("change");
     function changeOutMonth() {
         var maxMonth = $("#ServiceIDForm_ctrt_period").val();
         var list = [];
@@ -749,7 +764,7 @@ $('#ServiceIDForm_ctrt_period,#ServiceIDForm_sign_dt').on('change',function() {
 	var p = $('#ServiceIDForm_ctrt_period').val();
 	if (sign_dt && p) {
 		var m = parseInt(p,10);
-		var x = sign_dt.replace(/\//g,'-')
+		var x = sign_dt.replace(/\//g,'-');
 		var sd = new Date(x);
 		$('#ServiceIDForm_ctrt_end_dt').val(addMonth(sd,m));
 	}
@@ -766,6 +781,7 @@ function addMonth(d, m) {
 	result+=Month<10?'0'+Month:Month;
 	result+='/';
 	result+=Date<10?'0'+Date:Date;
+	$('#ServiceIDForm_status_dt').trigger('change');
 	return result;
 }
 //addrecdialog
