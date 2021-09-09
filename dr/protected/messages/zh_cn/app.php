@@ -117,6 +117,7 @@ return array(
     'Customer Type ID'=>'ID类别',
     'Customer Service ID'=>'ID客户服务',
     'Pay Week'=>'付款周期',
+    'Renaud Air List'=>'蔚诺空气业务签单排行榜',
 
 );
 ?>
