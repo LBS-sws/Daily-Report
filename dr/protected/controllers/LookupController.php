@@ -26,7 +26,7 @@ class LookupController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('company','staff','product','companyex2','companyex','staffex','staffex2','productex','template','userstaffex'),
+				'actions'=>array('company','staff','product','companyex2','companyex','staffex','staffex2','productex','template','userstaffex','reasonex'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -63,6 +63,24 @@ class LookupController extends Controller
 						'value'=>$record['code'].$record['name'],
 						'contact'=>trim($record['cont_name']).'/'.trim($record['cont_phone']),
 						'address'=>$record['address'],
+					);
+			}
+		}
+		print json_encode($result);
+	}
+
+	public function actionReasonEx($search) {
+		$city = Yii::app()->user->city();
+		$result = array();
+		$searchx = str_replace("'","\'",$search);
+		$sql = "select id,remark from swo_stop_remark
+				where remark like '%".$searchx."%'";
+		$records = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($records) > 0) {
+			foreach ($records as $k=>$record) {
+				$result[] = array(
+						'id'=>$record['id'],
+						'value'=>$record['remark'],
 					);
 			}
 		}
@@ -123,16 +141,18 @@ class LookupController extends Controller
 	}
 
 	public function actionStaffEx($search) {
+        $suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
 		$result = array();
 		$searchx = str_replace("'","\'",$search);
 
-		$sql = "select id, concat(name, ' (', code, ')') as value from swo_staff_v
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') 
-				and (city='".$city."' or (city='ZY' and department like '%技术%'))
-				and (leave_dt is null or leave_dt=0 or leave_dt > now())
+        $sql = "select a.id, concat(a.name, ' (', a.code, ')') as value from hr$suffix.hr_employee a
+                LEFT JOIN hr$suffix.hr_dept b on a.position = b.id 
+				where (a.code like '%".$searchx."%' or a.name like '%".$searchx."%') 
+				and (a.city='".$city."' or (a.city='ZY' and b.name like '%技术%'))
+				and a.staff_status=0 
 			 ";
-		$result1 = Yii::app()->db->createCommand($sql)->queryAll();
+        $result1 = Yii::app()->db->createCommand($sql)->queryAll();
 
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select a.id, concat(a.name, ' (', a.code, ')') as value from swo_staff_v a, hr$suffix.hr_plus_city b

@@ -219,6 +219,10 @@ return array(
                 'access'=>'C08',
                 'url'=>'/serviceendreason/index',
             ),
+            'Stop Remark'=>array(
+                'access'=>'C11',
+                'url'=>'/stopRemark/index',
+            ),
 
 		),
 	),

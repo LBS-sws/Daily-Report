@@ -181,17 +181,17 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 </div>
                 <div class="col-sm-2" data-num="<?php echo $model->cust_type_name;?>">
                     <?php
-                    echo $form->dropDownList($model, 'cust_type_name', array(), array('readonly'=>$model->scenario!='new'));
+                    echo $form->dropDownList($model, 'cust_type_name', array(), array('readonly'=>$model->readonlyForSAndR('new')));
                     ?>
                 </div>
                 <div class="col-sm-2" data-num="<?php echo $model->cust_type_three;?>">
                     <?php
-                    echo $form->dropDownList($model, 'cust_type_three', array(), array('readonly'=>$model->scenario!='new'));
+                    echo $form->dropDownList($model, 'cust_type_three', array(), array('readonly'=>$model->readonlyForSAndR('new')));
                     ?>
                 </div>
                 <div class="col-sm-2" data-num="<?php echo $model->cust_type_four;?>">
                     <?php
-                    echo $form->dropDownList($model, 'cust_type_four', array(), array('readonly'=>$model->scenario!='new'));
+                    echo $form->dropDownList($model, 'cust_type_four', array(), array('readonly'=>$model->readonlyForSAndR('new')));
                     ?>
                 </div>
             </div>
@@ -199,14 +199,14 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
             <div class="form-group">
                 <?php echo $form->labelEx($model,'nature_type',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'nature_type', General::getNatureList(), array('disabled'=>($model->scenario=='view')));
+                    <?php echo $form->dropDownList($model, 'nature_type', General::getNatureList(), array('disabled'=>($model->readonlyForSAndR())));
                     ?>
                 </div>
                 <?php if ($model->status!='A'): ?>
                     <?php echo $form->labelEx($model,'pieces',array('class'=>"col-sm-1 control-label"));   ?>
                     <div class="col-sm-2">
                         <?php echo $form->numberField($model, 'pieces',
-                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                            array('size'=>4,'min'=>0,'readonly'=>($model->readonlyForSAndR()))
                         ); ?>
                     </div>
                 <?php endif ?>
@@ -228,7 +228,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 <?php echo $form->labelEx($model,'pay_week',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php
-                    echo $form->dropDownList($model, 'pay_week',PayWeekForm::getPayWeekForId(), array('disabled'=>($model->scenario=='view'))
+                    echo $form->dropDownList($model, 'pay_week',PayWeekForm::getPayWeekForId(), array('disabled'=>($model->readonlyForSAndR()))
                     );
                     ?>
                 </div>
@@ -274,7 +274,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 <div class="col-sm-2">
                     <?php
                     echo $form->numberField($model, 'amt_paid',
-                        array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'),
+                        array('size'=>6,'min'=>0,'readonly'=>($model->readonlyForSAndR()),
                             'prepend'=>'<span class="fa '.$sign.'"></span>',"class"=>"changeOutMoney")
                     );
                     ?>
@@ -283,7 +283,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php echo $form->labelEx($model,'ctrt_period',array('class'=>"col-sm-1 control-label text-nowrap")); ?>
                     <div class="col-sm-2">
                         <?php echo $form->numberField($model, 'ctrt_period',
-                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'),'class'=>"changeOutMonth",'autocomplete'=>'off')
+                            array('size'=>4,'min'=>0,'readonly'=>($model->readonlyForSAndR()),'class'=>"changeOutMonth",'autocomplete'=>'off')
                         ); ?>
                     </div>
                     <?php echo $form->labelEx($model,"amt_money",array('class'=>"col-sm-1 control-label text-nowrap")); ?>
@@ -293,7 +293,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 <div class="col-sm-2">
                     <?php
                     echo $form->numberField($model, 'amt_money',
-                        array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'),
+                        array('size'=>6,'min'=>0,'readonly'=>($model->readonlyForSAndR()),
                             'prepend'=>'<span class="fa '.$sign.'"></span>')
                     );
                     ?>
@@ -343,13 +343,13 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 <?php echo $form->labelEx($model,'need_install',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-2">
                     <?php echo $form->dropDownList($model, 'need_install', array(''=>Yii::t('misc','No'),'Y'=>Yii::t('misc','Yes')),
-                        array('disabled'=>($model->scenario=='view'))
+                        array('disabled'=>($model->readonlyForSAndR()))
                     ); ?>
                 </div>
                 <?php echo $form->labelEx($model,'amt_install',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-2">
                     <?php echo $form->numberField($model, 'amt_install',
-                        array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'),
+                        array('size'=>6,'min'=>0,'readonly'=>($model->readonlyForSAndR()),
                             'prepend'=>'<span class="fa '.$sign.'"></span>')
                     ); ?>
                 </div>
@@ -363,7 +363,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php echo $form->textField($model, 'sign_dt',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),'autocomplete'=>'off'));
+                            array('class'=>'form-control pull-right','readonly'=>($model->readonlyForSAndR()),'autocomplete'=>'off'));
                         ?>
                     </div>
                 </div>
@@ -384,7 +384,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php echo $form->textField($model, 'ctrt_end_dt',
-                            array('class'=>'form-control pull-right','readonly'=>$model->scenario=='view','autocomplete'=>'off'));
+                            array('class'=>'form-control pull-right','readonly'=>$model->readonlyForSAndR(),'autocomplete'=>'off'));
                         ?>
                     </div>
                 </div>
@@ -397,21 +397,18 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php echo $form->textField($model, 'equip_install_dt',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),'autocomplete'=>'off'));
+                            array('class'=>'form-control pull-right','readonly'=>($model->readonlyForSAndR()),'autocomplete'=>'off'));
                         ?>
                     </div>
                 </div>
-                <?php echo $form->labelEx($model,'first_dt',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-2">
-                    <div class="input-group date">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
-                        </div>
-                        <?php echo $form->textField($model, 'first_dt',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),'autocomplete'=>'off'));
-                        ?>
+                <?php if (in_array($model->status,array("N","C"))): ?>
+                    <?php echo $form->labelEx($model,'freq',array('class'=>"col-sm-2 control-label text-nowrap")); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'freq',
+                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'),'class'=>"changeOutMonth",'autocomplete'=>'off')
+                        ); ?>
                     </div>
-                </div>
+                <?php endif ?>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'salesman',array('class'=>"col-sm-2 control-label")); ?>
@@ -447,6 +444,17 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                         ));
                     ?>
                     <?php echo $form->hiddenField($model, 'technician_id'); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'reason',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-7">
+                    <?php
+                    echo $form->textField($model, 'reason',
+                        array('size'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'),
+                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Stop Remark'),array('name'=>'btnReason','id'=>'btnReason','disabled'=>($model->scenario=='view'))),
+                        ));
+                    ?>
                 </div>
             </div>
             <div class="form-group">
@@ -751,6 +759,9 @@ Yii::app()->clientScript->registerScript('lookupOtherSalesman',$js,CClientScript
 */
 $js = Script::genLookupButtonEx('btnTechnician', 'staff', 'ServiceIDForm_technician_id', 'ServiceIDForm_technician');
 Yii::app()->clientScript->registerScript('lookupTechnician',$js,CClientScript::POS_READY);
+
+$js = Script::genLookupButtonEx('btnReason', 'reason', '', 'ServiceIDForm_reason');
+Yii::app()->clientScript->registerScript('lookupReason',$js,CClientScript::POS_READY);
 
 $js = Script::genLookupButtonEx('btnFirstTech', 'staff', 'ServiceIDForm_first_tech_id', 'ServiceIDForm_first_tech', array(), true);
 Yii::app()->clientScript->registerScript('lookupFirstTech',$js,CClientScript::POS_READY);

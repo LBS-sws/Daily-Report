@@ -116,5 +116,6 @@ return array(
     'Customer Service ID'=>'ID客戶服務',
     'Pay Week'=>'付款週期',
     'Renaud Air List'=>'蔚诺空气业务签单排行榜',
+    'Stop Remark'=>'終止原因',
 );
 ?>

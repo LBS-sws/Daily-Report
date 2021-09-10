@@ -24,7 +24,7 @@ class ServiceIDForm extends CFormModel
     public $service;//服务內容
     public $pay_week;//付款周期
     //public $paid_type="M";//金额类型 M：月金额 Y：年金额 1：一次性
-    public $amt_paid;//月金额
+    public $amt_paid=0;//月金额
     public $amt_money;//总金额
     public $b4_amt_paid;//月金额(更改前)
     public $b4_amt_money;//总金额(更改前)
@@ -44,6 +44,8 @@ class ServiceIDForm extends CFormModel
     public $ctrt_period=12;//合同终止日期
     public $cont_info;//客户联系/电话
     public $first_dt;//服务日期
+    public $freq;//服务次數
+    public $reason;//終止原因
     public $status="N";//N:新增 C:續約 A:更改 S:暫停 R:恢復 T:終止
     public $status_dt;//新增日期
     public $remarks;
@@ -104,9 +106,10 @@ class ServiceIDForm extends CFormModel
             'ctrt_end_dt'=>Yii::t('service','Contract End Date'),
             'ctrt_period'=>Yii::t('service','Contract Period'),
             'cont_info'=>Yii::t('service','Contact'),
+            'freq'=>Yii::t('service','Frequency'),
             'first_dt'=>Yii::t('service','Service Date'),
             'first_tech'=>Yii::t('service','First Service Tech.'),
-            'reason'=>Yii::t('service','Reason'),//
+            'reason'=>Yii::t('service','Stop Remark'),//
             'status'=>Yii::t('service','Record Type'),
             'status_dt'=>Yii::t('service','Record Date'),
             'remarks'=>Yii::t('service','Cross Area Remarks'),
@@ -175,10 +178,10 @@ class ServiceIDForm extends CFormModel
                 service,pay_week,b4_amt_paid,amt_paid,b4_amt_money,amt_money,amt_install,need_install,salesman_id,
                 salesman,technician_id,technician,othersalesman_id,othersalesman,sign_dt,
                 ctrt_end_dt,ctrt_period,cont_info,first_dt,status,status_dt,
-                b4_cust_type_end,b4_pieces,all_number,equip_install_dt,
+                b4_cust_type_end,b4_pieces,all_number,equip_install_dt,freq,reason,
                 remarks,remarks2,surplus,prepay_month,prepay_start,service_info','safe'),
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
-            array('company_name,amt_paid,amt_money,salesman, service,status_dt,sign_dt,ctrt_period,ctrt_end_dt','required'),
+            array('company_name,amt_paid,amt_money,salesman, service,status_dt,ctrt_period','required'),
             array('ctrt_period','numerical','allowEmpty'=>true,'integerOnly'=>true),
             array('amt_paid, amt_install','numerical','allowEmpty'=>true),
             //array('b4_amt_paid','numerical','allowEmpty'=>true),
@@ -327,6 +330,7 @@ class ServiceIDForm extends CFormModel
             $this->ctrt_end_dt = General::toDate($row['ctrt_end_dt']);
             $this->ctrt_period = $row['ctrt_period'];
             $this->cont_info = $row['cont_info'];
+            $this->freq = $row['freq'];
             $this->first_dt = General::toDate($row['first_dt']);
             $this->status_dt = General::toDate($row['status_dt']);
             $this->status = $row['status'];
@@ -334,6 +338,7 @@ class ServiceIDForm extends CFormModel
             $this->remarks2 = $row['remarks2'];
             $this->need_install = $row['need_install'];
             $this->city = $row['city'];
+            $this->reason = $row['reason'];
             $this->surplus = $row['surplus'];
             $this->all_number = $row['all_number'];
             //var_dump($row['cust_type_name']);
@@ -454,6 +459,7 @@ class ServiceIDForm extends CFormModel
                 ctrt_end_dt,ctrt_period,cont_info,first_dt,status,status_dt,
                 remarks,remarks2,surplus,prepay_month,prepay_start";*/
         //$arr["service_no"] = $this->service_no;
+        //N:新增 C:續約 A:更改 S:暫停 R:恢復 T:終止
         $this->setEmptyToArr($arr,"nature_type",true);
         if($this->getScenario()=="new"){ //客戶及客戶類型進新增允許修改
             $this->setEmptyToArr($arr,"service_new_id");
@@ -465,9 +471,11 @@ class ServiceIDForm extends CFormModel
             $this->setEmptyToArr($arr,"cust_type_four",true);
             $this->setEmptyToArr($arr,"cust_type_end",true);
         }
+        $this->setEmptyToArr($arr,"freq",true);
         $this->setEmptyToArr($arr,"pieces",true);
         $this->setEmptyToArr($arr,"product_id");
         $this->setEmptyToArr($arr,"service");
+        $this->setEmptyToArr($arr,"reason");
         $this->setEmptyToArr($arr,"pay_week",true);
         $this->setEmptyToArr($arr,"amt_paid");
         $this->setEmptyToArr($arr,"amt_money");
@@ -510,6 +518,12 @@ class ServiceIDForm extends CFormModel
         }elseif($bool){
             $arr[$str] = 0;
         }
+    }
+
+    public function readonlyForSAndR($str="view"){
+        //N:新增 C:續約 A:更改 S:暫停 R:恢復 T:終止
+        $bool = $str=="new"?$this->scenario!='new':$this->scenario=='view';
+        return $bool||in_array($this->status,array("S","R"));
     }
 
     protected function saveServiceID(&$connection)

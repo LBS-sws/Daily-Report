@@ -140,5 +140,8 @@ return array(
 
     'Note: Deposit is not included'=>'註:不包括押金',
     'Contract Start Date'=>'合同開始日期',
+    'Stop Remark'=>'終止原因',
+    'Stop Remark List'=>'終止原因列表',
+    'Stop Remark Form'=>'終止原因表單',
 );
 ?>
