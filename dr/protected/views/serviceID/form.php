@@ -368,39 +368,67 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     </div>
                 </div>
                 <?php if ($model->status=='A'): ?>
-                    <?php echo $form->labelEx($model,'ctrt_period',array('class'=>"col-sm-1 control-label text-nowrap")); ?>
+                    <?php echo $form->labelEx($model,'ctrt_period',array('class'=>"col-sm-2 control-label text-nowrap")); ?>
                     <div class="col-sm-2">
                         <?php echo $form->numberField($model, 'ctrt_period',
                             array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'),'class'=>"changeOutMonth",'autocomplete'=>'off')
                         ); ?>
                     </div>
-                    <?php echo $form->labelEx($model,'ctrt_end_dt',array('class'=>"col-sm-1 control-label text-nowrap")); ?>
-                <?php else: ?>
-                    <?php echo $form->labelEx($model,'ctrt_end_dt',array('class'=>"col-sm-2 control-label")); ?>
                 <?php endif ?>
-                <div class="col-sm-2">
-                    <div class="input-group date">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
+                <?php if ($model->status!='A'): ?>
+                    <?php echo $form->labelEx($model,'ctrt_end_dt',array('class'=>in_array($model->status,array("T","S","R"))?"col-sm-1 control-label text-nowrap":"col-sm-2 control-label")); ?>
+                    <div class="col-sm-2">
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <?php echo $form->textField($model, 'ctrt_end_dt',
+                                array('class'=>'form-control pull-right','readonly'=>$model->readonlyForSAndR(),'autocomplete'=>'off'));
+                            ?>
                         </div>
-                        <?php echo $form->textField($model, 'ctrt_end_dt',
-                            array('class'=>'form-control pull-right','readonly'=>$model->readonlyForSAndR(),'autocomplete'=>'off'));
-                        ?>
                     </div>
-                </div>
+                <?php endif ?>
+                <?php if (in_array($model->status,array("T","S","R"))): ?>
+                    <?php echo $form->labelEx($model,'equip_install_dt',array('class'=>"col-sm-1 control-label text-nowrap")); ?>
+                    <div class="col-sm-2">
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <?php echo $form->textField($model, 'equip_install_dt',
+                                array('class'=>'form-control pull-right','readonly'=>($model->readonlyForSAndR()),'autocomplete'=>'off'));
+                            ?>
+                        </div>
+                    </div>
+                <?php endif ?>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'equip_install_dt',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-2">
-                    <div class="input-group date">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
+                <?php if (!in_array($model->status,array("T","S","R"))): ?>
+                    <?php echo $form->labelEx($model,'equip_install_dt',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-2">
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <?php echo $form->textField($model, 'equip_install_dt',
+                                array('class'=>'form-control pull-right','readonly'=>($model->readonlyForSAndR()),'autocomplete'=>'off'));
+                            ?>
                         </div>
-                        <?php echo $form->textField($model, 'equip_install_dt',
-                            array('class'=>'form-control pull-right','readonly'=>($model->readonlyForSAndR()),'autocomplete'=>'off'));
-                        ?>
                     </div>
-                </div>
+                <?php endif ?>
+                <?php if ($model->status=='A'): ?>
+                    <?php echo $form->labelEx($model,'ctrt_end_dt',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-2">
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <?php echo $form->textField($model, 'ctrt_end_dt',
+                                array('class'=>'form-control pull-right','readonly'=>$model->readonlyForSAndR(),'autocomplete'=>'off'));
+                            ?>
+                        </div>
+                    </div>
+                <?php endif ?>
                 <?php if (in_array($model->status,array("N","C"))): ?>
                     <?php echo $form->labelEx($model,'freq',array('class'=>"col-sm-2 control-label text-nowrap")); ?>
                     <div class="col-sm-2">
@@ -446,17 +474,19 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php echo $form->hiddenField($model, 'technician_id'); ?>
                 </div>
             </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'reason',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-7">
-                    <?php
-                    echo $form->textField($model, 'reason',
-                        array('size'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'),
-                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Stop Remark'),array('name'=>'btnReason','id'=>'btnReason','disabled'=>($model->scenario=='view'))),
-                        ));
-                    ?>
+            <?php if ($model->status=="T"): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'reason',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-7">
+                        <?php
+                        echo $form->textField($model, 'reason',
+                            array('size'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'),
+                                'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Stop Remark'),array('name'=>'btnReason','id'=>'btnReason','disabled'=>($model->scenario=='view'))),
+                            ));
+                        ?>
+                    </div>
                 </div>
-            </div>
+            <?php endif ?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'cont_info',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-7">
