@@ -520,10 +520,10 @@ class ServiceIDForm extends CFormModel
         }
     }
 
-    public function readonlyForSAndR($str="view"){
+    public function readonlyForSAndR($str="view",$arr=array("S","R","T")){
         //N:新增 C:續約 A:更改 S:暫停 R:恢復 T:終止
         $bool = $str=="new"?$this->scenario!='new':$this->scenario=='view';
-        return $bool||in_array($this->status,array("S","R"));
+        return $bool||in_array($this->status,$arr);
     }
 
     protected function saveServiceID(&$connection)
