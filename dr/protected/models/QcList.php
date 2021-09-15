@@ -28,10 +28,12 @@ class QcList extends CListPageModel
 		$allcond = Yii::app()->user->validFunction('CN02') ? "" : (empty($staffcode) ? "and a.lcu='$user'" : "and (a.lcu='$user' or a.job_staff like '%$staffcode%')");
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
-		$sql1 = "select a.*, b.name as city_name,
+		$sql1 = "select a.*, b.name as city_name, (b.field_blob<>'' and c.field_blob<>'') as bool,
 				docman$suffix.countdoc('QC',a.id) as no_of_attm   
-				from swo_qc a, security$suffix.sec_city b 
-				where a.city=b.code and a.city in ($city) $allcond 
+				from swo_qc a inner join security$suffix.sec_city b on a.city=b.code 
+				left outer join swo_qc_info c on a.id=c.qc_id and c.field_id='sign_cust'
+				left outer join swo_qc_info d on a.id=d.qc_id and d.field_id='sign_qc'
+				where a.city in ($city) $allcond 
 			";
 		$sql2 = "select count(a.id)
 				from swo_qc a, security$suffix.sec_city b 
@@ -80,26 +82,8 @@ class QcList extends CListPageModel
 		$list = array();
 		$this->attr = array();
 
-
-        $sqls="select a.id from swo_qc a
-left outer join swo_qc_info b on a.id=b.qc_id and b.field_id='sign_cust'
-left outer join swo_qc_info c on a.id=c.qc_id and c.field_id='sign_qc'
-left outer join swo_qc_info d on a.id=d.qc_id and d.field_id='sign_cust'
-where b.field_blob='' or c.field_blob='' or d.field_blob='' and a.id=''";
-        $nook = Yii::app()->db->createCommand($sqls)->queryAll();
-        $arr = array();
-        if(count($nook) > 0){
-            foreach ($nook as $nooks) {
-                $arr[] = $nooks['id'];
-/*                $this->attrs[] = array(
-                    'ids'=>$nooks['id'],
-                );*/
-            }
-        }
-
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
-			    $bool = in_array($record['id'],$arr);
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'entry_dt'=>General::toDate($record['entry_dt']),
@@ -111,7 +95,7 @@ where b.field_blob='' or c.field_blob='' or d.field_blob='' and a.id=''";
 					'qc_staff'=>$record['qc_staff'],
 					'city_name'=>$record['city_name'],
 					'no_of_attm'=>$record['no_of_attm'],
-					'bool'=>$bool,
+					'bool'=>$row['bool']!=1,
 				);
 			}
 		}
