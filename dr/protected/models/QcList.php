@@ -28,7 +28,7 @@ class QcList extends CListPageModel
 		$allcond = Yii::app()->user->validFunction('CN02') ? "" : (empty($staffcode) ? "and a.lcu='$user'" : "and (a.lcu='$user' or a.job_staff like '%$staffcode%')");
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
-		$sql1 = "select a.*, b.name as city_name, (b.field_blob<>'' and c.field_blob<>'') as bool,
+		$sql1 = "select a.*, b.name as city_name, (c.field_blob<>'' and d.field_blob<>'') as bool,
 				docman$suffix.countdoc('QC',a.id) as no_of_attm   
 				from swo_qc a inner join security$suffix.sec_city b on a.city=b.code 
 				left outer join swo_qc_info c on a.id=c.qc_id and c.field_id='sign_cust'
@@ -95,7 +95,7 @@ class QcList extends CListPageModel
 					'qc_staff'=>$record['qc_staff'],
 					'city_name'=>$record['city_name'],
 					'no_of_attm'=>$record['no_of_attm'],
-					'bool'=>$row['bool']!=1,
+					'bool'=>$record['bool']!=1,
 				);
 			}
 		}
