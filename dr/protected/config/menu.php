@@ -93,6 +93,30 @@ return array(
 				'access'=>'B10',
 				'url'=>'/report/custterminate',
 			),
+			'ID-Customer-New'=>array(
+				'access'=>'B18',
+				'url'=>'/report/customerID?type=N',
+			),
+			'ID-Customer-Renewal'=>array(
+				'access'=>'B19',
+				'url'=>'/report/customerID?type=C',
+			),
+			'ID-Customer-Suspended'=>array(
+				'access'=>'B20',
+				'url'=>'/report/customerID?type=S',
+			),
+			'ID-Customer-Resume'=>array(
+				'access'=>'B21',
+				'url'=>'/report/customerID?type=R',
+			),
+			'ID-Customer-Amendment'=>array(
+				'access'=>'B22',
+				'url'=>'/report/customerID?type=A',
+			),
+			'ID-Customer-Terminate'=>array(
+				'access'=>'B23',
+				'url'=>'/report/customerID?type=T',
+			),
 			'Customer Enquiry'=>array(
 				'access'=>'B06',
 				'url'=>'/report/enquiry',

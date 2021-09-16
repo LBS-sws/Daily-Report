@@ -289,8 +289,9 @@ class ServiceIDForm extends CFormModel
     {
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city_allow();
-        $row = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('SERVICEID',id) as no_of_attm")->from("swo_serviceid")
-            ->where("id=:id and city in ($city)",array(":id"=>$index))->queryRow();
+        $row = Yii::app()->db->createCommand()->select("a.*,f.code as com_code,f.name as com_name,docman$suffix.countdoc('SERVICEID',a.id) as no_of_attm")->from("swo_serviceid a")
+            ->leftJoin("swo_company f","a.company_id=f.id")
+            ->where("a.id=:id and a.city in ($city)",array(":id"=>$index))->queryRow();
 //		print_r('<pre>');
 //        print_r($rows);
         if ($row) {
@@ -300,7 +301,7 @@ class ServiceIDForm extends CFormModel
                 $this->no_of_attm['serviceid'] = $row['no_of_attm'];
             }
             $this->company_id = $row['company_id'];
-            $this->company_name = $row['company_name'];
+            $this->company_name = $row['com_code'].$row['com_name'];
             $this->nature_type = $row['nature_type'];
             $this->nature_type = $row['nature_type'];
             $this->cust_type = $row['cust_type'];
@@ -318,11 +319,11 @@ class ServiceIDForm extends CFormModel
             $this->b4_cust_type_end = CustomertypeIDForm::getCustTypeInfoNameForId($row['b4_cust_type_end']);
             $this->amt_install = $row['amt_install'];
             $this->salesman_id = $row['salesman_id'];
-            $this->salesman = $row['salesman'];
+            $this->salesman = General::getEmployeeCodeAndNameForID($row['salesman_id']);
             $this->othersalesman_id = $row['othersalesman_id'];
-            $this->othersalesman = $row['othersalesman'];
+            $this->othersalesman = General::getEmployeeCodeAndNameForID($row['othersalesman_id']);
             $this->technician_id = $row['technician_id'];
-            $this->technician = $row['technician'];
+            $this->technician = General::getEmployeeCodeAndNameForID($row['technician_id']);
             $this->service_no = $row['service_no'];
             $this->pay_week = $row['pay_week'];
             $this->equip_install_dt = General::toDate($row['equip_install_dt']);
@@ -357,7 +358,7 @@ class ServiceIDForm extends CFormModel
                         'back_money'=>$detail["back_money"],
                         'put_month'=>$detail["put_month"],
                         'out_month'=>$detail["out_month"],
-                        'uflag'=>'N',
+                        'uflag'=>$this->getScenario()!="new"?'N':"Y",
                     );
                 }
             }

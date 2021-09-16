@@ -26,7 +26,7 @@ class ServiceIDList extends CListPageModel
     {
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city_allow();
-        $sql1 = "select a.id,a.service_no,a.service,a.cont_info,a.status_dt,a.status,f.name as company_name, b.description as nature_desc, c.description as type_desc, d.name as city_name, 
+        $sql1 = "select a.id,a.service_no,a.service,a.cont_info,a.status_dt,a.status,f.code as company_code,f.name as company_name, b.description as nature_desc, c.description as type_desc, d.name as city_name, 
 					docman$suffix.countdoc('SERVICEID',a.id) as no_of_attm   
 				from swo_serviceid a 
 				inner join security$suffix.sec_city d on a.city=d.code 
@@ -104,7 +104,7 @@ class ServiceIDList extends CListPageModel
                 $this->attr[] = array(
                     'id'=>$record['id'],
                     'service_no'=>$record['service_no'],
-                    'company_name'=>$record['company_name'],
+                    'company_name'=>$record['company_code'].$record['company_name'],
                     'nature_desc'=>$record['nature_desc'],
                     'type_desc'=>$record['type_desc'],
                     'service'=>$record['service'],

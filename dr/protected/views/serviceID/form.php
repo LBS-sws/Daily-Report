@@ -543,7 +543,12 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
             day=stopDate.getTime() - endDate.getTime();
             day =Math.floor(day / (24 * 3600 * 1000));
         }
-        $("#surplus").val(day);
+        if ($("#surplus").data("type")=="on"||$("#surplus").val()==0){
+            $("#surplus").data("type","on");
+            $("#surplus").val(day);
+        }else{
+            $("#surplus").data("type","on");
+        }
         $("#surplus").trigger("change");
     });
     $("#surplus").on("keyup change",function () {

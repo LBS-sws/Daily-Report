@@ -411,6 +411,7 @@ EOF;
 			case 'RptFeedbackstat': $model = new RptFeedbackstat(); break;
 			case 'RptFeedback': $model = new RptFeedback(); break;
 			case 'RptMonthly': $model = new RptMonthly(); break;
+			case 'RptCustomerID': $model = new RptCustomerID(); break;
 		}
 		return $model;
 	}

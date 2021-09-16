@@ -497,6 +497,21 @@ class General {
 		return Yii::app()->db->createCommand($sql)->queryScalar();
 	}
 
+    public static function getEmployeeCodeAndNameForID($str=0) {
+        if(!empty($str)){
+            $id = is_numeric($str)?$str:0;
+            $suffix = Yii::app()->params['envSuffix'];
+            $sql = "select code,name from hr$suffix.hr_employee where id='$id'";
+            $row = Yii::app()->db->createCommand($sql)->queryRow();
+            if($row){
+                $str = "{$row["name"]} ({$row["code"]})";
+            }
+        }else{
+            $str="";
+        }
+        return $str;
+    }
+
 	public function getInstalledSystemList() {
 		$rtn = array();
 		$systems = General::systemMapping();

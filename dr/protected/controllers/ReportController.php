@@ -2,6 +2,15 @@
 
 class ReportController extends Controller 
 {
+	public static $staticIDTypeList=array(
+		"N"=>array("id"=>"B18","value"=>"customerID","name"=>"ID-Customer-New"),
+		"C"=>array("id"=>"B19","value"=>"customerID","name"=>"ID-Customer-Renewal"),
+		"S"=>array("id"=>"B20","value"=>"customerID","name"=>"ID-Customer-Suspended"),
+		"R"=>array("id"=>"B21","value"=>"customerID","name"=>"ID-Customer-Resume"),
+		"A"=>array("id"=>"B22","value"=>"customerID","name"=>"ID-Customer-Amendment"),
+		"T"=>array("id"=>"B23","value"=>"customerID","name"=>"ID-Customer-Terminate")
+	);
+
 	public function filters()
 	{
 		return array(
@@ -27,6 +36,7 @@ class ReportController extends Controller
 			),
 */
 			array('allow','actions'=>array('all','allsave'),'expression'=>array('ReportController','allowAll')),
+			array('allow','actions'=>array('customerID'),'expression'=>array('ReportController','allowCustomerID')),
 			array('allow','actions'=>array('custnew'),'expression'=>array('ReportController','allowCustnew')),
 			array('allow','actions'=>array('custrenew'),'expression'=>array('ReportController','allowCustrenew')),
 			array('allow','actions'=>array('custamend'),'expression'=>array('ReportController','allowCustamend')),
@@ -237,6 +247,18 @@ class ReportController extends Controller
 */
 
 // Report: Customer - New	
+	protected static function allowCustomerID() {
+		$type = key_exists("type",$_GET)?$_GET["type"]:"N";
+		$list = self::$staticIDTypeList;
+		$fun = key_exists($type,$list)?$list[$type]:current($list);
+		return Yii::app()->user->validFunction($fun["id"]);
+	}
+
+    protected function genCustNew($criteria) {
+        $this->addQueueItem('RptCustnew', $criteria, 'A3');
+        Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+    }
+
 	protected static function allowCustnew() {
 		return Yii::app()->user->validFunction('B02');
 	}
@@ -247,8 +269,13 @@ class ReportController extends Controller
 		$this->showUI('custnew', 'Customer Report - New');
 	}
 
-	protected function genCustNew($criteria) {
-		$this->addQueueItem('RptCustnew', $criteria, 'A3');
+	protected function genCustomerID($criteria) {
+        $type = $criteria->type;
+        $list = self::$staticIDTypeList;
+        $fun = key_exists($type,$list)?$list[$type]:current($list);
+        $this->function_id = $fun["id"];
+        Yii::app()->session['active_func'] = $this->function_id;
+		$this->addQueueItem('RptCustomerID', $criteria, $this->function_id);
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
 
@@ -257,6 +284,15 @@ class ReportController extends Controller
 		return Yii::app()->user->validFunction('B15');
 	}
 	
+	public function actionCustomerID() {
+        $type = key_exists("type",$_GET)?$_GET["type"]:"N";
+        $list = self::$staticIDTypeList;
+        $fun = key_exists($type,$list)?$list[$type]:current($list);
+		$this->function_id = $fun["id"];
+		Yii::app()->session['active_func'] = $this->function_id;
+		$this->showUI($fun["value"], Yii::t("app",$fun["name"]),'start_dt,end_dt,format,city,type');
+	}
+
 	public function actionCustrenew() {
 		$this->function_id = 'B15';
 		Yii::app()->session['active_func'] = $this->function_id;
@@ -511,8 +547,12 @@ class ReportController extends Controller
 				$model->month = date("m");
 			}
 		}
+        $type = key_exists("type",$_GET)?$_GET["type"]:"N";
+        $list = self::$staticIDTypeList;
+        $type = key_exists($type,$list)?$type:"N";
 		$model->id = $id;
 		$model->name = $name;
+		$model->type = $type;
 		if (Yii::app()->user->isSingleCity())
 			$model->city = Yii::app()->user->city();
 			$sql="select * from swo_fixed_queue_value where city = '".$model->city ."'";
@@ -552,6 +592,7 @@ class ReportController extends Controller
 				if ($model->id=='monthly') $this->genMonthly($model);
 				if ($model->id=='feedbackstat') $this->genFeedbackstat($model);
 				if ($model->id=='feedback') $this->genFeedback($model);
+				if ($model->id=='customerID') $this->genCustomerID($model);
 //				Yii::app()->end();
 			} else {
 				$message = CHtml::errorSummary($model);
