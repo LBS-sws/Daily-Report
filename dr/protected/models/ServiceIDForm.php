@@ -190,8 +190,26 @@ class ServiceIDForm extends CFormModel
             ),
             array('status_dt','validateVisitDt','on'=>array('new')),
             array('cust_type','validateCustType','on'=>array('new')),
+            array('cust_type','validateServiceInfo'),
         );
     }
+
+    public function validateServiceInfo($attribute, $params) {
+        if(!empty($this->service_info)){
+            foreach ($this->service_info as $key=>&$row){
+                if(!empty($row["back_date"])){
+                    if($row["back_money"]===""||$row["put_month"]===""){
+                        unset($this->service_info[$key]);
+                        continue;
+                    }
+                    $row["back_money"] = is_numeric($row["back_money"])?floatval($row["back_money"]):0;
+                    $row["put_month"] = is_numeric($row["put_month"])?floatval($row["put_month"]):0;
+                    $row["out_month"] = is_numeric($row["out_month"])?floatval($row["out_month"]):0;
+                }
+            }
+        }
+    }
+
     public function validateCustType($attribute, $params) {
         $this->cust_type_end = $this->cust_type_name;
         if(!empty($this->cust_type_three)){
