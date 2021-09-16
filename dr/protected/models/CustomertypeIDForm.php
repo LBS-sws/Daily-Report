@@ -66,6 +66,7 @@ class CustomertypeIDForm extends CFormModel
     public function retrieveData($index,$type=0)
     {
         $index = is_numeric($index)?$index:0;
+        $this->index_num = 1;
         if (empty($type)){ //一級欄位
             $sql = "select * from swo_customer_type_id where id=$index";
             $row = Yii::app()->db->createCommand($sql)->queryRow();
@@ -86,9 +87,11 @@ class CustomertypeIDForm extends CFormModel
                 $this->index_num = $row['index_num'];
             }
         }
+        var_dump($row);
         $index_num = $this->index_num+1;
         $sql = "select * from swo_customer_type_info where cust_type_id=$index and index_num=$index_num";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        var_dump($rows);
         if (count($rows) > 0) {
             $this->detail = array();
             foreach ($rows as $row) {
@@ -104,6 +107,7 @@ class CustomertypeIDForm extends CFormModel
                 $this->detail[] = $temp;
             }
         }
+        die();
         if(empty($this->id)){
             return false;
         }
