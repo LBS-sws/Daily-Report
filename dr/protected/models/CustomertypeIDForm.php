@@ -103,6 +103,9 @@ class CustomertypeIDForm extends CFormModel
                 $this->detail[] = $temp;
             }
         }
+        if(empty($this->id)){
+            return false;
+        }
         return true;
     }
 
