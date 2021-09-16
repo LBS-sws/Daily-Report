@@ -29,7 +29,7 @@ class PayWeekForm extends CFormModel
 			array('code','unique','allowEmpty'=>false,
 					'attributeName'=>'code',
 					'caseSensitive'=>false,
-					'className'=>'Product',
+					'className'=>'PayWeek',
 					'on'=>'new',
 				),
 			array('description,code','required'),

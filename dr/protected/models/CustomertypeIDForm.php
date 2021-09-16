@@ -63,16 +63,18 @@ class CustomertypeIDForm extends CFormModel
         }
     }
 
-    public function retrieveData($index)
+    public function retrieveData($index,$type=0)
     {
-        $sql = "select * from swo_customer_type_id where id=".$index."";
-        $row = Yii::app()->db->createCommand($sql)->queryRow();
-        if ($row){ //一級欄位
-            $this->id = $row['id'];
-            $this->description = $row['description'];
-            $this->rpt_cat = $row['rpt_cat'];
-            $this->single = $row['single'];
-            $this->index_num = 1;
+        if (empty($type)){ //一級欄位
+            $sql = "select * from swo_customer_type_id where id=".$index."";
+            $row = Yii::app()->db->createCommand($sql)->queryRow();
+            if($row){
+                $this->id = $row['id'];
+                $this->description = $row['description'];
+                $this->rpt_cat = $row['rpt_cat'];
+                $this->single = $row['single'];
+                $this->index_num = 1;
+            }
         }else{//n級欄位
             $sql = "select * from swo_customer_type_info where id=".$index."";
             $row = Yii::app()->db->createCommand($sql)->queryRow();
@@ -152,14 +154,15 @@ class CustomertypeIDForm extends CFormModel
     }
 
     public function foreachParents($index){
-        $url = Yii::app()->createUrl('customertypeID/edit',array("index"=>$index));
         $list = array();
         $row = Yii::app()->db->createCommand()->select("cust_type_name,cust_type_id")->from("swo_customer_type_info")
             ->where("id=:id",array(":id"=>$index))->queryRow();
         if($row){
+            $url = Yii::app()->createUrl('customertypeID/edit',array("index"=>$index,"type"=>1));
             $list[]=array("id"=>$index,"name"=>$row["cust_type_name"],"url"=>$url);
-            $list = array_merge($list,self::foreachParents($row["cust_type_id"]));
+            $list = array_merge($list,self::foreachParents($row["cust_type_id"],1));
         }else{
+            $url = Yii::app()->createUrl('customertypeID/edit',array("index"=>$index));
             $row = Yii::app()->db->createCommand()->select("description,id")->from("swo_customer_type_id")
                 ->where("id=:id",array(":id"=>$index))->queryRow();
             $list[]=array("id"=>$index,"name"=>$row["description"],"url"=>$url);

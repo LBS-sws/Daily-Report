@@ -89,10 +89,10 @@ class CustomertypeIDController extends Controller
 		$this->render('form',array('model'=>$model,));
 	}
 	
-	public function actionEdit($index)
+	public function actionEdit($index,$type=0)
 	{
 		$model = new CustomertypeIDForm('edit');
-		if (!$model->retrieveData($index)) {
+		if (!$model->retrieveData($index,$type)) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		} else {
 			$this->render('form',array('model'=>$model,));

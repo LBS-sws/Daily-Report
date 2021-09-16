@@ -2,7 +2,7 @@
     <td>
         <?php
         if ($this->model->index_num<3){
-            echo TbHtml::button("<span class='fa fa-cog'></span>",array('submit'=>Yii::app()->createUrl('customertypeID/edit',array("index"=>$this->record['id']))));
+            echo TbHtml::button("<span class='fa fa-cog'></span>",array('submit'=>Yii::app()->createUrl('customertypeID/edit',array("index"=>$this->record['id'],"type"=>1))));
         }
         ?>
     </td>
