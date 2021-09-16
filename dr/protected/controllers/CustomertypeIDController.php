@@ -62,9 +62,9 @@ class CustomertypeIDController extends Controller
 			$model->attributes = $_POST['CustomertypeIDForm'];
 			if ($model->validate()) {
 				$model->saveData();
-//				$model->scenario = 'edit';
+                $type = $model->index_num>1?1:0;
 				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-				$this->redirect(Yii::app()->createUrl('CustomertypeID/edit',array('index'=>$model->id)));
+				$this->redirect(Yii::app()->createUrl('CustomertypeID/edit',array('index'=>$model->id,'type'=>$type)));
 			} else {
 				$message = CHtml::errorSummary($model);
 				Dialog::message(Yii::t('dialog','Validation Message'), $message);
@@ -105,8 +105,9 @@ class CustomertypeIDController extends Controller
 		if (isset($_POST['CustomertypeIDForm'])) {
 			$model->attributes = $_POST['CustomertypeIDForm'];
 			if ($model->isOccupied($model->id)) {
+			    $type = $model->index_num>1?1:0;
 				Dialog::message(Yii::t('dialog','Warning'), Yii::t('dialog','This record is already in use'));
-				$this->redirect(Yii::app()->createUrl('CustomertypeID/edit',array('index'=>$model->id)));
+				$this->redirect(Yii::app()->createUrl('CustomertypeID/edit',array('index'=>$model->id,'type'=>$type)));
 			} else {
 				$model->saveData();
 				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));

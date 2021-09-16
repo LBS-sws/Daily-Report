@@ -28,7 +28,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type Form';
         <?php echo CHtml::hiddenField('dtltemplate'); ?>
         <?php if ($model->index_num != 1): ?>
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('customertypeID/edit',array("index"=>$model->cust_type_id))));
+				'submit'=>Yii::app()->createUrl('customertypeID/edit',array("index"=>$model->cust_type_id,"type"=>1))));
 		?>
         <?php endif ?>
         <?php if ($model->scenario!='view'): ?>
@@ -76,7 +76,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type Form';
             <?php else: ?>
                 <div class="box">
                     <div class="box-body">
-                        <?php echo CustomertypeIDForm::getLineTitleHtml($model->id); ?>
+                        <?php echo CustomertypeIDForm::getLineTitleHtml($model->id,$model->index_num); ?>
                     </div>
                 </div>
                 <div class="form-group">

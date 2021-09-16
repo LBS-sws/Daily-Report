@@ -111,9 +111,9 @@ class CustomertypeIDForm extends CFormModel
         return true;
     }
 
-    public static function getLineTitleHtml($index){
+    public static function getLineTitleHtml($index,$num=2){
         $html = "";
-        $lists = self::foreachParents($index);
+        $lists = self::foreachParents($index,$num);
         if(!empty($lists)){
             $html = '<ol class="breadcrumb">';
             for ($i = count($lists)-1;$i>=0;$i--){
@@ -158,15 +158,16 @@ class CustomertypeIDForm extends CFormModel
         return json_encode($list);
     }
 
-    public function foreachParents($index){
+    public function foreachParents($index,$num=2){
         $list = array();
-        $row = Yii::app()->db->createCommand()->select("cust_type_name,cust_type_id")->from("swo_customer_type_info")
-            ->where("id=:id",array(":id"=>$index))->queryRow();
-        if($row){
+        if($num>1){
+            $num--;
+            $row = Yii::app()->db->createCommand()->select("cust_type_name,cust_type_id")->from("swo_customer_type_info")
+                ->where("id=:id",array(":id"=>$index))->queryRow();
             $url = Yii::app()->createUrl('customertypeID/edit',array("index"=>$index,"type"=>1));
             $list[]=array("id"=>$index,"name"=>$row["cust_type_name"],"url"=>$url);
             if($row["cust_type_id"] != $index){
-                $list = array_merge($list,self::foreachParents($row["cust_type_id"]));
+                $list = array_merge($list,self::foreachParents($row["cust_type_id"],$num));
             }
         }else{
             $url = Yii::app()->createUrl('customertypeID/edit',array("index"=>$index));
