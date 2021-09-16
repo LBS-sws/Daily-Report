@@ -87,11 +87,9 @@ class CustomertypeIDForm extends CFormModel
                 $this->index_num = $row['index_num'];
             }
         }
-        var_dump($row);
         $index_num = $this->index_num+1;
         $sql = "select * from swo_customer_type_info where cust_type_id=$index and index_num=$index_num";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
-        var_dump($rows);
         if (count($rows) > 0) {
             $this->detail = array();
             foreach ($rows as $row) {
@@ -107,7 +105,6 @@ class CustomertypeIDForm extends CFormModel
                 $this->detail[] = $temp;
             }
         }
-        die();
         if(empty($this->id)){
             return false;
         }
@@ -168,7 +165,9 @@ class CustomertypeIDForm extends CFormModel
         if($row){
             $url = Yii::app()->createUrl('customertypeID/edit',array("index"=>$index,"type"=>1));
             $list[]=array("id"=>$index,"name"=>$row["cust_type_name"],"url"=>$url);
-            $list = array_merge($list,self::foreachParents($row["cust_type_id"],1));
+            if($row["cust_type_id"] != $index){
+                $list = array_merge($list,self::foreachParents($row["cust_type_id"]));
+            }
         }else{
             $url = Yii::app()->createUrl('customertypeID/edit',array("index"=>$index));
             $row = Yii::app()->db->createCommand()->select("description,id")->from("swo_customer_type_id")
