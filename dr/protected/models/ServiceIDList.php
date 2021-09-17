@@ -55,7 +55,7 @@ class ServiceIDList extends CListPageModel
                     $clause .= General::getSqlConditionClause('d.name',$svalue);
                     break;
                 case 'company_name':
-                    $clause .= General::getSqlConditionClause('f.name',$svalue);
+                    $clause .= " and (f.name like '%$svalue%' or f.code like '%$svalue%')";
                     break;
                 case 'type_desc':
                     $clause .= General::getSqlConditionClause('c.description',$svalue);

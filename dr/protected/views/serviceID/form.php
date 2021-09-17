@@ -168,7 +168,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     echo $form->textField($model, 'company_name',
                         array('class'=>'form-control','maxlength'=>15,'readonly'=>true,
                             'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Customer'),
-                                array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->scenario=='view'))),
+                                array('name'=>'btnCompany','id'=>'btnCompany','readonly'=>($model->scenario=='view'))),
                         ));
                     ?>
                 </div>
@@ -200,7 +200,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
             <div class="form-group">
                 <?php echo $form->labelEx($model,'nature_type',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'nature_type', General::getNatureList(), array('disabled'=>($model->readonlyForSAndR())));
+                    <?php echo $form->dropDownList($model, 'nature_type', General::getNatureList(), array('readonly'=>($model->readonlyForSAndR())));
                     ?>
                 </div>
                 <?php if ($model->status!='A'): ?>
@@ -220,7 +220,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     echo $form->hiddenField($model, 'product_id');
                     echo $form->textField($model, 'service',
                         array('size'=>60,'maxlength'=>1000,'readonly'=>(true),
-                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Service'),array('name'=>'btnService','id'=>'btnService','disabled'=>($model->scenario=='view'))),
+                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Service'),array('name'=>'btnService','id'=>'btnService','readonly'=>($model->scenario=='view'))),
                         ));
                     ?>
                 </div>
@@ -229,7 +229,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 <?php echo $form->labelEx($model,'pay_week',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php
-                    echo $form->dropDownList($model, 'pay_week',PayWeekForm::getPayWeekForId(), array('disabled'=>($model->readonlyForSAndR()))
+                    echo $form->dropDownList($model, 'pay_week',PayWeekForm::getPayWeekForId(), array('readonly'=>($model->readonlyForSAndR()))
                     );
                     ?>
                 </div>
@@ -344,7 +344,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 <?php echo $form->labelEx($model,'need_install',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-2">
                     <?php echo $form->dropDownList($model, 'need_install', array(''=>Yii::t('misc','No'),'Y'=>Yii::t('misc','Yes')),
-                        array('disabled'=>($model->readonlyForSAndR()))
+                        array('readonly'=>($model->readonlyForSAndR()))
                     ); ?>
                 </div>
                 <?php echo $form->labelEx($model,'amt_install',array('class'=>"col-sm-2 control-label")); ?>
@@ -445,7 +445,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php
                     echo $form->textField($model, 'salesman',
                         array('size'=>60,'maxlength'=>1000,'readonly'=>true,
-                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnSalesman','id'=>'btnSalesman','disabled'=>($model->scenario=='view'))),
+                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnSalesman','id'=>'btnSalesman','readonly'=>($model->scenario=='view'))),
                         ));
                     ?>
                     <?php echo $form->hiddenField($model, 'salesman_id'); ?>
@@ -457,7 +457,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php
                     echo $form->textField($model, 'othersalesman',
                         array('size'=>60,'maxlength'=>1000,'readonly'=>true,
-                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnOtherSalesman','id'=>'btnOtherSalesman','disabled'=>($model->scenario=='view'))),
+                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnOtherSalesman','id'=>'btnOtherSalesman','readonly'=>($model->scenario=='view'))),
                         ));
                     ?>
                     <?php echo $form->hiddenField($model, 'othersalesman_id'); ?>
@@ -469,7 +469,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php
                     echo $form->textField($model, 'technician',
                         array('size'=>60,'maxlength'=>1000,'readonly'=>true,
-                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Tech.'),array('name'=>'btnTechnician','id'=>'btnTechnician','disabled'=>($model->scenario=='view'))),
+                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Tech.'),array('name'=>'btnTechnician','id'=>'btnTechnician','readonly'=>($model->scenario=='view'))),
                         ));
                     ?>
                     <?php echo $form->hiddenField($model, 'technician_id'); ?>
@@ -482,7 +482,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                         <?php
                         echo $form->textField($model, 'reason',
                             array('size'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'),
-                                'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Stop Remark'),array('name'=>'btnReason','id'=>'btnReason','disabled'=>($model->scenario=='view'))),
+                                'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Stop Remark'),array('name'=>'btnReason','id'=>'btnReason','readonly'=>($model->scenario=='view'))),
                             ));
                         ?>
                     </div>
