@@ -1,5 +1,6 @@
 <?php
 // Common Functions
+// 重新提交
 
 class General {
 	public static function toDate($value) {
