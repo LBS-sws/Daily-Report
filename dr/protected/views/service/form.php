@@ -366,6 +366,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 							'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnSalesman','id'=>'btnSalesman','disabled'=>($model->scenario=='view'))),
 						));
 					?>
+                    <?php echo $form->hiddenField($model, 'salesman_id'); ?>
 				</div>
 			</div>
             <div class="form-group">
@@ -377,6 +378,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                             'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnOtherSalesman','id'=>'btnOtherSalesman','disabled'=>($model->scenario=='view'))),
                         ));
                     ?>
+                    <?php echo $form->hiddenField($model, 'othersalesman_id'); ?>
                 </div>
             </div>
             <div class="form-group">
@@ -388,6 +390,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                             'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Tech.'),array('name'=>'btnTechnician','id'=>'btnTechnician','disabled'=>($model->scenario=='view'))),
                         ));
                     ?>
+                    <?php echo $form->hiddenField($model, 'technician_id'); ?>
                 </div>
             </div>
 			<div class="form-group">
@@ -457,6 +460,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 						array('size'=>80,'maxlength'=>1000,'readonly'=>($model->scenario=='view'),
 						'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','First Service Tech.'),array('name'=>'btnFirstTech','id'=>'btnFirstTech','disabled'=>($model->scenario=='view')))
 					)); ?>
+                    <?php echo $form->hiddenField($model, 'first_tech_id'); ?>
 				</div>
 			</div>
 <?php endif; ?>
@@ -625,16 +629,16 @@ Yii::app()->clientScript->registerScript('lookupServiceB4',$js,CClientScript::PO
 $js = Script::genLookupButtonEx('btnService', 'product', 'product_id', 'ServiceForm_service');
 Yii::app()->clientScript->registerScript('lookupService',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButtonEx('btnSalesman', 'staff', '', 'salesman');
+$js = Script::genLookupButtonEx('btnSalesman', 'staff', 'salesman_id','salesman');
 Yii::app()->clientScript->registerScript('lookupSalesman',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButtonEx('btnOtherSalesman', 'staff', '', 'othersalesman');
+$js = Script::genLookupButtonEx('btnOtherSalesman', 'staff', 'othersalesman_id', 'othersalesman');
 Yii::app()->clientScript->registerScript('lookupOtherSalesman',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButtonEx('btnTechnician', 'staff', '', 'technician');
+$js = Script::genLookupButtonEx('btnTechnician', 'staff', 'technician_id', 'technician');
 Yii::app()->clientScript->registerScript('lookupTechnician',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButtonEx('btnFirstTech', 'staff', '', 'first_tech', array(), true);
+$js = Script::genLookupButtonEx('btnFirstTech', 'staff', 'first_tech_id', 'first_tech', array(), true);
 Yii::app()->clientScript->registerScript('lookupFirstTech',$js,CClientScript::POS_READY);
 
 $js = Script::genLookupSelect();

@@ -321,7 +321,6 @@ class ServiceIDForm extends CFormModel
             $this->company_id = $row['company_id'];
             $this->company_name = $row['com_code'].$row['com_name'];
             $this->nature_type = $row['nature_type'];
-            $this->nature_type = $row['nature_type'];
             $this->cust_type = $row['cust_type'];
             $this->cust_type_name = $row['cust_type_name'];
             $this->cust_type_three = $row['cust_type_three'];

@@ -9,6 +9,8 @@ class ServiceForm extends CFormModel
 {
 	/* User Fields */
 	public $id;
+	public $service_no;
+	public $service_new_id=0;
 	public $company_id;
 	public $company_name;
 	public $nature_type;
@@ -22,13 +24,16 @@ class ServiceForm extends CFormModel
 	public $amt_install;
 	public $need_install;
 	public $salesman;
+	public $salesman_id;
     public $technician;
+    public $technician_id;
 	public $sign_dt;
 	public $ctrt_end_dt;
 	public $ctrt_period=12;
 	public $cont_info;
 	public $first_dt;
 	public $first_tech;
+	public $first_tech_id;
 	public $reason;
 	public $status;
 	public $status_dt;
@@ -55,6 +60,7 @@ class ServiceForm extends CFormModel
 	public $b4_paid_type;
 	public $b4_amt_paid;
 	public $othersalesman;
+	public $othersalesman_id;
 	public $status_desc;
 	public $backlink;
 	public $prepay_month=0;
@@ -87,6 +93,7 @@ class ServiceForm extends CFormModel
 	{
 		return array(
 			'id'=>Yii::t('service','Record ID'),
+            'service_no'=>Yii::t('service','service no'),
 			'company_name'=>Yii::t('service','Customer'),
 			'service'=>Yii::t('service','Service'),
 			'nature_type'=>Yii::t('service','Nature'),
@@ -149,7 +156,7 @@ class ServiceForm extends CFormModel
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
 */
-			array('id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, cust_type, prepay_month,prepay_start,contract_no
+			array('id, technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, cust_type, prepay_month,prepay_start,contract_no
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
 				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'),
@@ -164,9 +171,34 @@ class ServiceForm extends CFormModel
 			array('status_dt','date','allowEmpty'=>false,
 				'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
 			),
+            array('id','validateAutoFinish'),
            // array('status_dt','validateVisitDt','on'=>array('new')),
 		);
 	}
+
+    //驗證新增時是否有該服務
+    public function validateAutoFinish($attribute, $params){
+        $this->service_new_id = 0;
+        if(in_array($this->getScenario(),array("renew","amend","suspend","terminate","resume"))||($this->getScenario()=="edit"&&$this->status!="N")){
+            $this->cust_type_name = empty($this->cust_type_name)?0:$this->cust_type_name;
+            $row = Yii::app()->db->createCommand()->select("id")->from("swo_service")
+                ->where("status='N' and company_id=:company_id and cust_type=:cust_type and cust_type_name=:cust_type_name",array(
+                    ":company_id"=>$this->company_id,
+                    ":cust_type"=>$this->cust_type,
+                    ":cust_type_name"=>$this->cust_type_name,
+                ))->order("sign_dt desc")->queryRow();
+            if($row){
+                $this->service_new_id = $row["id"];
+            }else{
+                $this->addError($attribute, "請先新增該客戶的服務（{$this->company_name}）");
+            }
+        }
+        $this->salesman_id = empty($this->salesman_id)?0:$this->salesman_id;
+        $this->othersalesman_id = empty($this->othersalesman_id)?0:$this->othersalesman_id;
+        $this->technician_id = empty($this->technician_id)?0:$this->technician_id;
+        $this->first_tech_id = empty($this->first_tech_id)?0:$this->first_tech_id;
+    }
+
     public function validateVisitDt($attribute, $params) {
         $visit_dt = date("Y-m-d",strtotime($this->status_dt));
         $nowDate = date("Y-m-d");
@@ -181,8 +213,9 @@ class ServiceForm extends CFormModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
-		$sql = "select a.*, docman$suffix.countdoc('SERVICE',a.id) as no_of_attm,b.contract_no from swo_service a
+		$sql = "select a.*,f.code as com_code,f.name as com_name, docman$suffix.countdoc('SERVICE',a.id) as no_of_attm,b.contract_no from swo_service a
         left outer join swo_service_contract_no b on a.id=b.service_id 
+        left outer join swo_company f on a.company_id=f.id 
         where a.id=$index and a.city in ($city)";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 //		print_r('<pre>');
@@ -190,8 +223,10 @@ class ServiceForm extends CFormModel
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
 				$this->id = $row['id'];
+				$this->service_new_id = $row['service_new_id'];
+				$this->service_no = $row['service_no'];
 				$this->company_id = $row['company_id'];
-				$this->company_name = $row['company_name'];
+				$this->company_name = $row['com_code'].$row['com_name'];
 				$this->nature_type = $row['nature_type'];
 				$this->cust_type = $row['cust_type'];
 				$this->product_id = $row['product_id'];
@@ -203,15 +238,19 @@ class ServiceForm extends CFormModel
 				$this->b4_paid_type = $row['b4_paid_type'];
 				$this->b4_amt_paid = $row['b4_amt_paid'];
 				$this->amt_install = $row['amt_install'];
-				$this->salesman = $row['salesman'];
-                $this->othersalesman = $row['othersalesman'];
+				$this->salesman = General::getEmployeeCodeAndNameForID($row['salesman_id']);
+				$this->salesman_id = $row['salesman_id'];
+                $this->othersalesman = General::getEmployeeCodeAndNameForID($row['othersalesman_id']);
+                $this->othersalesman_id = $row['othersalesman_id'];
                 $this->technician = $row['technician'];
+                $this->technician_id = $row['technician_id'];
 				$this->sign_dt = General::toDate($row['sign_dt']);
 				$this->ctrt_end_dt = General::toDate($row['ctrt_end_dt']);
 				$this->ctrt_period = $row['ctrt_period'];
 				$this->cont_info = $row['cont_info'];
 				$this->first_dt = General::toDate($row['first_dt']);
 				$this->first_tech = $row['first_tech'];
+				$this->first_tech_id = $row['first_tech_id'];
 				$this->reason = $row['reason'];
 				$this->status_dt = General::toDate($row['status_dt']);
 				$this->status = $row['status'];
@@ -299,24 +338,27 @@ class ServiceForm extends CFormModel
 			case 'terminate':
 			case 'resume':
 				$sql = "insert into swo_service(
-							company_id, company_name, product_id, service, nature_type, cust_type, 
-							paid_type, amt_paid, amt_install, need_install, salesman,othersalesman,technician, sign_dt, b4_product_id,
+							service_new_id,company_id, company_name, product_id, service, nature_type, cust_type, 
+							paid_type, amt_paid, amt_install, need_install, salesman_id, salesman,othersalesman_id,othersalesman,technician_id,technician, sign_dt, b4_product_id,
 							b4_service, b4_paid_type, b4_amt_paid, 
-							ctrt_period, cont_info, first_dt, first_tech, reason,
+							ctrt_period, cont_info, first_dt, first_tech_id, first_tech, reason,
 							status, status_dt, remarks, remarks2, ctrt_end_dt,
 							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,
 							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,prepay_month,prepay_start
 						) values (
-							:company_id, :company_name, :product_id, :service, :nature_type, :cust_type, 
-							:paid_type, :amt_paid, :amt_install, :need_install, :salesman,:othersalesman,:technician, :sign_dt, :b4_product_id,
+							:service_new_id,:company_id, :company_name, :product_id, :service, :nature_type, :cust_type, 
+							:paid_type, :amt_paid, :amt_install, :need_install, :salesman_id, :salesman,:othersalesman_id,:othersalesman,:technician_id,:technician, :sign_dt, :b4_product_id,
 							:b4_service, :b4_paid_type, :b4_amt_paid, 
-							:ctrt_period, :cont_info, :first_dt, :first_tech, :reason,
+							:ctrt_period, :cont_info, :first_dt, :first_tech_id, :first_tech, :reason,
 							:status, :status_dt, :remarks, :remarks2, :ctrt_end_dt,
 							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, :cust_type_name,:pieces,
 							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3,:prepay_month,:prepay_start
 						)";
 				$this->execSql($connection,$sql);
 				$this->id = Yii::app()->db->getLastInsertID();
+                Yii::app()->db->createCommand()->update("swo_service",array(
+                    "service_no"=>$this->status.(100000+$this->id)
+                ),"id=".$this->id);
 				break;
 			case 'edit':
 				$sql = "update swo_service set                      
@@ -336,14 +378,18 @@ class ServiceForm extends CFormModel
 							b4_amt_paid = :b4_amt_paid, 
 							amt_install = :amt_install, 
 							need_install = :need_install,
+							salesman_id = :salesman_id, 
 							salesman = :salesman, 
+							othersalesman_id=:othersalesman_id,
 							othersalesman=:othersalesman,
+							technician_id = :technician_id,
 							technician = :technician,
 							sign_dt = :sign_dt,
 							ctrt_end_dt = :ctrt_end_dt,
 							ctrt_period = :ctrt_period, 
 							cont_info = :cont_info, 
 							first_dt = :first_dt, 
+							first_tech_id = :first_tech_id, 
 							first_tech = :first_tech, 
 							reason = :reason,
 							remarks = :remarks,
@@ -382,6 +428,8 @@ class ServiceForm extends CFormModel
 		$command=$connection->createCommand($sql);
 		if (strpos($sql,':id')!==false)
 			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
+		if (strpos($sql,':service_new_id')!==false)
+			$command->bindParam(':service_new_id',$this->service_new_id,PDO::PARAM_INT);
 		if (strpos($sql,':company_id')!==false) {
 			$cid = General::toMyNumber($this->company_id);
 			$command->bindParam(':company_id',$cid,PDO::PARAM_INT);
@@ -420,12 +468,18 @@ class ServiceForm extends CFormModel
 		if (strpos($sql,':need_install')!==false)
 			$command->bindParam(':need_install',$this->need_install,PDO::PARAM_STR);
 
+		if (strpos($sql,':salesman_id')!==false)
+			$command->bindParam(':salesman_id',$this->salesman_id,PDO::PARAM_INT);
 		if (strpos($sql,':salesman')!==false)
 			$command->bindParam(':salesman',$this->salesman,PDO::PARAM_STR);
 
+        if (strpos($sql,':othersalesman_id')!==false)
+            $command->bindParam(':othersalesman_id',$this->othersalesman_id,PDO::PARAM_INT);
         if (strpos($sql,':othersalesman')!==false)
             $command->bindParam(':othersalesman',$this->othersalesman,PDO::PARAM_STR);
 
+        if (strpos($sql,':technician_id')!==false)
+            $command->bindParam(':technician_id',$this->technician_id,PDO::PARAM_INT);
         if (strpos($sql,':technician')!==false)
             $command->bindParam(':technician',$this->technician,PDO::PARAM_STR);
 
@@ -448,8 +502,10 @@ class ServiceForm extends CFormModel
 			$fdate = General::toMyDate($this->first_dt);
 			$command->bindParam(':first_dt',$fdate,PDO::PARAM_STR);
 		}
+		if (strpos($sql,':first_tech_id')!==false)
+			$command->bindParam(':first_tech_id',$this->first_tech_id,PDO::PARAM_INT);
 		if (strpos($sql,':first_tech')!==false)
-			$command->bindParam(':first_tech',$this->first_tech,PDO::PARAM_INT);
+			$command->bindParam(':first_tech',$this->first_tech,PDO::PARAM_STR);
 		if (strpos($sql,':status_dt')!==false) {
 			$stsdate = General::toMyDate($this->status_dt);
 			$command->bindParam(':status_dt',$stsdate,PDO::PARAM_STR);

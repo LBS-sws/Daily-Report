@@ -25,17 +25,19 @@ class ServiceList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
-		$sql1 = "select a.*, b.description as nature_desc, c.description as type_desc, d.name as city_name, 
+		$sql1 = "select a.*,f.code as com_code,f.name as com_name, b.description as nature_desc, c.description as type_desc, d.name as city_name, 
 					docman$suffix.countdoc('SERVICE',a.id) as no_of_attm   
 				from swo_service a inner join security$suffix.sec_city d on a.city=d.code 
 					left outer join swo_nature b on a.nature_type=b.id 
 					left outer join swo_customer_type c on a.cust_type=c.id 
+                    left outer join swo_company f on a.company_id=f.id 
 				where a.city in ($city)  
 			";
 		$sql2 = "select count(a.id)
 				from swo_service a inner join security$suffix.sec_city d on a.city=d.code 
 					left outer join swo_nature b on a.nature_type=b.id 
 					left outer join swo_customer_type c on a.cust_type=c.id 
+                    left outer join swo_company f on a.company_id=f.id 
 				where a.city in ($city)  
 			";
 		$clause = "";
@@ -46,7 +48,7 @@ class ServiceList extends CListPageModel
 					$clause .= General::getSqlConditionClause('d.name',$svalue);
 					break;
 				case 'company_name':
-					$clause .= General::getSqlConditionClause('a.company_name',$svalue);
+					$clause .= " and (f.code like '%$svalue%' or f.name like '%$svalue%')";
 					break;
 				case 'type_desc':
 					$clause .= General::getSqlConditionClause('c.description',$svalue);
@@ -95,7 +97,7 @@ class ServiceList extends CListPageModel
 			foreach ($records as $k=>$record) {
 				$this->attr[] = array(
 					'id'=>$record['id'],
-					'company_name'=>$record['company_name'],
+					'company_name'=>$record['com_code'].$record['com_name'],
 					'nature_desc'=>$record['nature_desc'],
 					'type_desc'=>$record['type_desc'],
 					'service'=>$record['service'],
