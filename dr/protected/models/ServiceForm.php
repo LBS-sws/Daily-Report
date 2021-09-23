@@ -94,6 +94,7 @@ class ServiceForm extends CFormModel
 		return array(
 			'id'=>Yii::t('service','Record ID'),
             'service_no'=>Yii::t('service','service no'),
+			'company_id'=>Yii::t('service','Customer')." ID",
 			'company_name'=>Yii::t('service','Customer'),
 			'service'=>Yii::t('service','Service'),
 			'nature_type'=>Yii::t('service','Nature'),
@@ -101,6 +102,7 @@ class ServiceForm extends CFormModel
 			'amt_paid'=>Yii::t('service','Paid Amt'),
 			'amt_install'=>Yii::t('service','Installation Fee'),
 			'need_install'=>Yii::t('service','Installation'),
+			'salesman_id'=>Yii::t('service','Resp. Sales')." ID",
 			'salesman'=>Yii::t('service','Resp. Sales'),
             'othersalesman'=>Yii::t('service','OtherSalesman'),
             'technician'=>Yii::t('service','Resp. Tech.'),
@@ -160,7 +162,7 @@ class ServiceForm extends CFormModel
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
 				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'),
-			array('company_name,salesman, service,all_number,surplus, status_dt','required'),
+			array('company_id,salesman_id,company_name,salesman, service,all_number,surplus, status_dt','required'),
 			array('ctrt_period','numerical','allowEmpty'=>true,'integerOnly'=>true),
 			array('amt_paid, amt_install','numerical','allowEmpty'=>true),
 			array('org_equip_qty, rtn_equip_qty','numerical','allowEmpty'=>true),
@@ -193,7 +195,7 @@ class ServiceForm extends CFormModel
                 $this->service_new_id = -1;
             }
         }
-        $this->salesman_id = empty($this->salesman_id)?0:$this->salesman_id;
+        $this->salesman_id = empty($this->salesman_id)?"":$this->salesman_id;
         $this->othersalesman_id = empty($this->othersalesman_id)?0:$this->othersalesman_id;
         $this->technician_id = empty($this->technician_id)?0:$this->technician_id;
         $this->first_tech_id = empty($this->first_tech_id)?0:$this->first_tech_id;
@@ -225,7 +227,7 @@ class ServiceForm extends CFormModel
 				$this->id = $row['id'];
 				$this->service_new_id = $row['service_new_id'];
 				$this->service_no = $row['service_no'];
-				$this->company_id = $row['company_id'];
+				$this->company_id = empty($row['company_id'])?"":$row['company_id'];
 				$this->company_name = empty($row['com_name'])?$row['company_name']:$row['com_code'].$row['com_name'];
 				$this->nature_type = $row['nature_type'];
 				$this->cust_type = $row['cust_type'];
@@ -241,7 +243,7 @@ class ServiceForm extends CFormModel
 				$salesman = General::getEmployeeCodeAndNameForID($row['salesman_id']);
 				$othersalesman = General::getEmployeeCodeAndNameForID($row['othersalesman_id']);
 				$this->salesman = empty($salesman)?$row["salesman"]:$salesman;
-				$this->salesman_id = $row['salesman_id'];
+				$this->salesman_id = empty($row['salesman_id'])?"":$row['salesman_id'];
                 $this->othersalesman = empty($othersalesman)?$row["othersalesman"]:$othersalesman;
                 $this->othersalesman_id = $row['othersalesman_id'];
                 $this->technician = $row['technician'];
