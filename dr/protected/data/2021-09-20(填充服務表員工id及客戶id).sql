@@ -83,5 +83,35 @@ SET a.service_new_id = (
 	AND b.sign_dt <= a.sign_dt
 	LIMIT 1
 )
-WHERE a.status != 'N'
+WHERE a.status != 'N';
 
+
+-- ----------------------------------
+-- 由於數據異常需要模糊查詢然後填充
+-- ----------------------------------
+-- ----------------------------
+-- 填充客戶id
+-- ----------------------------
+UPDATE swo_service a SET
+a.company_id = (
+ SELECT b.id FROM swo_company b WHERE trim(a.company_name) LIKE concat(trim(b.code),'%') LIMIT 1
+)
+WHERE a.company_id=0 OR a.company_id is NULL;
+
+-- ----------------------------
+-- 填充业务员id
+-- ----------------------------
+UPDATE swo_service a SET
+a.salesman_id = (
+	SELECT b.id FROM hrdev.hr_employee b WHERE trim(a.salesman) LIKE CONCAT('%(',trim(b.code),')%') LIMIT 1
+)
+WHERE a.salesman_id=0 OR a.salesman_id is NULL;
+
+-- ----------------------------
+-- 填充被跨区业务员id
+-- ----------------------------
+UPDATE swo_service a SET
+a.othersalesman_id = (
+	SELECT b.id FROM hrdev.hr_employee b WHERE trim(a.othersalesman) LIKE CONCAT('%(',trim(b.code),')%') LIMIT 1
+)
+WHERE a.othersalesman_id=0 OR a.othersalesman_id is NULL;

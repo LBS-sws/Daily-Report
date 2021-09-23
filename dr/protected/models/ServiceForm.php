@@ -226,7 +226,7 @@ class ServiceForm extends CFormModel
 				$this->service_new_id = $row['service_new_id'];
 				$this->service_no = $row['service_no'];
 				$this->company_id = $row['company_id'];
-				$this->company_name = $row['com_code'].$row['com_name'];
+				$this->company_name = empty($row['com_name'])?$row['company_name']:$row['com_code'].$row['com_name'];
 				$this->nature_type = $row['nature_type'];
 				$this->cust_type = $row['cust_type'];
 				$this->product_id = $row['product_id'];
@@ -238,9 +238,11 @@ class ServiceForm extends CFormModel
 				$this->b4_paid_type = $row['b4_paid_type'];
 				$this->b4_amt_paid = $row['b4_amt_paid'];
 				$this->amt_install = $row['amt_install'];
-				$this->salesman = General::getEmployeeCodeAndNameForID($row['salesman_id']);
+				$salesman = General::getEmployeeCodeAndNameForID($row['salesman_id']);
+				$othersalesman = General::getEmployeeCodeAndNameForID($row['othersalesman_id']);
+				$this->salesman = empty($salesman)?$row["salesman"]:$salesman;
 				$this->salesman_id = $row['salesman_id'];
-                $this->othersalesman = General::getEmployeeCodeAndNameForID($row['othersalesman_id']);
+                $this->othersalesman = empty($othersalesman)?$row["othersalesman"]:$othersalesman;
                 $this->othersalesman_id = $row['othersalesman_id'];
                 $this->technician = $row['technician'];
                 $this->technician_id = $row['technician_id'];

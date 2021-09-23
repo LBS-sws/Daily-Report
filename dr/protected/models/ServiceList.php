@@ -97,7 +97,7 @@ class ServiceList extends CListPageModel
 			foreach ($records as $k=>$record) {
 				$this->attr[] = array(
 					'id'=>$record['id'],
-					'company_name'=>$record['com_code'].$record['com_name'],
+					'company_name'=>empty($record['com_code'])?$record['company_name']:$record['com_code'].$record['com_name'],
 					'nature_desc'=>$record['nature_desc'],
 					'type_desc'=>$record['type_desc'],
 					'service'=>$record['service'],
