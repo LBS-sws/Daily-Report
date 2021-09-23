@@ -190,7 +190,7 @@ class ServiceForm extends CFormModel
             if($row){
                 $this->service_new_id = $row["id"];
             }else{
-                $this->addError($attribute, "請先新增該客戶的服務（{$this->company_name}）");
+                $this->service_new_id = -1;
             }
         }
         $this->salesman_id = empty($this->salesman_id)?0:$this->salesman_id;
