@@ -203,7 +203,7 @@ return array(
 			),
 			'Customer Type ID'=>array(
 				'access'=>'C10',
-				'url'=>'/customertypeID/edit?index=1',
+				'url'=>'/customertypeID/index',
 				'tag'=>'@',
 			),
             'Pay Week'=>array(//付款周期

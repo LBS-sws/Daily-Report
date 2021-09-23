@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('code','Customer Type'); ?></strong>
+		<strong><?php echo Yii::t('app','Customer Type ID'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -28,13 +28,13 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type';
 		<?php 
 			if (Yii::app()->user->validRWFunction('C10'))
 				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Record'), array(
-					'submit'=>Yii::app()->createUrl('customertype/new'), 
+					'submit'=>Yii::app()->createUrl('customertypeID/new'),
 				)); 
 		?>
 	</div>
 	</div></div>
 	<?php $this->widget('ext.layout.ListPageWidget', array(
-			'title'=>Yii::t('code','Customer Type List'),
+			'title'=>Yii::t('app','Customer Type ID'),
 			'model'=>$model,
 				'viewhdr'=>'//customertypeID/_listhdr',
 				'viewdtl'=>'//customertypeID/_listdtl',

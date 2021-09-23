@@ -72,16 +72,6 @@ class CustomertypeIDController extends Controller
 			}
 		}
 	}
-
-	public function actionView($index)
-	{
-		$model = new CustomertypeIDForm('view');
-		if (!$model->retrieveData($index)) {
-			throw new CHttpException(404,'The requested page does not exist.');
-		} else {
-			$this->render('form',array('model'=>$model,));
-		}
-	}
 	
 	public function actionNew()
 	{
@@ -98,6 +88,16 @@ class CustomertypeIDController extends Controller
 			$this->render('form',array('model'=>$model,));
 		}
 	}
+
+	public function actionView($index,$type=0)
+	{
+		$model = new CustomertypeIDForm('view');
+		if (!$model->retrieveData($index,$type)) {
+			throw new CHttpException(404,'The requested page does not exist.');
+		} else {
+			$this->render('form',array('model'=>$model,));
+		}
+	}
 	
 	public function actionDelete()
 	{
@@ -105,9 +105,8 @@ class CustomertypeIDController extends Controller
 		if (isset($_POST['CustomertypeIDForm'])) {
 			$model->attributes = $_POST['CustomertypeIDForm'];
 			if ($model->isOccupied($model->id)) {
-			    $type = $model->index_num>1?1:0;
 				Dialog::message(Yii::t('dialog','Warning'), Yii::t('dialog','This record is already in use'));
-				$this->redirect(Yii::app()->createUrl('CustomertypeID/edit',array('index'=>$model->id,'type'=>$type)));
+				$this->redirect(Yii::app()->createUrl('CustomertypeID/edit',array('index'=>$model->id,'type'=>$model->index_num==1?0:1)));
 			} else {
 				$model->saveData();
 				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));

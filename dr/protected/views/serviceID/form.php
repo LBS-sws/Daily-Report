@@ -175,9 +175,9 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
             </div>
             <div class="form-group" id="custTypeDiv">
                 <?php echo $form->labelEx($model,'cust_type',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-2">
+                <div class="col-sm-2" data-num="<?php echo $model->cust_type;?>">
                     <?php
-                    echo $form->dropDownList($model, 'cust_type', CustomertypeIDForm::getCustTypeRow(), array('readonly'=>true));
+                    echo $form->dropDownList($model, 'cust_type', CustomertypeIDForm::getCustTypeRow(), array('readonly'=>$model->readonlyForSAndR('new')));
                     ?>
                 </div>
                 <div class="col-sm-2" data-num="<?php echo $model->cust_type_name;?>">
@@ -887,7 +887,7 @@ $js='
                 $(this).children("select:first").html(html);
                 if(html==""){
                     $(this).hide();
-                    return false;
+                    //return false;
                 }else{
                     $(this).show();
                     parentId = $(this).children("select:first").val();

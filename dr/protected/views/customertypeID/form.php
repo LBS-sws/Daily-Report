@@ -26,17 +26,32 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type Form';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
         <?php echo CHtml::hiddenField('dtltemplate'); ?>
-        <?php if ($model->index_num != 1): ?>
-		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('customertypeID/edit',array("index"=>$model->cust_type_id,"type"=>1))));
+		<?php
+            switch ($model->index_num){
+                case 1:
+                    echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
+                        'submit'=>Yii::app()->createUrl('customertypeID/index')));
+                    break;
+                default:
+                    echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
+                        'submit'=>Yii::app()->createUrl('customertypeID/edit',array("index"=>$model->cust_type_id,"type"=>$model->index_num==2?0:1))));
+                    break;
+            }
 		?>
-        <?php endif ?>
         <?php if ($model->scenario!='view'): ?>
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
                 'submit'=>Yii::app()->createUrl('customertypeID/save')));
             ?>
         <?php endif ?>
 	</div>
+            <?php if ($model->scenario=='edit'): ?>
+            <div class="btn-group pull-right" role="group">
+                <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                        'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+                );
+                ?>
+            </div>
+            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -50,7 +65,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type Form';
 				<?php echo $form->labelEx($model,'description',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-5">
 					<?php echo $form->textField($model, 'description', 
-						array('size'=>50,'maxlength'=>100,'readonly'=>(true))
+						array('size'=>50,'maxlength'=>100,'readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>
 			</div>

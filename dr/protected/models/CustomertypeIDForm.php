@@ -47,7 +47,7 @@ class CustomertypeIDForm extends CFormModel
     {
         return array(
             array('id,description,rpt_cat,single,detail,cust_type_name,index_num','safe'),
-            array('id','validateID'),
+            array('id','validateID','on'=>array('edit')),
         );
     }
     public function validateID($attribute, $params) {
@@ -131,10 +131,12 @@ class CustomertypeIDForm extends CFormModel
     //获取ID服务的一级栏位
     public static function getCustTypeRow(){
         $list=array();
-        $row = Yii::app()->db->createCommand()->select("id,description")->from("swo_customer_type_id")
-            ->queryRow();
-        if($row){
-            $list[$row["id"]] = $row["description"];
+        $rows = Yii::app()->db->createCommand()->select("id,description")->from("swo_customer_type_id")
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $list[$row["id"]] = $row["description"];
+            }
         }
         return $list;
     }
@@ -240,13 +242,16 @@ class CustomertypeIDForm extends CFormModel
     }
 
 
-    protected function deleteFearchInfo($id){
+    protected function deleteFearchInfo($id,$index){
+        $index++;
         Yii::app()->db->createCommand()->delete("swo_customer_type_info","id=:id",array(":id"=>$id));
         $rows = Yii::app()->db->createCommand()->select("id")->from("swo_customer_type_info")
-            ->where("cust_type_id=:id",array(":id"=>$id))->queryAll();
+            ->where("cust_type_id=:id and index_num=:index_num",
+                array(":id"=>$id,":index_num"=>$index)
+            )->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $this->deleteFearchInfo($row["id"]);
+                $this->deleteFearchInfo($row["id"],$index);
             }
         }
     }
@@ -254,12 +259,12 @@ class CustomertypeIDForm extends CFormModel
     protected function saveCustomertypeDtl(&$connection)
     {
         $uid = Yii::app()->user->id;
+        if($this->getScenario()=="delete"){
+            $this->deleteFearchInfo($this->id,$this->index_num);
+        }
         foreach ($this->detail as $row) {
             $sql = '';
             switch ($this->scenario) {
-                case 'delete':
-                    $this->deleteFearchInfo($row['id']);
-                    break;
                 case 'new':
                     if ($row['uflag']=='Y') {
                         $sql = "insert into swo_customer_type_info(
@@ -274,7 +279,7 @@ class CustomertypeIDForm extends CFormModel
                 case 'edit':
                     switch ($row['uflag']) {
                         case 'D':
-                            $this->deleteFearchInfo($row['id']);
+                            $this->deleteFearchInfo($row['id'],$this->index_num);
                             break;
                         case 'Y':
                             $sql = ($row['id']==0)
@@ -335,12 +340,16 @@ class CustomertypeIDForm extends CFormModel
 
     public function isOccupied($index) {
         $rtn = false;
-/*        $sql = "select a.id from swo_service a where a.cust_type=".$index." limit 1";
+        if($this->index_num==1){
+            $sql = "select a.id from swo_serviceid a where a.cust_type=".$index." limit 1";
+        }else{
+            $sql = "select a.id from swo_serviceid a where a.cust_type_name=".$index." limit 1";
+        }
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         foreach ($rows as $row) {
             $rtn = true;
             break;
-        }*/
+        }
         return $rtn;
     }
 
