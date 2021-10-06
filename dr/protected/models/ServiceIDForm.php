@@ -189,7 +189,7 @@ class ServiceIDForm extends CFormModel
                 'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
             ),
             array('status_dt','validateVisitDt','on'=>array('new')),
-            array('cust_type','validateCustType','on'=>array('new')),
+            array('cust_type','validateCustType'),
             array('cust_type','validateServiceInfo'),
         );
     }
