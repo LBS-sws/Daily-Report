@@ -96,7 +96,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php echo $form->labelEx($model,'service_no',array('class'=>"col-sm-1 control-label")); ?>
                     <div class="col-sm-3">
                         <?php echo $form->textField($model, 'service_no',
-                            array('class'=>'form-control','maxlength'=>30,'readonly'=>true));
+                            array('class'=>'form-control','maxlength'=>30,'readonly'=>true,'id'=>'service_no'));
                         ?>
                     </div>
                 <?php endif ?>
