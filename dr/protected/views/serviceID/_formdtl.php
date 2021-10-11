@@ -42,6 +42,15 @@
     </td>
     <td>
         <?php
+        echo TbHtml::dropDownList($this->getFieldName('back_ratio'), $this->record['back_ratio'],array(50=>"50%",100=>"100%"),
+            array(
+                'readonly'=>($this->model->isReadOnly()),
+            )
+        );
+        ?>
+    </td>
+    <td>
+        <?php
         echo !$this->model->isReadOnly()
             ? TbHtml::Button('-',array('id'=>'btnDelRow','title'=>Yii::t('misc','Delete'),'size'=>TbHtml::BUTTON_SIZE_SMALL))
             : '&nbsp;';

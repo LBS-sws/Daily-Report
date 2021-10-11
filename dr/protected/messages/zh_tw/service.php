@@ -143,5 +143,6 @@ return array(
     'Stop Remark'=>'終止原因',
     'Stop Remark List'=>'終止原因列表',
     'Stop Remark Form'=>'終止原因表單',
+    'ratio'=>'百分比',
 );
 ?>

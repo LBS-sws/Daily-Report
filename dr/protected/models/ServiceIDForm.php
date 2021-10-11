@@ -66,6 +66,7 @@ class ServiceIDForm extends CFormModel
             'back_money'=>'',
             'put_month'=>'',
             'out_month'=>'',
+            'back_ratio'=>100,
             'uflag'=>'Y',
         ),
     );//回款数组
@@ -136,6 +137,7 @@ class ServiceIDForm extends CFormModel
             'back_money'=>Yii::t('service','back money'),
             'put_month'=>Yii::t('service','put month'),
             'out_month'=>Yii::t('service','out month'),
+            'back_ratio'=>Yii::t('service','ratio'),
             'service_new_id'=>Yii::t('service','shortcuts'),
             'cust_type_end'=>Yii::t('service','Customer type end'),
             'b4_cust_type_end'=>Yii::t('service','Before:').Yii::t('service','Customer type end'),
@@ -205,6 +207,14 @@ class ServiceIDForm extends CFormModel
                     $row["back_money"] = is_numeric($row["back_money"])?floatval($row["back_money"]):0;
                     $row["put_month"] = is_numeric($row["put_month"])?floatval($row["put_month"]):0;
                     $row["out_month"] = is_numeric($row["out_month"])?floatval($row["out_month"]):0;
+                }
+                if($row["uflag"]=="D"){
+                    $bool = Yii::app()->db->createCommand()->select("id")->from("swo_serviceid_info")
+                        ->where("commission=1 and id=:id",array(":id"=>$row["id"]))->queryRow();
+                    if($bool){
+                        $this->addError($attribute, "该回款记录已参与提成计算，无法删除");
+                        return false;
+                    }
                 }
             }
         }
@@ -375,6 +385,7 @@ class ServiceIDForm extends CFormModel
                         'back_money'=>$detail["back_money"],
                         'put_month'=>$detail["put_month"],
                         'out_month'=>$detail["out_month"],
+                        'back_ratio'=>$detail["back_ratio"],
                         'uflag'=>$this->getScenario()!="new"?'N':"Y",
                     );
                 }
@@ -415,6 +426,7 @@ class ServiceIDForm extends CFormModel
                                 "back_money"=>$row["back_money"],
                                 "put_month"=>$row["put_month"],
                                 "out_month"=>$row["out_month"],
+                                "back_ratio"=>$row["back_ratio"],
                                 "lcu"=>$uid,
                             )
                         );
@@ -439,6 +451,7 @@ class ServiceIDForm extends CFormModel
                                         "back_money"=>$row["back_money"],
                                         "put_month"=>$row["put_month"],
                                         "out_month"=>$row["out_month"],
+                                        "back_ratio"=>$row["back_ratio"],
                                         "lcu"=>$uid,
                                     )
                                 );
@@ -450,6 +463,7 @@ class ServiceIDForm extends CFormModel
                                         "back_money"=>$row["back_money"],
                                         "put_month"=>$row["put_month"],
                                         "out_month"=>$row["out_month"],
+                                        "back_ratio"=>$row["back_ratio"],
                                         "luu"=>$uid,
                                     ),
                                     "id=:id and serviceID_id=:serviceID_id",
@@ -643,8 +657,10 @@ class ServiceIDForm extends CFormModel
 
     public function isOccupied($id){
         $city = Yii::app()->user->city();
-        $row = Yii::app()->db->createCommand()->select("id")->from("swo_serviceid")
-            ->where("id=:id and city='$city' and wage_type=0",array(":id"=>$id))->queryRow();
+        $row = Yii::app()->db->createCommand()->select("a.id")
+            ->from("swo_serviceid_info a")
+            ->leftJoin("swo_serviceid b","a.serviceID_id=b.id")
+            ->where("b.id=:id and b.city='$city' and a.commission=1",array(":id"=>$id))->queryRow();
         if($row){
             return false;
         }else{

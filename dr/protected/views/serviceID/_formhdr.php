@@ -11,6 +11,9 @@
 	<th>
 		<?php echo TbHtml::label($this->getLabelName('out_month'), false); ?>
 	</th>
+	<th>
+		<?php echo TbHtml::label($this->getLabelName('back_ratio'), false); ?>
+	</th>
 
 	<th>
 <!--		--><?php echo // Yii::app()->user->validRWFunction('XS03') ?
