@@ -244,6 +244,30 @@ class CalcService extends Calculation {
 		if (count($rows) > 0) {
 			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','');
 		}
+
+//In swo_serviceid, sign_dt = 合同开始日期, equip_install_dt = 签约日期
+		$sql = "select 
+					a.city, 
+					sum(
+						a.amt_money
+						- if(a.status='N', 0, a.b4_amt_money)
+					) as sum_amount
+				from 
+					swo_serviceid a, swo_customer_type_info b 
+				where 
+					a.cust_type_name=b.id and 
+					b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and
+					(
+					(a.status='N' and b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and year(a.sign_dt)=$year and month(a.sign_dt)=$month) or 
+					(a.status='A' and a.amt_money > a.b4_amt_money and year(a.status_dt)=$year and month(a.status_dt)=$month)
+					) 
+				group by
+					a.city
+		";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','') + (isset($rtn[$row['city']]) ? $rtn[$row['city']] : 0);
+		}
 		return $rtn;
 	}
 
@@ -257,23 +281,6 @@ class CalcService extends Calculation {
 //今月餐饮年生意额 
 	public static function sumAmountRestaurant($year, $month) {
 		$rtn = array();
-/*
-		$sql = "select a.city, 
-					sum(case a.paid_type
-							when 'Y' then a.amt_paid
-							when 'M' then a.amt_paid * 
-								(case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
-							else a.amt_paid
-						end
-					) as sum_amount
-				from swo_service a, swo_nature b, swo_customer_type c 
-				where year(a.first_dt)=$year and month(a.first_dt)=$month 
-				and a.nature_type=b.id and b.rpt_cat='A01' 
-				and a.status='N' 
-				and a.cust_type=c.id and c.rpt_cat <> 'INV'  
-				group by a.city
-			";
-*/
 		$sql = "select 
 					a.city, 
 					sum(
@@ -317,29 +324,37 @@ class CalcService extends Calculation {
 		if (count($rows) > 0) {
 			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','');
 		}
+
+//In swo_serviceid, sign_dt = 合同开始日期, equip_install_dt = 签约日期
+		$sql = "select 
+					a.city, 
+					sum(
+						a.amt_money
+						- if(a.status='N', 0, a.b4_amt_money)
+					) as sum_amount
+				from 
+					swo_serviceid a, swo_customer_type_info b, swo_nature c 
+				where 
+					a.cust_type=b.id and 
+					b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and
+					a.nature_type=c.id and c.rpt_cat='A01' and
+					(
+					(a.status='N' and b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and year(a.sign_dt)=$year and month(a.sign_dt)=$month) or 
+					(a.status='A' and a.amt_money > a.b4_amt_money and year(a.status_dt)=$year and month(a.status_dt)=$month)
+					) 
+				group by
+					a.city
+		";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','') + (isset($rtn[$row['city']]) ? $rtn[$row['city']] : 0);
+		}
 		return $rtn;
 	}
 
 //今月非餐饮年生意额 
 	public static function sumAmountNonRestaurant($year, $month) {
 		$rtn = array();
-/*
-		$sql = "select a.city, 
-					sum(case a.paid_type
-							when 'Y' then a.amt_paid
-							when 'M' then a.amt_paid * 
-								(case when a.ctrt_period < 12 then a.ctrt_period else 12 end)
-							else a.amt_paid
-						end
-					) as sum_amount
-				from swo_service a, swo_nature b, swo_customer_type c 
-				where year(a.first_dt)=$year and month(a.first_dt)=$month 
-				and a.nature_type=b.id and b.rpt_cat='B01' 
-				and a.status='N' 
-				and a.cust_type=c.id and c.rpt_cat <> 'INV'  
-				group by a.city
-			";
-*/
 		$sql = "select 
 					a.city, 
 					sum(
@@ -382,6 +397,30 @@ class CalcService extends Calculation {
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','');
+		}
+//In swo_serviceid, sign_dt = 合同开始日期, equip_install_dt = 签约日期
+		$sql = "select 
+					a.city, 
+					sum(
+						a.amt_money
+						- if(a.status='N', 0, a.b4_amt_money)
+					) as sum_amount
+				from 
+					swo_serviceid a, swo_customer_type_info b, swo_nature c 
+				where 
+					a.cust_type=b.id and 
+					b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and
+					a.nature_type=c.id and c.rpt_cat in ('B01','C01') and
+					(
+					(a.status='N' and b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and year(a.sign_dt)=$year and month(a.sign_dt)=$month) or 
+					(a.status='A' and a.amt_money > a.b4_amt_money and year(a.status_dt)=$year and month(a.status_dt)=$month)
+					) 
+				group by
+					a.city
+		";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','') + (isset($rtn[$row['city']]) ? $rtn[$row['city']] : 0);
 		}
 		return $rtn;
 	}
@@ -441,6 +480,52 @@ class CalcService extends Calculation {
 			}
 			$rtn[$city] = number_format($amt_n+$amt_a+$amt_r-$amt_s-$amt_t,2,'.','');
 		}
+
+//In swo_serviceid, sign_dt = 合同开始日期, equip_install_dt = 签约日期
+		$sql = "select a.city, a.status, 
+					sum(a.amt_money) as sum_amount,
+					sum(a.b4_amt_money) as b4_sum_amount
+				from
+					swo_service a, swo_customer_type_info b 
+				where 
+					a.cust_type=b.id and 
+					b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and
+					(
+					(a.status='N' and b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and year(a.sign_dt)=$year and month(a.sign_dt)=$month) or 
+					(a.status in ('T','A') and year(a.status_dt)=$year and month(a.status_dt)=$month)
+					) 
+				group by 
+					a.city, a.status
+			";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			$city = '';
+			$amt_n = 0;
+			$amt_a = 0;
+			$amt_r = 0;
+			$amt_s = 0;
+			$amt_t = 0;
+			foreach ($rows as $row) {
+				if ($row['city']!=$city) {
+					if ($city!='') $rtn[$city] = number_format($amt_n+$amt_a+$amt_r-$amt_s-$amt_t,2,'.','') + (isset($rtn[$city]) ? $rtn[$city] : 0);
+					
+					$amt_n = 0;
+					$amt_r = 0;
+					$amt_a = 0;
+					$amt_s = 0;
+					$amt_t = 0;
+					$city = $row['city'];
+				}
+				switch ($row['status']) {
+					case 'N': $amt_n = $row['sum_amount']; break;
+					case 'A': $amt_a = $row['sum_amount']-$row['b4_sum_amount']; break;
+					case 'R': $amt_r = $row['sum_amount']; break;
+					case 'S': $amt_s = $row['sum_amount']; break;
+					case 'T': $amt_t = $row['sum_amount']; break;
+				}
+			}
+			$rtn[$city] = number_format($amt_n+$amt_a+$amt_r-$amt_s-$amt_t,2,'.','') + (isset($rtn[$city]) ? $rtn[$city] : 0);
+		}
 		return $rtn;
 	}
 
@@ -454,22 +539,6 @@ class CalcService extends Calculation {
 //今月停单月生意额
 	public static function sumAmountTerminate($year, $month) {
 		$rtn = array();
-/*
-		$sql = "select a.city, 
-					sum(case a.paid_type
-							when 'Y' then a.amt_paid /
-								(case when a.ctrt_period > 0 then a.ctrt_period else 12 end)
-							when 'M' then a.amt_paid
-							else a.amt_paid
-						end
-					) as sum_amount
-				from swo_service a, swo_customer_type b 
-				where year(a.status_dt)=$year and month(a.status_dt)=$month 
-				and a.status='T' 
-				and a.cust_type=b.id and b.rpt_cat <> 'INV'  
-				group by a.city
-			";
-*/
 		$sql = "select 
 					a.city, 
 					sum(
@@ -517,6 +586,26 @@ class CalcService extends Calculation {
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','');
+		}
+//In swo_serviceid, sign_dt = 合同开始日期, equip_install_dt = 签约日期
+		$sql = "select 
+					a.city, 
+					sum(
+						if(a.status='T', a.amt_paid, ifnull(a.b4_amt_paid,0)-a.amt_paid)
+					) as sum_amount
+				from 
+					swo_service a, swo_customer_type_info b 
+				where 
+					a.cust_type_name=b.id and 
+					b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and
+					year(a.status_dt)=$year and month(a.status_dt)=$month and 
+					(a.status='T' or (a.status='A' and a.amt_paid < ifnull(a.b4_amt_paid,0))) 
+				group by
+					a.city
+		";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) $rtn[$row['city']] = number_format($row['sum_amount'],2,'.','') + (isset($rtn[$row['city']]) ? $rtn[$row['city']] : 0);
 		}
 		return $rtn;
 	}
