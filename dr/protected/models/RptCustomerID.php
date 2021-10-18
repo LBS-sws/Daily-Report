@@ -1,6 +1,7 @@
 <?php
 class RptCustomerID extends ReportData2 {
-	private $customerType = "N";
+//	private $customerType = "N";
+	protected $customerType = "N";		// 為應付日报表总汇增加ID服务内容 - Percy
 
 	public function fields() {
         //N:新增 C:續約 A:更改 S:暫停 R:恢復 T:終止
@@ -237,9 +238,11 @@ class RptCustomerID extends ReportData2 {
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
-		$type = $this->criteria->type;
-		$type = in_array($type,array("N","C","S","R","A","T"))?$type:"N";
-		$this->customerType = $type;
+		if ($this->criteria->type!='?') { // 為應付日报表总汇增加ID服务内容 - Percy
+			$type = $this->criteria->type;
+			$type = in_array($type,array("N","C","S","R","A","T"))?$type:"N";
+			$this->customerType = $type;
+		}
 		
 		$sql = "select a.*,
 			j.code as product_code,j.description as product_name,

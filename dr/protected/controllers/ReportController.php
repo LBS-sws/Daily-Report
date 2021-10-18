@@ -182,8 +182,15 @@ class ReportController extends Controller
 				'RptLogistic'=>'Product Delivery Report',
 				'RptQc'=>'Quality Control Report',
 				'RptStaff'=>'Staff Report',
+				'RptCustnewID'=>'Customer ID Report - New',
+				'RptCustrenewID'=>'Customer ID Report - Renewal',
+				'RptCustamendID'=>'Customer ID Report - Amendment',
+				'RptCustsuspendID'=>'Customer ID Report - Suspended',
+				'RptCustresumeID'=>'Customer ID Report - Resume',
+				'RptCustterminateID'=>'Customer ID Report - Terminate',
 			);
 		$criteria->name = 'All Daily Reports';
+		$criteria->type = '?';
 		$this->addQueueItem('RptAll', $criteria, 'A3', $rptname);
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
