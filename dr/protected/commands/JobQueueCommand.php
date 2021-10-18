@@ -412,6 +412,12 @@ EOF;
 			case 'RptFeedback': $model = new RptFeedback(); break;
 			case 'RptMonthly': $model = new RptMonthly(); break;
 			case 'RptCustomerID': $model = new RptCustomerID(); break;
+			case 'RptCustnewID': $model = new RptCustnewID(); break;
+			case 'RptCustrenewID': $model = new RptCustrenewID(); break;
+			case 'RptCustamendID': $model = new RptCustamendID(); break;
+			case 'RptCustsuspendID': $model = new RptCustsuspendID(); break;
+			case 'RptCustresumeID': $model = new RptCustresumeID(); break;
+			case 'RptCustterminateID': $model = new RptCustterminateID(); break;
 		}
 		return $model;
 	}

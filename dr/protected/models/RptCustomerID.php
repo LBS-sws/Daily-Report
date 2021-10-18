@@ -239,6 +239,8 @@ class RptCustomerID extends ReportData2 {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
 		if ($this->criteria->type!='?') { // 為應付日报表总汇增加ID服务内容 - Percy
+			$type = $this->customerType;
+		} else {
 			$type = $this->criteria->type;
 			$type = in_array($type,array("N","C","S","R","A","T"))?$type:"N";
 			$this->customerType = $type;

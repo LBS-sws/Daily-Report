@@ -153,7 +153,7 @@ class ReportController extends Controller
 		}
 		catch(Exception $e) {
 			$transaction->rollback();
-			throw new CHttpException(404,'Cannot update.');
+			throw new CHttpException(404,'Cannot update.'.$e->getMessage());
 		}
 	}
 	
@@ -182,12 +182,12 @@ class ReportController extends Controller
 				'RptLogistic'=>'Product Delivery Report',
 				'RptQc'=>'Quality Control Report',
 				'RptStaff'=>'Staff Report',
-				'RptCustnewID'=>'Customer ID Report - New',
-				'RptCustrenewID'=>'Customer ID Report - Renewal',
-				'RptCustamendID'=>'Customer ID Report - Amendment',
-				'RptCustsuspendID'=>'Customer ID Report - Suspended',
-				'RptCustresumeID'=>'Customer ID Report - Resume',
-				'RptCustterminateID'=>'Customer ID Report - Terminate',
+				'RptCustnewID'=>'ID-Customer-New',
+				'RptCustrenewID'=>'ID-Customer-Renewal',
+				'RptCustamendID'=>'ID-Customer-Amendment',
+				'RptCustsuspendID'=>'ID-Customer-Suspended',
+				'RptCustresumeID'=>'ID-Customer-Resume',
+				'RptCustterminateID'=>'ID-Customer-Terminate',
 			);
 		$criteria->name = 'All Daily Reports';
 		$criteria->type = '?';
