@@ -30,6 +30,7 @@ class RptCustomerID extends ReportData2 {
                     "status_dt","company_name","cust_type","nature",
 					"amt_paid"=>"b4_amt_paid","amt_money"=>"b4_amt_money","pieces"=>"b4_pieces","cust_type_end"=>"b4_cust_type_end",
 					"amt_paid","amt_money","pieces","cust_type_end",
+                    "amt_paid_diff","amt_year",
 					"need_install","amt_install","sign_dt","ctrt_period",
                     "ctrt_end_dt","equip_install_dt","freq","salesman","othersalesman","technician","cont_info",
                     "remarks2","remarks","back_date","back_money","put_month","out_month"
@@ -86,6 +87,10 @@ class RptCustomerID extends ReportData2 {
         $arr['prepay_month'] = array('label' => Yii::t('service', 'Prepay Month'), 'width' => 15, 'align' => 'L');
         //月金额
         $arr['amt_paid'] = array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C');
+        //月金额
+        $arr['amt_paid_diff'] = array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C');
+        //年金额
+        $arr['amt_year'] = array('label'=>Yii::t('service','Yearly Amt'),'width'=>15,'align'=>'C');
         //合同年限(月)
         $arr['ctrt_period'] = array('label' => Yii::t('service', 'Contract Period'), 'width' => 15, 'align' => 'C');
         //合同总金额
@@ -165,6 +170,13 @@ class RptCustomerID extends ReportData2 {
                         'amt_money',
                         'pieces',
                         'cust_type_end',
+                    )
+                ),
+                array(
+                    'label'=>Yii::t('service','Difference'),
+                    'child'=>array(
+                        'amt_paid_diff',
+                        'amt_year',
                     )
                 ),
                 "need_install","amt_install","sign_dt","ctrt_period",
@@ -274,6 +286,8 @@ class RptCustomerID extends ReportData2 {
 				$temp['b4_amt_money'] = $row['b4_amt_money'];
 				$temp['b4_pieces'] = $row['b4_pieces'];
 				$temp['b4_cust_type_end'] = $row['b4_cust_type_end'];
+				$temp['amt_paid_diff'] = $row['amt_paid']-$row['b4_amt_paid'];
+				$temp['amt_year'] = $temp['amt_paid_diff']*12;
 				$temp['cust_type_end'] = $row['cust_type_end'];
                 $temp['need_install'] = ($row['need_install']=='Y') ? Yii::t('misc','Yes') : Yii::t('misc','No');
                 $temp['amt_install'] = $row['amt_install'];
