@@ -18,6 +18,12 @@ class ReportAllSaveCommand extends CConsoleCommand
             'RptLogistic'=>'Product Delivery Report',
             'RptQc'=>'Quality Control Report',
             'RptStaff'=>'Staff Report',
+			'RptCustnewID'=>'ID-Customer-New',
+			'RptCustrenewID'=>'ID-Customer-Renewal',
+			'RptCustamendID'=>'ID-Customer-Amendment',
+			'RptCustsuspendID'=>'ID-Customer-Suspended',
+			'RptCustresumeID'=>'ID-Customer-Resume',
+			'RptCustterminateID'=>'ID-Customer-Terminate',
         );
         $suffix = Yii::app()->params['envSuffix'];
         $uid = 'admin';
@@ -45,6 +51,7 @@ class ReportAllSaveCommand extends CConsoleCommand
                 'CITY_NAME' =>$cityname,
                 'YEAR' => '',
                 'MONTH' => '',
+				'TYPE' => '?',
             );
             $connection = Yii::app()->db;
             $transaction = $connection->beginTransaction();
