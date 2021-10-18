@@ -18,6 +18,12 @@ return array(
 	'Feedback List Report'=>'经理回馈列表',
 	'Monthly Report'=>'月报表',
     'Comprehensive data comparative analysis'=>'综合数据对比分析',
+	'ID-Customer-New'=>'ID新增客户',
+	'ID-Customer-Renewal'=>'ID续约客户',
+	'ID-Customer-Suspended'=>'ID暂停服务客户',
+	'ID-Customer-Resume'=>'ID恢复服务客户',
+	'ID-Customer-Amendment'=>'ID更改服务客户',
+	'ID-Customer-Terminate'=>'ID终止服务客户',
 	
 	'City'=>'地区',
 	'Type'=>'类别',
