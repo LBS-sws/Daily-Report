@@ -662,9 +662,9 @@ class ServiceIDForm extends CFormModel
             ->leftJoin("swo_serviceid b","a.serviceID_id=b.id")
             ->where("b.id=:id and b.city='$city' and a.commission=1",array(":id"=>$id))->queryRow();
         if($row){
-            return false;
-        }else{
             return true;
+        }else{
+            return false;
         }
     }
 }
