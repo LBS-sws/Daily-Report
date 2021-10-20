@@ -335,7 +335,7 @@ class CalcService extends Calculation {
 				from 
 					swo_serviceid a, swo_customer_type_info b, swo_nature c 
 				where 
-					a.cust_type=b.id and 
+					a.cust_type_name=b.id and 
 					b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and
 					a.nature_type=c.id and c.rpt_cat='A01' and
 					(
@@ -408,7 +408,7 @@ class CalcService extends Calculation {
 				from 
 					swo_serviceid a, swo_customer_type_info b, swo_nature c 
 				where 
-					a.cust_type=b.id and 
+					a.cust_type_name=b.id and 
 					b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and
 					a.nature_type=c.id and c.rpt_cat in ('B01','C01') and
 					(
@@ -486,9 +486,9 @@ class CalcService extends Calculation {
 					sum(a.amt_money) as sum_amount,
 					sum(a.b4_amt_money) as b4_sum_amount
 				from
-					swo_service a, swo_customer_type_info b 
+					swo_serviceid a, swo_customer_type_info b 
 				where 
-					a.cust_type=b.id and 
+					a.cust_type_name=b.id and 
 					b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and
 					(
 					(a.status='N' and b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and year(a.sign_dt)=$year and month(a.sign_dt)=$month) or 
@@ -594,7 +594,7 @@ class CalcService extends Calculation {
 						if(a.status='T', a.amt_paid, ifnull(a.b4_amt_paid,0)-a.amt_paid)
 					) as sum_amount
 				from 
-					swo_service a, swo_customer_type_info b 
+					swo_serviceid a, swo_customer_type_info b 
 				where 
 					a.cust_type_name=b.id and 
 					b.cust_type_name in ('租赁服务', '延长维保', 'RA机器-轻松派', 'RA机器-随意派') and
