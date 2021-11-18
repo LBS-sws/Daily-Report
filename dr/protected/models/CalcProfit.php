@@ -28,7 +28,7 @@ class CalcProfit extends Calculation {
 				from operation$suffix.opr_monthly_hdr a 
 				inner join operation$suffix.opr_monthly_dtl b on a.id=b.hdr_id
 				where a.year_no=$year and a.month_no=$month  
-				and b.data_field in ('10001','10002','10003','10004','10005')
+				and b.data_field in ('10001','10002','10003','10004','10005','20001','20002','20004')
 				and b.data_value REGEXP '^[0-9]+\\.?[0-9]*$'
 				group by a.city
 			";
