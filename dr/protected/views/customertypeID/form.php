@@ -84,9 +84,6 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type Form';
                         array('disabled'=>$model->scenario=='view')
                     ); ?>
 				</div>
-                <div class="col-sm-5">
-                    <p class="form-control-static text-danger">仅适用于该类型的“无”状态</p>
-				</div>
 			</div>
             <?php else: ?>
                 <div class="box">
@@ -113,6 +110,9 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type Form';
             <?php endif ?>
 
             <div class="box">
+                <div class="col-sm-10 col-lg-offset-2">
+                    <p class="form-control-static text-danger">第二栏的“服务类型”为“非一次性服务”时将在人事系统的老总年度考核统计ID服务总金额</p>
+                </div>
                 <div class="box-body table-responsive">
                     <?php
                     $this->widget('ext.layout.TableView2Widget', array(

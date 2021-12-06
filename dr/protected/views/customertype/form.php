@@ -79,10 +79,12 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type Form';
                         array('disabled'=>$model->scenario=='view')
                     ); ?>
 				</div>
-                <div class="col-sm-5">
-                    <p class="form-control-static text-danger">仅适用于该类型的“无”状态</p>
-				</div>
 			</div>
+            <div class="form-group">
+                <div class="col-sm-10 col-lg-offset-2">
+                    <p class="form-control-static text-danger">“非一次性服务”时将在会计系统的“销售提成计算”参与计算“服务奖励点”</p>
+                </div>
+            </div>
 
             <div class="box">
                 <div class="box-body table-responsive">
