@@ -118,7 +118,7 @@ class CalcStaff extends Calculation {
 */
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select e.city, count(e.code) as counter from (
-					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position
+					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position, a.staff_leader
 					from hr$suffix.hr_employee a
 					where a.id not in (
 						select w.employee_id
@@ -127,7 +127,7 @@ class CalcStaff extends Calculation {
 						where x.id is null and w.lud > '$d2 23:59:59'
 					)
 				union
-					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position
+					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position, b.staff_leader
 					from hr$suffix.hr_employee_operate b
 					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
 					where c.id is null and b.lud > '$d2 23:59:59'
@@ -160,7 +160,7 @@ class CalcStaff extends Calculation {
 */
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select e.city, count(e.code) as counter from (
-					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position, b.start_time
+					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position, a.start_time
 					from hr$suffix.hr_employee a
 					where a.id not in (
 						select w.employee_id
@@ -195,7 +195,8 @@ class CalcStaff extends Calculation {
 			";
 */
 		$sql = "select e.city, count(e.code) as counter from (
-					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position, b.start_time
+					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position, a.start_time,
+					if((isnull(a.end_time) or (a.end_time = '')),NULL,(ifnull(str_to_date(a.end_time,'%Y/%m/%d'),str_to_date(a.end_time,'%Y-%m-%d')) + interval 1 day)) AS ctrt_renew_dt
 					from hr$suffix.hr_employee a
 					where a.id not in (
 						select w.employee_id
@@ -204,7 +205,8 @@ class CalcStaff extends Calculation {
 						where x.id is null and w.lud > '$d2 23:59:59'
 					)
 				union
-					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position, b.start_time
+					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position, b.start_time,
+					if((isnull(b.end_time) or (b.end_time = '')),NULL,(ifnull(str_to_date(b.end_time,'%Y/%m/%d'),str_to_date(b.end_time,'%Y-%m-%d')) + interval 1 day)) AS ctrt_renew_dt
 					from hr$suffix.hr_employee_operate b
 					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
 					where c.id is null and b.lud > '$d2 23:59:59'
@@ -235,8 +237,44 @@ class CalcStaff extends Calculation {
                 from hr$suffix.hr_prize a 
                 LEFT JOIN hr$suffix.hr_employee b ON a.employee_id = b.id
                 where a.status=3 and a.prize_date >= '$start_dt' and a.prize_date <= '$end_dt' AND a.id is NOT NULL 
-				and a.prize_type=1 and b.city is not null
+				and b.city is not null
 				group by b.city
+			";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) $rtn[$row['city']] = $row['total'];
+		}
+		return $rtn;
+	}
+
+	public static function countPin($year, $month) {
+		$rtn = array();
+
+		$suffix = Yii::app()->params['envSuffix'];
+		$start_dt = date("Y-m-d",strtotime("$year-$month-1"));
+		$end_dt = date("Y-m-t",strtotime("$year-$month-1"));
+
+		$sql = "select a.city,sum(a.pin_num) as total from hr$suffix.hr_pin a 
+                where a.apply_date >= '$start_dt' and a.apply_date <= '$end_dt'
+				group by a.city
+			";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) $rtn[$row['city']] = $row['total'];
+		}
+		return $rtn;
+	}
+
+	public static function countPinStaff($year, $month) {
+		$rtn = array();
+
+		$suffix = Yii::app()->params['envSuffix'];
+		$start_dt = date("Y-m-d",strtotime("$year-$month-1"));
+		$end_dt = date("Y-m-t",strtotime("$year-$month-1"));
+
+		$sql = "select city,count(distinct employee_id) as total from hr$suffix.hr_pin 
+                where apply_date >= '$start_dt' and apply_date <= '$end_dt'
+				group by city
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {

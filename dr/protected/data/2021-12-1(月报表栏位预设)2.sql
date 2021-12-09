@@ -1,0 +1,2 @@
+update swo_monthly_field set function_name='CalcStaff::countPinStaff', upd_type='Y' where code='00033';
+update swo_monthly_field set function_name='CalcStaff::countPin', upd_type='Y' where code='00034';
