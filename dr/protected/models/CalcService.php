@@ -611,7 +611,7 @@ class CalcService extends Calculation {
 	}
 
 	public static function countActualIAIB($year, $month) {
-		$rs = array('message'=>'', 'data'=>array());
+		$rs = array();
 		
 		$key = Yii::app()->params['unitedKey'];
 		$root = Yii::app()->params['unitedRootURL'];
@@ -632,17 +632,14 @@ class CalcService extends Calculation {
 			'Content-Length:'.strlen($data_string),
  		));
 		$out = curl_exec($ch);
-		if ($out===false) {
-			$rs['message'] = curl_error($ch);
-		} else {
+		if ($out!==false) {
 			$json = json_decode($out);
-			$rs['data'] = json_decode($out, true);
-			$rs['message'] = self::getJsonError(json_last_error());
+			$rs = json_decode($out, true);
 		}
 		
 		$rtn = array();
-		if ($rs['message']=='Success') {
-			foreach ($rs['data'] as $item) {
+		if (!empty($rs)) {
+			foreach ($rs as $item) {
 				$rtn[$item['city']] = $item['count'];
 			}
 		}
