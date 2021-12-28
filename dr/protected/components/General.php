@@ -18,8 +18,10 @@ class General {
 			date_format(date_create($value),"Y-m-d");
 	}
 	
-	public static function toMyNumber($value) {
-		return (empty($value) || $value==0 || !is_numeric($value)) ? null : $value;
+	public static function toMyNumber($value, $allowZero=false) {
+		return $allowZero
+			? (!is_numeric($value) ? null : $value)
+			: ((empty($value) || $value==0 || !is_numeric($value)) ? null : $value);
 	}
 
 	public static function isDate($i_sDate) {

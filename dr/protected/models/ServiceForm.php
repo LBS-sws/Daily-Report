@@ -547,11 +547,11 @@ class ServiceForm extends CFormModel
 			$command->bindParam(':equip_install_dt',$eidate,PDO::PARAM_STR);
 		}
 		if (strpos($sql,':org_equip_qty')!==false) {
-			$oeq = General::toMyNumber($this->org_equip_qty);
+			$oeq = General::toMyNumber($this->org_equip_qty, true);
 			$command->bindParam(':org_equip_qty',$oeq,PDO::PARAM_INT);
 		}
 		if (strpos($sql,':rtn_equip_qty')!==false) {
-			$req = General::toMyNumber($this->rtn_equip_qty);
+			$req = General::toMyNumber($this->rtn_equip_qty, true);
 			$command->bindParam(':rtn_equip_qty',$req,PDO::PARAM_INT);
 		}
         if (strpos($sql,':all_number')!==false) {
