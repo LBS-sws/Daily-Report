@@ -14,6 +14,11 @@
         ); ?>
     </td>
     <td>
+        <?php echo TbHtml::dropDownList($this->getFieldName('bring'),  $this->record['bring'], array('0'=>'否','1'=>'是'),
+            array('disabled'=>$this->model->isReadOnly())
+        ); ?>
+    </td>
+    <td>
         <?php echo TbHtml::dropDownList($this->getFieldName('conditions'),  $this->record['conditions'], array('1'=>'每个','2'=>'每个新客户','3'=>'每个新客户订购一包','4'=>'每个新客户每桶','5'=>'每个新客户每箱','6'=>'每月'),
             array('disabled'=>$this->model->isReadOnly())
         ); ?>

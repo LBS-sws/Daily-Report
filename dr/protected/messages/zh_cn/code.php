@@ -99,5 +99,6 @@ return array(
 
     'service type'=>'服务类型',
     'index num'=>'栏位级别',
+    'bring'=>'创新提成',
 );
 ?>

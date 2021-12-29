@@ -12,6 +12,7 @@ class CustomertypeForm extends CFormModel
             'cust_type_name'=>'',
             'conditions'=>'',
             'single'=>0,//是否是一次性服务 0：非一次性  1：一次性
+            'bring'=>0,//是否計算創新獎勵點 0：不計算 1：計算
             'fraction'=>0,
             'toplimit'=>0,
             'uflag'=>'N',
@@ -29,6 +30,7 @@ class CustomertypeForm extends CFormModel
             'rpt_cat'=>Yii::t('code','Report Category'),
             'cust_type_name'=>Yii::t('code','Cust Type Name'),
             'single'=>Yii::t('code','service type'),
+            'bring'=>Yii::t('code','bring'),
             'conditions'=>Yii::t('code','Condition'),
             'fraction'=>Yii::t('code','Fractiony'),
             'toplimit'=>Yii::t('code','Toplimit'),
@@ -72,6 +74,7 @@ class CustomertypeForm extends CFormModel
                 $temp['cust_type_name'] = $row['cust_type_name'];
                 $temp['conditions'] = $row['conditions'];
                 $temp['single'] = $row['single'];
+                $temp['bring'] = $row['bring'];
                 $temp['fraction'] = $row['fraction'];
                 $temp['toplimit'] = $row['toplimit'];
                 $temp['uflag'] = 'N';
@@ -173,10 +176,10 @@ class CustomertypeForm extends CFormModel
                             $sql = ($row['id']==0)
                                 ?
                                 "insert into swo_customer_type_twoname(
-										cust_type_id, cust_type_name, single, fraction, toplimit, conditions,
+										cust_type_id, cust_type_name, single, bring, fraction, toplimit, conditions,
 										 luu, lcu
 									) values (
-										:cust_type_id, :cust_type_name, :single, :fraction, :toplimit,:conditions,
+										:cust_type_id, :cust_type_name, :single, :bring, :fraction, :toplimit,:conditions,
 										:luu, :lcu
 									)
 									"
@@ -187,6 +190,7 @@ class CustomertypeForm extends CFormModel
 										single = :single,
 										conditions = :conditions,
 										fraction = :fraction,									
+										bring = :bring,									
 										toplimit = :toplimit,
 										luu = :luu 
 									where id = :id 
@@ -212,6 +216,8 @@ class CustomertypeForm extends CFormModel
                     $command->bindParam(':fraction',$row['fraction'],PDO::PARAM_INT);
                 if (strpos($sql,':toplimit')!==false)
                     $command->bindParam(':toplimit',$row['toplimit'],PDO::PARAM_INT);
+                if (strpos($sql,':bring')!==false)
+                    $command->bindParam(':bring',$row['bring'],PDO::PARAM_INT);
                 if (strpos($sql,':luu')!==false)
                     $command->bindParam(':luu',$uid,PDO::PARAM_STR);
                 if (strpos($sql,':lcu')!==false)

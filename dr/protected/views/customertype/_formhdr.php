@@ -6,6 +6,9 @@
         <?php echo TbHtml::label($this->getLabelName('single'), false); ?>
     </th>
     <th>
+        <?php echo TbHtml::label($this->getLabelName('bring'), false); ?>
+    </th>
+    <th>
         <?php echo TbHtml::label($this->getLabelName('conditions'), false); ?>
     </th>
 	<th>
