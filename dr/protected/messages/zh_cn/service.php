@@ -146,5 +146,7 @@ return array(
     'Stop Remark List'=>'终止原因列表',
     'Stop Remark Form'=>'终止原因表单',
     'ratio'=>'百分比',
+	
+	'Layer 2'=>'二级栏位',
 );
 ?>

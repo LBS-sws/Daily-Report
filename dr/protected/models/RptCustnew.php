@@ -5,6 +5,7 @@ class RptCustnew extends ReportData2 {
 			'status_dt'=>array('label'=>Yii::t('service','New Date'),'width'=>18,'align'=>'C'),
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
 			'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
+			'cust_type_name_two'=>array('label'=>Yii::t('service','Layer 2'),'width'=>20,'align'=>'L'),
 			'service'=>array('label'=>Yii::t('service','Service'),'width'=>40,'align'=>'L'),
 			'prepay_month'=>array('label'=>Yii::t('service','Prepay Month'),'width'=>10,'align'=>'C'),
 			'amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C'),
@@ -38,10 +39,11 @@ class RptCustnew extends ReportData2 {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
 		
-		$sql = "select a.*, b.description as nature, c.description as customer_type
+		$sql = "select a.*, b.description as nature, c.description as customer_type, d.cust_type_name as cust_type_name_two 
 					from swo_service a
 					left outer join swo_nature b on a.nature_type=b.id 
 					left outer join swo_customer_type c on a.cust_type=c.id
+					left outer join swo_customer_type_twoname d on d.id=a.cust_type_name
 				where a.status='N' and a.city='".$city."' 
 		";
 		if (isset($this->criteria)) {
@@ -61,6 +63,7 @@ class RptCustnew extends ReportData2 {
 				$temp['status_dt'] = General::toDate($row['status_dt']);
 				$temp['company_name'] = $row['company_name'];
 				$temp['nature'] = $row['nature'];
+				$temp['cust_type_name_two'] = $row['cust_type_name_two'];
 				$temp['service'] = $row['service'];
 				$temp['prepay_month'] = $row['prepay_month'];
 				$temp['amt_month'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:

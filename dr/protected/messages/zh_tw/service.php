@@ -144,5 +144,7 @@ return array(
     'Stop Remark List'=>'終止原因列表',
     'Stop Remark Form'=>'終止原因表單',
     'ratio'=>'百分比',
+
+	'Layer 2'=>'二級欄位',
 );
 ?>
