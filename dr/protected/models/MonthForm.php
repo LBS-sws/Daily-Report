@@ -600,7 +600,8 @@ class MonthForm extends CFormModel
             $f101=round(($e115+$e102+$e103+$e104+$e105+$e106+$e107+$e108+$e109+$e110+$e111+$e112+$e113+$e114)/55*15,2);
             $f116=round(($e124+$e117+$e118+$e119+$e120+$e121+$e122)/35*10,2);
             $f74=$f75+$f87+$f95+$f101+$f116;
-        }elseif (count($rows)==70){
+        }
+        elseif (count($rows)==70){
             $b3=intval($rows[0]['data_value']);
             $b4=intval($rows[1]['data_value']);
             $b5=intval($rows[2]['data_value']);
@@ -779,6 +780,13 @@ class MonthForm extends CFormModel
             $f74=$f75+$f87+$f95+$f101+$f116;
         }
         else{
+            //由於可能沒有數據，所以統一設置0。（開始） - 不知道咋改
+            if(count($rows)<64){
+                for ($i=0;$i<=64;$i++){
+                    $rows[$i]['data_value']=0;
+                }
+            }
+            //由於可能沒有數據，所以統一設置0。（結束）
             $b3=intval($rows[0]['data_value']);
             $b4=intval($rows[1]['data_value']);
             $b5=intval($rows[2]['data_value']);
@@ -1054,6 +1062,17 @@ class MonthForm extends CFormModel
         $this->excel['f101']=$f101;
         $this->excel['f116']=$f116;
         $this->excel['f75']=$f75;
+
+        //為了以後的統計使用 - 開始（由於不知道如何修改上面的計算，把結果保存到數據庫）
+        Yii::app()->db->createCommand()->update("swo_monthly_hdr",array(
+            'f74'=>$f75,
+            'f86'=>$f87,
+            'f94'=>$f95,
+            'f100'=>$f101,
+            'f115'=>$f116,
+            'f73'=>$f74
+        ),"id=".$index);
+        //為了以後的統計使用 - 結束
 
         if (count($rowss) > 0) {
             $hid = 0;

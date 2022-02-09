@@ -121,7 +121,21 @@ class MonthlyCommand extends CConsoleCommand {
 			}
 		}
 		$this->fillEmptyFieldtoZero($this->year, $this->month);
+
+		$this->resetMonthScore($header); //統計排名需要，所以把結果存入數據庫
 	}
+
+     //統一修改月報表計算總額
+	protected function resetMonthScore($header){
+        //統一修改月報表計算總額 - 開始
+        $monthModel = new MonthForm();
+        if(!empty($header)){
+            foreach ($header as $city_code=>$hdr_id){
+                $monthModel->retrieveData($hdr_id,$city_code);
+            }
+        }
+        //統一修改月報表計算總額 - 結束
+    }
 	
 	protected function getHeaderIdList() {
 		$rtn = array();

@@ -54,6 +54,7 @@ class MonthController extends Controller
         $moth=date("n");
 ////        print_r('<pre>');
 //		print_r($model->attributes );
+        $arr=array();
 		if(!empty($model['attr'])&&empty($model->attributes['searchValue'])){
             for ($i=1;$i<count($model['attr']);$i++){
                 $arr[]=$model['attr'][$i];

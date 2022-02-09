@@ -779,8 +779,14 @@ class MonthList extends CListPageModel
                     $f101=round(($e115+$e102+$e103+$e104+$e105+$e106+$e107+$e108+$e109+$e110+$e111+$e112+$e113+$e114)/55*15,2);
                     $f116=round(($e124+$e117+$e118+$e119+$e120+$e121+$e122)/35*10,2);
                     $f74=$f75+$f87+$f95+$f101+$f116;
-                }
-                else{
+                }else{
+                    //由於可能沒有數據，所以統一設置0。（開始） - 不知道咋改
+                    if(count($rows)<64){
+                        for ($i=0;$i<=64;$i++){
+                            $rows[$i]['data_value']=0;
+                        }
+                    }
+                    //由於可能沒有數據，所以統一設置0。（結束）
                     $b3=intval($rows[0]['data_value']);
                     $b4=intval($rows[1]['data_value']);
                     $b5=intval($rows[2]['data_value']);
