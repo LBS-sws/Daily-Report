@@ -43,5 +43,8 @@ return array(
     "Doctorate"=>"博士",
 	"AL Days"=>'应有年假天数',
 	"Education"=>'学历或文化程度',
+
+	"Ranking"=>'排名',
+	"Score Number"=>'月报表总分',
 );
 ?>

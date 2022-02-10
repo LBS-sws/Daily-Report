@@ -127,5 +127,7 @@ return array(
     'ID Sales Commission ladder'=>'ID服务提成阶梯',
     'ID Sales Commission'=>'ID销售提成计算',
     'ID Sales Commission history'=>'ID销售提成查询',
+    'City Ranking list'=>'地方老總排行榜',
+    'Months Ranking list'=>'月報表分數排名',
 );
 ?>

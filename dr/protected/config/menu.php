@@ -53,7 +53,7 @@ return array(
 	),
     'Quality'=>array(
         'access'=>'E',
-        'icon'=>'fa-file-text-o',
+        'icon'=>'fa-life-ring',
         'items'=>array(
             'Average score of quality inspection'=>array(
                 'access'=>'E01',
@@ -173,6 +173,16 @@ return array(
             ),
 		),
 	),
+    'City Ranking list'=>array(
+        'access'=>'T',
+		'icon'=>'fa-line-chart',
+        'items'=>array(
+            'Months Ranking list'=>array(
+                'access'=>'T01',
+                'url'=>'/rankMonth/index',
+            ),
+        ),
+    ),
     'Monthly Report'=>array(
         'access'=>'H',
 		'icon'=>'fa-calendar',
