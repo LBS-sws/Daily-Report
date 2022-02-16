@@ -14,6 +14,14 @@ if (isset($url) && !empty($url)) {
 	}
 }
 ?>
+<?php
+if (!isset($url) || empty($url)) {
+    $this->widget('ext.layout.DashboardWidget',
+        array('config'=>Yii::app()->basePath.'/config/dashboard.php',
+        )
+    );
+}
+?>
 
 <?php
 if (!isset($url) || empty($url)) {

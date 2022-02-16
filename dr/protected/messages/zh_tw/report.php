@@ -59,5 +59,7 @@ return array(
 'HR Dep. Score'=>'人事部分數',
 'Total Score'=>'總分',
 'State'=>'狀態',
+
+    'Refresh every day at 6'=>'每天六點刷新'
 );
 ?>

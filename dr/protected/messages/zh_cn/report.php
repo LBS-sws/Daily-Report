@@ -61,5 +61,6 @@ return array(
 	'Total Score'=>'总分',
     'State'=>'状态',
 
+    'Refresh every day at 6'=>'每天六点刷新'
 );
 ?>
