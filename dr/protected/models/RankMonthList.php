@@ -4,6 +4,8 @@ class RankMonthList extends CListPageModel
 {
     public $year;
     public $month;
+
+    private $notCity=array('KS','TY','HK','TN','ZS1','TC','MY','CN','TP','ZY','HXHB','MO','HD','JMS','HN','XM','CS','H-N','HD1','RW','RN','WL','HB','HX','HN2','HN1');
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -36,16 +38,17 @@ class RankMonthList extends CListPageModel
             $this->year = $date[0];
             $this->month = $date[1];
         }
+        $notCity = implode("','",$this->notCity);
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql1 = "select a.year_no,a.month_no,a.f73,b.name 
 				from swo_monthly_hdr a 
 				LEFT JOIN security{$suffix}.sec_city b ON a.city=b.code
-				where a.year_no={$this->year} AND a.month_no={$this->month}
+				where a.year_no={$this->year} AND a.month_no={$this->month} AND a.city not in ('{$notCity}') 
 			";
 		$sql2 = "select count(a.id)
 				from swo_monthly_hdr a 
 				LEFT JOIN security{$suffix}.sec_city b ON a.city=b.code
-				where a.year_no={$this->year} AND a.month_no={$this->month}
+				where a.year_no={$this->year} AND a.month_no={$this->month} AND a.city not in ('{$notCity}') 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -104,7 +107,9 @@ class RankMonthList extends CListPageModel
 	    $year = date("Y");
 	    $arr = array();
 	    for ($i=$year-4;$i<=$year;$i++){
-            $arr[$i] = $i." ".Yii::t('report','Year');
+	        if($i>2020){
+                $arr[$i] = $i." ".Yii::t('report','Year');
+            }
         }
         return $arr;
     }
