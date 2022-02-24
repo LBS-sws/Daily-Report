@@ -130,6 +130,6 @@ return array(
     'ID Sales Commission'=>'ID销售提成计算',
     'ID Sales Commission history'=>'ID销售提成查询',
     'City Ranking list'=>'地方老总排行榜',
-    'Months Ranking list'=>'月报表分数排名',
+    'Months Ranking list'=>'总经理综合表现排行榜',
 );
 ?>
