@@ -1219,11 +1219,30 @@ WHERE hdr_id = '".$model['id']."'";
             $sqlb="INSERT INTO swo_queue_user (queue_id,username) VALUES ('".$qid."','".$b[0]."'),('".$qid."','".$b[1]."'),('".$qid."','".$b[2]."'),('".$qid."','".$b[3]."'),('".$qid."','".$b[4]."'),('".$qid."','".$b[5]."')";
         }
         $aa = Yii::app()->db->createCommand($sqlb)->execute();
+        $monthRow = Yii::app()->db->createCommand()->select("f73,f115,f100,f94,f86,f74")->from("swo_monthly_hdr")
+            ->where("id=:id",array(":id"=>$index))->queryRow();
+        if($monthRow){
+            $monthRow["f73"]=floatval($monthRow["f73"]);
+            $monthRow["f115"]=floatval($monthRow["f115"]);
+            $monthRow["f100"]=floatval($monthRow["f100"]);
+            $monthRow["f94"]=floatval($monthRow["f94"]);
+            $monthRow["f86"]=floatval($monthRow["f86"]);
+            $monthRow["f74"]=floatval($monthRow["f74"]);
+        }else{
+            $monthRow=array(
+                "f73"=>"异常",//总分
+                "f115"=>"异常",//人事部分数
+                "f100"=>"异常",//营运部分数
+                "f94"=>"异常",//财务部分数
+                "f86"=>"异常",//外勤部分数
+                "f74"=>"异常",//销售部分数
+            );
+        }
         $from_addr = Yii::app()->user->email();
         $to_addr=json_encode($a);
         $subject = "月报表总汇-" .$time;
         $description = $time."<br/>月报表总分：".$total."    &nbsp;&nbsp;&nbsp;&nbsp;城市：".$cityname[0]['name']."<br/>内容分析";
-        $message = "销售：<br/>" . $market . "<br/><br/>外勤：<br/>" .$legwork ."<br/><br/>财务：<br/>" .$finance  ."<br/><br/>营运：<br/>" . $service ."<br/><br/>人事：<br/>" .$personnel."<br/><br/>其他：<br/>" .$other ;
+        $message = "销售（{$monthRow['f74']}）：<br/>" . $market . "<br/><br/>外勤（{$monthRow['f86']}）：<br/>" .$legwork ."<br/><br/>财务（{$monthRow['f94']}）：<br/>" .$finance  ."<br/><br/>营运（{$monthRow['f100']}）：<br/>" . $service ."<br/><br/>人事（{$monthRow['f115']}）：<br/>" .$personnel."<br/><br/>其他：<br/>" .$other ;
         $url = Yii::app()->createAbsoluteUrl('queue/download',array('index'=>$qid));
         $msg_url = str_replace('{url}',$url, Yii::t('report',"Please click <a href=\"{url}\" onClick=\"return popup(this,'Daily Report');\">here</a> to download the report."));
         $message .= "<p>&nbsp;</p><p>$msg_url</p>";
