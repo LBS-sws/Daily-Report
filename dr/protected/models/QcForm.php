@@ -186,7 +186,8 @@ class QcForm extends CFormModel
 			'score_toilet'=>Yii::t('qc','desc106'),
 			'score_urinal'=>Yii::t('qc','desc107'),
 			'score_machine'=>Yii::t('qc','desc108'),
-			
+			'score_sticker'=>Yii::t('qc','desc109'),
+
 			'score_uniform'=>Yii::t('qc','desc201'),
 			'score_tools'=>Yii::t('qc','desc202'),
 			'score_greet'=>Yii::t('qc','desc203'),
