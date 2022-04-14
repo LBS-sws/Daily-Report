@@ -24,7 +24,7 @@ class MonthController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('edit','save','send'),
+				'actions'=>array('edit','save','send','test'),
 				'expression'=>array('MonthController','allowReadWrite'),
 			),
 			array('allow', 
@@ -37,7 +37,15 @@ class MonthController extends Controller
 		);
 	}
 
-	public function actionIndex($pageNum=0) 
+	public function actionTest($year=0)
+	{
+		$model = new MonthList;
+		$year = empty($year)||!is_numeric($year)?date("Y"):$year;
+		$model->testAll($year);
+		Yii::app()->end();
+	}
+
+	public function actionIndex($pageNum=0)
 	{
 		$model = new MonthList;
 		if (isset($_POST['MonthList'])) {
@@ -51,7 +59,7 @@ class MonthController extends Controller
 		}
 		$model->determinePageNum($pageNum);
 		$model->retrieveDataByPage($model->pageNum);
-        $moth=date("n");
+/*        $moth=date("n");
 ////        print_r('<pre>');
 //		print_r($model->attributes );
         $arr=array();
@@ -65,7 +73,7 @@ class MonthController extends Controller
                 $arr[]=$model['attr'][$i];
             }
             $model['attr']=$arr;
-        }
+        }*/
 
 		$this->render('index',array('model'=>$model));
 	}

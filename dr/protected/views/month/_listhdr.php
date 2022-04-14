@@ -6,12 +6,12 @@
         ?>
     </th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('year_no').$this->drawOrderArrow('year_no'),'#',$this->createOrderLink('','year_no'))
+		<?php echo TbHtml::link($this->getLabelName('year_no').$this->drawOrderArrow('a.year_no'),'#',$this->createOrderLink('','a.year_no'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('month_no').$this->drawOrderArrow('month_no'),'#',$this->createOrderLink('monthly-list','month_no'))
+		<?php echo TbHtml::link($this->getLabelName('month_no').$this->drawOrderArrow('a.month_no'),'#',$this->createOrderLink('monthly-list','a.month_no'))
 			;
 		?>
 	</th>
