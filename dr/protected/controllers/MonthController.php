@@ -24,11 +24,11 @@ class MonthController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('edit','save','send','test'),
+				'actions'=>array('edit','save','send'),
 				'expression'=>array('MonthController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view','xiazai','summarize'),
+				'actions'=>array('index','view','xiazai','summarize','test'),
 				'expression'=>array('MonthController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
