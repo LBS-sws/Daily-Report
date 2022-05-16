@@ -1044,12 +1044,12 @@ class MonthForm extends CFormModel
         $this->excel['e124']=round($e124,4);
         if(!empty($rows[67])){
             $this->excel['b67']=round($rows[67],4);
-            $this->excel['bc102']=(round($bc102,4)*100)."%";
-            $this->excel['bc103']=(round($bc103,4)*100)."%";
-            $this->excel['bc104']=(round($bc104,4)*100)."%";
-            $this->excel['be102']=round($be102,4);
-            $this->excel['be103']=round($be103,4);
-            $this->excel['be104']=round($be104,4);
+            $this->excel['bc102']=isset($bc102)?(round($bc102,4)*100)."%":"";
+            $this->excel['bc103']=isset($bc103)?(round($bc103,4)*100)."%":"";
+            $this->excel['bc104']=isset($bc104)?(round($bc104,4)*100)."%":"";
+            $this->excel['be102']=isset($be102)?round($be102,4):"";
+            $this->excel['be103']=isset($be103)?round($be103,4):"";
+            $this->excel['be104']=isset($be104)?round($be104,4):"";
         }if(count($rows)==70){
             $this->excel['b68']=round($rows[68],4);
             $this->excel['b69']=round($rows[69],4);
