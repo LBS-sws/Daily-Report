@@ -7,6 +7,9 @@ class CustomertypeForm extends CFormModel
     public $description;
     public $rpt_cat;
     public $single;
+    public $sales_rate=0;//是否参加销售提成计算
+    public $display=0;//是否显示（暂不使用）
+    public $z_index=0;//层级（暂不使用）
     public $detail = array(
         array('id'=>0,
             'cust_type_name'=>'',
@@ -34,6 +37,7 @@ class CustomertypeForm extends CFormModel
             'conditions'=>Yii::t('code','Condition'),
             'fraction'=>Yii::t('code','Fractiony'),
             'toplimit'=>Yii::t('code','Toplimit'),
+            'sales_rate'=>Yii::t('code','sales rate'),
 
         );
     }
@@ -45,7 +49,7 @@ class CustomertypeForm extends CFormModel
     {
         return array(
             array('description','required'),
-            array('id,rpt_cat,single','safe'),
+            array('id,rpt_cat,single,sales_rate','safe'),
         );
     }
 
@@ -60,6 +64,7 @@ class CustomertypeForm extends CFormModel
                 $this->id = $row['id'];
                 $this->description = $row['description'];
                 $this->rpt_cat = $row['rpt_cat'];
+                $this->sales_rate = $row['sales_rate'];
                 $this->single = $row['single'];
                 break;
             }
@@ -108,14 +113,15 @@ class CustomertypeForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into swo_customer_type(
-						description, rpt_cat,single, luu, lcu) values (
-						:description, :rpt_cat,:single, :luu, :lcu)";
+						description, rpt_cat,single,sales_rate, luu, lcu) values (
+						:description, :rpt_cat,:single,:sales_rate, :luu, :lcu)";
                 break;
             case 'edit':
                 $sql = "update swo_customer_type set 
 					description = :description, 
 					rpt_cat = :rpt_cat,
 					single = :single,
+					sales_rate = :sales_rate,
 					luu = :luu
 					where id = :id";
                 break;
@@ -130,6 +136,8 @@ class CustomertypeForm extends CFormModel
             $command->bindParam(':description',$this->description,PDO::PARAM_STR);
         if (strpos($sql,':single')!==false)
             $command->bindParam(':single',$this->single,PDO::PARAM_INT);
+        if (strpos($sql,':sales_rate')!==false)
+            $command->bindParam(':sales_rate',$this->sales_rate,PDO::PARAM_INT);
         if (strpos($sql,':rpt_cat')!==false)
             $command->bindParam(':rpt_cat',$this->rpt_cat,PDO::PARAM_STR);
         if (strpos($sql,':luu')!==false)

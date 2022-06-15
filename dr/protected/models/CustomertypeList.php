@@ -11,6 +11,7 @@ class CustomertypeList extends CListPageModel
 	{
 		return array(	
 			'description'=>Yii::t('code','Description'),
+			'sales_rate'=>Yii::t('code','sales rate'),
 		);
 	}
 	
@@ -57,6 +58,7 @@ class CustomertypeList extends CListPageModel
 					$this->attr[] = array(
 						'id'=>$record['id'],
 						'description'=>$record['description'],
+						'sales_rate'=>self::getSalesRateList($record['sales_rate'],true),
 					);
 //					$itemcnt++;
 //				}
@@ -67,4 +69,19 @@ class CustomertypeList extends CListPageModel
 		return true;
 	}
 
+	public static function getSalesRateList($type="",$bool=false){
+	    $list = array(
+            0=>Yii::t("code","not participate"),//不参加
+	        1=>Yii::t("code","participate"),//参加
+        );
+	    if($bool){
+	        if(key_exists($type,$list)){
+	            return $list[$type];
+            }else{
+	            return $type;
+            }
+        }else{
+	        return $list;
+        }
+    }
 }

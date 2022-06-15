@@ -115,10 +115,18 @@ class LogisticController extends Controller
 		$model = new LogisticForm('delete');
 		if (isset($_POST['LogisticForm'])) {
 			$model->attributes = $_POST['LogisticForm'];
-			$model->saveData();
-			Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
-		}
-		$this->redirect(Yii::app()->createUrl('logistic/index'));
+            if ($model->validate()) {
+                $model->saveData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+                $this->redirect(Yii::app()->createUrl('logistic/index'));
+            }else{
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->redirect(Yii::app()->createUrl('logistic/edit',array("index"=>$model->id)));
+            }
+		}else{
+            $this->redirect(Yii::app()->createUrl('logistic/index'));
+        }
 	}
 	
 	/**

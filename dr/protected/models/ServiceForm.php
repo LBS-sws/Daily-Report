@@ -173,10 +173,21 @@ class ServiceForm extends CFormModel
 			array('status_dt','date','allowEmpty'=>false,
 				'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
 			),
+            array('id','validateID'),
             array('id','validateAutoFinish'),
            // array('status_dt','validateVisitDt','on'=>array('new')),
 		);
 	}
+
+    //驗證该服务是否已经参加销售提成计算
+    public function validateID($attribute, $params) {
+        $id=$this->getScenario()=="new"?0:$this->id;
+        $row = Yii::app()->db->createCommand()->select("id")->from("swo_service")
+            ->where("commission is not null and id=:id",array(":id"=>$id))->queryRow();
+        if($row){
+            $this->addError($attribute, "该服务已参加销售提成计算，无法修改或删除");
+        }
+    }
 
     //驗證新增時是否有該服務
     public function validateAutoFinish($attribute, $params){

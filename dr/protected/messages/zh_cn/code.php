@@ -100,5 +100,8 @@ return array(
     'service type'=>'服务类型',
     'index num'=>'栏位级别',
     'bring'=>'创新提成',
+    'sales rate'=>'销售提成计算',
+    'participate'=>'参加',
+    'not participate'=>'不参加',
 );
 ?>

@@ -73,6 +73,15 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type Form';
 			</div>
 
 			<div class="form-group">
+				<?php echo $form->labelEx($model,'sales_rate',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-2">
+                    <?php echo $form->dropDownList($model,'sales_rate', CustomertypeList::getSalesRateList(),
+                        array('disabled'=>$model->scenario=='view')
+                    ); ?>
+				</div>
+			</div>
+
+			<div class="form-group">
 				<?php echo $form->labelEx($model,'single',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
                     <?php echo $form->dropDownList($model,'single', array('0'=>'非一次性服务','1'=>'一次性服务'),

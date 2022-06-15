@@ -99,5 +99,8 @@ return array(
     'service type'=>'服務類型',
     'index num'=>'欄位級別',
     'bring'=>'創新提成',
+    'sales rate'=>'銷售提成計算',
+    'participate'=>'參加',
+    'not participate'=>'不參加',
 );
 ?>

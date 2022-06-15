@@ -83,8 +83,21 @@ class LogisticForm extends CFormModel
 							),
 			),
 			array('detail','validateDetailRecords'),
+			array('id','validateID'),
 		);
 	}
+
+	public function validateID($attribute, $params) {
+        $id=$this->getScenario()=="new"?0:$this->id;
+        $row = Yii::app()->db->createCommand()
+            ->select("a.id,f.description")
+            ->from("swo_logistic_dtl a")
+            ->leftJoin("swo_task f","a.task=f.id")
+            ->where("a.commission=1 and a.log_id=:id",array(":id"=>$id))->queryRow();
+        if($row){
+            $this->addError($attribute, "{$row['description']} 已参加产品提成计算，无法修改");
+        }
+    }
 
 	public function validateDetailRecords($attribute, $params) {
 		$rows = $this->$attribute;
