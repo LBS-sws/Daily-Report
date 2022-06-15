@@ -60,6 +60,8 @@ $this->pageTitle=Yii::app()->name . ' - Monthly Report Form';
 <?php
 	$modelName = get_class($model);
 	$cnt=0;
+	$datamonth = strval($model->year_no).substr('0'.strval($model->month_no),-2);
+	$targetmonth = date('Ym',strtotime(date('Y-m-1').' -2 month'));
 	foreach ($model->record as $key=>$data) {
 		$cnt++;
 		$id_prefix = $modelName.'_record_'.$key;
@@ -70,7 +72,7 @@ $this->pageTitle=Yii::app()->name . ' - Monthly Report Form';
 		echo '</div>';
 		echo '<div class="col-sm-3">';
 		echo TbHtml::textField($name_prefix.'[datavalue]',$data['datavalue'],
-				array('size'=>40,'maxlength'=>100,'readonly'=>($model->scenario=='view'||$data['updtype']=='Y'))
+				array('size'=>40,'maxlength'=>100,'readonly'=>($model->scenario=='view'||$data['updtype']=='Y'||$datamonth<=$targetmonth))
 			);		
 		echo TbHtml::hiddenField($name_prefix.'[id]',$data['id']);
 		echo TbHtml::hiddenField($name_prefix.'[code]',$data['code']);
