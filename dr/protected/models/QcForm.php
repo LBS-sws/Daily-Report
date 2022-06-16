@@ -360,8 +360,23 @@ class QcForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveQc($connection);
-			if ($this->service_type=='IA' || $this->service_type=='IB')
+			if ($this->service_type=='IA' || $this->service_type=='IB') {
+				if (isset($this->info['sign_qc']) && empty($this->info['sign_qc'])) {
+					$suffix = Yii::app()->params['envSuffix'];
+					$sql = "select c.user_id from hr$suffix.hr_employee b, hr$suffix.hr_binding c
+							where b.id=c.employee_id and '".$this->qc_staff."' like concat('%',b.code,'%')
+							limit 1
+					";
+					$row = Yii::app()->db->createCommand($sql)->queryRow();
+					if ($row!==false) {
+						$user = User::model()->find('LOWER(username)=?',array($row['user_id']));
+						$img = $user->getUserInfoImage('signature', false);
+						$type = $user->getUserInfo('signature_file_type', false);
+						$this->info['sign_qc'] = empty($img) ? "" : "data:image/".($type=='jpg' ? 'jpeg' : $type).";base64,".$img;
+					}
+				}
 				$this->saveQcInfo($connection);
+			}
 			$this->updateDocman($connection,'QC');
 			$this->updateDocman($connection,'QCPHOTO');
 			$transaction->commit();

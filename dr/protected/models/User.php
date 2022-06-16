@@ -145,4 +145,26 @@ class User extends CActiveRecord
 		$command->bindParam(':option_value', $value, PDO::PARAM_STR);
 		$command->execute();
 	}
+	
+	public function getUserInfoImage($fieldId, $decode=true) {
+		$suffix = Yii::app()->params['envSuffix'];
+
+		$rtn = '';
+		$username = $this->username;
+		$sql = "select field_blob from security$suffix.sec_user_info where Lower(username)='$username' and field_id='$fieldId'";
+		$row = Yii::app()->db->createCommand($sql)->queryRow();
+		if ($row!==false) $rtn = $decode ? base64_decode($row['field_blob']) : $row['field_blob'];
+		return $rtn;
+	}
+
+	public function getUserInfo($fieldId) {
+		$suffix = Yii::app()->params['envSuffix'];
+
+		$rtn = '';
+		$username = $this->username;
+		$sql = "select field_value from security$suffix.sec_user_info where Lower(username)='$username' and field_id='$fieldId'";
+		$row = Yii::app()->db->createCommand($sql)->queryRow();
+		if ($row!==false) $rtn = $row['field_value'];
+		return $rtn;
+	}
 }
