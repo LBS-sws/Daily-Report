@@ -370,9 +370,11 @@ class QcForm extends CFormModel
 					$row = Yii::app()->db->createCommand($sql)->queryRow();
 					if ($row!==false) {
 						$user = User::model()->find('LOWER(username)=?',array($row['user_id']));
-						$img = $user->getUserInfoImage('signature', false);
-						$type = $user->getUserInfo('signature_file_type', false);
-						$this->info['sign_qc'] = empty($img) ? "" : "data:image/".($type=='jpg' ? 'jpeg' : $type).";base64,".$img;
+						if (!is_null($user)) {
+							$img = $user->getUserInfoImage('signature', false);
+							$type = $user->getUserInfo('signature_file_type', false);
+							$this->info['sign_qc'] = empty($img) ? "" : "data:image/".($type=='jpg' ? 'jpeg' : $type).";base64,".$img;
+						}
 					}
 				}
 				$this->saveQcInfo($connection);
