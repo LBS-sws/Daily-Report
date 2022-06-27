@@ -183,7 +183,7 @@ class ServiceForm extends CFormModel
     public function validateID($attribute, $params) {
         $id=$this->getScenario()=="new"?0:$this->id;
         $row = Yii::app()->db->createCommand()->select("id")->from("swo_service")
-            ->where("commission is not null and id=:id",array(":id"=>$id))->queryRow();
+            ->where("(commission is not null or other_commission is not null) and id=:id",array(":id"=>$id))->queryRow();
         if($row){
             $this->addError($attribute, "该服务已参加销售提成计算，无法修改或删除");
         }
