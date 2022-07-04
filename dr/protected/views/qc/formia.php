@@ -116,7 +116,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'job_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
 					<?php echo $form->textField($model, 'job_staff',
-						array('maxlength'=>500,'readonly'=>'readonly',
+						array('maxlength'=>500,'readonly'=>($model->readonly()),
 						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->readonly())))
 					)); ?>
 				</div>
