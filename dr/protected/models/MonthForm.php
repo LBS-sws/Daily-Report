@@ -1131,12 +1131,35 @@ class MonthForm extends CFormModel
         $sqla="select * from swo_monthly_comment where hdr_id='".$id."'";
         $ros = Yii::app()->db->createCommand($sqla)->queryAll();
         if(empty($ros)){
-            $in="insert into swo_monthly_comment(hdr_id,market,legwork,finance,service,personnel,other,luu,lcu,state) values('".$id."','".$market."','".$legwork."','".$finance."','".$service."','".$personnel."','".$other."','".$user."','".$user."','Y')";
+            Yii::app()->db->createCommand()->insert("swo_monthly_comment",array(
+                "hdr_id"=>$id,
+                "market"=>$market,
+                "legwork"=>$legwork,
+                "finance"=>$finance,
+                "service"=>$service,
+                "personnel"=>$personnel,
+                "other"=>$other,
+                "luu"=>$user,
+                "lcu"=>$user,
+                "state"=>"Y",
+            ));
+            //$in="insert into swo_monthly_comment(hdr_id,market,legwork,finance,service,personnel,other,luu,lcu,state) values('".$id."','".$market."','".$legwork."','".$finance."','".$service."','".$personnel."','".$other."','".$user."','".$user."','Y')";
         }else{
+            Yii::app()->db->createCommand()->update("swo_monthly_comment",array(
+                "market"=>$market,
+                "legwork"=>$legwork,
+                "finance"=>$finance,
+                "service"=>$service,
+                "personnel"=>$personnel,
+                "other"=>$other,
+                "state"=>"Y",
+            ),"hdr_id=:hdr_id",array(":hdr_id"=>$model['id']));
+            /*
         $in="UPDATE swo_monthly_comment SET market = '".$market."',legwork = '".$legwork."',service = '".$service."',personnel = '".$personnel."',finance = '".$finance."',other = '".$other."',state='Y'
 WHERE hdr_id = '".$model['id']."'";
+            */
         }
-        $int = Yii::app()->db->createCommand($in)->execute();
+        //$int = Yii::app()->db->createCommand($in)->execute();
         $suffix = Yii::app()->params['envSuffix'];
         $user = Yii::app()->user->id;
         $sql = "select approver_type, username from account$suffix.acc_approver where city='$city'";
@@ -1279,6 +1302,7 @@ WHERE hdr_id = '".$model['id']."'";
         $path = Yii::app()->basePath.'/commands/template/m_template_one.xlsx';
         $excel->readFile($path);
         foreach ($rowss as $row) {
+            $row['excel_row'] = empty($row['excel_row'])?0:$row['excel_row'];
             $excel->setCellValue('B', $row['excel_row'], $row['data_value']);
         }
         return $excel->getOutput();
