@@ -122,6 +122,9 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 						case 'S': $dt_name = 'suspend_dt'; break;
 						case 'R': $dt_name = 'resume_dt'; break;
 						case 'T': $dt_name = 'terminate_dt'; break;
+                        default:
+                            $dt_name='new_dt';
+                            echo "<span>异常：$model->status</span>";
 					}
 					echo $form->labelEx($model,$dt_name,array('class'=>"col-sm-2 control-label"));
 				?>
