@@ -66,7 +66,9 @@ class ServiceForm extends CFormModel
 	public $prepay_month=0;
 	public $prepay_start=0;
     public $contract_no;
-	
+    public $commission;
+    public $other_commission;
+
 	public $files;
 
 	public $docMasterId = array(
@@ -182,10 +184,22 @@ class ServiceForm extends CFormModel
     //驗證该服务是否已经参加销售提成计算
     public function validateID($attribute, $params) {
         $id=$this->getScenario()=="new"?0:$this->id;
-        $row = Yii::app()->db->createCommand()->select("id")->from("swo_service")
+        $notUpdate=array("status_dt","cust_type","cust_type_name",
+            "paid_type","amt_install","all_number","salesman","salesman_id",
+            "othersalesman","othersalesman_id","ctrt_period","first_dt",
+            "b4_paid_type","b4_amt_paid","surplus","company_name","company_id");
+        $row = Yii::app()->db->createCommand()
+            ->select("id,".implode(",",$notUpdate))
+            ->from("swo_service")
             ->where("(commission is not null or other_commission is not null) and id=:id",array(":id"=>$id))->queryRow();
         if($row){
-            $this->addError($attribute, "该服务已参加销售提成计算，无法修改或删除");
+            if($this->getScenario()=="delete"){
+                $this->addError($attribute, "该服务已参加销售提成计算，无法删除");
+            }else{
+                foreach ($notUpdate as $item){
+                    $this->$item = $row[$item];
+                }
+            }
         }
     }
 
@@ -237,6 +251,8 @@ class ServiceForm extends CFormModel
 			foreach ($rows as $row) {
 				$this->id = $row['id'];
 				$this->service_new_id = $row['service_new_id'];
+				$this->commission = $row['commission'];
+				$this->other_commission = $row['other_commission'];
 				$this->service_no = $row['service_no'];
 				$this->company_id = empty($row['company_id'])?"":$row['company_id'];
 				$this->company_name = empty($row['com_name'])?$row['company_name']:$row['com_code'].$row['com_name'];
@@ -701,5 +717,9 @@ EOF;
         $record = Yii::app()->db->createCommand($sql_s)->execute();
         return "<script language=javascript>alert('发送成功');history.back();</script>";
 
+    }
+
+    public function getReadonly(){
+        return $this->scenario=='view'||$this->commission!==null||$this->other_commission!==null;
     }
 }

@@ -125,6 +125,8 @@ class ServiceController extends Controller
 			$model->removeFileId['service'] = 0;
 			$model->no_of_attm['service'] = 0;
 		}
+        $model->commission=null;
+        $model->other_commission=null;
 		$model->status = 'N';
 		$model->status_desc = $model->getStatusDesc();
 		$model->status_dt = date('Y/m/d');
