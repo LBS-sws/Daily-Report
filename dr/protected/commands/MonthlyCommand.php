@@ -88,7 +88,7 @@ class MonthlyCommand extends CConsoleCommand {
 //
 // Calculate Monthly Statistics and Store the Results in Database
 //	
-	public function actionCalculate($year='', $month='', $lastmonth='N') {
+	public function actionCalculate($year='', $month='', $lastmonth='N', $datafield='') {
 		if ($lastmonth=='Y') {
 			$this->year = date('Y', strtotime('first day of last month'));
 			$this->month = date('m', strtotime('first day of last month'));
@@ -103,7 +103,7 @@ class MonthlyCommand extends CConsoleCommand {
 		$header = $this->getHeaderIdList();
 		$funclist = $this->getItemProcedureList();
 		foreach ($funclist as $code=>$func) {
-			if ($func!=null) {
+			if ($func!=null && ($datafield=='' || $datafield==$code)) {
 				echo "CODE: $code\n";
 				$func_name = '';
 				$params = array($this->year, $this->month);

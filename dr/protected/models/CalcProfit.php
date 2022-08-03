@@ -46,7 +46,7 @@ class CalcProfit extends Calculation {
 		$month_start_dt = date("Y-m-d",strtotime("$year-$month-1"));
 		$end_dt = date("Y-m-t",strtotime("$year-$month-1"));
 		
-		$sql = "select a.city, sum(account$suffix.TransAmountByLCDWoIntTrf('IN',a.id,b.city,'$month_start_dt','$end_dt')) as total
+		$sql = "select a.city, sum(account$suffix.TransAmountByLCDWoIntTrf('IN',b.id,b.city,'$month_start_dt','$end_dt')) as total
 				from swo_monthly_hdr a, account$suffix.acc_account b
 				where a.year_no=$year and a.month_no=$month and (a.city=b.city or a.city='99999')
 				group by a.city
