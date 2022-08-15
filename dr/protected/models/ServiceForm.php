@@ -184,7 +184,7 @@ class ServiceForm extends CFormModel
     //驗證该服务是否已经参加销售提成计算
     public function validateID($attribute, $params) {
         $id=$this->getScenario()=="new"?0:$this->id;
-        $notUpdate=array("status_dt","cust_type","cust_type_name",
+        $notUpdate=array("status","status_dt","cust_type","cust_type_name",
             "paid_type","amt_install","all_number","salesman","salesman_id",
             "othersalesman","othersalesman_id","ctrt_period","first_dt",
             "b4_paid_type","b4_amt_paid","surplus","company_name","company_id");
