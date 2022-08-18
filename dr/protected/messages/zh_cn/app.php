@@ -113,6 +113,7 @@ return array(
     'QC Delete'=>'品检删除',
 	'System Use'=>'系统使用',
 	'Announcement'=>'公告',
+	'Monthly Report Edit'=>'月报表编辑',
 
     'Integrated data email (region)'=>'综合数据电邮（地区）',
     'Integrated data email (regional)'=>'综合数据电邮（区域）',
