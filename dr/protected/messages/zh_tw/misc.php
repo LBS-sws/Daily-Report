@@ -12,6 +12,7 @@ return array(
 'xiazai'=>'下載',
 'fenxi'=>'月報總結',
 'ZongJie'=>'總結',
+'Add Record'=>'新增',
 'Add'=>'新增',
 'Add New'=>'新增',
 'New Record'=>'新增紀錄',
