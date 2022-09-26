@@ -28,7 +28,7 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
 				'submit'=>Yii::app()->createUrl('feedback/index'))); 
 		?>
-<?php if ($model->scenario!='view'): ?>
+<?php if ($model->scenario!='view'&&$model->city==Yii::app()->user->city()): ?>
 			<?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
 				'submit'=>Yii::app()->createUrl('feedback/save'))); 
 			?>
@@ -42,11 +42,23 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
 			<?php echo $form->hiddenField($model, 'id'); ?>
 			<?php echo $form->hiddenField($model, 'status'); ?>
 			<?php echo $form->hiddenField($model, 'rpt_id'); ?>
+			<?php echo $form->hiddenField($model, 'city'); ?>
+
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-2">
+					<?php
+                    echo TbHtml::textField("city",General::getCityName($model->city),
+                        array('size'=>15,'maxlength'=>50,'readonly'=>true)
+                    );
+                    ?>
+				</div>
+			</div>
 
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'request_dt',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
-					<?php echo $form->textField($model, 'request_dt', 
+					<?php echo $form->textField($model, 'request_dt',
 						array('size'=>15,'maxlength'=>50,'readonly'=>true)
 					); ?>
 				</div>
@@ -54,7 +66,7 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
 				</div>
 				<?php echo $form->labelEx($model,'status_desc',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
-					<?php echo $form->textField($model, 'status_desc', 
+					<?php echo $form->textField($model, 'status_desc',
 						array('size'=>10,'maxlength'=>10,'readonly'=>true)
 					); ?>
 				</div>

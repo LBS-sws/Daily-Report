@@ -20,6 +20,7 @@ class FeedbackList extends CListPageModel
 			'feedback_cat'=>Yii::t('feedback','Feedback Type'),
 			'status'=>Yii::t('feedback','Status'),
 			'feedbacker'=>Yii::t('feedback','Feedback Person'),
+			'city_name'=>Yii::t('misc','City'),
 		);
 	}
 	
@@ -27,18 +28,26 @@ class FeedbackList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
-		$sql1 = "select a.*, b.disp_name
-				from swo_mgr_feedback a, security$suffix.sec_user b 
-				where a.city='$city' and a.username=b.username 
+        $city_allow = empty($this->city)?Yii::app()->user->city_allow():"'$this->city'";
+		$sql1 = "select a.*, b.disp_name,f.name as city_name
+				from swo_mgr_feedback a 
+				LEFT JOIN security$suffix.sec_user b on a.username=b.username 
+				LEFT JOIN security$suffix.sec_city f on a.city=f.code 
+				where a.city in ($city_allow)
 			";
-		$sql2 = "select count(id)
-				from swo_mgr_feedback a, security$suffix.sec_user b 
-				where a.city='$city' and a.username=b.username 
+		$sql2 = "select count(a.id)
+				from swo_mgr_feedback a 
+				LEFT JOIN security$suffix.sec_user b on a.username=b.username 
+				LEFT JOIN security$suffix.sec_city f on a.city=f.code 
+				where a.city in ($city_allow)
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
+				case 'city':
+					$clause .= General::getSqlConditionClause('f.name', $svalue);
+					break;
 				case 'feedbacker':
 					$clause .= General::getSqlConditionClause('b.disp_name', $svalue);
 					break;
@@ -97,6 +106,7 @@ class FeedbackList extends CListPageModel
 					}
 					$this->attr[] = array(
 						'id'=>$record['id'],
+						'city_name'=>$record['city_name'],
 						'request_dt'=>$record['request_dt'],
 						'feedback_dt'=>$record['feedback_dt'],
 						'status'=>General::getFeedbackStatusDesc($record['status']),

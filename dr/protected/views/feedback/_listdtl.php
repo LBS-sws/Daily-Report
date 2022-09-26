@@ -10,6 +10,7 @@
 ?>
 <tr class='clickable-row' data-href='<?php echo $lnk;?>'>
 	<td><?php echo "<a href=\"$lnk\"><span class=\"$icon\"></span></a>";?></td>
+	<td><?php echo $this->record['city_name']; ?></td>
 	<td><?php echo $this->record['request_dt']; ?></td>
 	<td><?php echo $this->record['feedbacker']; ?></td>
 	<td><?php echo $this->record['feedback_dt']; ?></td>
