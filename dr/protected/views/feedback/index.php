@@ -23,22 +23,34 @@ $this->pageTitle=Yii::app()->name . ' - Feedback';
 </section>
 
 <section class="content">
-	<?php $this->widget('ext.layout.ListPageWidget', array(
-			'title'=>Yii::t('feedback','Feedback List'),
-			'model'=>$model,
-				'viewhdr'=>'//feedback/_listhdr',
-				'viewdtl'=>'//feedback/_listdtl',
-				'gridsize'=>'24',
-				'height'=>'600',
-				'search'=>array(
-							'request_dt',
-							'feedback_dt',
-							'status',
-							'feedback_cat',
-							'feedbacker',
-						),
-		));
-	?>
+    <?php
+    $search_add_html="";
+    $modelName = get_class($model);
+    $city_allow = Yii::app()->user->city_allow();
+    $cityList=General::getCityListWithNoDescendant($city_allow);
+    if(!empty($cityList)){
+        $cityList = array_merge(array(""=>"-- 城市 --"),$cityList);
+        $search_add_html .= TbHtml::dropDownList($modelName.'[city]',$model->city,$cityList,
+            array("class"=>"form-control submitBtn"));
+    }
+
+    $this->widget('ext.layout.ListPageWidget', array(
+        'title'=>Yii::t('feedback','Feedback List'),
+        'model'=>$model,
+        'viewhdr'=>'//feedback/_listhdr',
+        'viewdtl'=>'//feedback/_listdtl',
+        'gridsize'=>'24',
+        'height'=>'600',
+        'search_add_html'=>$search_add_html,
+        'search'=>array(
+            'request_dt',
+            'feedback_dt',
+            'status',
+            'feedback_cat',
+            'feedbacker',
+        ),
+    ));
+    ?>
 </section>
 <?php
 	echo $form->hiddenField($model,'pageNum');
@@ -49,6 +61,11 @@ $this->pageTitle=Yii::app()->name . ' - Feedback';
 <?php $this->endWidget(); ?>
 
 <?php
+$js = "
+$('.submitBtn').change(function(){
+    $('form:first').submit();
+});";
+Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 	$js = Script::genTableRowClick();
 	Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 ?>

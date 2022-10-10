@@ -3,6 +3,7 @@
 class FeedbackForm extends CFormModel
 {
 	public $id;
+	public $city;
 	public $request_dt;
 	public $feedback_dt;
 	public $status;
@@ -40,6 +41,7 @@ class FeedbackForm extends CFormModel
 	public function attributeLabels()
 	{
 		$lbl = array(
+            'city'=>Yii::t('misc','City'),
 			'request_dt'=>Yii::t('feedback','Request Date'),
 			'feedback_dt'=>Yii::t('feedback','Feedback Date'),
 			'feedback'=>Yii::t('feedback','Feedback'),
@@ -71,10 +73,29 @@ class FeedbackForm extends CFormModel
 		}
 		
 		return array(
-			array('id, request_dt, feedback_dt, status, status_desc, to, cc, rpt_id','safe'),
+			array('id, city, request_dt, feedback_dt, status, status_desc, to, cc, rpt_id','safe'),
 			array($cat_list,'validateType'),
 			array($feedback_list,'validateRemarks'),
+			array("id",'validateCity'),
 		);
+	}
+
+	public function validateCity($attribute, $params){
+        $city = Yii::app()->user->city();
+        $id = empty($this->id)?0:$this->id;
+        $sql = "select city from swo_mgr_feedback where id={$id}";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+		if ($row) {
+		    if($row["city"]!=$city){
+                $message = "不允许保存其它城市的回馈";
+                $this->addError($attribute,$message);
+            }else{
+		        $this->city = $row["city"];
+            }
+		}else{
+            $message = "回馈不存在，请刷新重试";
+            $this->addError($attribute,$message);
+        }
 	}
 
 	public function validateType($attribute, $params){
@@ -105,11 +126,13 @@ class FeedbackForm extends CFormModel
 
 	public function retrieveData($index,$mode='edit') {
 		$city = Yii::app()->user->city();
-		$sql = "select * from swo_mgr_feedback where id=$index and city='$city'"; 
+        $city_allow = Yii::app()->user->city_allow();
+		$sql = "select * from swo_mgr_feedback where id=$index and city in ($city_allow)";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
 				$this->id = $row['id'];
+				$this->city = $row['city'];
 				$this->request_dt = General::toDate($row['request_dt']);
 				$this->feedback_dt = General::toDate($row['feedback_dt']);
 				$this->status = $row['status'];
@@ -121,8 +144,8 @@ class FeedbackForm extends CFormModel
 			return false;
 		
 		if ($mode=='edit' && Yii::app()->user->id!=$row['username']) return false;
-		
-		$to = City::model()->getAncestorInChargeList(Yii::app()->user->city());
+
+		$to = City::model()->getAncestorInChargeList($this->city);
 		$this->to = implode("; ",General::getEmailByUserIdArray($to));
 //		$this->to = implode("; ",Yii::app()->params['bossEmail']);
 		
@@ -210,6 +233,7 @@ class FeedbackForm extends CFormModel
 
 	protected function saveFeedbackRmk(&$connection)
 	{
+        $uid = Yii::app()->user->id;
 		$sql = "delete from swo_mgr_feedback_rmk where feedback_id=:id";
 		$command=$connection->createCommand($sql);
 		if (strpos($sql,':id')!==false)
