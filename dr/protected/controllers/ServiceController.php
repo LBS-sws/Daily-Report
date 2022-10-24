@@ -309,15 +309,15 @@ class ServiceController extends Controller
 		$model = new ServiceForm('delete');
 		if (isset($_POST['ServiceForm'])) {
 			$model->attributes = $_POST['ServiceForm'];
-//            if ($model->validate()) {
+            if ($model->validate()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
                 $this->redirect(Yii::app()->createUrl('service/index'));
-//            }else{
-//                $message = CHtml::errorSummary($model);
-//                Dialog::message(Yii::t('dialog','Validation Message'), $message);
-//                $this->redirect(Yii::app()->createUrl('service/edit',array("index"=>$model->id)));
-//            }
+            }else{
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->redirect(Yii::app()->createUrl('service/edit',array("index"=>$model->id)));
+            }
 		}else{
             $this->redirect(Yii::app()->createUrl('service/index'));
         }
