@@ -499,7 +499,8 @@ class ServiceForm extends CFormModel
 			$command->bindParam(':cust_type',$ctid,PDO::PARAM_INT);
 		}
         if (strpos($sql,':pieces')!==false) {
-            $command->bindParam(':pieces',$this->pieces,PDO::PARAM_INT);
+			$pieces = !is_numeric($this->pieces) ? null : $this->pieces;
+            $command->bindParam(':pieces',$pieces,PDO::PARAM_INT);
         }
 		if (strpos($sql,':paid_type')!==false)
 			$command->bindParam(':paid_type',$this->paid_type,PDO::PARAM_STR);
