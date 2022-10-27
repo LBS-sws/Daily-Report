@@ -43,6 +43,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('custsuspend'),'expression'=>array('ReportController','allowCustsuspend')),
 			array('allow','actions'=>array('custresume'),'expression'=>array('ReportController','allowCustresume')),
 			array('allow','actions'=>array('custterminate'),'expression'=>array('ReportController','allowCustterminate')),
+			array('allow','actions'=>array('custterall'),'expression'=>array('ReportController','allowCustterall')),
 			array('allow','actions'=>array('complaint'),'expression'=>array('ReportController','allowComplaint')),
 			array('allow','actions'=>array('qc'),'expression'=>array('ReportController','allowQc')),
 			array('allow','actions'=>array('staff'),'expression'=>array('ReportController','allowStaff')),
@@ -177,6 +178,7 @@ class ReportController extends Controller
 				'RptCustsuspend'=>'Customer Report - Suspended',
 				'RptCustresume'=>'Customer Report - Resume',
 				'RptCustterminate'=>'Customer Report - Terminate',
+				'RptCustterall'=>'Customer Report - All',
 				'RptComplaint'=>'Complaint Cases Report',
 				'RptEnquiry'=>'Customer Report - Enquiry',
 				'RptLogistic'=>'Product Delivery Report',
@@ -364,14 +366,30 @@ class ReportController extends Controller
 		return Yii::app()->user->validFunction('B10');
 	}
 
+// Report: Customer - Termination
+	protected static function allowCustterAll() {
+		return Yii::app()->user->validFunction('B24');
+	}
+
 	public function actionCustterminate() {
 		$this->function_id = 'B10';
 		Yii::app()->session['active_func'] = $this->function_id;
 		$this->showUI('custterminate','Customer Report - Terminate');
 	}
 
+	public function actionCustterall() {
+		$this->function_id = 'B24';
+		Yii::app()->session['active_func'] = $this->function_id;
+		$this->showUI('custterall','Customer Report - All');
+	}
+
 	protected function genCustTerminate($criteria) {
 		$this->addQueueItem('RptCustterminate', $criteria, 'A3');
+		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+	}
+
+	protected function genCustAll($criteria) {
+		$this->addQueueItem('RptCustterall', $criteria, 'A3');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
 
@@ -590,6 +608,7 @@ class ReportController extends Controller
 				if ($model->id=='custsuspend') $this->genCustSuspend($model);
 				if ($model->id=='custresume') $this->genCustResume($model);
 				if ($model->id=='custterminate') $this->genCustTerminate($model);
+				if ($model->id=='custterall') $this->genCustAll($model);
 				if ($model->id=='qc') $this->genQc($model);
 				if ($model->id=='logistic') $this->genLogistic($model);
 				if ($model->id=='staff') $this->genStaff($model);

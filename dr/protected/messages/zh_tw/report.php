@@ -8,6 +8,7 @@ return array(
 'Customer Report - Resume'=>'恢復服務客戶報表',
 'Customer Report - Amendment'=>'更改服務客戶報表',
 'Customer Report - Terminate'=>'終止服務客戶報表',
+'Customer Report - All'=>'暫停/恢復/終止服務客戶報表',
 'Customer Report - Enquiry'=>'客戶查詢報表',
 'Product Delivery Report'=>'物流配送報表',
 'Quality Control Report'=>'品檢記錄報表',

@@ -56,6 +56,7 @@ return array(
 	'Customer-Resume'=>'恢复服务客户',
 	'Customer-Amendment'=>'更改服务客户',
 	'Customer-Terminate'=>'终止服务客户',
+	'Customer-All'=>'暂停/恢复/终止服务客户',
 	'ID-Customer-New'=>'ID新增客户',
 	'ID-Customer-Renewal'=>'ID续约客户',
 	'ID-Customer-Suspended'=>'ID暂停服务客户',

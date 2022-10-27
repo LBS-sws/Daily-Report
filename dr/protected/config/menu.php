@@ -93,6 +93,10 @@ return array(
 				'access'=>'B10',
 				'url'=>'/report/custterminate',
 			),
+			'Customer-All'=>array(
+				'access'=>'B24',
+				'url'=>'/report/custterall',
+			),
 			'ID-Customer-New'=>array(
 				'access'=>'B18',
 				'url'=>'/report/customerID?type=N',
