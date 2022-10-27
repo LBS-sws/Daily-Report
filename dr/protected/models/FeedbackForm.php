@@ -190,7 +190,7 @@ class FeedbackForm extends CFormModel
 		$sql = '';
         $status = 'N';
 //        类别为发送的 或者 类型为暂存但是已发送状态的
-        if($type == 'send' || ($type == 'temp' && $this->status='Y')){
+        if($type == 'send' || ($type == 'temp' && $this->status == 'Y')){
             $status = 'Y';
         }
 		switch ($this->scenario) {
