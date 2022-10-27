@@ -154,7 +154,22 @@ class ServiceForm extends CFormModel
 	 */
 	public function rules()
 	{
-		return array(
+		return $this->getScenario()=="delete"
+		? array(
+			array('id, technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, cust_type, prepay_month,prepay_start,contract_no
+				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
+				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
+			array('files, removeFileId, docMasterId, no_of_attm','safe'),
+			array('company_id,salesman_id,company_name,salesman, service,all_number,surplus, status_dt','safe'),
+			array('ctrt_period','safe'),
+			array('amt_paid, amt_install','safe'),
+			array('org_equip_qty, rtn_equip_qty','safe'),
+			array('b4_amt_paid','safe'),
+			array('sign_dt, ctrt_end_dt, first_dt, equip_install_dt','safe'),
+			array('status_dt','safe'),
+            array('id','validateID'),
+		)
+		: array(
 /*
 			array('id, salesman, cont_info, first_tech, reason, remarks, remarks2, paid_type, nature_type, cust_type, 
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
@@ -484,7 +499,8 @@ class ServiceForm extends CFormModel
 			$command->bindParam(':cust_type',$ctid,PDO::PARAM_INT);
 		}
         if (strpos($sql,':pieces')!==false) {
-            $command->bindParam(':pieces',$this->pieces,PDO::PARAM_INT);
+			$pieces = !is_numeric($this->pieces) ? null : $this->pieces;
+            $command->bindParam(':pieces',$pieces,PDO::PARAM_INT);
         }
 		if (strpos($sql,':paid_type')!==false)
 			$command->bindParam(':paid_type',$this->paid_type,PDO::PARAM_STR);

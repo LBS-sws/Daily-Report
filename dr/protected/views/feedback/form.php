@@ -29,9 +29,12 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
 				'submit'=>Yii::app()->createUrl('feedback/index'))); 
 		?>
 <?php if ($model->scenario!='view'&&$model->city==Yii::app()->user->city()): ?>
-			<?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
-				'submit'=>Yii::app()->createUrl('feedback/save'))); 
+			<?php echo TbHtml::button('<span class="fa fa-hand-o-up"></span> '.Yii::t('misc','Temp'), array(
+				'submit'=>Yii::app()->createUrl('feedback/save',array('type'=>'temp'))));
 			?>
+            <?php echo TbHtml::button('<span class="fa fa-paper-plane-o"></span> '.Yii::t('misc','Send'), array(
+                'submit'=>Yii::app()->createUrl('feedback/save',array('type'=>'send'))));
+            ?>
 <?php endif ?>
 	</div>
 	</div></div>

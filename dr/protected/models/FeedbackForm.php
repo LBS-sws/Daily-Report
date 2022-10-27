@@ -170,12 +170,12 @@ class FeedbackForm extends CFormModel
 		return true;
 	}
 	
-	public function saveData()
+	public function saveData($type)
 	{
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-			$this->saveFeedback($connection);
+			$this->saveFeedback($connection,$type);
 			$this->saveFeedbackRmk($connection);
 			$transaction->commit();
 		}
@@ -185,15 +185,20 @@ class FeedbackForm extends CFormModel
 		}
 	}
 
-	protected function saveFeedback(&$connection)
+	protected function saveFeedback(&$connection,$type)
 	{
 		$sql = '';
+        $status = 'N';
+//        类别为发送的 或者 类型为暂存但是已发送状态的
+        if($type == 'send' || ($type == 'temp' && $this->status == 'Y')){
+            $status = 'Y';
+        }
 		switch ($this->scenario) {
 			case 'edit':
 				$sql = ($this->status='N') 
 						? "update swo_mgr_feedback set
 							feedback_dt = now(),
-							status = 'Y', 
+							status = :status, 
 							feedback_cat_list = :feedback_cat,
 							luu = :uid 
 						where id = :id and city = :city and username = :uid
@@ -226,6 +231,8 @@ class FeedbackForm extends CFormModel
 			$command->bindParam(':city',$city,PDO::PARAM_STR);
 		if (strpos($sql,':uid')!==false)
 			$command->bindParam(':uid',$uid,PDO::PARAM_STR);
+        if (strpos($sql,':status')!==false)
+            $command->bindParam(':status',$status,PDO::PARAM_STR);
 		$command->execute();
 
 		return true;
@@ -269,6 +276,7 @@ class FeedbackForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
 		$incharge = City::model()->getAncestorInChargeList(Yii::app()->user->city());
 		$city=Yii::app()->user->city();
+
         $sqlcity="select name from security$suffix.sec_city where code='".$city."'";
         $cityname = Yii::app()->db->createCommand($sqlcity)->queryAll();
 		$to = General::getEmailByUserIdArray($incharge);

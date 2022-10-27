@@ -24,7 +24,7 @@ class FeedbackController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('edit','save'),
+				'actions'=>array('edit','save','temp'),
 				'expression'=>array('FeedbackController','allowReadWrite'),
 			),
 			array('allow', 
@@ -59,13 +59,20 @@ class FeedbackController extends Controller
 	{
 		if (isset($_POST['FeedbackForm'])) {
 			$model = new FeedbackForm($_POST['FeedbackForm']['scenario']);
-			$model->attributes = $_POST['FeedbackForm'];
-			if ($model->validate()) {
-				$model->saveData();
-				$model->sendNotification();
-				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done and Submit to Sent Notification'));
-					
-				$this->redirect(Yii::app()->createUrl('feedback/edit',array('index'=>$model->id)));
+            //获取前台post值
+            $params = $_POST['FeedbackForm'];
+            //如果没有传type 则默认为 temp
+            $type = isset($_GET['type'])?$_GET['type']:'temp';
+            $model->attributes = $params;
+            if ($model->validate()) {
+				$model->saveData($type);
+                if($type == 'send'){
+                    $model->sendNotification();
+                    Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done and Submit to Sent Notification'));
+                    $this->redirect(Yii::app()->createUrl('feedback/edit',array('index'=>$model->id)));
+                }
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save but no Submit to Sent Notification'));
+                $this->redirect(Yii::app()->createUrl('feedback/edit',array('index'=>$model->id)));
 			} else {
 				$message = CHtml::errorSummary($model);
 				Dialog::message(Yii::t('dialog','Validation Message'), $message);
