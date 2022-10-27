@@ -38,6 +38,7 @@ return array(
 	'Save Done and Sent Notification' => '记录保存完成并发出电邮通知',
 	'Save Done but Fail in Sent Notification' => '记录保存完成但发出电邮通知不成功',
 	'Save Done and Submit to Sent Notification'=>'记录保存完成并提交到发送电邮通知',
+	'Save but no Submit to Sent Notification'=>'暂存完成,点击【发送】按钮发送确认发送电邮通知',
 	'Attachment'=>'附件',
 	'File Attachment'=>'附件档案',
 	'File Name'=>'档案名称',
