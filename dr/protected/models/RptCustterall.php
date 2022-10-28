@@ -40,14 +40,6 @@ class RptCustterall extends ReportData2 {
             'ctrt_end_dt'=>array('label'=>Yii::t('service','Contract End Date'),'width'=>15,'align'=>'C'),
         );
 	}
-
-	public function groups() {
-		return array(
-			array(
-				'type'=>array('label'=>Yii::t('service','Customer Type'),'width'=>294,'align'=>'L'),
-			),
-		);
-	}
 	
 	public function retrieveData() {
 	    $this->data=array();
