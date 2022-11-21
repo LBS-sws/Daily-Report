@@ -1,13 +1,24 @@
+<style>
+	.ratio-2-1{ position: relative;width: 100%;padding-top: 50%;}
+	.ratio-2-1>div{ position: absolute;width: 100%;height: 100%;left: 0px;top: 0px;}
+</style>
+
 <?php
 	$button = TbHtml::button(Yii::t('qc','Clear'), array('name'=>'btnClearSignature','id'=>'btnClearSignature','class'=>'btn-sm',));
 	$button .= TbHtml::button(Yii::t('qc','Adjust'), array('name'=>'btnAlign','id'=>'btnAlign','class'=>'btn-sm',));
 	$hidden = TbHtml::hiddenField('sign_target_field','');
 	$content = <<<EOF
 <div class='row'>
-	<div class='col-sm-7'>
+	<div class='col-lg-12'>
+		<div class='ratio-2-1'>
+			<div>
+				<canvas id='qc-signature' class='signature-pad' style='border:1px solid black; width:100%; height:100%'></canvas>
+			</div>
+		</div>
+		<div>
 		$hidden
-		<canvas id='qc-signature' class='signature-pad' style='border:1px solid black; width:330px; height:200px'></canvas>
 		$button
+		</div>
 	</div>
 </div>
 EOF;
@@ -66,6 +77,10 @@ $('#btnOkSignature').on('click',function(){
 //window.addEventListener("resize", resizeCanvas);
 //resizeCanvas();
 //window.onresize = resizeCanvas;
+
+$('#signdialog').on('shown.bs.modal', function (e) {
+  $('#btnAlign').trigger('click');
+})
 EOF;
 Yii::app()->clientScript->registerScript('signatureDialog',$js,CClientScript::POS_READY);
 ?>
