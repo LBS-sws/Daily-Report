@@ -98,8 +98,9 @@ class TimerCommand extends CConsoleCommand {
     //日報表系統的服務提醒（新增、續約需要五天內添加附件）
     private function drServiceSendEmail(){
         $suffix = Yii::app()->params['envSuffix'];
-        $startDate="2022/11/01";//2022/11/18
+        $startDate="2022/12/01";//2022/11/18
         $endday = date("Y/m/d",strtotime("- 5 day"));
+        //$sql = "a.city != 'MO' and a.status in ('N','C') and a.status_dt>='{$startDate}' and a.status_dt<='{$endday}' and docman$suffix.countdoc('SERVICE',a.id)=0";
         $sql = "a.status in ('N','C') and a.status_dt>='{$startDate}' and a.status_dt<='{$endday}' and docman$suffix.countdoc('SERVICE',a.id)=0";
         $rows = Yii::app()->db->createCommand()
             ->select("a.id,a.lud,a.status,a.status_dt,a.company_name,a.salesman,a.city, b.description as nature_desc, c.description as type_desc")
