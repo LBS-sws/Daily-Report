@@ -125,18 +125,27 @@ class WorkListController extends Controller
         $data['end_date'] = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d H:h:s');
         $data['staff'] = isset($_GET['staff']) ? $_GET['staff'] : '';
         $data['city'] = isset($_GET['city']) ? $_GET['city'] : '';
-        $time_point = isset($_GET['time_point']) ? $_GET['time_point'] : '00:10';
+        $time_point_start = isset($_GET['time_point_start']) ? $_GET['time_point_start'] : '';
+        $time_point_end = isset($_GET['time_point_end']) ? $_GET['time_point_end'] : '';
         $data['service_type'] = isset($_GET['service_type']) ? $_GET['service_type'] : 1;
-//        $data['switch_type'] = isset($_GET['switch_type']) ? $_GET['switch_type'] : 1;
         $data['is_mark'] = isset($_GET['is_mark']) ? $_GET['is_mark'] : 1;
-//        if(isset($data['is_mark']) && $data['is_mark'] == 1){
-//            $start_time = isset($_GET['start_time']) ? $_GET['start_time'] : '';
-//            $end_time = isset($_GET['end_time']) ? $_GET['end_time'] : '';
-////            $data['start_time'] = $this->HourMinuteToDecimal($start_time);
-////            $data['end_time'] = $this->HourMinuteToDecimal($end_time);
-//        }
+//        var_dump($time_point_start);exit();
+
+        if($time_point_start == '' || $time_point_start == 'null'){
+            $data['time_point_start'] = 0;
+        }else{
+            $data['time_point_start'] = $this->HourMinuteToDecimal($time_point_start);
+        }
+
+
+        if($time_point_end == '' || $time_point_end == 'null'){
+            $data['time_point_end'] = 0;
+        }else{
+            $data['time_point_end'] = $this->HourMinuteToDecimal($time_point_end);
+        }
         //特殊处理三个时间
-        $data['time_point'] = $this->HourMinuteToDecimal($time_point);
+//        $data['time_point_start'] = $time_point_start!=''?$this->HourMinuteToDecimal($time_point_start):0;
+//        $data['time_point_end'] = $this->HourMinuteToDecimal($time_point_end);
 
         $model = new WorkOrder();
         try {
@@ -157,11 +166,24 @@ class WorkListController extends Controller
         $data['start_date'] = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d H:h:s', '-1 day');
         $data['end_date'] = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d H:h:s');
         $data['staff_id'] = isset($_GET['staff_id']) ? $_GET['staff_id'] : '';
-        $data['time_point'] = isset($_GET['time_point']) ? $_GET['time_point'] : '';
+
         $data['service_type'] = isset($_GET['service_type']) ? $_GET['service_type'] : '';
         $data['city'] = isset($_GET['city']) ? $_GET['city'] : '';
         $data['is_mark'] = isset($_GET['is_mark']) ? $_GET['is_mark'] : '';
-        $data['time'] = $this->HourMinuteToDecimal($data['time_point']);
+//        $data['time'] = $this->HourMinuteToDecimal($data['time_point']);
+        $time_point_start = isset($_GET['time_point_start']) ? $_GET['time_point_start'] : '';
+        $time_point_end = isset($_GET['time_point_end']) ? $_GET['time_point_end'] : '';
+
+        if($time_point_start == '' || $time_point_start == 'null'){
+            $data['time_point_start'] = 0;
+        }else{
+            $data['time_point_start'] = $this->HourMinuteToDecimal($time_point_start);
+        }
+        if($time_point_end == '' || $time_point_end == 'null'){
+            $data['time_point_end'] = 0;
+        }else{
+            $data['time_point_end'] = $this->HourMinuteToDecimal($time_point_end);
+        }
         if (!isset($data['staff_id']) && empty($data['staff_id'])) {
             $this->json([], 'error', 0);
         }
@@ -186,11 +208,25 @@ class WorkListController extends Controller
             $data['start_date'] = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d H:h:s', '-1 day');
             $data['end_date'] = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d H:h:s');
 //        $data['staff_id'] = isset($_GET['staff_id']) ? $_GET['staff_id'] : '';
-            $data['time_point'] = isset($_GET['time_point']) ? $_GET['time_point'] : '';
+//            $data['time_point'] = isset($_GET['time_point']) ? $_GET['time_point'] : '';
             $data['service_type'] = isset($_GET['service_type']) ? $_GET['service_type'] : '';
             $data['city'] = isset($_GET['city']) ? $_GET['city'] : '';
             $data['is_mark'] = isset($_GET['is_mark']) ? $_GET['is_mark'] : '';
-            $data['time'] = $this->HourMinuteToDecimal($data['time_point']);
+//            $data['time'] = $this->HourMinuteToDecimal($data['time_point']);
+            $time_point_start = isset($_GET['time_point_start']) ? $_GET['time_point_start'] : '';
+            $time_point_end = isset($_GET['time_point_end']) ? $_GET['time_point_end'] : '';
+
+            if($time_point_start == '' || $time_point_start == 'null'){
+                $data['time_point_start'] = 0;
+            }else{
+                $data['time_point_start'] = $this->HourMinuteToDecimal($time_point_start);
+            }
+            if($time_point_end == '' || $time_point_end == 'null'){
+                $data['time_point_end'] = 0;
+            }else{
+                $data['time_point_end'] = $this->HourMinuteToDecimal($time_point_end);
+            }
+
             if (isset($data['staff_id']) && !empty($data['staff_id'])) {
                 $this->json([], 'error', 0);
             }

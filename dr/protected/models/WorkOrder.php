@@ -121,18 +121,38 @@ class WorkOrder extends CListPageModel
         $start_date = date('Y-m-d', strtotime($data['start_date'])) . " 00:00:00";
         $end_date = date('Y-m-d', strtotime($data['end_date'])) . " 23:59:59";
 //        is_mark == 1 表示大于开启
-        if ($data['is_mark'] == 1) {
+        if ((isset($data['time_point_start']) && $data['time_point_start'] >=0) && $data['time_point_end'] == 0) {
             $is_mark = '>=';
-            $condition = "COUNT(IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point']}, TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point']}, NULL
+            $condition = "COUNT(IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_start']}, TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_start']}, NULL
     )) AS unusual,
-    COUNT(IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point']}, TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point']}, NULL
+    COUNT(IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point_start']}, TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point_start']}, NULL
     )) AS normal,";
-        } else {
+
+            $condition_count = "IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_start']},'0','1') as 'scene',
+  IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_start']},'异常单','正常单') as 'name'";
+
+        }
+        if((isset($data['time_point_end']) && $data['time_point_end'] >=0) && $data['time_point_start'] == 0){
             $is_mark = '<=';
-            $condition = "COUNT(IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point']}, TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point']}, NULL
+            $condition = "COUNT(IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_end']}, TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_end']}, NULL
     )) AS unusual,
-    COUNT(IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point']}, TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point']}, NULL
+    COUNT(IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point_end']}, TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point_end']}, NULL
     )) AS normal,";
+
+            $condition_count = "IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_end']},'0','1') as 'scene',
+  IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_end']},'异常单','正常单') as 'name'";
+
+        }
+
+        if((isset($data['time_point_start']) && $data['time_point_start'] >0) && (isset($data['time_point_end']) && $data['time_point_end'] >0)){
+
+            $condition = "COUNT(IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point_start']} OR TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point_end']}, TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point_start']} OR TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point_end']}, NULL
+    )) AS unusual,
+    COUNT(1) - COUNT(IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point_start']} OR TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point_end']}, TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point_start']} OR TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point_end']}, NULL
+    )) AS normal,";
+            $condition_count = "IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point_start']} OR TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point_end']},'0','1') as 'scene',
+  IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point_start']} OR TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point_end']},'异常单','正常单') as 'name'";
+
         }
 
 
@@ -152,15 +172,6 @@ WHERE
 	AND b.EnumID = '{$data['city']}' AND a.Staff01 !='' AND a.`Status` = 3
 GROUP BY staff_id ORDER BY {$rangDate} DESC";
 
-        if ($data['is_mark'] == 1) {
-            $is_mark = '>=';
-            $condition_count = "IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point']},'0','1') as 'scene',
-  IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point']},'异常单','正常单') as 'name'";
-        } else {
-            $is_mark = '<=';
-            $condition_count = "IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point']},'0','1') as 'scene',
-  IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point']},'异常单','正常单') as 'name'";
-        }
 
         $ret['data'] = Yii::app()->db->createCommand($sql)->queryAll();
         $sql_count = "SELECT COUNT(1) AS value , FinishTime - StartTime AS service_time,
@@ -200,18 +211,30 @@ GROUP BY scene";
                 $rangDate = 'FinishDate';
                 $stype = 'ServiceType';
         }
-//        $start_date = $data['start_date'] . " 00:00:00";
-//        $end_date = $data['end_date'] . " 23:59:59";
         $start_date = date('Y-m-d',strtotime($data['start_date']))." 00:00:00";
         $end_date = date('Y-m-d',strtotime($data['end_date'])). " 23:59:59";
+        if ((isset($data['time_point_start']) && $data['time_point_start'] >=0) && $data['time_point_end'] == 0) {
+            $is_mark = '>=';
+            $condition_x = "TIMEDIFF(a.FinishTime,a.StartTime) AS job_time,IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_start']},'1','0') as 'flag',
+  IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_start']},'异常单','正常单') as 'status'";
 
-        if ($data['is_mark'] == 1) {
-            $condition = '>=';
-            $condition_x = "TIMEDIFF(a.FinishTime,a.StartTime) AS job_time,TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)) as second,IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$condition}{$data['time']},'1','0') as 'flag',IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$condition}{$data['time']},'异常','正常') as 'status'";
-        } else {
-            $condition = '<=';
-            $condition_x = "TIMEDIFF(a.FinishTime,a.StartTime) AS job_time,TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)) as second,IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$condition}{$data['time']},'1','0') as 'flag',IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$condition}{$data['time']},'异常','正常') as 'status'";
         }
+        if((isset($data['time_point_end']) && $data['time_point_end'] >=0) && $data['time_point_start'] == 0){
+            $is_mark = '<=';
+            $condition_x = "TIMEDIFF(a.FinishTime,a.StartTime) AS job_time,IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_end']},'1','0') as 'flag',
+  IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_end']},'异常单','正常单') as 'status'";
+
+        }
+
+        if((isset($data['time_point_start']) && $data['time_point_start'] >0) && (isset($data['time_point_end']) && $data['time_point_end'] >0)){
+
+            $condition_x = "TIMEDIFF(a.FinishTime,a.StartTime) AS job_time,IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point_start']} OR TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point_end']},'1','0') as 'flag',
+  IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point_start']} OR TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point_end']},'异常单','正常单') as 'status'";
+
+        }
+
+
+
 
         $sql = "SELECT 
 	a.CustomerName AS customer_name,
@@ -263,13 +286,24 @@ WHERE
 
         $start_date = date('Y-m-d',strtotime($data['start_date']))." 00:00:00";
         $end_date = date('Y-m-d',strtotime($data['end_date'])). " 23:59:59";
+        if ((isset($data['time_point_start']) && $data['time_point_start'] >=0) && $data['time_point_end'] == 0) {
+            $is_mark = '>=';
+            $condition_x = "TIMEDIFF(a.FinishTime,a.StartTime) AS job_time,IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_start']},'1','0') as 'flag',
+  IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_start']},'异常单','正常单') as 'status'";
 
-        if ($data['is_mark'] == 1) {
-            $condition = '>=';
-            $condition_x = "TIMEDIFF(a.FinishTime,a.StartTime) AS job_time,TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)) as second,IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$condition}{$data['time']},'1','0') as 'flag',IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$condition}{$data['time']},'异常','正常') as 'status'";
-        } else {
-            $condition = '<=';
-            $condition_x = "TIMEDIFF(a.FinishTime,a.StartTime) AS job_time,TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)) as second,IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$condition}{$data['time']},'1','0') as 'flag',IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$condition}{$data['time']},'异常','正常') as 'status'";
+        }
+        if((isset($data['time_point_end']) && $data['time_point_end'] >=0) && $data['time_point_start'] == 0){
+            $is_mark = '<=';
+            $condition_x = "TIMEDIFF(a.FinishTime,a.StartTime) AS job_time,IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_end']},'1','0') as 'flag',
+  IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime)){$is_mark}{$data['time_point_end']},'异常单','正常单') as 'status'";
+
+        }
+
+        if((isset($data['time_point_start']) && $data['time_point_start'] >0) && (isset($data['time_point_end']) && $data['time_point_end'] >0)){
+
+            $condition_x = "TIMEDIFF(a.FinishTime,a.StartTime) AS job_time,IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point_start']} OR TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point_end']},'1','0') as 'flag',
+  IF(TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))>{$data['time_point_start']} OR TIME_TO_SEC(TIMEDIFF(a.FinishTime,a.StartTime))<{$data['time_point_end']},'异常单','正常单') as 'status'";
+
         }
 
         $sql = "SELECT SQL_CALC_FOUND_ROWS

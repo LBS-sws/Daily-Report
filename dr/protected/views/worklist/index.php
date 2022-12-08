@@ -16,189 +16,159 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
     'layout' => TbHtml::FORM_LAYOUT_INLINE,
 )); ?>
 
-<section class="content" id="app" >
-    <div  class="box">
+<section class="content" id="app">
+    <div class="box">
         <div class="box-body">
-            <div >
-                  <div>
-                      <span class="demonstration">日期：</span>
-                      <el-date-picker
-                              v-model="date1"
-                              type="daterange"
-                              align="left"
-                              unlink-panels
-                              range-separator="至"
-                              start-placeholder="开始日期"
-                              end-placeholder="结束日期"
-                              :picker-options="pickerOptions">
-                      </el-date-picker>
-                      <!--                    </div>-->
+            <div>
+                <div>
+                    <span class="demonstration">日期：</span>
+                    <el-date-picker
+                            v-model="date1"
+                            type="daterange"
+                            align="left"
+                            unlink-panels
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            :picker-options="pickerOptions">
+                    </el-date-picker>
+                    <!--                    </div>-->
 
 
-                      城市选择：
-                      <el-select style="width:120px" v-model="value1" placeholder="请选择" @change="GetCurId1">
-                          <el-option
-                                  v-for="(item, index) in options1"
-                                  :key="index"
-                                  :label="item.Text"
-                                  :value="item.City">
-                          </el-option>
-                      </el-select>
+                    城市选择：
+                    <el-select style="width:120px" v-model="value1" placeholder="请选择" @change="GetCurId1">
+                        <el-option
+                                v-for="(item, index) in options1"
+                                :key="index"
+                                :label="item.Text"
+                                :value="item.City">
+                        </el-option>
+                    </el-select>
 
-                      人员选择：
-                      <el-select style="width:120px" clearable v-model="value2" placeholder="请选择"  @change="GetCurId2">
-                          <el-option
-                                  v-for="(item, index)  in options2"
-                                  :key="index"
-                                  :label="item.StaffName"
-                                  :value="item.StaffID">
-                          </el-option>
-                      </el-select>
-                      类型：
-                      <el-select style="width:100px" v-model="value"  placeholder="请选择">
-                          <el-option
-                                  v-for="item in options"
-                                  :key="item.value"
-                                  :label="item.label"
-                                  :value="item.value">
-                          </el-option>
-                      </el-select>
+                    人员选择：
+                    <el-select style="width:120px" clearable v-model="value2" placeholder="请选择" @change="GetCurId2">
+                        <el-option
+                                v-for="(item, index)  in options2"
+                                :key="index"
+                                :label="item.StaffName"
+                                :value="item.StaffID">
+                        </el-option>
+                    </el-select>
 
 
-                  </div>
-                <div   style="display: block;padding-top: 10px">
-                    <el-tooltip placement="bottom">
-                        <template #content> 【时间单位：h】选择大于时长，点查询，出来的就是大于这个时间段的异常单，<br/>然后大于这边不选，选择小于时长，出来的就是小于时长的异常单。 </template>
-                        <el-switch
-                                v-model="switch_value"
-                                active-color="#13ce66"
-                                inactive-color="#ff4949"
-                                active-text="大于"
-                                inactive-text="小于">
-                        </el-switch>
-                    </el-tooltip>
-                    <span v-if="switch_value">
-                        <span style="color: #5FCA71">大于时间</span>
-                        <el-time-select style="width:150px"
-                                        v-model="timeInterval"
-                                        :picker-options="{start: '00:00',step: '00:10',end: '23:59'}"
-                                        placeholder="时间间隔">
-                        </el-time-select>
-                    </span>
-                    <span v-else="switch_value">
-                         <span style="color: #EB5851">小于时间</span>
-                        <el-time-select style="width:150px"
-                                        v-model="timeInterval"
-                                        :picker-options="{start: '00:00',step: '00:10',end: '23:59'}"
-                                        placeholder="时间间隔">
-                        </el-time-select>
-<!--                        <span style="color: #EB5851">大于时长</span>-->
-<!--                        <el-time-select style="width:150px"-->
-<!--                                        v-model="timeIntervalStart"-->
-<!--                                        :picker-options="{start: '00:00',step: '00:10',end: '23:59'}"-->
-<!--                                        placeholder="大于时长">-->
-<!--                        </el-time-select>-->
-<!--                        <span style="color: #EB5851">小于时长</span>-->
-<!--                        <el-time-select style="width:150px"-->
-<!--                                        v-model="timeIntervalEnd"-->
-<!--                                        :picker-options="{start: '00:00',step: '00:10',end: '23:59'}"-->
-<!--                                        placeholder="小于时长">-->
-<!--                        </el-time-select>-->
+                </div>
+                <div style="display: block;padding-top: 10px">
 
-<!--                        <el-switch-->
-<!--                                v-model="mark_exception"-->
-<!--                                inactive-text="选择范围内标记异常">-->
-<!--                        </el-switch>-->
+                    类型：
+                    <el-select style="width:100px" v-model="value" placeholder="请选择">
+                        <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+
+                    <span style="color: #5FCA71">大于时间</span>
+                    <el-time-select style="width:150px"
+                                    v-model="timeInterval"
+                                    :picker-options="{start: '00:00',step: '00:10',end: '23:59'}"
+                                    placeholder="时间间隔">
+                    </el-time-select>
+
+                    <span style="color: #EB5851">小于时间</span>
+                    <el-time-select style="width:150px"
+                                    v-model="timeInterval1"
+                                    :picker-options="{start: '00:00',step: '00:10',end: '23:59'}"
+                                    placeholder="时间间隔">
+                    </el-time-select>
+
                     </span>
                     <el-button style="margin-left: 20px" type="primary" @click="doSearch">查询</el-button>
-<!--                    <el-button style="margin-left: 20px" type="primary" @click="exportAreaDataexportAreaData">导出</el-button>-->
-
-                </div>
-
+                    <!--                    <el-button style="margin-left: 20px" type="primary" @click="exportAreaDataexportAreaData">导出</el-button>-->
                 </div>
             </div>
         </div>
-        <el-main v-loading="loading" v-if="showEchars">
+    </div>
+    <el-main v-loading="loading" v-if="showEchars">
 
-            <div  id="main" style="width: 600px;height:400px;"></div>
-            <div style="float: right">
-                        <el-button v-if="show_export" type="primary" @click="exportAreaData">下载报表</el-button>
-            </div>
-        </el-main>
-
-<!--        <el-button type="text" @click="dialogTableVisible = true">打开嵌套表格的 Dialog</el-button>-->
-
-        <el-dialog v-loading="loading" title="明细" :visible.sync="dialogTableVisible"><el-tag style="float: right" type="success" @click="exportData">导出</el-tag>
-
-            <el-table :data="gridData">
-                <el-table-column property="job_date" label="日期" width="auto"></el-table-column>
-                <el-table-column property="city_name" label="地区" width="auto"></el-table-column>
-                <el-table-column property="customer_name" label="客户" width="200px"></el-table-column>
-                <el-table-column property="staff_name" label="工作人员" width="auto"></el-table-column>
-                <el-table-column property="service_type" label="服务类别" width="auto"></el-table-column>
-                <el-table-column property="start_time" label="开始时间" width="auto"></el-table-column>
-                <el-table-column property="end_time" label="结束时间" width="auto"></el-table-column>
-                <el-table-column property="job_time" label="工作时间"></el-table-column>
-                <el-table-column
-                        prop="tag"
-                        label="标签"
-                        width="100"
-                        :filters="[{ text: '异常', value: '1' }, { text: '正常', value: '0' }]"
-                        :filter-method="filterTag"
-                        filter-placement="bottom-end">
-                    <template slot-scope="scope">
-                        <el-tag
-                                :type="scope.row.flag == 0 ? 'success' : 'warning'"
-                                disable-transitions>{{scope.row.status}}</el-tag>
-                    </template>
-                </el-table-column>
-            </el-table>
-        </el-dialog>
-
-
-        <div class="box-body table-responsive">
-<!--            <el-button @click="exportExcel('tab1', '会员明细.xlsx')">导出</el-button>-->
-            <el-table
-                    v-loading="loading"
-                    :data="tableData"
-                    :default-sort = "{prop: 'FinishDate', order: 'descending'}"
-                    row-key="staff_id"
-                    show-summary //合计方法
-                    :summary-method="getSummaries" //自定义计算合计
-                    @row-click="handleclick"
-                    style="width: 100%">
-                <el-table-column
-                        prop="city_name"
-                        label="地区"
-                        width="auto">
-                </el-table-column>
-
-                <el-table-column
-                        prop="staff_name"
-                        label="姓名"
-                        width="auto">
-                </el-table-column>
-
-                <el-table-column
-                        prop="total"
-                        label="总单数"
-                        width="auto">
-                </el-table-column>
-
-
-                <el-table-column
-                        prop="normal"
-                        label="正常单"
-                        width="auto">
-                </el-table-column>
-
-                <el-table-column
-                        prop="unusual"
-                        label="异常单"
-                        width="auto">
-                </el-table-column>
-            </el-table>
+        <div id="main" style="width: 600px;height:400px;"></div>
+        <div style="float: right">
+            <el-button v-if="show_export" type="primary" @click="exportAreaData">下载报表</el-button>
         </div>
+    </el-main>
+
+    <!--        <el-button type="text" @click="dialogTableVisible = true">打开嵌套表格的 Dialog</el-button>-->
+
+    <el-dialog v-loading="loading" title="明细" :visible.sync="dialogTableVisible">
+        <el-tag style="float: right" type="success" @click="exportData">导出</el-tag>
+
+        <el-table :data="gridData">
+            <el-table-column property="job_date" label="日期" width="auto"></el-table-column>
+            <el-table-column property="city_name" label="地区" width="auto"></el-table-column>
+            <el-table-column property="customer_name" label="客户" width="200px"></el-table-column>
+            <el-table-column property="staff_name" label="工作人员" width="auto"></el-table-column>
+            <el-table-column property="service_type" label="服务类别" width="auto"></el-table-column>
+            <el-table-column property="start_time" label="开始时间" width="auto"></el-table-column>
+            <el-table-column property="end_time" label="结束时间" width="auto"></el-table-column>
+            <el-table-column property="job_time" label="工作时间"></el-table-column>
+
+
+            <el-table-column prop="tag" label="状态">
+                <template slot-scope="scope">
+                    <el-tag :type="'success'" v-if="scope.row.flag == 0">正常</el-tag>
+                    <el-tag :type="'warning'" v-if="scope.row.flag == 1">异常</el-tag>
+                </template>
+            </el-table-column>
+
+        </el-table>
+    </el-dialog>
+
+
+    <div class="box-body table-responsive">
+        <!--            <el-button @click="exportExcel('tab1', '会员明细.xlsx')">导出</el-button>-->
+        <el-table
+                v-loading="loading"
+                :data="tableData"
+                :default-sort="{prop: 'FinishDate', order: 'descending'}"
+                row-key="staff_id"
+                show-summary
+        //合计方法
+        :summary-method="getSummaries" //自定义计算合计
+        @row-click="handleclick"
+        style="width: 100%">
+        <el-table-column
+                prop="city_name"
+                label="地区"
+                width="auto">
+        </el-table-column>
+
+        <el-table-column
+                prop="staff_name"
+                label="姓名"
+                width="auto">
+        </el-table-column>
+
+        <el-table-column
+                prop="total"
+                label="总单数"
+                width="auto">
+        </el-table-column>
+
+
+        <el-table-column
+                prop="normal"
+                label="正常单"
+                width="auto">
+        </el-table-column>
+
+        <el-table-column
+                prop="unusual"
+                label="异常单"
+                width="auto">
+        </el-table-column>
+        </el-table>
+    </div>
     </div>
 
 
@@ -232,26 +202,27 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
         data() {
             return {
                 dialogTableVisible: false,
-                showEchars:false,
-                timeInterval:'00:10',
-                timeIntervalStart:'00:00',
-                timeIntervalEnd:'00:00',
+                showEchars: false,
+                timeInterval: '00:10',
+                timeInterval1: '00:00',
+                timeIntervalStart: '00:00',
+                timeIntervalEnd: '00:00',
                 loading: true,
-                date1:[],
+                date1: [],
                 options1: [],
                 options2: [],
-                mark_exception:true,
-                is_mark:1,
-                checkUser:'',
-                city:'',
-                echars_name:'',
-                echars_name_copy:'',
+                mark_exception: true,
+                is_mark: 1,
+                checkUser: '',
+                city: '',
+                echars_name: '',
+                echars_name_copy: '',
                 value1: [],
-                show_export:false,
+                show_export: false,
                 value2: [],
-                switch_value:true,
+                switch_value: true,
                 tableData: [],
-                link:'',
+                link: '',
                 options: [{
                     value: '1',
                     // default:'1',
@@ -259,8 +230,8 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 }, {
                     value: '2',
                     label: '跟进单'
-                }],value: ''
-                ,gridData: [],
+                }], value: ''
+                , gridData: [],
                 pickerOptions: {
                     shortcuts: [{
                         text: '最近一周',
@@ -301,21 +272,18 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 // console.log(newValue)
             }
         },
-        computed:{
-
-
-        },
-        methods:{
-            getXiaoji(name){
-                var sum=0;
-                this.tableData.forEach((n,i)=>{
-                    sum+=parseFloat(n[name]);
+        computed: {},
+        methods: {
+            getXiaoji(name) {
+                var sum = 0;
+                this.tableData.forEach((n, i) => {
+                    sum += parseFloat(n[name]);
                 })
                 return sum;
             },
             // 表格总计的时间
             getSummaries(param) {
-                const { columns, data } = param;
+                const {columns, data} = param;
                 const sums = [];
                 columns.forEach((column, index) => {
                     if (index === 0) {
@@ -343,9 +311,9 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
             },
 
             exportData() {
-                var aoa = [["日期", "地区", "客户", "工作人员", "服务类别", "开始时间", "结束时间", "工作时间"]];
+                var aoa = [["日期", "地区", "客户", "工作人员", "服务类别", "开始时间", "结束时间", "工作时间", "状态"]];
                 this.gridData.map(item => {
-                    aoa.push([item.job_date, item.city_name, item.customer_name,item.staff_name,item.service_type,item.start_time,item.end_time,item.job_time])
+                    aoa.push([item.job_date, item.city_name, item.customer_name, item.staff_name, item.service_type, item.start_time, item.end_time, item.job_time, item.status])
                 })
                 console.log(aoa)
                 var sheet = XLSX.utils.aoa_to_sheet(aoa);
@@ -366,14 +334,16 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                     type: 'binary'
                 };
                 var wbout = XLSX.write(workbook, wopts);
-                var blob = new Blob([s2ab(wbout)], {type:"application/octet-stream"});
+                var blob = new Blob([s2ab(wbout)], {type: "application/octet-stream"});
+
                 // 字符串转ArrayBuffer
                 function s2ab(s) {
                     var buf = new ArrayBuffer(s.length);
                     var view = new Uint8Array(buf);
-                    for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+                    for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
                     return buf;
                 }
+
                 return blob;
             },
             /**
@@ -382,25 +352,20 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
              * @param saveName 保存文件名，可选
              */
             openDownloadDialog(url, saveName) {
-                if(typeof url == 'object' && url instanceof Blob)
-                {
+                if (typeof url == 'object' && url instanceof Blob) {
                     url = URL.createObjectURL(url); // 创建blob地址
                 }
                 var aLink = document.createElement('a');
                 aLink.href = url;
                 aLink.download = saveName || ''; // HTML5新增的属性，指定保存文件名，可以不要后缀，注意，file:///模式下不会生效
                 var event;
-                if(window.MouseEvent) event = new MouseEvent('click');
-                else
-                {
+                if (window.MouseEvent) event = new MouseEvent('click');
+                else {
                     event = document.createEvent('MouseEvents');
                     event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
                 }
                 aLink.dispatchEvent(event);
             },
-
-
-
 
 
             filterTag(value, row) {
@@ -418,7 +383,7 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 defalutStartTime = startDateNs.getFullYear() + '-' + ((startDateNs.getMonth() + 1) >= 10 ? (startDateNs.getMonth() + 1) : '0' + (startDateNs.getMonth() + 1)) + '-' + (startDateNs.getDate() >= 10 ? startDateNs.getDate() : '0' + startDateNs.getDate())
                 defalutEndTime = endDateNs.getFullYear() + '-' + ((endDateNs.getMonth() + 1) >= 10 ? (endDateNs.getMonth() + 1) : '0' + (endDateNs.getMonth() + 1)) + '-' + (endDateNs.getDate() >= 10 ? endDateNs.getDate() : '0' + endDateNs.getDate())
 
-                this.date1 =  [defalutStartTime, defalutEndTime]
+                this.date1 = [defalutStartTime, defalutEndTime]
             },
             handleclick(row, column, event,) {
                 console.log(row.staff_id);
@@ -426,13 +391,13 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 this.dialogTableVisible = true
             },
 
-            drawEchars(echarsData){
+            drawEchars(echarsData) {
                 console.log(echarsData)
                 // 基于准备好的dom，初始化echarts实例
                 var myChart = echarts.init(document.getElementById('main'));
 
                 // 指定图表的配置项和数据
-                var  option = {
+                var option = {
                     title: {
                         text: '区域异常单统计概览',
                         subtext: this.echars_name,
@@ -447,7 +412,7 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                     },
                     series: [
                         {
-                            name:this.echars_name,
+                            name: this.echars_name,
                             type: 'pie',
                             radius: '50%',
                             data: echarsData,
@@ -474,72 +439,81 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 // 使用刚指定的配置项和数据显示图表。
                 myChart.setOption(option);
             },
-            doSearch(){
+            doSearch() {
                 // this.drawEchars()
                 let orgin_time = this.date1;
-                if(!this.date1 || this.date1 == 'undefind'){
+                if (!this.date1 || this.date1 == 'undefind') {
                     this.$message({
                         message: '未选择时间',
                         type: 'warning'
-                    });return;
+                    });
+                    return;
                 }
 
-                if(!this.city || this.city == 'undefind'){
+                if (!this.city || this.city == 'undefind') {
                     this.$message({
                         message: '请选择城市',
                         type: 'warning'
-                    });return;
+                    });
+                    return;
                 }
 
                 let start_date = this.formatDate(orgin_time[0]);
                 let end_date = this.formatDate(orgin_time[1]);
                 let city = this.city;
-
                 let url_params = '';
-
-                // if(this.mark_exception === true){
-                //     this.is_mark = 1
-                // }else{
-                //     this.is_mark = 0
+                // if (this.switch_value === true) {
+                //     this.is_mark = 1;
+                // } else {
+                //     this.is_mark = 0;
                 // }
-                if(this.switch_value === true){
-                    this.is_mark = 1;
-                }else{
-                    this.is_mark = 0;
+                if((this.timeInterval == '00:00' && this.timeInterval1 == '00:00') || this.timeInterval == '' && this.timeInterval1 == ''){
+                    this.$message({
+                        message: '至少选择一个时间段作为筛选条件',
+                        type: 'warning'
+                    });
+                    return;
                 }
-                url_params = '?start_date='+start_date+'&end_date='+end_date+'&staff='+this.checkUser+'&city='+city+'&time_point='+this.timeInterval+'&service_type='+this.value+'&is_mark='+this.is_mark
+                if(this.timeInterval1 >= this.timeInterval){
+                    this.$message({
+                        message: '时间条件筛选有误',
+                        type: 'warning'
+                    });
+                    return;
+                }
 
+                url_params = '?start_date=' + start_date + '&end_date=' + end_date + '&staff=' + this.checkUser + '&city=' + city + '&time_point_start=' + this.timeInterval+ '&time_point_end=' + this.timeInterval1 + '&service_type=' + this.value + '&is_mark=' + this.is_mark
                 this.loading = true
-                fetch("./../WorkList/jobList"+url_params,{
-                    method:"get",
+                fetch("./../WorkList/jobList" + url_params, {
+                    method: "get",
                     // body: JSON.stringify({City:val}),
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                }).then(result=>{
+                }).then(result => {
                     // console.log(result);
                     return result.json();
-                }).then(res=>{
-                    if(res.code == 1){
+                }).then(res => {
+                    if (res.code == 1) {
                         setTimeout(() => {
                             this.loading = false
-                        }, 2000);
+                        }, 100);
                         this.tableData = res.data.data
                         this.showEchars = true
                         this.echars_name = this.echars_name_copy
-                        if(this.checkUser != '' && this.checkUser != 'undefined'){
+                        if (this.checkUser != '' && this.checkUser != 'undefined') {
                             this.echars_name = res.data.data[0].staff_name
                         }
                         this.$nextTick(() => {
                             this.drawEchars(res.data.count) // 渲染操作
                         })
 
-                    }else{
+                    } else {
                         this.tableData = []
                         this.showEchars = false
                         setTimeout(() => {
                             this.loading = false
-                        }, 2000);
+                        }, 100);
                         // this.$nextTick(() => {
                         //     this.drawEchars([]) // 渲染操作
                         // })
@@ -550,7 +524,7 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
             /**
              * 格式化时间
              * */
-            formatDate (d) {
+            formatDate(d) {
                 var date = new Date(d);
                 var YY = date.getFullYear() + '-';
                 var MM =
@@ -567,26 +541,26 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                     date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
                 return YY + MM + DD + ' ' + hh + mm + ss;
             },
-            GetCurId1(val){
+            GetCurId1(val) {
                 this.city = val
                 // this.options2.value = null;
-                console.log("当前城市为："+val)
-                fetch("./../WorkList/staff?city="+val,{
-                    method:"get",
+                console.log("当前城市为：" + val)
+                fetch("./../WorkList/staff?city=" + val, {
+                    method: "get",
                     // body: JSON.stringify({City:val}),
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                }).then(result=>{
+                }).then(result => {
                     // console.log(result);
                     return result.json();
-                }).then(res=>{
+                }).then(res => {
                     // console.log(data);
-                    if(res.code == 1){
+                    if (res.code == 1) {
                         this.options2 = res.data;
                         this.echars_name = res.data[0].Text;
                         this.echars_name_copy = res.data[0].Text;
-                    }else {
+                    } else {
                         this.$message({
                             message: '暂无数据',
                             type: 'warning'
@@ -597,52 +571,52 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                         this.tableData = []
                         setTimeout(() => {
                             this.loading = false
-                        }, 2000);
+                        }, 100);
                     }
 
                 })
             },
-            GetCurId2(val){
+            GetCurId2(val) {
                 console.log('GetCurId2')
                 console.log(val)
-                if(this.options2.length >0){
+                if (this.options2.length > 0) {
                     console.log(this.options2.length)
                     this.checkUser = val
-                }else{
+                } else {
                     this.checkUser = ''
                 }
 
             },
-            getStaffInfo(val){
+            getStaffInfo(val) {
                 // consol
                 // this.nowUser = val
                 let orgin_time = this.date1;
                 let start_date = this.formatDate(orgin_time[0]);
                 let end_date = this.formatDate(orgin_time[1]);
-                if(this.switch_value === true){
+                if (this.switch_value === true) {
                     this.is_mark = 1;
-                }else{
+                } else {
                     this.is_mark = 0;
                 }
                 this.loading = true
 
-                fetch('./../WorkList/StaffInfo?staff_id='+val+'&start_date='+start_date+'&end_date='+end_date+'&time_point='+this.timeInterval+'&service_type='+this.value+'&city='+this.city+'&is_mark='+this.is_mark,{
-                    method:"get",
+                fetch('./../WorkList/StaffInfo?staff_id=' + val + '&start_date=' + start_date + '&end_date=' + end_date + '&time_point_start=' + this.timeInterval+ '&time_point_end=' + this.timeInterval1 + '&service_type=' + this.value + '&city=' + this.city + '&is_mark=' + this.is_mark, {
+                    method: "get",
                     // body: JSON.stringify({City:val}),
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                }).then(result=>{
+                }).then(result => {
                     // console.log(result);
                     return result.json();
-                }).then(res=>{
+                }).then(res => {
                     // console.log(data);
-                    if(res.code == 1){
+                    if (res.code == 1) {
                         this.gridData = res.data;
                         setTimeout(() => {
                             this.loading = false
                         }, 1000);
-                    }else {
+                    } else {
                         this.gridData = []
                         this.$message({
                             message: '暂无数据',
@@ -656,17 +630,17 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 // this.checkUser = ''
             },
 
-            exportAreaData(){
+            exportAreaData() {
                 let orgin_time = this.date1;
                 let start_date = this.formatDate(orgin_time[0]);
                 let end_date = this.formatDate(orgin_time[1]);
-                if(this.switch_value === true){
+                if (this.switch_value === true) {
                     this.is_mark = 1;
-                }else{
+                } else {
                     this.is_mark = 0;
                 }
                 this.loading = true
-                if(orgin_time == '' || orgin_time == undefined || this.city ==''){
+                if (orgin_time == '' || orgin_time == undefined || this.city == '') {
                     this.$message({
                         message: '筛选条件不足',
                         type: 'warning'
@@ -675,8 +649,8 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                     return;
                 }
 
-                this.link = './../WorkList/export?start_date='+start_date+'&end_date='+end_date+'&time_point='+this.timeInterval+'&service_type='+this.value+'&city='+this.city+'&is_mark='+this.is_mark;
-                window.open( this.link, "_blank");
+                this.link = './../WorkList/export?start_date=' + start_date + '&end_date=' + end_date + '&time_point_start=' + this.timeInterval+ '&time_point_end=' + this.timeInterval1  + '&service_type=' + this.value + '&city=' + this.city + '&is_mark=' + this.is_mark;
+                window.open(this.link, "_blank");
                 this.loading = false
                 // this.checkUser = ''
             },
@@ -686,31 +660,30 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
 
 
         },
-        mounted(){
+        mounted() {
             this.loading = true
             this.defaultDate(),
-            fetch("./../WorkList/area",{
-                method:"post"
-            }).then(result=>{
-                // console.log(result);
-                return result.json();
-            }).then(res=>{
-                if(res.code == 1){
-                    this.options1 = res.data;
-                    this.show_export = true;
-                    setTimeout(() => {
-                        this.loading = false
-                    }, 1000);
-                }else {
-                    this.$message({
-                        message: '暂无数据',
-                        type: 'warning'
-                    });
-                }
-            })
+                fetch("./../WorkList/area", {
+                    method: "post"
+                }).then(result => {
+                    // console.log(result);
+                    return result.json();
+                }).then(res => {
+                    if (res.code == 1) {
+                        this.options1 = res.data;
+                        this.show_export = true;
+                        setTimeout(() => {
+                            this.loading = false
+                        }, 1000);
+                    } else {
+                        this.$message({
+                            message: '暂无数据',
+                            type: 'warning'
+                        });
+                    }
+                })
         }
     })
-
 
 
 </script>
