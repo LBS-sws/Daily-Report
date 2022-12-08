@@ -177,6 +177,16 @@ return array(
             ),
 		),
 	),
+    'WorkOrder'=>array(
+        'access'=>'WO',
+        'icon'=>'fa fa-industry',
+        'items'=>array(
+            'LBS WorkOrder'=>array(
+                'access'=>'WO01',
+                'url'=>'/WorkList/index',
+            )
+        ),
+    ),
     'City Ranking list'=>array(
         'access'=>'T',
 		'icon'=>'fa-line-chart',
