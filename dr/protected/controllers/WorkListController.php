@@ -131,16 +131,16 @@ class WorkListController extends Controller
         $data['is_mark'] = isset($_GET['is_mark']) ? $_GET['is_mark'] : 1;
 //        var_dump($time_point_start);exit();
 
-        if($time_point_start == '' || $time_point_start == 'null'){
+        if ($time_point_start == '' || $time_point_start == 'null') {
             $data['time_point_start'] = 0;
-        }else{
+        } else {
             $data['time_point_start'] = $this->HourMinuteToDecimal($time_point_start);
         }
 
 
-        if($time_point_end == '' || $time_point_end == 'null'){
+        if ($time_point_end == '' || $time_point_end == 'null') {
             $data['time_point_end'] = 0;
-        }else{
+        } else {
             $data['time_point_end'] = $this->HourMinuteToDecimal($time_point_end);
         }
         //特殊处理三个时间
@@ -174,14 +174,14 @@ class WorkListController extends Controller
         $time_point_start = isset($_GET['time_point_start']) ? $_GET['time_point_start'] : '';
         $time_point_end = isset($_GET['time_point_end']) ? $_GET['time_point_end'] : '';
 
-        if($time_point_start == '' || $time_point_start == 'null'){
+        if ($time_point_start == '' || $time_point_start == 'null') {
             $data['time_point_start'] = 0;
-        }else{
+        } else {
             $data['time_point_start'] = $this->HourMinuteToDecimal($time_point_start);
         }
-        if($time_point_end == '' || $time_point_end == 'null'){
+        if ($time_point_end == '' || $time_point_end == 'null') {
             $data['time_point_end'] = 0;
-        }else{
+        } else {
             $data['time_point_end'] = $this->HourMinuteToDecimal($time_point_end);
         }
         if (!isset($data['staff_id']) && empty($data['staff_id'])) {
@@ -216,14 +216,14 @@ class WorkListController extends Controller
             $time_point_start = isset($_GET['time_point_start']) ? $_GET['time_point_start'] : '';
             $time_point_end = isset($_GET['time_point_end']) ? $_GET['time_point_end'] : '';
 
-            if($time_point_start == '' || $time_point_start == 'null'){
+            if ($time_point_start == '' || $time_point_start == 'null') {
                 $data['time_point_start'] = 0;
-            }else{
+            } else {
                 $data['time_point_start'] = $this->HourMinuteToDecimal($time_point_start);
             }
-            if($time_point_end == '' || $time_point_end == 'null'){
+            if ($time_point_end == '' || $time_point_end == 'null') {
                 $data['time_point_end'] = 0;
-            }else{
+            } else {
                 $data['time_point_end'] = $this->HourMinuteToDecimal($time_point_end);
             }
 
@@ -259,7 +259,7 @@ class WorkListController extends Controller
                         ->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                     $objectPHPExcel->setActiveSheetIndex(0)->setCellValue('A2', '日期：' . date("Y年m月j日"));
-                $objectPHPExcel->setActiveSheetIndex(0)->setCellValue('G2','范围：'.$result['range'][0].'--'.$result['range'][1]);
+                    $objectPHPExcel->setActiveSheetIndex(0)->setCellValue('G2', '范围：' . $result['range'][0] . '--' . $result['range'][1]);
                     $objectPHPExcel->setActiveSheetIndex(0)->getStyle('I2')
                         ->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
@@ -363,10 +363,10 @@ class WorkListController extends Controller
             @ob_start();
             header('Content-Type: application/vnd.ms-excel');
 //            判断PHP版本 以兼容下载
-            if(phpversion() >=7){
+            if (phpversion() >= 7) {
                 header('Content-Disposition: attachment;filename="' . '区域明细-' . date("Y年m月j日") . '.xlsx"');
                 $objWriter = PHPExcel_IOFactory::createWriter($objectPHPExcel, 'Excel2007');
-            }else{
+            } else {
                 header('Content-Disposition: attachment;filename="' . '区域明细-' . date("Y年m月j日") . '.xls"');
                 $objWriter = PHPExcel_IOFactory::createWriter($objectPHPExcel, 'Excel5');
             }

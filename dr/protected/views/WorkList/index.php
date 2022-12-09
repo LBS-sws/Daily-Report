@@ -467,14 +467,14 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 // } else {
                 //     this.is_mark = 0;
                 // }
-                if((this.timeInterval == '00:00' && this.timeInterval1 == '00:00') || this.timeInterval == '' && this.timeInterval1 == ''){
+                if ((this.timeInterval == '00:00' && this.timeInterval1 == '00:00') || this.timeInterval == '' && this.timeInterval1 == '') {
                     this.$message({
                         message: '至少选择一个时间段作为筛选条件',
                         type: 'warning'
                     });
                     return;
                 }
-                if(this.timeInterval1 >= this.timeInterval){
+                if (this.timeInterval1 >= this.timeInterval) {
                     this.$message({
                         message: '时间条件筛选有误',
                         type: 'warning'
@@ -482,7 +482,7 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                     return;
                 }
 
-                url_params = '?start_date=' + start_date + '&end_date=' + end_date + '&staff=' + this.checkUser + '&city=' + city + '&time_point_start=' + this.timeInterval+ '&time_point_end=' + this.timeInterval1 + '&service_type=' + this.value + '&is_mark=' + this.is_mark
+                url_params = '?start_date=' + start_date + '&end_date=' + end_date + '&staff=' + this.checkUser + '&city=' + city + '&time_point_start=' + this.timeInterval + '&time_point_end=' + this.timeInterval1 + '&service_type=' + this.value + '&is_mark=' + this.is_mark
                 this.loading = true
                 fetch("./../WorkList/jobList" + url_params, {
                     method: "get",
@@ -600,7 +600,7 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 }
                 this.loading = true
 
-                fetch('./../WorkList/StaffInfo?staff_id=' + val + '&start_date=' + start_date + '&end_date=' + end_date + '&time_point_start=' + this.timeInterval+ '&time_point_end=' + this.timeInterval1 + '&service_type=' + this.value + '&city=' + this.city + '&is_mark=' + this.is_mark, {
+                fetch('./../WorkList/StaffInfo?staff_id=' + val + '&start_date=' + start_date + '&end_date=' + end_date + '&time_point_start=' + this.timeInterval + '&time_point_end=' + this.timeInterval1 + '&service_type=' + this.value + '&city=' + this.city + '&is_mark=' + this.is_mark, {
                     method: "get",
                     // body: JSON.stringify({City:val}),
                     headers: {
@@ -649,7 +649,7 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                     return;
                 }
 
-                this.link = './../WorkList/export?start_date=' + start_date + '&end_date=' + end_date + '&time_point_start=' + this.timeInterval+ '&time_point_end=' + this.timeInterval1  + '&service_type=' + this.value + '&city=' + this.city + '&is_mark=' + this.is_mark;
+                this.link = './../WorkList/export?start_date=' + start_date + '&end_date=' + end_date + '&time_point_start=' + this.timeInterval + '&time_point_end=' + this.timeInterval1 + '&service_type=' + this.value + '&city=' + this.city + '&is_mark=' + this.is_mark;
                 window.open(this.link, "_blank");
                 this.loading = false
                 // this.checkUser = ''
