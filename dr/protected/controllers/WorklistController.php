@@ -1,6 +1,6 @@
 <?php
 
-class WorkListController extends Controller
+class WorklistController extends Controller
 {
     public $function_id = 'WO01';
 
@@ -20,11 +20,11 @@ class WorkListController extends Controller
         return array(
             array('allow',
                 'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export'),
-                'expression' => array('WorkListController', 'allowReadWrite'),
+                'expression' => array('WorklistController', 'allowReadWrite'),
             ),
             array('allow',
                 'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export'),
-                'expression' => array('WorkListController', 'allowReadOnly'),
+                'expression' => array('WorklistController', 'allowReadOnly'),
             ),
 //            array('deny',  // deny all users
 //                'users' => array('*'),

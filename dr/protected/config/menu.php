@@ -183,7 +183,7 @@ return array(
         'items'=>array(
             'LBS WorkOrder'=>array(
                 'access'=>'WO01',
-                'url'=>'/WorkList/index',
+                'url'=>'/worklist/index',
             )
         ),
     ),
