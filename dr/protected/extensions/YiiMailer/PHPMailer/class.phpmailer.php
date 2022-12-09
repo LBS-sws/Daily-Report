@@ -289,7 +289,7 @@ class PHPMailer
      * The SMTP server timeout in seconds.
      * @type integer
      */
-    public $Timeout = 20;
+    public $Timeout = 10;
 
     /**
      * SMTP class debug output mode.
