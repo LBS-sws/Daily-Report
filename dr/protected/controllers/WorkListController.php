@@ -231,7 +231,7 @@ class WorkListController extends Controller
                 $this->json([], 'error', 0);
             }
             $model = new WorkOrder();
-            $page_size = 5000;
+            $page_size = 50000;
             $result = $model->getExport($data);
             if (isset($result['data']['count']['row_count']) && $result['data']['count']['row_count'] >= $page_size) {
                 $this->json([], '筛选的时间段过大', 0);
