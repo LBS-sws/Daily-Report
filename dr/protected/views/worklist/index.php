@@ -222,6 +222,7 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 value2: [],
                 switch_value: true,
                 tableData: [],
+                click_staff:'',
                 link: '',
                 options: [{
                     value: '1',
@@ -318,9 +319,9 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 console.log(aoa)
                 var sheet = XLSX.utils.aoa_to_sheet(aoa);
                 let orgin_time = this.date1;
-                let start_date = this.formatDate(orgin_time[0]);
-                let end_date = this.formatDate(orgin_time[1]);
-                this.openDownloadDialog(this.sheet2blob(sheet), '【'+this.echars_name+'】'+start_date+'--'+end_date+'.xlsx');
+                let start_date = this.formatDate(orgin_time[0],1);
+                let end_date = this.formatDate(orgin_time[1],1);
+                this.openDownloadDialog(this.sheet2blob(sheet), '【'+this.click_staff+'】'+start_date+'--'+end_date+'.xlsx');
             },
             // 将一个sheet转成最终的excel文件的blob对象，然后利用URL.createObjectURL下载
             sheet2blob(sheet, sheetName) {
@@ -461,8 +462,8 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                     return;
                 }
 
-                let start_date = this.formatDate(orgin_time[0]);
-                let end_date = this.formatDate(orgin_time[1]);
+                let start_date = this.formatDate(orgin_time[0],0);
+                let end_date = this.formatDate(orgin_time[1],0);
                 let city = this.city;
                 let url_params = '';
                 // if (this.switch_value === true) {
@@ -527,7 +528,7 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
             /**
              * 格式化时间
              * */
-            formatDate(d) {
+            formatDate(d,type = 0) {
                 var date = new Date(d);
                 var YY = date.getFullYear() + '-';
                 var MM =
@@ -542,7 +543,13 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                     ':';
                 var ss =
                     date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-                return YY + MM + DD + ' ' + hh + mm + ss;
+                var result;
+                if(type == 1){
+                    result = YY + MM + DD;
+                }else{
+                    result = YY + MM + DD + ' ' + hh + mm + ss;
+                }
+                return result;
             },
             GetCurId1(val) {
                 this.city = val
@@ -594,8 +601,8 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 // consol
                 // this.nowUser = val
                 let orgin_time = this.date1;
-                let start_date = this.formatDate(orgin_time[0]);
-                let end_date = this.formatDate(orgin_time[1]);
+                let start_date = this.formatDate(orgin_time[0],0);
+                let end_date = this.formatDate(orgin_time[1],0);
                 if (this.switch_value === true) {
                     this.is_mark = 1;
                 } else {
@@ -613,12 +620,13 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                     // console.log(result);
                     return result.json();
                 }).then(res => {
-                    // console.log(data);
                     if (res.code == 1) {
                         this.gridData = res.data;
+                        // console.log(res.data[0].staff_name);
+                       this.click_staff =  res.data[0].staff_name
                         setTimeout(() => {
                             this.loading = false
-                        }, 1000);
+                        }, 100);
                     } else {
                         this.gridData = []
                         this.$message({
@@ -627,7 +635,7 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                         });
                         setTimeout(() => {
                             this.loading = false
-                        }, 1000);
+                        }, 100);
                     }
                 })
                 // this.checkUser = ''
@@ -635,8 +643,8 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
 
             exportAreaData() {
                 let orgin_time = this.date1;
-                let start_date = this.formatDate(orgin_time[0]);
-                let end_date = this.formatDate(orgin_time[1]);
+                let start_date = this.formatDate(orgin_time[0],0);
+                let end_date = this.formatDate(orgin_time[1],0);
                 if (this.switch_value === true) {
                     this.is_mark = 1;
                 } else {
@@ -677,7 +685,7 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                         this.show_export = true;
                         setTimeout(() => {
                             this.loading = false
-                        }, 1000);
+                        }, 100);
                     } else {
                         this.$message({
                             message: '暂无数据',

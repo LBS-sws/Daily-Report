@@ -367,7 +367,7 @@ class WorklistController extends Controller
                 header('Content-Disposition: attachment;filename="' . $product['city_name'] . $result['range'][0] . '--' . $result['range'][1] . '.xlsx"');
                 $objWriter = PHPExcel_IOFactory::createWriter($objectPHPExcel, 'Excel2007');
             } else {
-                header('Content-Disposition: attachment;filename="' . $product['city_name'] . $result['range'][0] . '--' . $result['range'][1] . '.xls"');
+                header('Content-Disposition: attachment;filename="' .'【'. $product['city_name'].'】' . $result['range'][0] . '--' . $result['range'][1] . '.xls"');
                 $objWriter = PHPExcel_IOFactory::createWriter($objectPHPExcel, 'Excel5');
             }
         } catch (Exception $exception) {
