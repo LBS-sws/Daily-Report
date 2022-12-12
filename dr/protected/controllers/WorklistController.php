@@ -364,10 +364,10 @@ class WorklistController extends Controller
             header('Content-Type: application/vnd.ms-excel');
 //            判断PHP版本 以兼容下载
             if (phpversion() >= 7) {
-                header('Content-Disposition: attachment;filename="' . '区域明细-' . date("Y年m月j日") . '.xlsx"');
+                header('Content-Disposition: attachment;filename="' . $product['city_name'] . $result['range'][0] . '--' . $result['range'][1] . '.xlsx"');
                 $objWriter = PHPExcel_IOFactory::createWriter($objectPHPExcel, 'Excel2007');
             } else {
-                header('Content-Disposition: attachment;filename="' . '区域明细-' . date("Y年m月j日") . '.xls"');
+                header('Content-Disposition: attachment;filename="' . $product['city_name'] . $result['range'][0] . '--' . $result['range'][1] . '.xls"');
                 $objWriter = PHPExcel_IOFactory::createWriter($objectPHPExcel, 'Excel5');
             }
         } catch (Exception $exception) {
