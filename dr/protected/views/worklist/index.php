@@ -317,7 +317,10 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 })
                 console.log(aoa)
                 var sheet = XLSX.utils.aoa_to_sheet(aoa);
-                this.openDownloadDialog(this.sheet2blob(sheet), '【'+item.staff_name+'】'+item.start_time+'--'+item.start_time+'.xlsx');
+                let orgin_time = this.date1;
+                let start_date = this.formatDate(orgin_time[0]);
+                let end_date = this.formatDate(orgin_time[1]);
+                this.openDownloadDialog(this.sheet2blob(sheet), '【'+this.echars_name+'】'+start_date+'--'+end_date+'.xlsx');
             },
             // 将一个sheet转成最终的excel文件的blob对象，然后利用URL.createObjectURL下载
             sheet2blob(sheet, sheetName) {
