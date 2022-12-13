@@ -81,6 +81,9 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 			<?php echo $form->hiddenField($model, 'status'); ?>
 			<?php echo $form->hiddenField($model, 'company_id'); ?>
 			<?php echo $form->hiddenField($model, 'backlink'); ?>
+			<?php echo $form->hiddenField($model, 'city'); ?>
+			<?php echo $form->hiddenField($model, 'commission'); ?>
+			<?php echo $form->hiddenField($model, 'other_commission'); ?>
 			<?php echo TbHtml::hiddenField('copy_index',0,array('id'=>'copy_index')); ?>
 			<?php
 				if ($model->status!='A') {
