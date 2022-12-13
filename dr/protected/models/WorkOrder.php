@@ -250,7 +250,7 @@ FROM
 	 JOIN service{$this->suffix}.staff d ON d.StaffID = a.Staff01
 WHERE
 	a.Staff01 = '" . $data['staff_id'] . "' AND JobDate BETWEEN '{$start_date}' AND '{$end_date}'
-	AND a.`Status` = 3  AND b.Text != '' AND a.City = '{$data['city']}'";
+	AND a.`Status` = 3 AND a.City = '{$data['city']}'";
 //        var_dump($sql);exit;
 
         $ret = Yii::app()->db->createCommand($sql)->queryAll();
@@ -321,7 +321,7 @@ FROM
 
 WHERE
     JobDate BETWEEN '{$start_date}' AND '{$end_date}'
-	AND a.`Status` = 3  AND b.Text != '' AND a.City = '{$data['city']}'";
+	AND a.`Status` = 3 AND a.City = '{$data['city']}'";
         $ret['data'] = Yii::app()->db->createCommand($sql)->queryAll();
 //        $this->findBySql("SELECT FOUND_ROWS() as row_count;");
         $ret['count'] = Yii::app()->db->createCommand("SELECT FOUND_ROWS() as row_count;")->queryRow();
