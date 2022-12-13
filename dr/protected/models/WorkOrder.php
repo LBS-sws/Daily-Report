@@ -250,7 +250,7 @@ FROM
 	 JOIN service{$this->suffix}.staff d ON d.StaffID = a.Staff01
 WHERE
 	a.Staff01 = '" . $data['staff_id'] . "' AND JobDate BETWEEN '{$start_date}' AND '{$end_date}'
-	AND a.`Status` = 3   AND b.EnumType = 1  AND a.City = '{$data['city']}' ORDER BY  a.JobDate DESC";
+	AND a.`Status` = 3   AND c.EnumType = 1  AND a.City = '{$data['city']}' ORDER BY  a.JobDate DESC";
 
 //        var_dump($sql);exit;
 
