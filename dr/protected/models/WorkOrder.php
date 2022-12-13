@@ -169,7 +169,7 @@ FROM
 	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
 WHERE
 	JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
-	AND b.EnumID = '{$data['city']}' AND a.Staff01 !='' AND a.`Status` = 3
+	AND b.EnumID = '{$data['city']}' AND b.EnumType = 1 AND a.Staff01 !='' AND a.`Status` = 3
 GROUP BY staff_id ORDER BY {$rangDate} DESC";
 
 
@@ -181,8 +181,8 @@ FROM {$table} a
 	LEFT JOIN service{$this->suffix}.enums b ON b.EnumID = a.City
 	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
 WHERE JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
-	AND b.EnumID = '{$data['city']}' AND a.Staff01 !='' AND a.`Status` = 3
-GROUP BY scene";
+	AND b.EnumID = '{$data['city']}'  AND b.EnumType = 1 AND a.Staff01 !='' AND a.`Status` = 3
+GROUP BY scene ";
 //        var_dump($sql_count);exit();
         $ret['count'] = Yii::app()->db->createCommand($sql_count)->queryAll();
         return $ret;
@@ -237,7 +237,7 @@ GROUP BY scene";
         $sql = "SELECT 
 	a.CustomerName AS customer_name,
 	d.StaffName AS staff_name,
-	b.Text AS service_type,
+	b.ServiceName AS service_type,
 	c.Text AS city_name,
 	a.StartTime AS start_time,
 	a.FinishTime AS end_time,
@@ -245,12 +245,13 @@ GROUP BY scene";
 	{$condition_x}
 FROM
 	{$table} a
-	LEFT JOIN service{$this->suffix}.enums b ON b.EnumID = a.{$stype}
+	LEFT JOIN service{$this->suffix}.service b ON b.ServiceType = a.{$stype}
 	 JOIN service{$this->suffix}.enums c ON c.EnumID = a.City 
 	 JOIN service{$this->suffix}.staff d ON d.StaffID = a.Staff01
 WHERE
 	a.Staff01 = '" . $data['staff_id'] . "' AND JobDate BETWEEN '{$start_date}' AND '{$end_date}'
-	AND a.`Status` = 3 AND b.EnumType = 2 AND b.Text != '' AND a.City = '{$data['city']}'";
+	AND a.`Status` = 3   AND c.EnumType = 1  AND a.City = '{$data['city']}' ORDER BY  a.JobDate DESC";
+
 //        var_dump($sql);exit;
 
         $ret = Yii::app()->db->createCommand($sql)->queryAll();
@@ -307,7 +308,7 @@ WHERE
         $sql = "SELECT SQL_CALC_FOUND_ROWS
 	a.CustomerName AS customer_name,
 	d.StaffName AS staff_name,
-	b.Text AS service_type,
+    b.ServiceName AS service_type,
 	c.Text AS city_name,
 	a.StartTime AS start_time,
 	a.FinishTime AS end_time,
@@ -315,13 +316,13 @@ WHERE
 	{$condition_x}
 FROM
 	{$table} a
-	LEFT JOIN service{$this->suffix}.enums b ON b.EnumID = a.{$stype}
-	 JOIN service{$this->suffix}.enums c ON c.EnumID = a.City 
+    LEFT JOIN service{$this->suffix}.service b ON b.ServiceType = a.{$stype}
+	 JOIN service{$this->suffix}.enums c ON c.EnumID = a.City  
 	 JOIN service{$this->suffix}.staff d ON d.StaffID = a.Staff01
 
 WHERE
-    JobDate BETWEEN '{$start_date}' AND '{$end_date}'
-	AND a.`Status` = 3 AND b.EnumType = 2 AND b.Text != '' AND a.City = '{$data['city']}'";
+    JobDate BETWEEN '{$start_date}' AND '{$end_date}'  AND c.EnumType = 1
+	AND a.`Status` = 3 AND a.City = '{$data['city']}'  ORDER BY  a.JobDate DESC";
         $ret['data'] = Yii::app()->db->createCommand($sql)->queryAll();
 //        $this->findBySql("SELECT FOUND_ROWS() as row_count;");
         $ret['count'] = Yii::app()->db->createCommand("SELECT FOUND_ROWS() as row_count;")->queryRow();
