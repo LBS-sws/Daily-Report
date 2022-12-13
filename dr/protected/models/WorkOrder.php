@@ -169,7 +169,7 @@ FROM
 	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
 WHERE
 	JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
-	AND b.EnumID = '{$data['city']}' AND a.Staff01 !='' AND a.`Status` = 3
+	AND b.EnumID = '{$data['city']}' AND b.EnumType = 1 AND a.Staff01 !='' AND a.`Status` = 3
 GROUP BY staff_id ORDER BY {$rangDate} DESC";
 
 
@@ -180,9 +180,9 @@ GROUP BY staff_id ORDER BY {$rangDate} DESC";
 FROM {$table} a
 	LEFT JOIN service{$this->suffix}.enums b ON b.EnumID = a.City
 	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
-WHERE JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
+WHERE JobDate BETWEEN '{$start_date}'  AND b.EnumType = 1 AND '{$end_date}'" . $staff_sql . "
 	AND b.EnumID = '{$data['city']}' AND a.Staff01 !='' AND a.`Status` = 3
-GROUP BY scene";
+GROUP BY scene ";
 //        var_dump($sql_count);exit();
         $ret['count'] = Yii::app()->db->createCommand($sql_count)->queryAll();
         return $ret;
@@ -249,8 +249,8 @@ FROM
 	 JOIN service{$this->suffix}.enums c ON c.EnumID = a.City 
 	 JOIN service{$this->suffix}.staff d ON d.StaffID = a.Staff01
 WHERE
-	a.Staff01 = '" . $data['staff_id'] . "' AND JobDate BETWEEN '{$start_date}' AND '{$end_date}'
-	AND a.`Status` = 3 AND a.City = '{$data['city']}'";
+	a.Staff01 = '" . $data['staff_id'] . "'  AND b.EnumType = 1 AND JobDate BETWEEN '{$start_date}' AND '{$end_date}'
+	AND a.`Status` = 3 AND a.City = '{$data['city']}' ORDER BY  a.JobDate DESC";
 //        var_dump($sql);exit;
 
         $ret = Yii::app()->db->createCommand($sql)->queryAll();
@@ -316,12 +316,12 @@ WHERE
 FROM
 	{$table} a
     LEFT JOIN service{$this->suffix}.service b ON b.ServiceType = a.{$stype}
-	 JOIN service{$this->suffix}.enums c ON c.EnumID = a.City 
+	 JOIN service{$this->suffix}.enums c ON c.EnumID = a.City  
 	 JOIN service{$this->suffix}.staff d ON d.StaffID = a.Staff01
 
 WHERE
-    JobDate BETWEEN '{$start_date}' AND '{$end_date}'
-	AND a.`Status` = 3 AND a.City = '{$data['city']}'";
+    JobDate BETWEEN '{$start_date}' AND '{$end_date}'  AND c.EnumType = 1
+	AND a.`Status` = 3 AND a.City = '{$data['city']}'  ORDER BY  a.JobDate DESC";
         $ret['data'] = Yii::app()->db->createCommand($sql)->queryAll();
 //        $this->findBySql("SELECT FOUND_ROWS() as row_count;");
         $ret['count'] = Yii::app()->db->createCommand("SELECT FOUND_ROWS() as row_count;")->queryRow();
