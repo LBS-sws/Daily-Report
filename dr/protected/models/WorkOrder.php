@@ -74,6 +74,11 @@ class WorkOrder extends CListPageModel
 
     public function retrieveData($city)
     {
+        $sql = "select code as City,name as Text from security{$this->suffix}.sec_city WHERE code ='{$city}'";
+        $ret = Yii::app()->db->createCommand($sql)->queryAll();
+        return $ret;
+
+/*
         try {
             $no_city = ['TY','KS','TN','TC','HK','TP','ZS1','HN','MY','ZY','HXHB','MO','HD','JMS','XM','CS','HX','H-N','HD1','RN','HN1','HN2','CN','HB'];
             $sql = "select code,name from security{$this->suffix}.sec_city WHERE code ='{$city}'";
@@ -106,17 +111,26 @@ class WorkOrder extends CListPageModel
             return ['status'=>true,'data'=>$ret_scv];
         }catch (Exception $exception){
             return ['status'=>false,'err'=>$exception->getMessage()];
-        }
+        }*/
 
 
     }
 
 
-    public function getStaff($city = '')
+    public function getStaff($city)
     {
-        $sql = "select * from service{$this->suffix}.staff a left join service{$this->suffix}.enums b on b.EnumID=a.City AND b.EnumType = 1 where City = {$city} ";
-        $ret = Yii::app()->db->createCommand($sql)->queryAll();
-        return $ret;
+        if(empty($city)){
+            return false;
+        }
+        $sql = "select GROUP_CONCAT(DISTINCT City ) as citys from
+				service{$this->suffix}.officecity as o 
+				left join service{$this->suffix}.enums as e on e.EnumID=o.Office 
+				left join security{$this->suffix}.sec_city as b on e.Text=b.code 
+				where e.EnumType=8 and e.Text IN({$city})";
+        $ret = Yii::app()->db->createCommand($sql)->queryRow();
+        $sql_staff = "select * from service{$this->suffix}.staff  where City IN({$ret['citys']})";
+        $ret_staff = Yii::app()->db->createCommand($sql_staff)->queryAll();
+        return $ret_staff;
     }
 
     public function getJob($data)

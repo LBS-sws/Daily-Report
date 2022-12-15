@@ -35,7 +35,9 @@ class WorklistController extends Controller
     public function actionTest()
     {
         $session = Yii::app()->session;
-        var_dump($session['city']);
+        $model = new City();
+        $res =  $model->getDescendantList('HXHB');
+        var_dump($res);
     }
 
     public function actionStaffEx($search, $incity = '')
@@ -86,11 +88,10 @@ class WorklistController extends Controller
         $session = Yii::app()->session;
         $model = new WorkOrder();
         $res = $model->retrieveData($session['city']);
-        if ($res['status']) {
-            $this->json($res['data']);
+        if ($res) {
+            $this->json($res);
         }
-        $this->json($res['err'], 'error', 0);
-
+        $this->json([], 'error', 0);
     }
 
     /**
@@ -99,10 +100,12 @@ class WorklistController extends Controller
      * */
     public function actionStaff()
     {
-        $city = isset($_GET['city']) ? $_GET['city'] : '200';
+        $city = isset($_GET['city']) ? $_GET['city'] : 0;
         $model = new WorkOrder();
-        $res = $model->getStaff($city);
-        if ($res) {
+        $cityModel = new City();
+        $citys =  $cityModel->getDescendantList($city);
+        $res = $model->getStaff($citys);
+        if ($res && $city) {
             $this->json($res);
         }
         $this->json([], 'error', 0);
