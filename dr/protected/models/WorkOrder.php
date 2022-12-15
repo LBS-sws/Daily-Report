@@ -20,17 +20,13 @@ class WorkOrder extends CListPageModel
     public $format;
     public $uid;
     public $city;
-    public $target_at;
+
     public $fields;
     public $email;
-    public $emailcc;
-    public $touser;
-    public $ccuser;
     public $year;
     public $follow_staff;
     public $type;
     public $form;
-    public $staffs_desc;
     public $suffix = '';
 
     public function __construct()
@@ -76,16 +72,43 @@ class WorkOrder extends CListPageModel
         return Yii::t('returneport', 'Date') . ': ' . $this->criteria->year . '/' . $this->criteria->month;
     }
 
-    public function retrieveData()
+    public function retrieveData($city)
     {
-        $year = empty($this->criteria->year) ? date('Y') : $this->criteria->year;
-        $month = empty($this->criteria->month) ? date('m') : $this->criteria->month;
-        $first_date = $year . '-' . $month . '-01';
-//        $last_date = date('Y-m-d',strtotime(date('Y-m-d',strtotime($first_date.' +1 month')).' -1 day'));
-//        $first_date2 = date('Y-m-d',strtotime($first_date.' -1 day'));
-        $sql = "select * from service{$this->suffix}.officecity a left join service{$this->suffix}.enums b on b.EnumID=a.City AND b.EnumType = 1";
-        $ret = Yii::app()->db->createCommand($sql)->queryAll();
-        return $ret;
+        try {
+            $no_city = ['TY','KS','TN','TC','HK','TP','ZS1','HN','MY','ZY','HXHB','MO','HD','JMS','XM','CS','HX','H-N','HD1','RN','HN1','HN2','CN','HB'];
+            $sql = "select code,name from security{$this->suffix}.sec_city WHERE code ='{$city}'";
+            $ret = Yii::app()->db->createCommand($sql)->queryAll();
+            $count_no = 0;
+                //凡是这里边的都是 地区
+                if (in_array($ret[0]['code'], $no_city)) {
+                    //存在
+                    $count_no++;
+                    $where_sp = "region = '{$ret[0]['code']}' OR code ='{$ret[0]['code']}'";
+                }else{
+                    $count_no = 999;
+                    $where_sp = "code ='{$ret[0]['code']}'";
+                }
+            if($count_no !== 999){
+                $sql_sp = "select code,name from security{$this->suffix}.sec_city WHERE  {$where_sp}";
+            }else{
+                $sql_sp = "select code,name from security{$this->suffix}.sec_city WHERE {$where_sp}";
+            }
+            $ret_sp = Yii::app()->db->createCommand($sql_sp)->queryAll();
+            $citys = '';
+            foreach ($ret_sp as $k =>$v){
+                $citys .= ','."'".$v['code']."'";
+            }
+            $citys = ltrim($citys,',');
+            $city_sql =  "SELECT GROUP_CONCAT(city)  as city_ids FROM service{$this->suffix}.enums a LEFT JOIN  service{$this->suffix}.officecity b ON b.office = a.EnumID  WHERE  a.Text IN({$citys}) AND a.EnumType = 8";
+            $city_ret = Yii::app()->db->createCommand($city_sql)->queryAll();
+            $sql_scv = "select * from service{$this->suffix}.officecity a left join service{$this->suffix}.enums b on b.EnumID=a.City  AND b.EnumType = 1 WHERE b.EnumID IN({$city_ret[0]['city_ids']})";
+            $ret_scv = Yii::app()->db->createCommand($sql_scv)->queryAll();
+            return ['status'=>true,'data'=>$ret_scv];
+        }catch (Exception $exception){
+            return ['status'=>false,'err'=>$exception->getMessage()];
+        }
+
+
     }
 
 

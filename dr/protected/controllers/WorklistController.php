@@ -19,11 +19,11 @@ class WorklistController extends Controller
     {
         return array(
             array('allow',
-                'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export'),
+                'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export', 'test'),
                 'expression' => array('WorklistController', 'allowReadWrite'),
             ),
             array('allow',
-                'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export'),
+                'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export', 'test'),
                 'expression' => array('WorklistController', 'allowReadOnly'),
             ),
 //            array('deny',  // deny all users
@@ -32,11 +32,10 @@ class WorklistController extends Controller
         );
     }
 
-    public function actionTest($fid, $test)
+    public function actionTest()
     {
-        var_dump($fid);
-        var_dump($test);
-
+        $session = Yii::app()->session;
+        var_dump($session['city']);
     }
 
     public function actionStaffEx($search, $incity = '')
@@ -84,12 +83,13 @@ class WorklistController extends Controller
      * */
     public function actionArea()
     {
+        $session = Yii::app()->session;
         $model = new WorkOrder();
-        $res = $model->retrieveData();
-        if ($res) {
-            $this->json($res);
+        $res = $model->retrieveData($session['city']);
+        if ($res['status']) {
+            $this->json($res['data']);
         }
-        $this->json([], 'error', 0);
+        $this->json($res['err'], 'error', 0);
 
     }
 
