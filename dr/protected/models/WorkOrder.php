@@ -74,7 +74,7 @@ class WorkOrder extends CListPageModel
 
     public function retrieveData($city)
     {
-        $sql = "select code as City,name as Text from security{$this->suffix}.sec_city WHERE code ='{$city}'";
+        $sql = "select code as City,name as Text from security{$this->suffix}.sec_city WHERE code IN({$city})";
         $ret = Yii::app()->db->createCommand($sql)->queryAll();
         return $ret;
 

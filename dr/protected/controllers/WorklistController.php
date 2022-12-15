@@ -86,8 +86,9 @@ class WorklistController extends Controller
     public function actionArea()
     {
         $session = Yii::app()->session;
+//        var_dump($_SESSION);exit();
         $model = new WorkOrder();
-        $res = $model->retrieveData($session['city']);
+        $res = $model->retrieveData($session['city_allow']);
         if ($res) {
             $this->json($res);
         }
