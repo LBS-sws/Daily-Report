@@ -92,7 +92,7 @@ class WorkOrder extends CListPageModel
         $rows = Yii::app()->db->createCommand()->select("GROUP_CONCAT(DISTINCT c.EnumID ) as city")->from("service{$this->suffix}.officecity as a")
             ->leftJoin("service{$this->suffix}.enums b", "b.EnumID = a.Office")
             ->leftJoin("service{$this->suffix}.enums c", "c.EnumID = a.City ")
-            ->where("b.Text IN($city) and b.EnumType = 8")
+            ->where("b.Text IN($city) and b.EnumType = 8 AND c.EnumType = 1")
             ->queryAll();
         return $rows;
     }
