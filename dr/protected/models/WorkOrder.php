@@ -80,7 +80,7 @@ class WorkOrder extends CListPageModel
             $city_de = $city;
         }
         $citys = $this->getCityByCode($city_de);
-        $sql_scv = "select b.EnumID as City,b.Text as Text from service{$this->suffix}.enums b where b.EnumID IN({$citys[0]['city']})";
+        $sql_scv = "select b.EnumID as City,b.Text as Text from service{$this->suffix}.enums b where b.EnumID IN({$citys[0]['city']}) AND b.EnumType = 1  ";
         $ret = Yii::app()->db->createCommand($sql_scv)->queryAll();
         return $ret;
 
