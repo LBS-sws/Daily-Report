@@ -86,7 +86,6 @@ class WorklistController extends Controller
     public function actionArea()
     {
         $session = Yii::app()->session;
-//        var_dump($_SESSION);exit();
         $model = new WorkOrder();
         $res = $model->retrieveData($session['city_allow']);
         if ($res) {
@@ -105,7 +104,8 @@ class WorklistController extends Controller
         $model = new WorkOrder();
         $cityModel = new City();
         $citys =  $cityModel->getDescendantList($city);
-        $res = $model->getStaff($citys);
+        $city_ret = !empty($citys)?$citys:$city;
+        $res = $model->getStaff($city_ret);
         if ($res && $city) {
             $this->json($res);
         }
