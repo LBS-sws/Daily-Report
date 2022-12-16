@@ -89,9 +89,9 @@ class WorkOrder extends CListPageModel
     public function getCityByCode($city)
     {
 //        var_dump($city);exit();
-        $rows = Yii::app()->db->createCommand()->select("GROUP_CONCAT(DISTINCT c.EnumID ) as city")->from("servicedev.officecity as a")
-            ->leftJoin("servicedev.enums b", "b.EnumID = a.Office")
-            ->leftJoin("servicedev.enums c", "c.EnumID = a.City ")
+        $rows = Yii::app()->db->createCommand()->select("GROUP_CONCAT(DISTINCT c.EnumID ) as city")->from("service{$this->suffix}.officecity as a")
+            ->leftJoin("service{$this->suffix}.enums b", "b.EnumID = a.Office")
+            ->leftJoin("service{$this->suffix}.enums c", "c.EnumID = a.City ")
             ->where("b.Text IN($city) and b.EnumType = 8")
             ->queryAll();
         return $rows;
