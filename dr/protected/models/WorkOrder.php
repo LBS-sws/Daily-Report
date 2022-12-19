@@ -176,7 +176,7 @@ FROM
 	{$table} a
 	LEFT JOIN service{$this->suffix}.enums b ON b.EnumID = a.City
 	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
-    LEFT JOIN SECURITY.sec_city AS b1 ON b.Text = b1.CODE 
+    LEFT JOIN SECURITY{$this->suffix}.sec_city AS b1 ON b.Text = b1.CODE 
 WHERE
 	JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
 	AND b.Text in ({$data['city']})  AND b.EnumType = 1 AND a.Staff01 !='' AND a.`Status` = 3
@@ -245,7 +245,7 @@ GROUP BY scene ";
 FROM
  officecity AS o
 	LEFT JOIN enums AS e ON e.EnumID = o.Office
-	LEFT JOIN securitydev.sec_city AS b ON e.Text = b.CODE 
+	LEFT JOIN security{$this->suffix}.sec_city AS b ON e.Text = b.CODE 
 WHERE
 	e.EnumType = 8 
 	AND o.City = {$data['city']}";
@@ -256,7 +256,7 @@ WHERE
 FROM
  officecity AS o
 	LEFT JOIN enums AS e ON e.EnumID = o.Office
-	LEFT JOIN securitydev.sec_city AS b ON e.Text = b.CODE 
+	LEFT JOIN security{$this->suffix}.sec_city AS b ON e.Text = b.CODE 
 WHERE
 	e.EnumType = 8 
 	AND e.Text IN({$build_ret1['area_code']}) ";
