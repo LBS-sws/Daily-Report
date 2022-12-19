@@ -166,7 +166,7 @@ class WorkOrder extends CListPageModel
         }
 
 
-        $sql = "SELECT
+        $sql = "SELECT 
     COUNT(1) AS total,
     {$condition}
 	b.Text AS city_name,
@@ -179,9 +179,8 @@ FROM
 	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
 WHERE
 	JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
-	AND b.Text in ({$data['city']})  AND b.EnumType = 1 AND a.Staff01 !='' AND a.`Status` = 3
+	AND b.EnumID = '{$data['city']}' AND a.Staff01 !='' AND a.`Status` = 3
 GROUP BY staff_id ORDER BY {$rangDate} DESC";
-
 
 
         $ret['data'] = Yii::app()->db->createCommand($sql)->queryAll();
@@ -190,11 +189,11 @@ GROUP BY staff_id ORDER BY {$rangDate} DESC";
 	, b.Text AS city_name, c.StaffName AS staff_name, {$rangDate} AS {$rangDate},CustomerName AS CustomerName
 FROM {$table} a
 	LEFT JOIN service{$this->suffix}.enums b ON b.EnumID = a.City
-	JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
+	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
 WHERE JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
-	AND b.Text in ({$data['city']})  AND b.EnumType = 1 AND a.Staff01 !='' AND a.`Status` = 3
-GROUP BY scene ";
-
+	AND b.EnumID = '{$data['city']}' AND a.Staff01 !='' AND a.`Status` = 3
+GROUP BY scene";
+//        var_dump($sql_count);exit();
         $ret['count'] = Yii::app()->db->createCommand($sql_count)->queryAll();
         return $ret;
     }
