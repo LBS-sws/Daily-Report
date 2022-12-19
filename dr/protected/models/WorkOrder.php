@@ -99,7 +99,8 @@ class WorkOrder extends CListPageModel
 
     public function getStaff($city)
     {
-        $sql = "select * from service{$this->suffix}.staff a left join service{$this->suffix}.enums b on b.EnumID=a.City AND b.EnumType = 1 where City IN({$city}) ";
+
+        $sql = "select * from service{$this->suffix}.staff a left join service{$this->suffix}.enums b on b.EnumID=a.City AND b.EnumType = 1 where City = {$city} ";
         $ret = Yii::app()->db->createCommand($sql)->queryAll();
         return $ret;
 
@@ -176,11 +177,11 @@ FROM
 	{$table} a
 	LEFT JOIN service{$this->suffix}.enums b ON b.EnumID = a.City
 	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
-     -- LEFT JOIN security{$this->suffix}.sec_city AS b1 ON b.Text = b1.CODE 
 WHERE
 	JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
 	AND b.Text in ({$data['city']})  AND b.EnumType = 1 AND a.Staff01 !='' AND a.`Status` = 3
 GROUP BY staff_id ORDER BY {$rangDate} DESC";
+
 
 
         $ret['data'] = Yii::app()->db->createCommand($sql)->queryAll();
@@ -190,16 +191,21 @@ GROUP BY staff_id ORDER BY {$rangDate} DESC";
 FROM {$table} a
 	LEFT JOIN service{$this->suffix}.enums b ON b.EnumID = a.City
 	JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
-   -- LEFT JOIN security{$this->suffix}.sec_city AS b1 ON b.Text = b1.CODE 
 WHERE JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
 	AND b.Text in ({$data['city']})  AND b.EnumType = 1 AND a.Staff01 !='' AND a.`Status` = 3
 GROUP BY scene ";
+
         $ret['count'] = Yii::app()->db->createCommand($sql_count)->queryAll();
         return $ret;
     }
 
     public function getStaffInfo($data)
     {
+//        var_dump($data);exit;
+//        $staff_id = '',$start_date, $end_date,$time_point,$service_type = 1,$city
+//        if (empty()) {
+//            return false;
+//        }
         switch ($data['service_type']) {
             case '1':
                 $table = "service{$this->suffix}.joborder";
@@ -238,30 +244,6 @@ GROUP BY scene ";
 
         }
 
-        $build_sql1 = "SELECT
-	e.Text as area_code
-FROM
- officecity AS o
-	LEFT JOIN enums AS e ON e.EnumID = o.Office
-	LEFT JOIN security{$this->suffix}.sec_city AS b ON e.Text = b.CODE 
-WHERE
-	e.EnumType = 8 
-	AND o.City = {$data['city']}";
-        $build_ret1 = Yii::app()->db->createCommand($build_sql1)->queryAll();
-
-        $build_sql2 = "SELECT
-	GROUP_CONCAT(City) as citys
-FROM
- officecity AS o
-	LEFT JOIN enums AS e ON e.EnumID = o.Office
-	LEFT JOIN security{$this->suffix}.sec_city AS b ON e.Text = b.CODE 
-WHERE
-	e.EnumType = 8 
-	AND e.Text IN({$build_ret1['area_code']}) ";
-
-        $build_ret2 = Yii::app()->db->createCommand($build_sql2)->queryAll();
-
-
 
         $sql = "SELECT 
 	a.CustomerName AS customer_name,
@@ -279,7 +261,7 @@ FROM
 	 JOIN service{$this->suffix}.staff d ON d.StaffID = a.Staff01
 WHERE
 	a.Staff01 = '" . $data['staff_id'] . "' AND JobDate BETWEEN '{$start_date}' AND '{$end_date}'
-	AND a.`Status` = 3   AND c.EnumType = 1  AND a.City IN($build_ret2) ORDER BY  a.JobDate DESC";
+	AND a.`Status` = 3   AND c.EnumType = 1  AND a.City = '{$data['city']}' ORDER BY  a.JobDate DESC";
 
 //        var_dump($sql);exit;
 
