@@ -187,7 +187,6 @@ GROUP BY staff_id ORDER BY {$rangDate} DESC";*/
         $sql = "select COUNT(1) AS total,{$condition},b.name city_name,b.code,IFNULL(t.StaffName ,'')  AS staff_name, 
 	IFNULL(t.StaffId ,'')  AS staff_id  from {$table} as a left join service{$this->suffix}.officecity as o on a.City=o.City  left join service{$this->suffix}.enums as e on e.EnumID=o.Office left join service{$this->suffix}.service as s on s.ServiceType=a.ServiceType left join service{$this->suffix}.staff as t on t.StaffID=a.Staff01 left join security{$this->suffix}.sec_city as b on e.Text=b.code where e.EnumType=8 and a.Status=3 and e.Text in ({$data['city']}) and a.JobDate BETWEEN '{$start_date}' AND '{$end_date}'" .$staff_sql."GROUP BY staff_id ORDER BY {$rangDate} DESC";
 
-var_dump($sql);exit();
 
         $ret['data'] = Yii::app()->db->createCommand($sql)->queryAll();
         /*$sql_count = "SELECT COUNT(1) AS value , FinishTime - StartTime AS service_time,
