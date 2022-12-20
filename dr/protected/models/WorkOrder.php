@@ -206,7 +206,7 @@ FROM
 WHERE
 	JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
 	AND b.EnumID IN({$build_ret2[0]['citys']}) AND a.Staff01 !='' AND a.`Status` = 3
-GROUP BY staff_id,b.EnumID ORDER BY {$rangDate} DESC";
+GROUP BY staff_id ORDER BY {$rangDate} DESC";
 
 
         $ret['data'] = Yii::app()->db->createCommand($sql)->queryAll();
