@@ -165,31 +165,31 @@ class WorkOrder extends CListPageModel
 
         }
 
-
-        $build_sql1 = "SELECT
-   e.Text as area_code
-FROM
- service{$this->suffix}.officecity AS o
-   LEFT JOIN service{$this->suffix}.enums AS e ON e.EnumID = o.Office
-   LEFT JOIN security{$this->suffix}.sec_city AS b ON e.Text = b.CODE 
-WHERE
-   e.EnumType = 8 
-   AND o.City = {$data['city']}";
-        $build_ret1 = Yii::app()->db->createCommand($build_sql1)->queryAll();
-//        var_dump($build_ret1[0]['area_code']);exit();
-
-        $build_sql2 = "SELECT
-   GROUP_CONCAT(City) as citys
-FROM
- service{$this->suffix}.officecity AS o
-   LEFT JOIN service{$this->suffix}.enums AS e ON e.EnumID = o.Office
-   LEFT JOIN security{$this->suffix}.sec_city AS b ON e.Text = b.CODE 
-WHERE
-   e.EnumType = 8 
-   AND e.Text IN('{$build_ret1[0]['area_code']}') ";
-
-        $build_ret2 = Yii::app()->db->createCommand($build_sql2)->queryAll();
-//        var_dump($build_ret2);exit();
+//
+//        $build_sql1 = "SELECT
+//   e.Text as area_code
+//FROM
+// service{$this->suffix}.officecity AS o
+//   LEFT JOIN service{$this->suffix}.enums AS e ON e.EnumID = o.Office
+//   LEFT JOIN security{$this->suffix}.sec_city AS b ON e.Text = b.CODE
+//WHERE
+//   e.EnumType = 8
+//   AND o.City = {$data['city']}";
+//        $build_ret1 = Yii::app()->db->createCommand($build_sql1)->queryAll();
+////        var_dump($build_ret1[0]['area_code']);exit();
+//
+//        $build_sql2 = "SELECT
+//   GROUP_CONCAT(City) as citys
+//FROM
+// service{$this->suffix}.officecity AS o
+//   LEFT JOIN service{$this->suffix}.enums AS e ON e.EnumID = o.Office
+//   LEFT JOIN security{$this->suffix}.sec_city AS b ON e.Text = b.CODE
+//WHERE
+//   e.EnumType = 8
+//   AND e.Text IN('{$build_ret1[0]['area_code']}') ";
+//
+//        $build_ret2 = Yii::app()->db->createCommand($build_sql2)->queryAll();
+////        var_dump($build_ret2);exit();
 
 
         $sql = "SELECT 
@@ -205,7 +205,7 @@ FROM
 	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
 WHERE
 	JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
-	AND b.EnumID IN({$build_ret2[0]['citys']}) AND a.Staff01 !='' AND a.`Status` = 3
+	AND b.EnumID IN({$data['city']}) AND a.Staff01 !='' AND a.`Status` = 3
 GROUP BY staff_id ORDER BY {$rangDate} DESC";
 
 
@@ -217,7 +217,7 @@ FROM {$table} a
 	LEFT JOIN service{$this->suffix}.enums b ON b.EnumID = a.City
 	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
 WHERE JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
-	AND b.EnumID  IN({$build_ret2[0]['citys']}) AND a.Staff01 !='' AND a.`Status` = 3
+	AND b.EnumID  IN({$data['city']}) AND a.Staff01 !='' AND a.`Status` = 3
 GROUP BY scene";
 //        var_dump($sql_count);exit();
         $ret['count'] = Yii::app()->db->createCommand($sql_count)->queryAll();
