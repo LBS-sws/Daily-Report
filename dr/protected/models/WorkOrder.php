@@ -205,7 +205,7 @@ FROM
 	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
 WHERE
 	JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
-	AND b.EnumID IN({$data['city']}) AND a.Staff01 !='' AND a.`Status` = 3
+	AND b.EnumID IN({$data['city']}) AND a.Staff01 !='' AND a.`Status` = 3 AND b.EnumType = 1
 GROUP BY staff_id ORDER BY {$rangDate} DESC";
 
 
@@ -217,7 +217,7 @@ FROM {$table} a
 	LEFT JOIN service{$this->suffix}.enums b ON b.EnumID = a.City
 	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
 WHERE JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
-	AND b.EnumID  IN({$data['city']}) AND a.Staff01 !='' AND a.`Status` = 3
+	AND b.EnumID  IN({$data['city']}) AND a.Staff01 !='' AND a.`Status` = 3 AND b.EnumType = 1
 GROUP BY scene";
 //        var_dump($sql_count);exit();
         $ret['count'] = Yii::app()->db->createCommand($sql_count)->queryAll();
