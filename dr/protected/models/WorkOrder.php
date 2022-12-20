@@ -218,7 +218,7 @@ FROM {$table} a
 	 JOIN service{$this->suffix}.staff c ON c.StaffID = a.Staff01
 WHERE JobDate BETWEEN '{$start_date}' AND '{$end_date}'" . $staff_sql . "
 	AND b.EnumID  IN({$build_ret2[0]['citys']}) AND a.Staff01 !='' AND a.`Status` = 3
-GROUP BY scene,b.EnumID";
+GROUP BY scene";
 //        var_dump($sql_count);exit();
         $ret['count'] = Yii::app()->db->createCommand($sql_count)->queryAll();
         return $ret;
