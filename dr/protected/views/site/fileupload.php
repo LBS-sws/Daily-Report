@@ -4,7 +4,10 @@ if (isset($model->uploadMaxSize) && $model->uploadMaxSize > 0) $doc->docMaxSize 
 $doc->masterId = $model->docMasterId[strtolower($doc->docType)];
 
 $ftrbtn = array();
-if (!$ronly) {$ftrbtn[] = TbHtml::button(Yii::t('dialog','Upload'), array('id'=>$doc->uploadButtonName,));}
+if (!$ronly) {
+	$ftnbtn[] = '<span class="text-red">( 提示: 文件大小不能超过10MB )</span>';
+	$ftrbtn[] = TbHtml::button(Yii::t('dialog','Upload'), array('id'=>$doc->uploadButtonName,));
+}
 $ftrbtn[] = TbHtml::button(Yii::t('dialog','Close'), array('id'=>$doc->closeButtonName,'data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY));
 
 $this->beginWidget('bootstrap.widgets.TbModal', array(

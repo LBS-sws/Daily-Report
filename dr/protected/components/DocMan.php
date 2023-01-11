@@ -22,7 +22,7 @@ class DocMan {
     public $widgetName = 'fileupload';
 
     public $imageMaxSize = 512000;
-    public $docMaxSize = 8388608;
+    public $docMaxSize = 10485760;
 
     protected $baseDir;
 
