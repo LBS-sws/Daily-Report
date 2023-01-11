@@ -5,7 +5,7 @@ $doc->masterId = $model->docMasterId[strtolower($doc->docType)];
 
 $ftrbtn = array();
 if (!$ronly) {
-	$ftnbtn[] = '<span class="text-red">( 提示: 文件大小不能超过10MB )</span>';
+	$ftrbtn[] = '<span class="text-red">( 提示: 文件大小不能超过10MB )</span>';
 	$ftrbtn[] = TbHtml::button(Yii::t('dialog','Upload'), array('id'=>$doc->uploadButtonName,));
 }
 $ftrbtn[] = TbHtml::button(Yii::t('dialog','Close'), array('id'=>$doc->closeButtonName,'data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY));
