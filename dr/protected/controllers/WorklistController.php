@@ -19,11 +19,11 @@ class WorklistController extends Controller
     {
         return array(
             array('allow',
-                'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export'),
+                'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export', 'test'),
                 'expression' => array('WorklistController', 'allowReadWrite'),
             ),
             array('allow',
-                'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export'),
+                'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export', 'test'),
                 'expression' => array('WorklistController', 'allowReadOnly'),
             ),
 //            array('deny',  // deny all users
@@ -32,11 +32,12 @@ class WorklistController extends Controller
         );
     }
 
-    public function actionTest($fid, $test)
+    public function actionTest()
     {
-        var_dump($fid);
-        var_dump($test);
-
+        $session = Yii::app()->session;
+        $model = new City();
+        $res =  $model->getDescendantList('HXHB');
+        var_dump($res);
     }
 
     public function actionStaffEx($search, $incity = '')
@@ -84,13 +85,13 @@ class WorklistController extends Controller
      * */
     public function actionArea()
     {
+        $session = Yii::app()->session;
         $model = new WorkOrder();
-        $res = $model->retrieveData();
+        $res = $model->retrieveData($session['city_allow']);
         if ($res) {
             $this->json($res);
         }
         $this->json([], 'error', 0);
-
     }
 
     /**
@@ -99,10 +100,13 @@ class WorklistController extends Controller
      * */
     public function actionStaff()
     {
-        $city = isset($_GET['city']) ? $_GET['city'] : '200';
+        $city = isset($_GET['city']) ? $_GET['city'] : 0;
         $model = new WorkOrder();
-        $res = $model->getStaff($city);
-        if ($res) {
+        $cityModel = new City();
+        $citys =  $cityModel->getDescendantList($city);
+        $city_ret = !empty($citys)?$citys:$city;
+        $res = $model->getStaff($city_ret);
+        if ($res && $city) {
             $this->json($res);
         }
         $this->json([], 'error', 0);
