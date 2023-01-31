@@ -28,7 +28,9 @@ class QcForm extends CFormModel
 	public $new_form = false;
 	public $qc_score;
 	public $lcu;
+	public $luu;
 	public $lcd;
+	public $lud;
 
 	public $docType = 'QC';
 	public $files;
@@ -333,7 +335,9 @@ class QcForm extends CFormModel
 			$this->remarks = $row['remarks'];
 			$this->service_type = $row['service_type'];
 			$this->lcu = $row['lcu'];
+			$this->luu = $row['luu'];
 			$this->lcd = $row['lcd'];
+			$this->lud = $row['lud'];
 			$this->no_of_attm['qc'] = $row['no_of_attm'];
 			$this->no_of_attm['qcphoto'] = $row['no_of_photo'];
 			
