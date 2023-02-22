@@ -14,7 +14,7 @@ class RptSummarySC extends ReportData2 {
 		    $where = "and a.id<0";
         }
         $rows = Yii::app()->db->createCommand()
-            ->select("a.status,a.nature_type,a.paid_type,a.amt_paid,a.ctrt_period,a.b4_paid_type,a.b4_amt_paid
+            ->select("a.status,a.city,a.nature_type,a.paid_type,a.amt_paid,a.ctrt_period,a.b4_paid_type,a.b4_amt_paid
             ,b.region,b.name as city_name,c.name as region_name")
             ->from("swo_service a")
             ->leftJoin("security{$suffix}.sec_city b","a.city=b.code")
@@ -25,6 +25,8 @@ class RptSummarySC extends ReportData2 {
         $data = array();
 		if($rows){
             foreach ($rows as $row) {
+                $row["region"] = $this->strUnsetNumber($row["region"]);
+                $row["region_name"] = $this->strUnsetNumber($row["region_name"]);
                 $row["nature_type"] = is_numeric($row["nature_type"])?intval($row["nature_type"]):0;
                 $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
                 $row["ctrt_period"] = is_numeric($row["ctrt_period"])?floatval($row["ctrt_period"]):0;
@@ -91,5 +93,19 @@ class RptSummarySC extends ReportData2 {
         $this->data = $data;
 		return true;
 	}
+
+	protected function strUnsetNumber($str){
+	    if(!empty($str)){
+            $arr = str_split($str,1);
+            foreach ($arr as $key=>$value){
+                if(is_numeric($value)){
+                    unset($arr[$key]);
+                }
+            }
+            return implode("",$arr);
+        }else{
+	        return "none";
+        }
+    }
 }
 ?>
