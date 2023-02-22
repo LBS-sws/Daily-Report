@@ -366,12 +366,14 @@ EOF;
 							'sublinedefinition'=>$model->subsections(),
 							'reportstructure'=>$model->report_structure(),
 							'data'=>$model->data,
+							'rpt_id'=>$rpt_id,
 						);
 				}
 				$sheet = 0;
 				$excel = new MyExcel(); 
 				$excel->init();
 				foreach ($rptdata as $report) {
+					$excel->SetReportId($report['rpt_id']);
 					$excel->SetHeaderTitle($report['headertitle']);
 					$excel->SetHeaderString($report['headerstring']);
 
@@ -419,6 +421,7 @@ EOF;
 			case 'RptCustsuspendID': $model = new RptCustsuspendID(); break;
 			case 'RptCustresumeID': $model = new RptCustresumeID(); break;
 			case 'RptCustterminateID': $model = new RptCustterminateID(); break;
+			case 'RptSummarySC': $model = new RptSummarySC(); break;
 		}
 		return $model;
 	}

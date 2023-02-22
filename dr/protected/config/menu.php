@@ -65,6 +65,10 @@ return array(
 		'access'=>'B',
 		'icon'=>'fa-file-text-o',
 		'items'=>array(
+			'Summary Service Cases'=>array( //客戶服務匯總
+				'access'=>'B30',
+				'url'=>'/report/summarySC',
+			),
 			'Complaint Cases'=>array(
 				'access'=>'B01',
 				'url'=>'/report/complaint',
