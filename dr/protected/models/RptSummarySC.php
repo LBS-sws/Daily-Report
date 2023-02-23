@@ -78,12 +78,14 @@ class RptSummarySC extends ReportData2 {
                         $data[$region]["list"][$city]["num_update"]+=($money-$b4_money);
                         break;
                     case "S"://暂停
+                        $money*=-1;
                         $data[$region]["list"][$city]["num_pause"]+=$money;
                         break;
                     case "R"://恢复
                         $data[$region]["list"][$city]["num_restore"]+=$money;
                         break;
                     case "T"://终止
+                        $money*=-1;
                         $data[$region]["list"][$city]["num_stop"]+=$money;
                         break;
                 }

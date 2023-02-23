@@ -515,7 +515,7 @@ class ReportController extends Controller
 	public function actionSummarySC() {
 		$this->function_id = 'B30';
 		Yii::app()->session['active_func'] = $this->function_id;
-        $this->showUI('summarySC','Summary Service Cases Report');
+        $this->showUI('summarySC','Summary Service Cases Report', 'start_dt,end_dt');
 		//$this->showUIFbList('summarySC', 'Summary Service Cases Report', 'start_dt,end_dt,format');
 	}
 

@@ -251,7 +251,7 @@ class MyExcel {
                 if(!empty($regionList["list"])){
                     foreach ($regionList["list"] as $cityList){
                         foreach ($bodyKey as $key=>$keyStr){
-                            if($key=="num_growth"){//净增长
+                            if($keyStr=="num_growth"){//净增长
                                 $text = "=SUM(B{$this->current_row}:F{$this->current_row})";
                             }else{
                                 $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:0;
