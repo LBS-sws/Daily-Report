@@ -191,7 +191,7 @@ class ReportController extends Controller
 				'RptCustsuspendID'=>'ID-Customer-Suspended',
 				'RptCustresumeID'=>'ID-Customer-Resume',
 				'RptCustterminateID'=>'ID-Customer-Terminate',
-				'RptSummarySC'=>'Summary Service Cases Report',
+				//'RptSummarySC'=>'Summary Service Cases Report',
 			);
 		$criteria->name = 'All Daily Reports';
 		$criteria->type = '?';

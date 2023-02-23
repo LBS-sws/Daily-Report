@@ -19,7 +19,7 @@ class RptSummarySC extends ReportData2 {
             ->from("swo_service a")
             ->leftJoin("security{$suffix}.sec_city b","a.city=b.code")
             ->leftJoin("security{$suffix}.sec_city c","b.region=c.code")
-            ->where("a.id>0 {$where}")
+            ->where("a.city!='MO' {$where}")
             ->order("a.city")
             ->queryAll();
         $data = array();
