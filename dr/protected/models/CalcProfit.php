@@ -48,7 +48,7 @@ class CalcProfit extends Calculation {
 		
 		$sql = "select a.city, sum(account$suffix.TransAmountByLCDWoIntTrf('IN',b.id,a.city,'$month_start_dt','$end_dt')) as total
 				from swo_monthly_hdr a, account$suffix.acc_account b
-				where a.year_no=$year and a.month_no=$month and (a.city=b.city or a.city='99999')
+				where a.year_no=$year and a.month_no=$month and (a.city=b.city or b.city='99999')
 				group by a.city
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
