@@ -59,6 +59,10 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
 			<?php echo $form->hiddenField($model, 'new_form'); ?>
+			<?php echo $form->hiddenField($model, 'lcu'); ?>
+			<?php echo $form->hiddenField($model, 'luu'); ?>
+			<?php echo $form->hiddenField($model, 'lcd'); ?>
+			<?php echo $form->hiddenField($model, 'lud'); ?>
 
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'entry_dt',array('class'=>"col-sm-2 control-label")); ?>

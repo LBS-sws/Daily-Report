@@ -6,9 +6,9 @@ $this->beginWidget('bootstrap.widgets.TbModal', array(
 ?>
 
 	<div class="form-group">
-		<div class="col-sm-11">
+		<div class="col-sm-12">
 <?php
-			echo CHtml::image(Yii::app()->request->baseUrl.'/images/help01.png','image',array('width'=>550,'height'=>400,'class'=>'responsive-image'));
+			echo CHtml::image(Yii::app()->request->baseUrl.'/images/help02.png','image',array('width'=>'100%','height'=>'auto','class'=>'responsive-image'));
 ?>
 		</div>
 	</div>

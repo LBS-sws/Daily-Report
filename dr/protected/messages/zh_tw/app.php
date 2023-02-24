@@ -131,5 +131,6 @@ return array(
     'ID Sales Commission history'=>'ID销售提成查询',
     'City Ranking list'=>'地方老總排行榜',
     'Months Ranking list'=>'總經理綜合表現排行榜',
+    'Summary Service Cases'=>'生意額數據匯總表',
 );
 ?>

@@ -80,6 +80,10 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<?php echo $form->hiddenField($model, 'team'); ?>
 			<?php echo $form->hiddenField($model, 'month'); ?>
 			<?php echo $form->hiddenField($model, 'new_form'); ?>
+            <?php echo $form->hiddenField($model, 'lcu'); ?>
+            <?php echo $form->hiddenField($model, 'luu'); ?>
+            <?php echo $form->hiddenField($model, 'lcd'); ?>
+            <?php echo $form->hiddenField($model, 'lud'); ?>
 			<?php echo TbHtml::hiddenField('QcForm[info][sign_cust]', $model->info['sign_cust']); ?>
 			<?php echo TbHtml::hiddenField('QcForm[info][sign_tech]', $model->info['sign_tech']); ?>
 			<?php echo TbHtml::hiddenField('QcForm[info][sign_qc]', $model->info['sign_qc']); ?>
