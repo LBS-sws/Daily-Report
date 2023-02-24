@@ -92,6 +92,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type Form';
             <div class="form-group">
                 <div class="col-sm-10 col-lg-offset-2">
                     <p class="form-control-static text-danger">“非一次性服务”时将在会计系统的“销售提成计算”参与计算“服务奖励点”</p>
+                    <p class="form-control-static text-danger">产品：报表类别（INV）并且服务类型（一次性服务）。被“生意额数据汇总表”使用</p>
                 </div>
             </div>
 
