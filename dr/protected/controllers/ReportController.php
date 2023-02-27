@@ -53,7 +53,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('monthly'),'expression'=>array('ReportController','allowMonthly')),
 			array('allow','actions'=>array('feedbackstat'),'expression'=>array('ReportController','allowFeedbackstat')),
 			array('allow','actions'=>array('feedback'),'expression'=>array('ReportController','allowFeedback')),
-			array('allow','actions'=>array('summarySC'),'expression'=>array('ReportController','allowSummarySC')),
+			array('allow','actions'=>array('summarySC','textCURL'),'expression'=>array('ReportController','allowSummarySC')),
 			array('allow',
 				'actions'=>array('generate'),
 				'expression'=>array('ReportController','allowReadOnly'),
@@ -62,6 +62,12 @@ class ReportController extends Controller
 				'users'=>array('*'),
 			),
 		);
+	}
+
+	public function actionTextCURL(){
+        $json = Invoice::getInvData("2023/02/01","2023/02/31");
+        var_dump($json);
+        die();
 	}
 
 	public static function allowReadOnly() {
