@@ -4,15 +4,17 @@ class RptSummarySC extends ReportData2 {
 //		$city = Yii::app()->user->city();
         $suffix = Yii::app()->params['envSuffix'];
         $where = '';
-		if (isset($this->criteria)) {
-			if (isset($this->criteria->start_dt))
-				$where .= " and "."a.status_dt>='".General::toDate($this->criteria->start_dt)." 00:00:00'";
-			if (isset($this->criteria->end_dt))
-				$where .= " and "."a.status_dt<='".General::toDate($this->criteria->end_dt)." 23:59:59'";
-		}
-		if(empty($where)){
-		    $where = "and a.id<0";
+        if(!isset($this->criteria->start_dt)){
+            $this->criteria->start_dt = date("Y/m/01");
         }
+        if(!isset($this->criteria->end_dt)){
+            $this->criteria->end_dt = date("Y/m/31");
+        }
+        $this->criteria->start_dt = General::toDate($this->criteria->start_dt);
+        $this->criteria->end_dt = General::toDate($this->criteria->end_dt);
+        $where .= " and "."a.status_dt>='{$this->criteria->start_dt} 00:00:00'";
+        $where .= " and "."a.status_dt<='{$this->criteria->end_dt} 23:59:59'";
+
         //rpt_cat='INV' and single=1的客户服务时产品，所以需要筛选出去
         $rows = Yii::app()->db->createCommand()
             ->select("a.status,a.city,a.nature_type,a.paid_type,a.amt_paid,a.ctrt_period,a.b4_paid_type,a.b4_amt_paid
@@ -25,6 +27,7 @@ class RptSummarySC extends ReportData2 {
             ->order("a.city")
             ->queryAll();
         $data = array();
+        $cityList = array();
 		if($rows){
             foreach ($rows as $row) {
                 $row["region"] = $this->strUnsetNumber($row["region"]);
@@ -43,10 +46,12 @@ class RptSummarySC extends ReportData2 {
                     );
                 }
                 if(!key_exists($city,$data[$region]["list"])){
+                    $cityList[$city] = $region;
                     $data[$region]["list"][$city]=array(
                         "city"=>$city,
                         "city_name"=>$row["city_name"],
                         "num_new"=>0,//新增
+                        "u_invoice_sum"=>0,//新增(U系统同步数据)
                         "num_stop"=>0,//终止服务
                         "num_restore"=>0,//恢复服务
                         "num_pause"=>0,//暂停服务
@@ -56,6 +61,8 @@ class RptSummarySC extends ReportData2 {
                         "num_short"=>0,//短约
                         "num_cate"=>0,//餐饮客户
                         "num_not_cate"=>0,//非餐饮客户
+                        "u_num_cate"=>0,//餐饮客户(U系统同步数据)
+                        "u_num_not_cate"=>0,//非餐饮客户(U系统同步数据)
                     );
                 }
                 if($row["paid_type"]=="M"){//月金额
@@ -94,9 +101,34 @@ class RptSummarySC extends ReportData2 {
 
             }
         }
+
+        //獲取U系統的數據
+        $this->getUData($data,$cityList);
+
         $this->data = $data;
 		return true;
 	}
+
+    //獲取U系統的數據
+	protected function getUData(&$data,$cityList){
+        $json = Invoice::getInvData($this->criteria->start_dt,$this->criteria->end_dt);
+        if($json["message"]==="Success"){
+            $jsonData = $json["data"];
+            foreach ($jsonData as $row){
+                $city = $row["city"];
+                $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
+                if(key_exists($city,$cityList)){
+                    $region = $cityList[$city];
+                    $data[$region]["list"][$city]["u_invoice_sum"]+=$money;
+                    if($row["customer_type"]==="餐饮类"){
+                        $data[$region]["list"][$city]["u_num_cate"]+=$money;
+                    }else{
+                        $data[$region]["list"][$city]["u_num_not_cate"]+=$money;
+                    }
+                }
+            }
+        }
+    }
 
 	protected function strUnsetNumber($str){
 	    if(!empty($str)){

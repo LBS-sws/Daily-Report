@@ -227,21 +227,22 @@ class MyExcel {
 	protected function outDetailForSC($data) {
 	    $countRowArr = array();
         $this->setCellValue("A",$this->current_row,"签单情况");
-        $this->objPHPExcel->getActiveSheet()->mergeCells("A".$this->current_row.':'."G".$this->current_row);
-        $this->setCellValue("H",$this->current_row,"新增客户");
-        $this->objPHPExcel->getActiveSheet()->mergeCells("H".$this->current_row.':'."K".$this->current_row);
-        $this->setHeaderStyleTwo("A{$this->current_row}:G{$this->current_row}","D8E4BC");
-        $this->setHeaderStyleTwo("H{$this->current_row}:K{$this->current_row}","C5D9F1");
+        $this->objPHPExcel->getActiveSheet()->mergeCells("A".$this->current_row.':'."H".$this->current_row);
+        $this->setCellValue("I",$this->current_row,"新增客户（服务）");
+        $this->objPHPExcel->getActiveSheet()->mergeCells("I".$this->current_row.':'."L".$this->current_row);
+        $this->setCellValue("M",$this->current_row,"新增客户（产品）");
+        $this->objPHPExcel->getActiveSheet()->mergeCells("M".$this->current_row.':'."N".$this->current_row);
+        $this->setHeaderStyleTwo("A{$this->current_row}:H".($this->current_row+1),"D8E4BC");
+        $this->setHeaderStyleTwo("I{$this->current_row}:L".($this->current_row+1),"C5D9F1");
+        $this->setHeaderStyleTwo("M{$this->current_row}:N".($this->current_row+1),"F8E57F");
         $this->current_row++;
-        $this->setHeaderStyleTwo("A{$this->current_row}:G{$this->current_row}","D8E4BC");
-        $this->setHeaderStyleTwo("H{$this->current_row}:K{$this->current_row}","C5D9F1");
-        $heardArr = array("RMB","新增","终止服务","恢复服务","暂停服务","更改服务","净增长","长约（>=12月）","短约","餐饮客户","非餐饮客户");
+        $heardArr = array("RMB","新增服务","新增（产品）","终止服务","恢复服务","暂停服务","更改服务","净增长","长约（>=12月）","短约","餐饮客户","非餐饮客户","餐饮客户","非餐饮客户");
         foreach ($heardArr as $key=>$heardStr){
             $this->fillHeaderCell($key, $this->current_row, $heardStr,17);
         }
         $bodyKey = array(
-            "city_name","num_new","num_stop","num_restore","num_pause","num_update",
-            "num_growth","num_long","num_short","num_cate","num_not_cate"
+            "city_name","num_new","u_invoice_sum","num_stop","num_restore","num_pause","num_update",
+            "num_growth","num_long","num_short","num_cate","num_not_cate","u_num_cate","u_num_not_cate"
         );
         if(!empty($data)){
             foreach ($data as $regionList){
@@ -252,7 +253,7 @@ class MyExcel {
                     foreach ($regionList["list"] as $cityList){
                         foreach ($bodyKey as $key=>$keyStr){
                             if($keyStr=="num_growth"){//净增长
-                                $text = "=SUM(B{$this->current_row}:F{$this->current_row})";
+                                $text = "=SUM(B{$this->current_row}:G{$this->current_row})";
                             }else{
                                 $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:0;
                             }
@@ -273,7 +274,7 @@ class MyExcel {
                             ->setBold(true);
                     }
                     $this->objPHPExcel->getActiveSheet()
-                        ->getStyle("A{$this->current_row}:K{$this->current_row}")
+                        ->getStyle("A{$this->current_row}:N{$this->current_row}")
                         ->applyFromArray(
                             array(
                                 'borders' => array(
@@ -307,7 +308,7 @@ class MyExcel {
                     ->setBold(true);
             }
             $this->objPHPExcel->getActiveSheet()
-                ->getStyle("A{$this->current_row}:K{$this->current_row}")
+                ->getStyle("A{$this->current_row}:N{$this->current_row}")
                 ->applyFromArray(
                     array(
                         'borders' => array(
