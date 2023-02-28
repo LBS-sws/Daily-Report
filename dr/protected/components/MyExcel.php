@@ -325,23 +325,23 @@ class MyExcel {
                         )
                     )
                 );
-            //澳門單獨顯示
-            $this->current_row++;
-            $this->current_row++;
-            $this->current_row++;
-            if(!empty($moData)) {
-                foreach ($moData as $cityList) {
-                    foreach ($bodyKey as $key => $keyStr) {
-                        if ($keyStr == "num_growth") {//净增长
-                            $text = "=SUM(B{$this->current_row}:G{$this->current_row})";
-                        } else {
-                            $text = key_exists($keyStr, $cityList) ? $cityList[$keyStr] : 0;
-                        }
-                        $this->objPHPExcel->getActiveSheet()
-                            ->setCellValueByColumnAndRow($key, $this->current_row, $text);
+        }
+        //澳門單獨顯示
+        $this->current_row++;
+        $this->current_row++;
+        $this->current_row++;
+        if(!empty($moData)) {
+            foreach ($moData as $cityList) {
+                foreach ($bodyKey as $key => $keyStr) {
+                    if ($keyStr == "num_growth") {//净增长
+                        $text = "=SUM(B{$this->current_row}:G{$this->current_row})";
+                    } else {
+                        $text = key_exists($keyStr, $cityList) ? $cityList[$keyStr] : 0;
                     }
-                    $this->current_row++;
+                    $this->objPHPExcel->getActiveSheet()
+                        ->setCellValueByColumnAndRow($key, $this->current_row, $text);
                 }
+                $this->current_row++;
             }
         }
     }
