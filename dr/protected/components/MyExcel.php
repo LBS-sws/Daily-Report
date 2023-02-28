@@ -225,6 +225,12 @@ class MyExcel {
 	}
 	
 	protected function outDetailForSC($data) {
+	    if(key_exists("MO",$data)){//是否有澳門地區的數據
+            $moData=$data["MO"]["list"];
+            unset($data["MO"]);
+        }else{
+	        $moData = array();
+        }
 	    $countRowArr = array();
         $this->setCellValue("A",$this->current_row,"签单情况");
         $this->objPHPExcel->getActiveSheet()->mergeCells("A".$this->current_row.':'."H".$this->current_row);
@@ -236,6 +242,7 @@ class MyExcel {
         $this->setHeaderStyleTwo("I{$this->current_row}:L".($this->current_row+1),"C5D9F1");
         $this->setHeaderStyleTwo("M{$this->current_row}:N".($this->current_row+1),"F8E57F");
         $this->current_row++;
+        $this->objPHPExcel->getActiveSheet()->freezePane('B7');
         $heardArr = array("RMB","新增服务","新增（产品）","终止服务","恢复服务","暂停服务","更改服务","净增长","长约（>=12月）","短约","餐饮客户","非餐饮客户","餐饮客户","非餐饮客户");
         foreach ($heardArr as $key=>$heardStr){
             $this->fillHeaderCell($key, $this->current_row, $heardStr,17);
@@ -318,6 +325,24 @@ class MyExcel {
                         )
                     )
                 );
+            //澳門單獨顯示
+            $this->current_row++;
+            $this->current_row++;
+            $this->current_row++;
+            if(!empty($moData)) {
+                foreach ($moData as $cityList) {
+                    foreach ($bodyKey as $key => $keyStr) {
+                        if ($keyStr == "num_growth") {//净增长
+                            $text = "=SUM(B{$this->current_row}:G{$this->current_row})";
+                        } else {
+                            $text = key_exists($keyStr, $cityList) ? $cityList[$keyStr] : 0;
+                        }
+                        $this->objPHPExcel->getActiveSheet()
+                            ->setCellValueByColumnAndRow($key, $this->current_row, $text);
+                    }
+                    $this->current_row++;
+                }
+            }
         }
     }
 

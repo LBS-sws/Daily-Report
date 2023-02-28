@@ -23,7 +23,7 @@ class RptSummarySC extends ReportData2 {
             ->leftJoin("swo_customer_type f","a.cust_type=f.id")
             ->leftJoin("security{$suffix}.sec_city b","a.city=b.code")
             ->leftJoin("security{$suffix}.sec_city c","b.region=c.code")
-            ->where("a.city not in ('MO','ZY') and f.rpt_cat!='INV' and f.single!=1 {$where}")
+            ->where("a.city not in ('ZY') and f.rpt_cat!='INV' and f.single!=1 {$where}")
             ->order("a.city")
             ->queryAll();
         $data = array();
@@ -38,6 +38,7 @@ class RptSummarySC extends ReportData2 {
                 $row["b4_amt_paid"] = is_numeric($row["b4_amt_paid"])?floatval($row["b4_amt_paid"]):0;
                 $region = empty($row["region"])?"none":$row["region"];
                 $city = empty($row["city"])?"none":$row["city"];
+                $region = $city==="MO"?"MO":$region;//澳門地區單獨顯示
                 if(!key_exists($region,$data)){
                     $data[$region]=array(
                         "region"=>$region,
