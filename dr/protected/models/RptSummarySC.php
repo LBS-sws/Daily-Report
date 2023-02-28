@@ -15,21 +15,24 @@ class RptSummarySC extends ReportData2 {
         $where .= " and "."a.status_dt>='{$this->criteria->start_dt} 00:00:00'";
         $where .= " and "."a.status_dt<='{$this->criteria->end_dt} 23:59:59'";
 
-        //rpt_cat='INV' and single=1的客户服务时产品，所以需要筛选出去
         $rows = Yii::app()->db->createCommand()
-            ->select("a.status,a.city,a.nature_type,a.paid_type,a.amt_paid,a.ctrt_period,a.b4_paid_type,a.b4_amt_paid
+            ->select("a.status,f.rpt_cat,f.single,a.city,a.nature_type,a.paid_type,a.amt_paid,a.ctrt_period,a.b4_paid_type,a.b4_amt_paid
             ,b.region,b.name as city_name,c.name as region_name")
             ->from("swo_service a")
             ->leftJoin("swo_customer_type f","a.cust_type=f.id")
             ->leftJoin("security{$suffix}.sec_city b","a.city=b.code")
             ->leftJoin("security{$suffix}.sec_city c","b.region=c.code")
-            ->where("a.city not in ('ZY') and f.rpt_cat!='INV' and f.single!=1 {$where}")
+            ->where("a.city not in ('ZY') {$where}")
             ->order("a.city")
             ->queryAll();
         $data = array();
         $cityList = array();
 		if($rows){
             foreach ($rows as $row) {
+                //rpt_cat='INV' and single=1的客户服务是产品，所以需要筛选出去
+                if($row["rpt_cat"]==="INV"&&intval($row["single"])===1){
+                    continue;
+                }
                 $row["region"] = $this->strUnsetNumber($row["region"]);
                 $row["region_name"] = $this->strUnsetNumber($row["region_name"]);
                 $row["nature_type"] = is_numeric($row["nature_type"])?intval($row["nature_type"]):0;
