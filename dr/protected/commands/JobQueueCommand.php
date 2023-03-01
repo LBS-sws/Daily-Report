@@ -422,6 +422,7 @@ EOF;
 			case 'RptCustresumeID': $model = new RptCustresumeID(); break;
 			case 'RptCustterminateID': $model = new RptCustterminateID(); break;
 			case 'RptSummarySC': $model = new RptSummarySC(); break;
+			case 'RptActiveService': $model = new RptActiveService(); break;
 		}
 		return $model;
 	}
