@@ -17,7 +17,7 @@ class RptActiveService extends ReportData2 {
 	public function retrieveData() {
 		$suffix = Yii::app()->params['envSuffix'];
 		$targetDate = isset($this->criteria) && isset($this->criteria->target_dt)
-			? General::toDate($this->criteria->target_dt)." 00:00:00";
+			? General::toDate($this->criteria->target_dt)." 23:59:59";
 			: date('Y-m-d')." 23:59:59";
 		$sql = "select 
 				z3.name as city_name, 
@@ -33,7 +33,7 @@ class RptActiveService extends ReportData2 {
 				select a.city, b.code, a.cust_type, max(a.status_dt) as max_dt
 				from swo_service a, swo_company b
 				where a.city=b.city and substring(a.company_name, 1, char_length(b.code))=b.code
-				and a.status_dt < '$targetDate'
+				and a.status_dt <= '$targetDate'
 				group by a.city, b.code, a.cust_type
 			) x
 			inner join swo_service y on y.city=x.city and substring(y.company_name, 1, char_length(x.code))=x.code and x.max_dt=y.status_dt
