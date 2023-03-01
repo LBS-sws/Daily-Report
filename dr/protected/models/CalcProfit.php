@@ -43,8 +43,8 @@ class CalcProfit extends Calculation {
 		$rtn = array();
 		
 		$suffix = Yii::app()->params['envSuffix'];
-		$month_start_dt = date("Y-m-d",strtotime("$year-$month-1"));
-		$end_dt = date("Y-m-t",strtotime("$year-$month-1"));
+		$month_start_dt = date("Y-m-d",strtotime("$year-$month-1")).' 00:00:00';
+		$end_dt = date("Y-m-t",strtotime("$year-$month-1")).' 23:59:59';
 		
 		$sql = "select a.city, sum(account$suffix.TransAmountByLCDWoIntTrf('IN',b.id,a.city,'$month_start_dt','$end_dt')) as total
 				from swo_monthly_hdr a, account$suffix.acc_account b
