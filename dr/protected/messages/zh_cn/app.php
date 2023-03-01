@@ -138,5 +138,6 @@ return array(
 	'WorkOrder' => '工作单统计',
 	'LBS WorkOrder'=>'工作单报表',
 	'Summary Service Cases'=>'生意额数据汇总表',
+	'Active Contract'=>'生效中合约报表',
 );
 ?>

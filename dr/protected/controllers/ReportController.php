@@ -54,6 +54,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('feedbackstat'),'expression'=>array('ReportController','allowFeedbackstat')),
 			array('allow','actions'=>array('feedback'),'expression'=>array('ReportController','allowFeedback')),
 			array('allow','actions'=>array('summarySC','textCURL'),'expression'=>array('ReportController','allowSummarySC')),
+			array('allow','actions'=>array('activeService'),'expression'=>array('ReportController','allowActiveService')),
 			array('allow',
 				'actions'=>array('generate'),
 				'expression'=>array('ReportController','allowReadOnly'),
@@ -527,6 +528,23 @@ class ReportController extends Controller
 
     protected function genSummarySC($criteria) {
         $this->addQueueItem('RptSummarySC', $criteria, 'A4');
+        Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+    }
+
+// Report: ActiveService
+	protected static function allowActiveService() {
+		return Yii::app()->user->validFunction('B31');
+	}
+	
+	public function actionActiveService() {
+		$this->function_id = 'B31';
+		Yii::app()->session['active_func'] = $this->function_id;
+        $this->showUI('activeService','Active Contract', 'target_dt');
+		//$this->showUIFbList('summarySC', 'Summary Service Cases Report', 'start_dt,end_dt,format');
+	}
+
+    protected function genActiveService($criteria) {
+        $this->addQueueItem('RptActiveService', $criteria, 'A4');
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
 

@@ -26,6 +26,7 @@ return array(
 	'ID-Customer-Amendment'=>'ID更改服务客户',
 	'ID-Customer-Terminate'=>'ID终止服务客户',
 	'Summary Service Cases Report'=>'生意额数据汇总表',
+	'Active Contract Report'=>'生效中合约报表',
 
 	'City'=>'地区',
 	'Type'=>'类别',

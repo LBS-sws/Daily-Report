@@ -161,6 +161,10 @@ return array(
 //				'access'=>'B14',
 //				'url'=>'/report/monthly',
 //			),
+			'Active Contract'=>array( 
+				'access'=>'B31',
+				'url'=>'/report/activeService',
+			),
 			'Report Manager'=>array(
 				'access'=>'B12',
 				'url'=>'/queue/index',
