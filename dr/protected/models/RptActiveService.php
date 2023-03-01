@@ -17,7 +17,7 @@ class RptActiveService extends ReportData2 {
 	public function retrieveData() {
 		$suffix = Yii::app()->params['envSuffix'];
 		$targetDate = isset($this->criteria) && isset($this->criteria->target_dt)
-			? General::toDate($this->criteria->target_dt)." 23:59:59";
+			? General::toDate($this->criteria->target_dt)." 23:59:59"
 			: date('Y-m-d')." 23:59:59";
 		$sql = "select 
 				z3.name as city_name, 
