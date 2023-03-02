@@ -19,7 +19,8 @@ class RptActiveService extends ReportData2 {
 		$targetDate = isset($this->criteria) && isset($this->criteria->target_dt)
 			? General::toDate($this->criteria->target_dt)." 23:59:59"
 			: date('Y-m-d')." 23:59:59";
-		$sql = "select 
+		$sql = "
+			select 
 				z3.name as city_name, 
 				y.company_name, 
 				z1.description as nature, 
@@ -41,27 +42,40 @@ class RptActiveService extends ReportData2 {
 			left outer join swo_customer_type z2 on y.cust_type=z2.id
 			left outer join security$suffix.sec_city z3 on y.city=z3.code
 			where y.status not in ('T','S')
+			order by y.city, y.company_name, y.nature_type, y.cust_type
 		";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
+			$last_city = '';		// For remove duplicate row
+			$last_cust_type = '';
+			$last_comp_name = '';
+			$last_natu_type = '';
+			
 			foreach ($rows as $row) {
 				$temp = array();
-				$temp['city_name'] = $row['city_name'];
-				$temp['customer_type'] = $row['customer_type'];
-				$temp['company_name'] = $row['company_name'];
-				$temp['nature'] = $row['nature'];
-				$temp['amt_month'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:
-										($row['paid_type']=='M'?$row['amt_paid']:round($row['amt_paid']/($row['ctrt_period']>0?$row['ctrt_period']:1),2)))
-									,2,'.','');
-				$period = empty($row['ctrt_period'])?0:($row['ctrt_period']<12?$row['ctrt_period']:12);
-				$temp['amt_year'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:
-										($row['paid_type']=='M'?$row['amt_paid']*$period:$row['amt_paid']))
-									,2,'.','');
-				$temp['sign_dt'] = General::toDate($row['sign_dt']);
-				$temp['ctrt_period'] = $row['ctrt_period'];
-				$temp['ctrt_end_dt'] = General::toDate($row['ctrt_end_dt']);
+				if ($last_city!=$row['city_name'] || $last_cust_type!=$row['customer_type'] || $last_comp_name!=$row['company_name'] || $last_natu_type!=$row['nature']) {
+					$temp['city_name'] = $row['city_name'];
+					$temp['customer_type'] = $row['customer_type'];
+					$temp['company_name'] = $row['company_name'];
+					$temp['nature'] = $row['nature'];
+					$temp['amt_month'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:
+											($row['paid_type']=='M'?$row['amt_paid']:round($row['amt_paid']/($row['ctrt_period']>0?$row['ctrt_period']:1),2)))
+										,2,'.','');
+					$period = empty($row['ctrt_period'])?0:($row['ctrt_period']<12?$row['ctrt_period']:12);
+					$temp['amt_year'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:
+											($row['paid_type']=='M'?$row['amt_paid']*$period:$row['amt_paid']))
+										,2,'.','');
+					$temp['sign_dt'] = General::toDate($row['sign_dt']);
+					$temp['ctrt_period'] = $row['ctrt_period'];
+					$temp['ctrt_end_dt'] = General::toDate($row['ctrt_end_dt']);
 
-				$this->data[] = $temp;
+					$this->data[] = $temp;
+				}
+				
+				$last_city = $row['city_name'];
+				$last_cust_type = $row['customer_type']; 
+				$last_comp_name = $row['company_name']; 
+				$last_natu_type = $row['nature'];
 			}
 		}
 		return true;
