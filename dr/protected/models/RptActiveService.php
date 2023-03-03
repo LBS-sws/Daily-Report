@@ -35,6 +35,7 @@ class RptActiveService extends ReportData2 {
 				from swo_service a, swo_company b
 				where a.city=b.city and substring(a.company_name, 1, char_length(b.code))=b.code
 				and a.status_dt <= '$targetDate'
+				and a.city not in ('TC','TN','TP','TY','KS','MY','ZY','ZS1')
 				group by a.city, b.code, a.cust_type
 			) x
 			inner join swo_service y on y.city=x.city and substring(y.company_name, 1, char_length(x.code))=x.code and x.max_dt=y.status_dt
@@ -53,9 +54,12 @@ class RptActiveService extends ReportData2 {
 			
 			foreach ($rows as $row) {
 				$temp = array();
+				$period = empty($row['ctrt_period'])?($row['paid_type']=='M' ? 12 :0):($row['ctrt_period']<12?$row['ctrt_period']:12);
+				$end_dt = empty($row['sign_dt']) ? '' : (empty($row['ctrt_end_dt']) ? date('Y-m-d',strtotime($row['sign_dt']." + $period months")) : $row['ctrt_end_dt']);
 				if (($last_city!=$row['city_name'] || $last_cust_type!=$row['customer_type'] || $last_comp_name!=$row['company_name'] || $last_natu_type!=$row['nature'])
 					&& $row['paid_type']!='1'
-					&& (empty($row['ctrt_end_dt']) || General::toDate($row['ctrt_end_dt']) > General::toDate($this->criteria->target_dt))
+					&& !empty($row['sign_dt'])
+					&& (General::toDate($end_dt) > General::toDate($this->criteria->target_dt))
 				) {
 					$temp['city_name'] = $row['city_name'];
 					$temp['customer_type'] = $row['customer_type'];
@@ -64,13 +68,12 @@ class RptActiveService extends ReportData2 {
 					$temp['amt_month'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:
 											($row['paid_type']=='M'?$row['amt_paid']:round($row['amt_paid']/($row['ctrt_period']>0?$row['ctrt_period']:1),2)))
 										,2,'.','');
-					$period = empty($row['ctrt_period'])?($row['paid_type']=='M' ? 12 :0):($row['ctrt_period']<12?$row['ctrt_period']:12);
 					$temp['amt_year'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:
 											($row['paid_type']=='M'?$row['amt_paid']*$period:$row['amt_paid']))
 										,2,'.','');
 					$temp['sign_dt'] = General::toDate($row['sign_dt']);
 					$temp['ctrt_period'] = !empty($row['ctrt_period']) ? $row['ctrt_period'] : ($row['paid_type']=='M' ? 12 : $row['ctrt_period']);
-					$temp['ctrt_end_dt'] = General::toDate($row['ctrt_end_dt']);
+					$temp['ctrt_end_dt'] = General::toDate($end_dt);
 
 					$this->data[] = $temp;
 				}
