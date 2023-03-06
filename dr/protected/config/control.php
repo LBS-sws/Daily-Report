@@ -8,4 +8,5 @@ return array(
     'Integrated data email (region)'=>array('access'=>'CN12',),
     'Integrated data email (regional)'=>array('access'=>'CN13',),
     'Integrated data email (all)'=>array('access'=>'CN14',),
+    'Target Ready All'=>array('access'=>'CN15',),//可以查看所有目标金额
 );
