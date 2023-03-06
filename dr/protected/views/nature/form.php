@@ -69,6 +69,11 @@ $this->pageTitle=Yii::app()->name . ' - Nature Form';
 					); ?>
 				</div>
 			</div>
+            <div class="form-group">
+                <div class="col-sm-10 col-lg-offset-2">
+                    <p class="form-control-static text-danger">报表类别为“A01”时，系统识别该类型为“餐饮”行业</p>
+                </div>
+            </div>
 			
 		</div>
 	</div>
