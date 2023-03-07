@@ -97,20 +97,6 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
 
 <?php
 $js="
-$('#tblDetail').delegate('.changeCom','keyup change',function(){
-    var sum = 0;
-    var final_money = $('#final_money').data('num');
-    final_money=$.isNumeric(final_money)?parseFloat(final_money):0;
-    $('#tblDetail>tbody>tr').each(function(){
-        if($(this).css('display')!='none'){
-            var num = $(this).find('.changeCom:first').val();
-            num = $.isNumeric(num)?parseFloat(num):0;
-            sum+=num;
-        }
-    });
-    $('#supplement_money').val(sum);
-    $('#final_money').val(sum+final_money);
-});
 
     $('.click-th').click(function(){
         var startNum=1;
@@ -161,7 +147,7 @@ $('#tblDetail').delegate('.changeCom','keyup change',function(){
         }else{
             $(this).addClass('show-tr');
         }
-        $(this).parent('tr').nextAll('tr').each(function(){
+        $(this).prevAll('tr').each(function(){
             if($(this).hasClass('tr-end')||$(this).children('td:first').hasClass('click-tr')){
                 return false;
             }else{

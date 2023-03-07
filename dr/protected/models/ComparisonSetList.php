@@ -28,13 +28,13 @@ class ComparisonSetList extends CListPageModel
 	{
 	    $this->comparison_year = (empty($this->comparison_year)||!is_numeric($this->comparison_year))?date("Y"):$this->comparison_year;
         $suffix = Yii::app()->params['envSuffix'];
-		$sql1 = "select code,name 
+        $sql1 = "select code,name 
 				from security{$suffix}.sec_city 
-				where code not in (SELECT region FROM security{$suffix}.sec_city) 
+				where code not in (SELECT b.region FROM security{$suffix}.sec_city b WHERE b.region is not NULL and b.region!='' GROUP BY b.region) 
 			";
-		$sql2 = "select count(code)
+        $sql2 = "select count(code)
 				from security{$suffix}.sec_city 
-				where code not in (SELECT region FROM security{$suffix}.sec_city) 
+				where code not in (SELECT b.region FROM security{$suffix}.sec_city b WHERE b.region is not NULL and b.region!='' GROUP BY b.region) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

@@ -434,21 +434,21 @@ class ComparisonForm extends CFormModel
                     //地区汇总
                     $regionRow["city_name"]=$regionList["region_name"];
                     $html.=$this->printTableTr($regionRow,$bodyKey);
-                    $html.="<tr><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
+                    $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
                 }
             }
             //地区汇总
             $allRow["city_name"]=Yii::t("summary","all total");
             $html.=$this->printTableTr($allRow,$bodyKey);
-            $html.="<tr><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
-            $html.="<tr><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
+            $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
+            $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
         }
         return $html;
     }
 
     protected function printTableTr($data,$bodyKey){
         $this->resetTdRow($data);
-        $html="<tr class='click-tr'>";
+        $html="<tr class='tr-end click-tr'>";
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
             $html.="<td><b>{$text}</b></td>";
@@ -459,7 +459,7 @@ class ComparisonForm extends CFormModel
 
     public function tableFooterHtml(){
         $html="<tfoot>";
-        $html.="<tr><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
+        $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
         $html.="</tfoot>";
         return $html;
     }
