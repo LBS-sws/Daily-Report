@@ -264,6 +264,7 @@ class SysBlock {
     每个月倒数第二天限制专员和审核人必须审核完当前地区所有的慈善分记录, false: 未处理
      **/
     public function isCharityApproved () {
+		return false;//測試是否統一
         $uid = Yii::app()->user->id;
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
