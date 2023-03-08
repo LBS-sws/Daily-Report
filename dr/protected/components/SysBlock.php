@@ -5,7 +5,8 @@ class SysBlock {
     protected $systemIsCN=0;//0：大陸。 1：台灣。2：新加坡。 3：吉隆坡
 
     public function __construct() {
-        $this->checkItems = require(Yii::app()->basePath.'/config/sysblock.php');
+        $blockConfig = dirname(dirname(__FILE__))."/config/sysblock.php";
+        $this->checkItems = require($blockConfig);
         $this->systemIsCN = General::SystemIsCN();
     }
 
