@@ -215,7 +215,7 @@ class ComparisonForm extends CFormModel
         if(empty($numLast)){
             return 0;
         }else{
-            $rate = ($num/$numLast) - 1;
+            $rate = ($num/$numLast);
             $rate = round($rate,3)*100;
             return $rate."%";
         }
