@@ -28,15 +28,16 @@ class SummarySetList extends CListPageModel
 	{
 	    $this->summary_year = (empty($this->summary_year)||!is_numeric($this->summary_year))?date("Y"):$this->summary_year;
         $suffix = Yii::app()->params['envSuffix'];
+        $notCityStr = ComparisonSetList::notCitySqlStr();
         $sql1 = "select code,name 
 				from security{$suffix}.sec_city 
 				where code not in (SELECT b.region FROM security{$suffix}.sec_city b WHERE b.region is not NULL and b.region!='' GROUP BY b.region)
-				 AND name NOT in ('停用','中央支援组')
+				 AND code NOT in ('{$notCityStr}') AND name != '停用'
 			";
         $sql2 = "select count(code)
 				from security{$suffix}.sec_city 
 				where code not in (SELECT b.region FROM security{$suffix}.sec_city b WHERE b.region is not NULL and b.region!='' GROUP BY b.region) 
-				AND name NOT in ('停用','中央支援组')
+				AND code NOT in ('{$notCityStr}') AND name != '停用'
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
