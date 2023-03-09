@@ -114,12 +114,15 @@ class ComparisonForm extends CFormModel
                     if($year==$this->comparison_year){
                         $uStr = "u_sum";
                         $newStr = "new_sum";
+                        $netStr = "net_sum";
                     }else{
                         $uStr = "u_sum_last";
                         $newStr = "new_sum_last";
+                        $netStr = "net_sum_last";
                     }
                     $data[$region]["list"][$city][$uStr]+=$money;
                     $data[$region]["list"][$city][$newStr]+=$money;
+                    $data[$region]["list"][$city][$netStr]+=$money;
                 }
             }
         }
