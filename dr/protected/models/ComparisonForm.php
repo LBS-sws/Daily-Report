@@ -190,7 +190,7 @@ class ComparisonForm extends CFormModel
                 $data[$region]["list"][$city][$newStr] += $money;
                 break;
             case "T"://终止
-                //$money *= -1;
+                $money *= -1;
                 $data[$region]["list"][$city][$stopStr] += $money;
                 break;
         }
