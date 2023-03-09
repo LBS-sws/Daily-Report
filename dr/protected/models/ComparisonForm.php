@@ -197,9 +197,9 @@ class ComparisonForm extends CFormModel
     }
 
     protected function resetTdRow(&$list){
-        $list["new_rate"] = $this->comparisonRate($list["new_sum"],$list["new_sum_last"]);
-        $list["stop_rate"] = $this->comparisonRate($list["stop_sum"],$list["stop_sum_last"]);
-        $list["net_rate"] = $this->comparisonRate($list["net_sum"],$list["net_sum_last"]);
+        $list["new_rate"] = $this->nowAndLastRate($list["new_sum"],$list["new_sum_last"]);
+        $list["stop_rate"] = $this->nowAndLastRate($list["stop_sum"],$list["stop_sum_last"]);
+        $list["net_rate"] = $this->nowAndLastRate($list["net_sum"],$list["net_sum_last"]);
         $list["two_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["two_gross"]);
         $list["two_net_rate"] = $this->comparisonRate($list["net_sum"],$list["two_net"]);
 
@@ -208,6 +208,16 @@ class ComparisonForm extends CFormModel
             $list["one_net_rate"] = $this->comparisonRate($list["net_sum"],$list["one_net"]);
             $list["three_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["three_gross"]);
             $list["three_net_rate"] = $this->comparisonRate($list["net_sum"],$list["three_net"]);
+        }
+    }
+
+    public static function nowAndLastRate($nowNum,$lastNum){
+        if(empty($lastNum)){
+            return 0;
+        }else{
+            $rate = ($nowNum/$lastNum)-1;
+            $rate = round($rate,3)*100;
+            return $rate."%";
         }
     }
 
