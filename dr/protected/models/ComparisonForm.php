@@ -55,6 +55,7 @@ class ComparisonForm extends CFormModel
 
     public function retrieveData() {
         $data = array();
+        $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $this->start_date = empty($this->start_date)?date("Y/01/01"):$this->start_date;
         $this->end_date = empty($this->end_date)?date("Y/m/t"):$this->end_date;
@@ -73,7 +74,7 @@ class ComparisonForm extends CFormModel
             ->leftJoin("swo_nature g","a.nature_type=g.id")
             ->leftJoin("security{$suffix}.sec_city b","a.city=b.code")
             ->leftJoin("security{$suffix}.sec_city c","b.region=c.code")
-            ->where("a.city not in ('ZY') and a.status in ('N','T') and ({$where})")
+            ->where("a.city in ({$city_allow}) and a.city not in ('ZY') and a.status in ('N','T') and ({$where})")
             ->order("a.city")
             ->queryAll();
         $cityList = array();

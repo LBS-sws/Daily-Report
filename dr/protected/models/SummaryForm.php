@@ -57,6 +57,7 @@ class SummaryForm extends CFormModel
         $criteria = new ReportForm();
         $criteria->start_dt = $this->start_date;
         $criteria->end_dt = $this->end_date;
+        $criteria->city = Yii::app()->user->city_allow();
         $rptModel->criteria = $criteria;
         $rptModel->retrieveData();
         $this->data = $rptModel->data;

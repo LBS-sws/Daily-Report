@@ -527,6 +527,7 @@ class ReportController extends Controller
 	}
 
     protected function genSummarySC($criteria) {
+        $criteria->city="";
         $this->addQueueItem('RptSummarySC', $criteria, 'A4');
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
