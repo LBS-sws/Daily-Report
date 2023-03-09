@@ -139,8 +139,8 @@ class ComparisonForm extends CFormModel
         }
         if(!key_exists($city,$data[$region]["list"])){
             $cityList[$city] = $region;//U系统同步使用
-            $setRow = Yii::app()->db->createCommand()->select("*")->from("swo_summary_set")
-                ->where("summary_year=:year and city=:city",
+            $setRow = Yii::app()->db->createCommand()->select("*")->from("swo_comparison_set")
+                ->where("comparison_year=:year and city=:city",
                     array(":year"=>$this->comparison_year,":city"=>$city)
                 )->queryRow();//查询目标金额
             $data[$region]["list"][$city]=array(
@@ -157,17 +157,17 @@ class ComparisonForm extends CFormModel
                 "net_sum_last"=>0,//总和（上一年）
                 "net_sum"=>0,//总和
                 "net_rate"=>0,//总和对比比例
-                "one_gross"=>$setRow?$setRow["one_gross"]:0,
+                "one_gross"=>$setRow?floatval($setRow["one_gross"]):0,
                 "one_gross_rate"=>0,
-                "one_net"=>$setRow?$setRow["one_net"]:0,
+                "one_net"=>$setRow?floatval($setRow["one_net"]):0,
                 "one_net_rate"=>0,
-                "two_gross"=>$setRow?$setRow["two_gross"]:0,
+                "two_gross"=>$setRow?floatval($setRow["two_gross"]):0,
                 "two_gross_rate"=>0,
-                "two_net"=>$setRow?$setRow["two_net"]:0,
+                "two_net"=>$setRow?floatval($setRow["two_net"]):0,
                 "two_net_rate"=>0,
-                "three_gross"=>$setRow?$setRow["three_gross"]:0,
+                "three_gross"=>$setRow?floatval($setRow["three_gross"]):0,
                 "three_gross_rate"=>0,
-                "three_net"=>$setRow?$setRow["three_net"]:0,
+                "three_net"=>$setRow?floatval($setRow["three_net"]):0,
                 "three_net_rate"=>0
             );
         }
