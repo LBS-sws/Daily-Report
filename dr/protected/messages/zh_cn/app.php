@@ -139,10 +139,10 @@ return array(
 	'LBS WorkOrder'=>'工作单报表',
 	'Summary Service Cases'=>'生意额数据汇总表',
 	'Active Contract'=>'生效中合约报表',
-	'Summary'=>'Summary',
-	'Summary Set'=>'Summary年目标金额',
-	'Comparison'=>'Comparison',
-	'Comparison Set'=>'Comparison年目标金额',
+	'Summary'=>'合同分析查询',
+	'Summary Set'=>'合同分析年目标金额',
+	'Comparison'=>'合同同比分析',
+	'Comparison Set'=>'合同同比分析年目标金额',
 	'Target Ready All'=>'查看所有目标金额',
 );
 ?>

@@ -133,10 +133,10 @@ return array(
     'Months Ranking list'=>'總經理綜合表現排行榜',
     'Summary Service Cases'=>'生意額數據匯總表',
     'Active Contract'=>'生效中合約報表',
-    'Summary'=>'Summary',
-    'Summary Set'=>'Summary年目標金額',
-    'Comparison'=>'Comparison',
-    'Comparison Set'=>'Comparison年目標金額',
+    'Summary'=>'合同分析查詢',
+    'Summary Set'=>'合同分析年目標金額',
+    'Comparison'=>'合同同比分析',
+    'Comparison Set'=>'合同同比分析年目標金額',
     'Target Ready All'=>'查看所有目標金額',
 );
 ?>
