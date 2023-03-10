@@ -187,13 +187,13 @@ return array(
                 'access'=>'G03',
                 'url'=>'/summary/index',
             ),
-            'Summary Set'=>array(
-                'access'=>'G04',
-                'url'=>'/summarySet/index',
-            ),
             'Comparison'=>array(
                 'access'=>'G05',
                 'url'=>'/comparison/index',
+            ),
+            'Summary Set'=>array(
+                'access'=>'G04',
+                'url'=>'/summarySet/index',
             ),
             'Comparison Set'=>array(
                 'access'=>'G06',
