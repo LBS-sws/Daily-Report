@@ -39,9 +39,10 @@ class RptCustnew extends ReportData2 {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
 		
-		$sql = "select a.*, b.description as nature, c.description as customer_type, d.cust_type_name as cust_type_name_two 
+		$sql = "select a.*, b.description as nature,f.code as com_code,f.name as com_name, c.description as customer_type, d.cust_type_name as cust_type_name_two 
 					from swo_service a
 					left outer join swo_nature b on a.nature_type=b.id 
+        			left outer join swo_company f on a.company_id=f.id 
 					left outer join swo_customer_type c on a.cust_type=c.id
 					left outer join swo_customer_type_twoname d on d.id=a.cust_type_name
 				where a.status='N' and a.city='".$city."' 
@@ -61,7 +62,7 @@ class RptCustnew extends ReportData2 {
 				$temp = array();
 				$temp['type'] = $row['customer_type'];
 				$temp['status_dt'] = General::toDate($row['status_dt']);
-				$temp['company_name'] = $row['company_name'];
+				$temp['company_name'] = empty($row['com_name'])?$row['company_name']:$row['com_code'].$row['com_name'];
 				$temp['nature'] = $row['nature'];
 				$temp['cust_type_name_two'] = $row['cust_type_name_two'];
 				$temp['service'] = $row['service'];
