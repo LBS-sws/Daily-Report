@@ -41,5 +41,7 @@ return array(
     'YTD New'=>'YTD新增',
     'YTD Stop'=>'YTD终止',
     'YTD Net'=>'YTD Net',
+    'day num'=>'查询天数',
+    'day'=>'天',
 );
 ?>

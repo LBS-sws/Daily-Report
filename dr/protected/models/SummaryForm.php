@@ -5,6 +5,7 @@ class SummaryForm extends CFormModel
 	/* User Fields */
 	public $start_date;
 	public $end_date;
+    public $day_num=0;
 	public $summary_year;
 
 	public $data=array();
@@ -21,6 +22,7 @@ class SummaryForm extends CFormModel
 		return array(
             'start_date'=>Yii::t('summary','start date'),
             'end_date'=>Yii::t('summary','end date'),
+            'day_num'=>Yii::t('summary','day num'),
 		);
 	}
 
@@ -57,6 +59,7 @@ class SummaryForm extends CFormModel
         $criteria = new ReportForm();
         $criteria->start_dt = $this->start_date;
         $criteria->end_dt = $this->end_date;
+        ComparisonForm::setDayNum($this->start_date,$this->end_date,$this->day_num);
         $criteria->city = Yii::app()->user->city_allow();
         $rptModel->criteria = $criteria;
         $rptModel->retrieveData();
@@ -101,6 +104,8 @@ class SummaryForm extends CFormModel
     }
 
     protected function resetTdRow(&$list){
+        $list["two_gross"] = ComparisonForm::resetNetOrGross($list["two_gross"],$this->day_num);
+        $list["two_net"] = ComparisonForm::resetNetOrGross($list["two_net"],$this->day_num);
 	    $newSum = $list["num_new"]+$list["u_invoice_sum"];//所有新增总金额
 	    $list["num_growth"]+=$list["num_new"];
 	    $list["num_growth"]+=$list["u_invoice_sum"];
@@ -112,6 +117,10 @@ class SummaryForm extends CFormModel
         $list["two_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["two_gross"]);
         $list["two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["two_net"]);
         if(SummaryForm::targetAllReady()){
+            $list["one_gross"] = ComparisonForm::resetNetOrGross($list["one_gross"],$this->day_num);
+            $list["one_net"] = ComparisonForm::resetNetOrGross($list["one_net"],$this->day_num);
+            $list["three_gross"] = ComparisonForm::resetNetOrGross($list["three_gross"],$this->day_num);
+            $list["three_net"] = ComparisonForm::resetNetOrGross($list["three_net"],$this->day_num);
             $list["one_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["one_gross"]);
             $list["one_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["one_net"]);
             $list["three_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["three_gross"]);

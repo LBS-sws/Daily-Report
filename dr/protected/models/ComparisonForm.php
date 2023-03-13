@@ -5,6 +5,7 @@ class ComparisonForm extends CFormModel
 	/* User Fields */
 	public $start_date;
 	public $end_date;
+	public $day_num=0;
 	public $comparison_year;
     public $month_start_date;
     public $month_end_date;
@@ -23,6 +24,7 @@ class ComparisonForm extends CFormModel
 		return array(
             'start_date'=>Yii::t('summary','start date'),
             'end_date'=>Yii::t('summary','end date'),
+            'day_num'=>Yii::t('summary','day num'),
 		);
 	}
 
@@ -53,6 +55,23 @@ class ComparisonForm extends CFormModel
         );
     }
 
+    public static function setDayNum($startDate,$endDate,&$dayNum){
+        $startDate = strtotime($startDate);
+        $endDate = strtotime($endDate);
+        $timer = 0;
+        if($endDate>=$startDate){
+            $timer = ($endDate-$startDate)/86400;
+            $timer++;//需要算上起始的一天
+        }
+        $dayNum = $timer;
+    }
+
+    public static function resetNetOrGross($num,$day){
+        $num = ($num*12/365)*$day;
+        $num = round($num,2);
+        return $num;
+    }
+
     public function retrieveData() {
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
@@ -62,6 +81,7 @@ class ComparisonForm extends CFormModel
         $this->comparison_year = date("Y",strtotime($this->start_date));
         $this->month_start_date = date("m/d",strtotime($this->start_date));
         $this->month_end_date = date("m/d",strtotime($this->end_date));
+        ComparisonForm::setDayNum($this->start_date,$this->end_date,$this->day_num);
         $lastStartDate = ($this->comparison_year-1)."/".$this->month_start_date;
         $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
         $where="(a.status_dt BETWEEN '{$this->start_date}' and '{$this->end_date}')";
@@ -201,6 +221,8 @@ class ComparisonForm extends CFormModel
     }
 
     protected function resetTdRow(&$list){
+        $list["two_gross"] = ComparisonForm::resetNetOrGross($list["two_gross"],$this->day_num);
+        $list["two_net"] = ComparisonForm::resetNetOrGross($list["two_net"],$this->day_num);
         $list["new_rate"] = $this->nowAndLastRate($list["new_sum"],$list["new_sum_last"]);
         $list["stop_rate"] = $this->nowAndLastRate($list["stop_sum"],$list["stop_sum_last"]);
         $list["net_rate"] = $this->nowAndLastRate($list["net_sum"],$list["net_sum_last"]);
@@ -208,6 +230,10 @@ class ComparisonForm extends CFormModel
         $list["two_net_rate"] = $this->comparisonRate($list["net_sum"],$list["two_net"]);
 
         if(SummaryForm::targetAllReady()){
+            $list["one_gross"] = ComparisonForm::resetNetOrGross($list["one_gross"],$this->day_num);
+            $list["one_net"] = ComparisonForm::resetNetOrGross($list["one_net"],$this->day_num);
+            $list["three_gross"] = ComparisonForm::resetNetOrGross($list["three_gross"],$this->day_num);
+            $list["three_net"] = ComparisonForm::resetNetOrGross($list["three_net"],$this->day_num);
             $list["one_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["one_gross"]);
             $list["one_net_rate"] = $this->comparisonRate($list["net_sum"],$list["one_net"]);
             $list["three_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["three_gross"]);

@@ -68,6 +68,16 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <?php echo $form->labelEx($model,'day_num',array('class'=>"col-sm-2 control-label")); ?>
+                            <div class="col-sm-2">
+                                <?php echo $form->textField($model, 'day_num',
+                                    array('readonly'=>true,'append'=>Yii::t("summary","day"))
+                                ); ?>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="col-lg-12" style="padding-top: 15px;">
                         <div class="row panel panel-default" style="border-color: #333">
