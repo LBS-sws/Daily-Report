@@ -56,8 +56,14 @@ class SummaryController extends Controller
         $model = new SummaryForm('view');
         if (isset($_POST['SummaryForm'])) {
             $model->attributes = $_POST['SummaryForm'];
-            $model->retrieveData();
-            $this->render('form',array('model'=>$model));
+            if ($model->validate()) {
+                $model->retrieveData();
+                $this->render('form',array('model'=>$model));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->render('index',array('model'=>$model));
+            }
         }else{
             $model->setScenario("index");
             $this->render('index',array('model'=>$model));

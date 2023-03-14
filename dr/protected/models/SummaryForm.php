@@ -34,8 +34,17 @@ class SummaryForm extends CFormModel
 		return array(
             array('start_date,end_date','safe'),
 			array('start_date,end_date','required'),
+            array('start_date','validateDate'),
 		);
 	}
+
+    public function validateDate($attribute, $params) {
+	    $startYear = date("Y",strtotime($this->start_date));
+	    $endYear = date("Y",strtotime($this->end_date));
+	    if($startYear!=$endYear){
+            $this->addError($attribute, "请把开始年份跟结束年份保持一致");
+        }
+    }
 
     public function setCriteria($criteria)
     {

@@ -103,8 +103,7 @@ class DownSummary{
                     foreach ($regionList["list"] as $city=>$cityList){
                         $col = 0;
                         foreach ($cityList as $text){
-                            $this->objPHPExcel->getActiveSheet()
-                                ->setCellValueByColumnAndRow($col, $this->current_row, $text);
+                            $this->setCellValueForSummary($col, $this->current_row, $text);
                             $col++;
                         }
                         $this->current_row++;
@@ -113,8 +112,7 @@ class DownSummary{
                 //合计
                 $col = 0;
                 foreach ($regionList["count"] as $text){
-                    $this->objPHPExcel->getActiveSheet()
-                        ->setCellValueByColumnAndRow($col, $this->current_row, $text);
+                    $this->setCellValueForSummary($col, $this->current_row, $text);
                     $col++;
                 }
                 $this->objPHPExcel->getActiveSheet()
@@ -139,9 +137,27 @@ class DownSummary{
         if(!empty($moData)){
             $col = 0;
             foreach ($moData as $text){
-                $this->objPHPExcel->getActiveSheet()
-                    ->setCellValueByColumnAndRow($col, $this->current_row, $text);
+                $this->setCellValueForSummary($col, $this->current_row, $text);
                 $col++;
+            }
+        }
+    }
+
+    private function setCellValueForSummary($col,$row,$text){
+        $this->objPHPExcel->getActiveSheet()
+            ->setCellValueByColumnAndRow($col, $row, $text);
+        if (strpos($text,'%')!==false){
+            $number = floatval($text);
+            if($number>=100){
+                $str = $this->getColumn($col);
+                $this->objPHPExcel->getActiveSheet()
+                    ->getStyle($str.$row)->applyFromArray(
+                        array(
+                            'font'=>array(
+                                'color'=>array('rgb'=>'00a65a')
+                            )
+                        )
+                    );
             }
         }
     }
