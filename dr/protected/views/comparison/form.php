@@ -16,6 +16,7 @@ $this->pageTitle=Yii::app()->name . ' - Comparison Form';
     input[type="checkbox"].readonly{ opacity: 0.6;pointer-events: none;}
     .form-group{ margin-bottom: 0px;}
     .table-fixed>thead>tr>th,.table-fixed>tfoot>tr>td,.table-fixed>tbody>tr>td{ text-align: center;vertical-align: middle;font-size: 12px;border-color: #333;}
+    .table-fixed>tfoot>tr>td,.table-fixed>tbody>tr>td{ text-align: right;}
     .table-fixed>thead>tr>th.header-width{ height: 0px;padding: 0px;overflow: hidden;border-width: 0px;line-height: 0px;}
 </style>
 
@@ -39,6 +40,11 @@ $this->pageTitle=Yii::app()->name . ' - Comparison Form';
 				'submit'=>Yii::app()->createUrl('comparison/index')));
 		?>
 	</div>
+            <div class="btn-group pull-right" role="group">
+                <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('dialog','Download'), array(
+                    'submit'=>Yii::app()->createUrl('comparison/downExcel')));
+                ?>
+            </div>
 	</div></div>
 
     <div class="box">

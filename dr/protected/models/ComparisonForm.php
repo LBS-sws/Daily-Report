@@ -220,9 +220,9 @@ class ComparisonForm extends CFormModel
         $data[$region]["list"][$city][$netStr] += $money;
     }
 
-    protected function resetTdRow(&$list){
-        $list["two_gross"] = ComparisonForm::resetNetOrGross($list["two_gross"],$this->day_num);
-        $list["two_net"] = ComparisonForm::resetNetOrGross($list["two_net"],$this->day_num);
+    protected function resetTdRow(&$list,$bool=false){
+        $list["two_gross"] = $bool?$list["two_gross"]:ComparisonForm::resetNetOrGross($list["two_gross"],$this->day_num);
+        $list["two_net"] = $bool?$list["two_net"]:ComparisonForm::resetNetOrGross($list["two_net"],$this->day_num);
         $list["new_rate"] = $this->nowAndLastRate($list["new_sum"],$list["new_sum_last"]);
         $list["stop_rate"] = $this->nowAndLastRate($list["stop_sum"],$list["stop_sum_last"]);
         $list["net_rate"] = $this->nowAndLastRate($list["net_sum"],$list["net_sum_last"]);
@@ -230,10 +230,10 @@ class ComparisonForm extends CFormModel
         $list["two_net_rate"] = $this->comparisonRate($list["net_sum"],$list["two_net"]);
 
         if(SummaryForm::targetAllReady()){
-            $list["one_gross"] = ComparisonForm::resetNetOrGross($list["one_gross"],$this->day_num);
-            $list["one_net"] = ComparisonForm::resetNetOrGross($list["one_net"],$this->day_num);
-            $list["three_gross"] = ComparisonForm::resetNetOrGross($list["three_gross"],$this->day_num);
-            $list["three_net"] = ComparisonForm::resetNetOrGross($list["three_net"],$this->day_num);
+            $list["one_gross"] = $bool?$list["one_gross"]:ComparisonForm::resetNetOrGross($list["one_gross"],$this->day_num);
+            $list["one_net"] = $bool?$list["one_net"]:ComparisonForm::resetNetOrGross($list["one_net"],$this->day_num);
+            $list["three_gross"] = $bool?$list["three_gross"]:ComparisonForm::resetNetOrGross($list["three_gross"],$this->day_num);
+            $list["three_net"] = $bool?$list["three_net"]:ComparisonForm::resetNetOrGross($list["three_net"],$this->day_num);
             $list["one_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["one_gross"]);
             $list["one_net_rate"] = $this->comparisonRate($list["net_sum"],$list["one_net"]);
             $list["three_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["three_gross"]);
@@ -263,6 +263,19 @@ class ComparisonForm extends CFormModel
         }
     }
 
+    public static function showNum($num){
+        if (strpos($num,'%')!==false){
+            $number = floatval($num);
+            $number=sprintf("%.1f",$number)."%";
+        }elseif (is_numeric($num)){
+            $number = floatval($num);
+            $number=sprintf("%.2f",$number);
+        }else{
+            $number = $num;
+        }
+        return $number;
+    }
+
     //顯示提成表的表格內容
     public function comparisonHtml(){
         $html= '<table id="comparison" class="table table-fixed table-condensed table-bordered table-hover">';
@@ -273,27 +286,25 @@ class ComparisonForm extends CFormModel
         return $html;
     }
 
-
-    //顯示提成表的表格內容（表頭）
-    private function tableTopHtml(){
+    private function getTopArr(){
         $monthStr = "（{$this->month_start_date} ~ {$this->month_end_date}）";
         $topList=array(
-            array("name"=>"City","rowspan"=>2),//城市
-            array("name"=>Yii::t("summary","YTD New").$monthStr,"background"=>"rgb(247,253,157)",
+            array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
+            array("name"=>Yii::t("summary","YTD New").$monthStr,"background"=>"#f7fd9d",
                 "colspan"=>array(
                     array("name"=>$this->comparison_year-1),//对比年份
                     array("name"=>$this->comparison_year),//查询年份
                     array("name"=>Yii::t("summary","YoY change")),//YoY change
                 )
             ),//YTD新增
-            array("name"=>Yii::t("summary","YTD Stop").$monthStr,"exprName"=>$monthStr,"background"=>"rgb(252,213,180)",
+            array("name"=>Yii::t("summary","YTD Stop").$monthStr,"exprName"=>$monthStr,"background"=>"#fcd5b4",
                 "colspan"=>array(
                     array("name"=>$this->comparison_year-1),//对比年份
                     array("name"=>$this->comparison_year),//查询年份
                     array("name"=>Yii::t("summary","YoY change")),//YoY change
                 )
             ),//YTD终止
-            array("name"=>Yii::t("summary","YTD Net").$monthStr,"background"=>"rgb(242,220,219)",
+            array("name"=>Yii::t("summary","YTD Net").$monthStr,"background"=>"#f2dcdb",
                 "colspan"=>array(
                     array("name"=>$this->comparison_year-1),//对比年份
                     array("name"=>$this->comparison_year),//查询年份
@@ -341,6 +352,13 @@ class ComparisonForm extends CFormModel
                 )
             );//目标完成度 (minimum case)
         }
+
+        return $topList;
+    }
+
+    //顯示提成表的表格內容（表頭）
+    private function tableTopHtml(){
+        $topList = self::getTopArr();
         $trOne="";
         $trTwo="";
         $html="<thead>";
@@ -465,21 +483,26 @@ class ComparisonForm extends CFormModel
                             $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                             $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
+                            $tdClass =(strpos($text,'%')!==false&&floatval($text)>=100)?"text-green":"";
+                            $text = ComparisonForm::showNum($text);
+                            $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][]",$text);
                             if($keyStr=="new_sum"){//调试U系统同步数据
-                                $html.="<td data-u='{$cityList['u_sum']}'>{$text}</td>";
+                                $html.="<td class='{$tdClass}' data-u='{$cityList['u_sum']}'>{$text}{$inputHide}</td>";
                             }else{
-                                $html.="<td>{$text}</td>";
+                                $html.="<td class='{$tdClass}'>{$text}{$inputHide}</td>";
                             }
                         }
                         $html.="</tr>";
                     }
                     //地区汇总
+                    $regionRow["region"]=$regionList["region"];
                     $regionRow["city_name"]=$regionList["region_name"];
                     $html.=$this->printTableTr($regionRow,$bodyKey);
                     $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
                 }
             }
             //地区汇总
+            $allRow["region"]="allRow";
             $allRow["city_name"]=Yii::t("summary","all total");
             $html.=$this->printTableTr($allRow,$bodyKey);
             $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
@@ -489,11 +512,14 @@ class ComparisonForm extends CFormModel
     }
 
     protected function printTableTr($data,$bodyKey){
-        $this->resetTdRow($data);
+        $this->resetTdRow($data,true);
         $html="<tr class='tr-end click-tr'>";
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
-            $html.="<td><b>{$text}</b></td>";
+            $tdClass =(strpos($text,'%')!==false&&floatval($text)>=100)?"text-green":"";
+            $text = ComparisonForm::showNum($text);
+            $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][]",$text);
+            $html.="<td class='{$tdClass}'><b>{$text}{$inputHide}</b></td>";
         }
         $html.="</tr>";
         return $html;
@@ -504,5 +530,20 @@ class ComparisonForm extends CFormModel
         $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
         $html.="</tfoot>";
         return $html;
+    }
+
+    //下載
+    public function downExcel($excelData){
+        $this->comparison_year = date("Y",strtotime($this->start_date));
+        $this->month_start_date = date("m/d",strtotime($this->start_date));
+        $this->month_end_date = date("m/d",strtotime($this->end_date));
+        $headList = $this->getTopArr();
+        $excel = new DownSummary();
+        $excel->SetHeaderTitle(Yii::t("app","Comparison"));
+        $excel->SetHeaderString($this->start_date." ~ ".$this->end_date);
+        $excel->init();
+        $excel->setSummaryHeader($headList);
+        $excel->setSummaryData($excelData);
+        $excel->outExcel("Comparison");
     }
 }

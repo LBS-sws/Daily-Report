@@ -136,7 +136,7 @@ return array(
     'Summary'=>'合同分析查詢',
     'Summary Set'=>'合同分析年目標金額',
     'Comparison'=>'合同同比分析',
-    'Comparison Set'=>'合同同比分析年目標金額',
+    'Comparison Set'=>'生意額目標設置',
     'Target Ready All'=>'查看所有目標金額',
 );
 ?>

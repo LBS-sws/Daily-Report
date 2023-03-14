@@ -28,7 +28,7 @@ class ComparisonController extends Controller
 				'expression'=>array('ComparisonController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','downExcel'),
 				'expression'=>array('ComparisonController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -36,6 +36,18 @@ class ComparisonController extends Controller
 			),
 		);
 	}
+    public function actionDownExcel()
+    {
+        $model = new ComparisonForm('view');
+        if (isset($_POST['ComparisonForm'])) {
+            $model->attributes = $_POST['ComparisonForm'];
+            $excelData = key_exists("excel",$_POST)?$_POST["excel"]:array();
+            $model->downExcel($excelData);
+        }else{
+            $model->setScenario("index");
+            $this->render('index',array('model'=>$model));
+        }
+    }
 
 	public function actionIndex()
 	{

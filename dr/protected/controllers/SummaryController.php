@@ -28,7 +28,7 @@ class SummaryController extends Controller
 				'expression'=>array('SummaryController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','downExcel'),
 				'expression'=>array('SummaryController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -58,6 +58,19 @@ class SummaryController extends Controller
             $model->attributes = $_POST['SummaryForm'];
             $model->retrieveData();
             $this->render('form',array('model'=>$model));
+        }else{
+            $model->setScenario("index");
+            $this->render('index',array('model'=>$model));
+        }
+	}
+
+	public function actionDownExcel()
+	{
+        $model = new SummaryForm('view');
+        if (isset($_POST['SummaryForm'])) {
+            $model->attributes = $_POST['SummaryForm'];
+            $excelData = key_exists("excel",$_POST)?$_POST["excel"]:array();
+            $model->downExcel($excelData);
         }else{
             $model->setScenario("index");
             $this->render('index',array('model'=>$model));

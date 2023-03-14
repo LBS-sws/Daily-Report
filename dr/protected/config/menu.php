@@ -191,10 +191,6 @@ return array(
                 'access'=>'G05',
                 'url'=>'/comparison/index',
             ),
-            'Summary Set'=>array(
-                'access'=>'G04',
-                'url'=>'/summarySet/index',
-            ),
             'Comparison Set'=>array(
                 'access'=>'G06',
                 'url'=>'/comparisonSet/index',

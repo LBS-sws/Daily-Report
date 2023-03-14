@@ -82,10 +82,10 @@ class SummaryForm extends CFormModel
                         $this->data[$regionKey]["list"][$cityKey]["three_net"]=0;
                         $this->data[$regionKey]["list"][$cityKey]["three_net_rate"]=0;
                         //放入目标金额
-                        $row = Yii::app()->db->createCommand()->select("*")->from("swo_summary_set")
-                            ->where("summary_year=:year and city=:city",
+                        $row = Yii::app()->db->createCommand()->select("*")->from("swo_comparison_set")
+                            ->where("comparison_year=:year and city=:city",
                                 array(":year"=>$this->summary_year,":city"=>$cityKey)
-                            )->queryRow();
+                            )->queryRow();//2023/3/14日，目標金額配置統一調用swo_comparison_set
                         if($row){
                             $this->data[$regionKey]["list"][$cityKey]["one_gross"]=empty($row["one_gross"])?0:floatval($row["one_gross"]);
                             $this->data[$regionKey]["list"][$cityKey]["one_net"]=empty($row["one_net"])?0:floatval($row["one_net"]);
@@ -103,10 +103,9 @@ class SummaryForm extends CFormModel
         return true;
     }
 
-    protected function resetTdRow(&$list){
-        $list["two_gross"] = ComparisonForm::resetNetOrGross($list["two_gross"],$this->day_num);
-        $list["two_net"] = ComparisonForm::resetNetOrGross($list["two_net"],$this->day_num);
+    protected function resetTdRow(&$list,$bool=false){
 	    $newSum = $list["num_new"]+$list["u_invoice_sum"];//所有新增总金额
+        $list["num_growth"] = 0;
 	    $list["num_growth"]+=$list["num_new"];
 	    $list["num_growth"]+=$list["u_invoice_sum"];
 	    $list["num_growth"]+=$list["num_stop"];
@@ -114,13 +113,15 @@ class SummaryForm extends CFormModel
 	    $list["num_growth"]+=$list["num_pause"];
 	    $list["num_growth"]+=$list["num_update"];
 
+        $list["two_gross"] = $bool?$list["two_gross"]:ComparisonForm::resetNetOrGross($list["two_gross"],$this->day_num);
+        $list["two_net"] = $bool?$list["two_net"]:ComparisonForm::resetNetOrGross($list["two_net"],$this->day_num);
         $list["two_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["two_gross"]);
         $list["two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["two_net"]);
         if(SummaryForm::targetAllReady()){
-            $list["one_gross"] = ComparisonForm::resetNetOrGross($list["one_gross"],$this->day_num);
-            $list["one_net"] = ComparisonForm::resetNetOrGross($list["one_net"],$this->day_num);
-            $list["three_gross"] = ComparisonForm::resetNetOrGross($list["three_gross"],$this->day_num);
-            $list["three_net"] = ComparisonForm::resetNetOrGross($list["three_net"],$this->day_num);
+            $list["one_gross"] = $bool?$list["one_gross"]:ComparisonForm::resetNetOrGross($list["one_gross"],$this->day_num);
+            $list["one_net"] = $bool?$list["one_net"]:ComparisonForm::resetNetOrGross($list["one_net"],$this->day_num);
+            $list["three_gross"] = $bool?$list["three_gross"]:ComparisonForm::resetNetOrGross($list["three_gross"],$this->day_num);
+            $list["three_net"] = $bool?$list["three_net"]:ComparisonForm::resetNetOrGross($list["three_net"],$this->day_num);
             $list["one_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["one_gross"]);
             $list["one_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["one_net"]);
             $list["three_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["three_gross"]);
@@ -138,82 +139,86 @@ class SummaryForm extends CFormModel
         return $html;
     }
 
-
-    //顯示提成表的表格內容（表頭）
-    private function tableTopHtml(){
+    private function getTopArr(){
         $topList=array(
-            array("name"=>"City","rowspan"=>2),//城市
-            array("name"=>"Signing status","background"=>"rgb(247,253,157)",
+            array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
+            array("name"=>Yii::t("summary","Signing status"),"background"=>"#f7fd9d",
                 "colspan"=>array(
-                    array("name"=>"New(service)"),//新增服务
-                    array("name"=>"New(INV)"),//新增（产品）
-                    array("name"=>"Terminate service"),//终止服务
-                    array("name"=>"Resume service"),//恢复服务
-                    array("name"=>"Suspended service"),//暂停服务
-                    array("name"=>"Amendment service"),//更改服务
-                    array("name"=>"Net growth"),//净增长
+                    array("name"=>Yii::t("summary","New(service)")),//新增服务
+                    array("name"=>Yii::t("summary","New(INV)")),//新增（产品）
+                    array("name"=>Yii::t("summary","Terminate service")),//终止服务
+                    array("name"=>Yii::t("summary","Resume service")),//恢复服务
+                    array("name"=>Yii::t("summary","Suspended service")),//暂停服务
+                    array("name"=>Yii::t("summary","Amendment service")),//更改服务
+                    array("name"=>Yii::t("summary","Net growth")),//净增长
                 )
             ),//签单情况
-            array("name"=>"New customer(service)","background"=>"rgb(252,213,180)",
+            array("name"=>Yii::t("summary","New customer(service)"),"background"=>"#fcd5b4",
                 "colspan"=>array(
-                    array("name"=>"long month"),//长约（>=12月）
-                    array("name"=>"short month"),//短约
-                    array("name"=>"cate service"),//餐饮客户
-                    array("name"=>"not cate service"),//非餐饮客户
+                    array("name"=>Yii::t("summary","long month")),//长约（>=12月）
+                    array("name"=>Yii::t("summary","short month")),//短约
+                    array("name"=>Yii::t("summary","cate service")),//餐饮客户
+                    array("name"=>Yii::t("summary","not cate service")),//非餐饮客户
                 )
             ),//新增客户（服务）
-            array("name"=>"New customer(INV)","background"=>"rgb(242,220,219)",
+            array("name"=>Yii::t("summary","New customer(INV)"),"background"=>"#f2dcdb",
                 "colspan"=>array(
-                    array("name"=>"cate service"),//餐饮客户
-                    array("name"=>"not cate service"),//非餐饮客户
+                    array("name"=>Yii::t("summary","cate service")),//餐饮客户
+                    array("name"=>Yii::t("summary","not cate service")),//非餐饮客户
                 )
             ),//新增客户（产品）
         );
         if(SummaryForm::targetAllReady()){
-            $topList[]=array("name"=>"Annual target (upside case)","background"=>"#FDE9D9",
+            $topList[]=array("name"=>Yii::t("summary","Annual target (upside case)"),"background"=>"#FDE9D9",
                 "colspan"=>array(
-                    array("name"=>"Gross"),//Gross
-                    array("name"=>"Net"),//Net
+                    array("name"=>Yii::t("summary","Gross")),//Gross
+                    array("name"=>Yii::t("summary","Net")),//Net
                 )
             );//年金额目标 (upside case)
-            $topList[]=array("name"=>"Goal degree (upside case)","background"=>"#FDE9D9",
+            $topList[]=array("name"=>Yii::t("summary","Goal degree (upside case)"),"background"=>"#FDE9D9",
                 "colspan"=>array(
-                    array("name"=>"Gross"),//Gross
-                    array("name"=>"Net"),//Net
+                    array("name"=>Yii::t("summary","Gross")),//Gross
+                    array("name"=>Yii::t("summary","Net")),//Net
                 )
             );//目标完成度 (upside case)
         }
-        $topList[]=array("name"=>"Annual target (base case)","background"=>"#DCE6F1",
+        $topList[]=array("name"=>Yii::t("summary","Annual target (base case)"),"background"=>"#DCE6F1",
             "colspan"=>array(
-                array("name"=>"Gross"),//Gross
-                array("name"=>"Net"),//Net
+                array("name"=>Yii::t("summary","Gross")),//Gross
+                array("name"=>Yii::t("summary","Net")),//Net
             )
         );//年金额目标 (base case)
-        $topList[]=array("name"=>"Goal degree (base case)","background"=>"#DCE6F1",
+        $topList[]=array("name"=>Yii::t("summary","Goal degree (base case)"),"background"=>"#DCE6F1",
             "colspan"=>array(
-                array("name"=>"Gross"),//Gross
-                array("name"=>"Net"),//Net
+                array("name"=>Yii::t("summary","Gross")),//Gross
+                array("name"=>Yii::t("summary","Net")),//Net
             )
         );//目标完成度 (base case)
         if(SummaryForm::targetAllReady()){
-            $topList[]=array("name"=>"Annual target (minimum case)","background"=>"#FDE9D9",
+            $topList[]=array("name"=>Yii::t("summary","Annual target (minimum case)"),"background"=>"#FDE9D9",
                 "colspan"=>array(
-                    array("name"=>"Gross"),//Gross
-                    array("name"=>"Net"),//Net
+                    array("name"=>Yii::t("summary","Gross")),//Gross
+                    array("name"=>Yii::t("summary","Net")),//Net
                 )
             );//年金额目标 (minimum case)
-            $topList[]=array("name"=>"Goal degree (minimum case)","background"=>"#FDE9D9",
+            $topList[]=array("name"=>Yii::t("summary","Goal degree (minimum case)"),"background"=>"#FDE9D9",
                 "colspan"=>array(
-                    array("name"=>"Gross"),//Gross
-                    array("name"=>"Net"),//Net
+                    array("name"=>Yii::t("summary","Gross")),//Gross
+                    array("name"=>Yii::t("summary","Net")),//Net
                 )
             );//目标完成度 (minimum case)
         }
+        return $topList;
+    }
+
+    //顯示提成表的表格內容（表頭）
+    private function tableTopHtml(){
+        $topList = self::getTopArr();
         $trOne="";
         $trTwo="";
         $html="<thead>";
         foreach ($topList as $list){
-            $clickName=Yii::t("summary",$list["name"]);
+            $clickName=$list["name"];
             $colList=key_exists("colspan",$list)?$list['colspan']:array();
             $trOne.="<th";
             if(key_exists("rowspan",$list)){
@@ -233,7 +238,7 @@ class SummaryForm extends CFormModel
             if(!empty($colList)){
                 foreach ($colList as $col){
                     $this->th_sum++;
-                    $trTwo.="<th>".Yii::t("summary",$col["name"])."</th>";
+                    $trTwo.="<th>".$col["name"]."</th>";
                 }
             }
         }
@@ -308,7 +313,10 @@ class SummaryForm extends CFormModel
                 $html="<tr>";
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
-                    $html.="<td>{$text}</td>";
+                    $text = ComparisonForm::showNum($text);
+                    $inputHide = TbHtml::hiddenField("excel[MO][]",$text);
+                    $tdClass =(strpos($text,'%')!==false&&floatval($text)>=100)?"text-green":"";
+                    $html.="<td class='{$tdClass}'>{$text}{$inputHide}</td>";
                 }
                 $html.="</tr>";
             }
@@ -337,17 +345,22 @@ class SummaryForm extends CFormModel
                             $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                             $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
-                            $html.="<td>{$text}</td>";
+                            $tdClass =(strpos($text,'%')!==false&&floatval($text)>=100)?"text-green":"";
+                            $text = ComparisonForm::showNum($text);
+                            $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][]",$text);
+                            $html.="<td class='{$tdClass}'>{$text}{$inputHide}</td>";
                         }
                         $html.="</tr>";
                     }
                     //地区汇总
+                    $regionRow["region"]=$regionList["region"];
                     $regionRow["city_name"]=$regionList["region_name"];
                     $html.=$this->printTableTr($regionRow,$bodyKey);
                     $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
                 }
             }
             //地区汇总
+            $allRow["region"]="allRow";
             $allRow["city_name"]=Yii::t("summary","all total");
             $html.=$this->printTableTr($allRow,$bodyKey);
             $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
@@ -357,11 +370,14 @@ class SummaryForm extends CFormModel
     }
 
     protected function printTableTr($data,$bodyKey){
-        $this->resetTdRow($data);
+        $this->resetTdRow($data,true);
         $html="<tr class='tr-end click-tr'>";
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
-            $html.="<td><b>{$text}</b></td>";
+            $tdClass =(strpos($text,'%')!==false&&floatval($text)>=100)?"text-green":"";
+            $text = ComparisonForm::showNum($text);
+            $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][]",$text);
+            $html.="<td class='{$tdClass}'><b>{$text}{$inputHide}</b></td>";
         }
         $html.="</tr>";
         return $html;
@@ -376,5 +392,17 @@ class SummaryForm extends CFormModel
 
     public static function targetAllReady(){
         return Yii::app()->user->validFunction('CN15');
+    }
+
+    //下載
+    public function downExcel($excelData){
+        $headList = $this->getTopArr();
+        $excel = new DownSummary();
+        $excel->SetHeaderTitle(Yii::t("app","Summary"));
+        $excel->SetHeaderString($this->start_date." ~ ".$this->end_date);
+        $excel->init();
+        $excel->setSummaryHeader($headList);
+        $excel->setSummaryData($excelData);
+        $excel->outExcel("Summary");
     }
 }
