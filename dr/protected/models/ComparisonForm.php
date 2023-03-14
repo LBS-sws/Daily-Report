@@ -454,7 +454,10 @@ class ComparisonForm extends CFormModel
                 $html="<tr>";
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
-                    $html.="<td>{$text}</td>";
+                    $tdClass =(strpos($text,'%')!==false&&floatval($text)>=100)?"text-green":"";
+                    $text = ComparisonForm::showNum($text);
+                    $inputHide = TbHtml::hiddenField("excel[MO][]",$text);
+                    $html.="<td class='{$tdClass}'>{$text}{$inputHide}</td>";
                 }
                 $html.="</tr>";
             }
