@@ -627,7 +627,7 @@ class General {
     }
 	
     /*
-     * 加载日报表系统的SysBlock文件
+     * 加载日报表系统的SysBlock文件 
      * @return str
      */
     public static function includeDrsSysBlock(){
