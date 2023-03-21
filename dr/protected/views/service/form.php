@@ -296,7 +296,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                         array('size'=>4,'min'=>0,'readonly'=>($model->getReadonly()))
                     ); ?>
                 </div>
-                <?php if (($model->status=='A') || ($model->status=='T')) : ?>
+                <?php if (($model->status=='A') || ($model->status=='T') || ($model->status=='S')) : ?>
                 <?php echo $form->labelEx($model,'surplus',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-2">
                     <?php echo $form->numberField($model, 'surplus',
