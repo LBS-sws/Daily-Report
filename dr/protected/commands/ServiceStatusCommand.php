@@ -7,7 +7,7 @@ class ServiceStatusCommand extends CConsoleCommand {
 
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "
-			select a.contract_no, a.service_id, a.status_dt, date_add(date_add(a.status_dt, interval 1 month), interval 1 day) as target_dt 
+			select a.contract_no, a.service_id, a.status_dt, date_add(date_add(a.status_dt, interval 3 month), interval 1 day) as target_dt 
 			from swo_service_contract_no a
 			left outer join swo_service_contract_no b on a.contract_no=b.contract_no and a.status_dt < b.status_dt
 			where a.status='S' and a.status_dt >= '2023-01-01' 
