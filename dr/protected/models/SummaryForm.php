@@ -324,7 +324,7 @@ class SummaryForm extends CFormModel
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                     $text = ComparisonForm::showNum($text);
                     $inputHide = TbHtml::hiddenField("excel[MO][]",$text);
-                    $tdClass =(strpos($text,'%')!==false&&floatval($text)>=100)?"text-green":"";
+                    $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                     $html.="<td class='{$tdClass}'>{$text}{$inputHide}</td>";
                 }
                 $html.="</tr>";
@@ -354,7 +354,7 @@ class SummaryForm extends CFormModel
                             $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                             $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
-                            $tdClass =(strpos($text,'%')!==false&&floatval($text)>=100)?"text-green":"";
+                            $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                             $text = ComparisonForm::showNum($text);
                             $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][]",$text);
                             $html.="<td class='{$tdClass}'>{$text}{$inputHide}</td>";
@@ -383,7 +383,7 @@ class SummaryForm extends CFormModel
         $html="<tr class='tr-end click-tr'>";
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
-            $tdClass =(strpos($text,'%')!==false&&floatval($text)>=100)?"text-green":"";
+            $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
             $text = ComparisonForm::showNum($text);
             $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][]",$text);
             $html.="<td class='{$tdClass}'><b>{$text}{$inputHide}</b></td>";

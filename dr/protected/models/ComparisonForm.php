@@ -463,7 +463,7 @@ class ComparisonForm extends CFormModel
                 $html="<tr>";
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
-                    $tdClass =(strpos($text,'%')!==false&&floatval($text)>=100)?"text-green":"";
+                    $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                     $text = ComparisonForm::showNum($text);
                     $inputHide = TbHtml::hiddenField("excel[MO][]",$text);
                     $html.="<td class='{$tdClass}'>{$text}{$inputHide}</td>";
@@ -473,6 +473,20 @@ class ComparisonForm extends CFormModel
         }
         return $html;
     }
+
+    //設置百分比顏色
+    public static function getTextColorForKeyStr($text,$keyStr){
+        $tdClass = "";
+        if(strpos($text,'%')!==false){
+            if(!in_array($keyStr,array("new_rate","stop_rate","net_rate"))){
+                $tdClass =floatval($text)<=60?"text-danger":$tdClass;
+            }
+            $tdClass =floatval($text)>=100?"text-green":$tdClass;
+        }
+
+        return $tdClass;
+    }
+
     //將城市数据寫入表格
     private function showServiceHtml($data){
         $bodyKey = $this->getDataAllKeyStr();
@@ -495,7 +509,7 @@ class ComparisonForm extends CFormModel
                             $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                             $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
-                            $tdClass =(strpos($text,'%')!==false&&floatval($text)>=100)?"text-green":"";
+                            $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                             $text = ComparisonForm::showNum($text);
                             $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][]",$text);
                             if($keyStr=="new_sum"){//调试U系统同步数据
@@ -528,7 +542,7 @@ class ComparisonForm extends CFormModel
         $html="<tr class='tr-end click-tr'>";
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
-            $tdClass =(strpos($text,'%')!==false&&floatval($text)>=100)?"text-green":"";
+            $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
             $text = ComparisonForm::showNum($text);
             $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][]",$text);
             $html.="<td class='{$tdClass}'><b>{$text}{$inputHide}</b></td>";
