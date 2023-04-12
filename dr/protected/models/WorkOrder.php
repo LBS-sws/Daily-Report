@@ -293,8 +293,8 @@ WHERE
 
         $build_ret2 = Yii::app()->db->createCommand($build_sql2)->queryAll();
 
-
-        $sql = "SELECT 
+        if($table == "service{$this->suffix}.followuporder"){
+            $sql = "SELECT 
 	a.CustomerName AS customer_name,
 	d.StaffName AS staff_name,
 	b.ServiceName AS service_type,
@@ -311,6 +311,29 @@ FROM
 WHERE
 	a.Staff01 = '" . $data['staff_id'] . "' AND JobDate BETWEEN '{$start_date}' AND '{$end_date}'
 	AND a.`Status` = 3   AND c.EnumType = 1  AND a.City IN({$build_ret2[0]['citys']}) ORDER BY  a.JobDate DESC";
+        }else{
+            $sql = "SELECT 
+	a.CustomerName AS customer_name,
+	d.StaffName AS staff_name,
+	b.ServiceName AS service_type,
+	c.Text AS city_name,
+	a.StartTime AS start_time,
+	a.FinishTime AS end_time,
+	a.JobDate AS job_date,
+	a.FinishDate AS finish_date,
+	{$condition_x}
+FROM
+	{$table} a
+	LEFT JOIN service{$this->suffix}.service b ON b.ServiceType = a.{$stype}
+	 JOIN service{$this->suffix}.enums c ON c.EnumID = a.City 
+	 JOIN service{$this->suffix}.staff d ON d.StaffID = a.Staff01
+WHERE
+	a.Staff01 = '" . $data['staff_id'] . "' AND JobDate BETWEEN '{$start_date}' AND '{$end_date}'
+	AND a.`Status` = 3   AND c.EnumType = 1  AND a.City IN({$build_ret2[0]['citys']}) ORDER BY  a.JobDate DESC";
+        }
+
+
+
 
 //        var_dump($sql);exit;
 
