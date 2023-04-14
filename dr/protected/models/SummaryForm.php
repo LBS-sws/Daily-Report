@@ -66,17 +66,19 @@ class SummaryForm extends CFormModel
 	    $list = array();
 	    $citySql = "";
 	    if(!empty($city_allow)){
-	        $citySql = " and City in ({$city_allow})";
+	        $citySql = " and b.Text in ({$city_allow})";
         }
         $suffix = Yii::app()->params['envSuffix'];
-        $rows = Yii::app()->db->createCommand()->select("City,Fee,TermCount")
-            ->from("service{$suffix}.joborder")
-            ->where("Status=3 and JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
-            ->order("City")
+        $rows = Yii::app()->db->createCommand()->select("b.Text,a.Fee,a.TermCount")
+            ->from("service{$suffix}.joborder a")
+            ->leftJoin("service{$suffix}.officecity f","a.City = f.City")
+            ->leftJoin("service{$suffix}.enums b","f.Office = b.EnumID and b.EnumType=8")
+            ->where("a.Status=3 and a.JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
+            ->order("b.Text")
             ->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $city = $row["City"];
+                $city = $row["Text"];
                 $money = empty($row["TermCount"])?0:floatval($row["Fee"])/floatval($row["TermCount"]);
                 if(!key_exists($city,$list)){
                     $list[$city]=0;
