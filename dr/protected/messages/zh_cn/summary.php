@@ -43,5 +43,6 @@ return array(
     'YTD Net'=>'YTD Net',
     'day num'=>'查询天数',
     'day'=>'天',
+    'Actual monthly amount'=>'实际服务金额',
 );
 ?>
