@@ -43,6 +43,6 @@ return array(
     'YTD Net'=>'YTD Net',
     'day num'=>'查詢天數',
     'day'=>'天',
-    'Actual monthly amount'=>'實際服務金額',
+    'Actual monthly amount'=>'服務生意額',
 );
 ?>
