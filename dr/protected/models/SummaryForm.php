@@ -62,12 +62,12 @@ class SummaryForm extends CFormModel
         );
     }
 
-    public static function getUActualMoney(){
+    public static function getUActualMoney($startDay,$endDay){
 	    $list = array();
         $suffix = Yii::app()->params['envSuffix'];
         $rows = Yii::app()->db->createCommand()->select("City,Fee,TermCount")
             ->from("service{$suffix}.joborder")
-            ->where("Status=3")
+            ->where("Status=3 and JobDate BETWEEN '{$startDay}' AND '{$endDay}'")
             ->order("City")
             ->queryAll();
         if($rows){
@@ -94,7 +94,7 @@ class SummaryForm extends CFormModel
         $rptModel->criteria = $criteria;
         $rptModel->retrieveData();
         $this->data = $rptModel->data;
-        $uActualMoneyList = SummaryForm::getUActualMoney();
+        $uActualMoneyList = SummaryForm::getUActualMoney($this->start_date,$this->end_date);
         if($this->data){
             foreach ($this->data as $regionKey=>$regionList){
                 if(!empty($regionList["list"])){
