@@ -84,6 +84,10 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'commission'); ?>
 			<?php echo $form->hiddenField($model, 'other_commission'); ?>
+			<?php echo $form->hiddenField($model, 'lcu'); ?>
+			<?php echo $form->hiddenField($model, 'luu'); ?>
+			<?php echo $form->hiddenField($model, 'lcd'); ?>
+			<?php echo $form->hiddenField($model, 'lud'); ?>
 			<?php echo TbHtml::hiddenField('copy_index',0,array('id'=>'copy_index')); ?>
 			<?php
 				if ($model->status!='A') {
