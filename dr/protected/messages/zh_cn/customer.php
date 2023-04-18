@@ -49,6 +49,8 @@ return array(
 	'Others'=>'其他',
 	'Group ID'=>'集团编号',
 	'Group Name'=>'编号名称',
+	'chain num'=>'连锁店数量',
+	'note 1:'=>'注：输入数量X后，系统筛选出客户名字前3个字相同，数量且大于等于X',
 
 );
 ?>

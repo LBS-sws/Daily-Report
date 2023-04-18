@@ -7,6 +7,7 @@ class CustomerEnqList extends CListPageModel
 	public $company_status;
 	public $city_list;
 	public $company_type_list;
+	public $chain_num;//連鎖店數量
 	public $show;
 
 	
@@ -28,13 +29,14 @@ class CustomerEnqList extends CListPageModel
 			'product_desc'=>Yii::t('customer','Product'),
 			'first_dt'=>Yii::t('customer','First Date'),
 			'amt_paid'=>Yii::t('customer','Amount'),
+			'chain_num'=>Yii::t('customer','chain num'),
 		);
 	}
 	
 	public function rules()
 	{	$rtn1 = parent::rules();
 		$rtn2 =  array(
-			array('company_code, company_name, company_type_list, company_status, city_list, show','safe',),
+			array('chain_num,company_code, company_name, company_type_list, company_status, city_list, show','safe',),
 			);
 		return array_merge($rtn1, $rtn2);
 	}
@@ -90,6 +92,27 @@ class CustomerEnqList extends CListPageModel
 				$svalue .= ($svalue=='' ? '' : ',')."'$item'";
 			}
 			$clause .= (empty($clause) ? '' : ' and ').'a.city in ('.$svalue.')';
+		}
+		if (!empty($this->chain_num)) {
+			$svalue = is_numeric($this->chain_num)?intval($this->chain_num):1;
+            $svalue = $svalue<=1?2:$svalue;
+            $this->chain_num = $svalue;
+			//$svalue
+            $numSql = "SELECT * FROM(
+		SELECT LEFT (NAME, 3) AS company_name, count(id) AS count_num FROM
+			swo_company
+		GROUP BY LEFT (NAME, 3)
+	) a WHERE a.count_num >= {$svalue}";
+            $rows = Yii::app()->db->createCommand($numSql)->queryAll();
+            $chainSql = " 1=2";
+            if($rows){
+                $chainSql = array();
+                foreach ($rows as $row){
+                    $chainSql[]="a.name like '{$row["company_name"]}%'";
+                }
+                $chainSql = "(".implode("or",$chainSql).")";
+            }
+			$clause .= (empty($clause) ? '' : ' and ').$chainSql;
 		}
 		if ($clause!='') $clause = ' and ('.$clause.')'; 
 		

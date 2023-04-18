@@ -50,6 +50,16 @@ $this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
 				?>
 			</div>
 		</div>
+
+		<div class="form-group">
+            <?php echo $form->labelEx($model,'chain_num',array('class'=>"col-sm-2 control-label")); ?>
+            <div class="col-sm-2">
+                <?php echo $form->numberField($model, 'chain_num', array('min'=>2)); ?>
+            </div>
+            <div class="col-sm-7">
+                <p class="form-control-static text-warning"><?php echo Yii::t('customer','note 1:');?></p>
+            </div>
+		</div>
 		<div class="btn-group" role="group">
 			<?php 
 				echo TbHtml::button('dummyButton', array('style'=>'display:none','disabled'=>true,'submit'=>'#',));
