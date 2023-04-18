@@ -104,7 +104,8 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
         <el-tag style="float: right" type="success" @click="exportData">导出</el-tag>
 
         <el-table :data="gridData">
-            <el-table-column property="job_date" label="日期" width="auto"></el-table-column>
+            <el-table-column property="job_date" label="排单日期" width="auto"></el-table-column>
+            <el-table-column property="finish_date" label="离店日期" width="auto"></el-table-column>
             <el-table-column property="city_name" label="地区" width="auto"></el-table-column>
             <el-table-column property="customer_name" label="客户" width="200px"></el-table-column>
             <el-table-column property="staff_name" label="工作人员" width="auto"></el-table-column>
@@ -312,9 +313,9 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
             },
 
             exportData() {
-                var aoa = [["日期", "地区", "客户", "工作人员", "服务类别", "开始时间", "结束时间", "工作时间", "状态"]];
+                var aoa = [["排单日期","离店日期", "地区", "客户", "工作人员", "服务类别", "开始时间", "结束时间", "工作时间", "状态"]];
                 this.gridData.map(item => {
-                    aoa.push([item.job_date, item.city_name, item.customer_name, item.staff_name, item.service_type, item.start_time, item.end_time, item.job_time, item.status])
+                    aoa.push([item.job_date,item.finish_date??'', item.city_name, item.customer_name, item.staff_name, item.service_type, item.start_time, item.end_time, item.job_time, item.status])
                 })
                 console.log(aoa)
                 var sheet = XLSX.utils.aoa_to_sheet(aoa);

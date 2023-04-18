@@ -115,7 +115,7 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
 $js="
 
     $('.click-th').click(function(){
-        var startNum=1;
+        var startNum=2;
         var endNum = $(this).attr('colspan');
         $(this).prevAll('.click-th').each(function(){
             var colspan = $(this).attr('colspan');
@@ -128,7 +128,7 @@ $js="
                 var width = $(this).data('width')+'px';
                 $(this).width(width);
             });
-            $('#summary>thead>tr').eq(2).children().slice(startNum-1,endNum-1).each(function(){
+            $('#summary>thead>tr').eq(2).children().slice(startNum-2,endNum-2).each(function(){
                 $(this).text($(this).data('text'));
             });
             $('#summary>tbody>tr').each(function(){
@@ -143,7 +143,7 @@ $js="
                 var width = '15px';
                 $(this).width(width);
             });
-            $('#summary>thead>tr').eq(2).children().slice(startNum-1,endNum-1).each(function(){
+            $('#summary>thead>tr').eq(2).children().slice(startNum-2,endNum-2).each(function(){
                 $(this).data('text',$(this).text());
                 $(this).text('');
             });

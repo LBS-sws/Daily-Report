@@ -36,6 +36,7 @@ class DownSummary{
         $this->setSummaryWidth();
         if(!empty($headerArr)){
             $this->objPHPExcel->getActiveSheet()->mergeCells("A".$this->current_row.':'."A".($this->current_row+1));
+            $this->objPHPExcel->getActiveSheet()->mergeCells("B".$this->current_row.':'."B".($this->current_row+1));
             $this->objPHPExcel->getActiveSheet()->getStyle("A{$this->current_row}:Y".($this->current_row+1))->applyFromArray(
                 array(
                     'font'=>array(
@@ -53,7 +54,7 @@ class DownSummary{
                 )
             );
             $colOne = 0;
-            $colTwo = 1;
+            $colTwo = 2;
             foreach ($headerArr as $list){
                 $startStr = $this->getColumn($colOne);
                 $colspan = key_exists("colspan",$list)?count($list["colspan"])-1:0;

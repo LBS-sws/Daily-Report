@@ -85,7 +85,11 @@ class ServiceForm extends CFormModel
 		$this->city = Yii::app()->user->city();
 	}
 	public $send;
-	
+	public $lcd;
+	public $lud;
+	public $lcu;
+	public $luu;
+
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -325,6 +329,10 @@ class ServiceForm extends CFormModel
                 $this->prepay_start = $row['prepay_start'];
                 $this->contract_no = $row['contract_no'];
                 $this->send = $row['send'];
+                $this->lcd = $row['lcd'];
+                $this->lud = $row['lud'];
+                $this->lcu = $row['lcu'];
+                $this->luu = $row['luu'];
 //                print_r('<pre>');
 //                print_r($this);exit();
 				break;

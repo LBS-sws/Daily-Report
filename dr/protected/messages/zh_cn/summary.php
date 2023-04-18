@@ -13,8 +13,8 @@ return array(
     'Goal degree (base case)'=>'目标完成度(base case)',
     'Goal degree (minimum case)'=>'目标完成度(minimum case)',
     'Update Annual Target'=>'修改目标金额',
-    'Gross'=>'Gross',
-    'Net'=>'Net',
+    'Gross'=>'新生意',
+    'Net'=>'净增长',
     'Enquiry'=>'查询',
     'start date'=>'开始时间',
     'end date'=>'结束时间',
@@ -43,5 +43,6 @@ return array(
     'YTD Net'=>'YTD Net',
     'day num'=>'查询天数',
     'day'=>'天',
+    'Actual monthly amount'=>'服务生意额',
 );
 ?>
