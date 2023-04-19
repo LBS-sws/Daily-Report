@@ -104,16 +104,16 @@ class CustomerEnqList extends CListPageModel
 		GROUP BY LEFT (NAME, 3)
 	) a WHERE a.count_num >= {$svalue}";
             $rows = Yii::app()->db->createCommand($numSql)->queryAll();
-            $chainSql = " 1=2";
+            $chainSql = "";
             if($rows){
                 $chainSql = array();
                 foreach ($rows as $row){
-                    $chainSql[]=" a.name like '{$row["company_name"]}%' ";
+                    $chainSql[]=$row["company_name"];
                 }
-                $chainSql = "(".implode("or",$chainSql).")";
+                $chainSql = implode("','",$chainSql);
             }
-			$clause .= (empty($clause) ? '' : ' and ').$chainSql;
-            $clause .= " and a.city not in ('RN')";//不需要查詢蔚諾
+			$clause .= (empty($clause) ? '' : ' and ')." left(a.name, 3) in ('{$chainSql}')";
+            $clause .= " and a.city not in ('RN','WL')";//不需要查詢蔚諾
 
             $this->orderField = empty($this->orderField)?"a.name":$this->orderField;
 		}
