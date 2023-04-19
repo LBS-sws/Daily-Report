@@ -98,21 +98,12 @@ class CustomerEnqList extends CListPageModel
             $svalue = $svalue<=1?2:$svalue;
             $this->chain_num = $svalue;
 			//$svalue
-            $numSql = "SELECT * FROM(
+            $numSql = "SELECT company_name FROM(
 		SELECT LEFT (NAME, 3) AS company_name, count(id) AS count_num FROM
 			swo_company
 		GROUP BY LEFT (NAME, 3)
 	) a WHERE a.count_num >= {$svalue}";
-            $rows = Yii::app()->db->createCommand($numSql)->queryAll();
-            $chainSql = "";
-            if($rows){
-                $chainSql = array();
-                foreach ($rows as $row){
-                    $chainSql[]=$row["company_name"];
-                }
-                $chainSql = implode("','",$chainSql);
-            }
-			$clause .= (empty($clause) ? '' : ' and ')." left(a.name, 3) in ('{$chainSql}')";
+			$clause .= (empty($clause) ? '' : ' and ')." left(a.name, 3) in ($numSql)";
             $clause .= " and a.city not in ('RN','WL')";//不需要查詢蔚諾
 
             $this->orderField = empty($this->orderField)?"a.name":$this->orderField;
