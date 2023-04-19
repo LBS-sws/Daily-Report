@@ -45,7 +45,7 @@ class CustomerEnqList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 //		$city = Yii::app()->user->city_allow();
-		$sql1 = "select a.*, c.name as city_name, b.status, b.type_list  
+		$sql1 = "select a.id,a.code,a.name,a.full_name,a.cont_name,a.cont_phone,a.city, c.name as city_name, b.status, b.type_list  
 				from swo_company a
 				left join security$suffix.sec_city c on a.city=c.code
 				left join swo_company_status b on a.id=b.id
