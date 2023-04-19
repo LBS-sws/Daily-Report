@@ -191,6 +191,7 @@ class CustomerEnqList extends CListPageModel
 	public function getCriteria() {
 		$rtn1 = parent::getCriteria();
 		$rtn2 = array(
+					'chain_num'=>$this->chain_num,
 					'company_code'=>$this->company_code,
 					'company_name'=>$this->company_name,
 					'company_status'=>$this->company_status,

@@ -9,6 +9,9 @@ $this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
 //'layout'=>TbHtml::FORM_LAYOUT_INLINE,
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 )); ?>
+<style>
+    #CustomerEnqList_noOfItem{ width: 30%;display: inline-block;}
+</style>
 
 <section class="content-header">
 	<h1>
@@ -77,6 +80,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer Enquiry';
 				'viewhdr'=>'//customerenq/_listhdr',
 				'viewdtl'=>'//customerenq/_listdtl',
 				'hasSearchBar'=>false,
+				'item_bool'=>true,
 		));
 	?>
 </section>

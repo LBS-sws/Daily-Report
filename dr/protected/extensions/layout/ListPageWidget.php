@@ -15,7 +15,8 @@ class ListPageWidget extends CWidget
     public $search_add_html = '';
 	public $city=array();
 	public $advancedSearch = false;
-	
+	public $item_bool = false;
+
 	public $hasDateButton = false;
 	
 	public $record;
@@ -95,7 +96,7 @@ class ListPageWidget extends CWidget
 		$layout .= '</div>';
 		
 		$layout .= '<div class="box-footer clearfix">';
-		if ($this->hasSearchBar) {
+		if ($this->hasSearchBar||$this->item_bool) {
 			$layout .= '<div class="box-tools">'.$this->pageBar().'</div>';
 		}
 
