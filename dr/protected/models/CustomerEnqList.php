@@ -113,6 +113,8 @@ class CustomerEnqList extends CListPageModel
                 $chainSql = "(".implode("or",$chainSql).")";
             }
 			$clause .= (empty($clause) ? '' : ' and ').$chainSql;
+
+            $this->orderField = empty($this->orderField)?"a.name":$this->orderField;
 		}
 		if ($clause!='') $clause = ' and ('.$clause.')'; 
 		
