@@ -108,7 +108,7 @@ class CustomerEnqList extends CListPageModel
             if($rows){
                 $chainSql = array();
                 foreach ($rows as $row){
-                    $chainSql[]="a.name like '{$row["company_name"]}%'";
+                    $chainSql[]=" a.name like '{$row["company_name"]}%' ";
                 }
                 $chainSql = "(".implode("or",$chainSql).")";
             }
