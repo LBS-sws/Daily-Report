@@ -47,14 +47,14 @@ class CustomerEnqList extends CListPageModel
 //		$city = Yii::app()->user->city_allow();
 		$sql1 = "select a.*, c.name as city_name, b.status, b.type_list  
 				from swo_company a
-				inner join security$suffix.sec_city c on a.city=c.code
-				left outer join swo_company_status b on a.id=b.id
+				left join security$suffix.sec_city c on a.city=c.code
+				left join swo_company_status b on a.id=b.id
 				where 1=1
 			";
 		$sql2 = "select count(a.id)
 				from swo_company a
-				inner join security$suffix.sec_city c on a.city=c.code
-				left outer join swo_company_status b on a.id=b.id
+				left join security$suffix.sec_city c on a.city=c.code
+				left join swo_company_status b on a.id=b.id
 				where 1=1
 			";
 		$clause = "";
@@ -155,10 +155,8 @@ class CustomerEnqList extends CListPageModel
 					and a.status_dt < b.status_dt and a.cust_type=b.cust_type
 				left outer join swo_customer_type c on a.cust_type=c.id 
 				left outer join swo_product d on a.product_id=d.id 
-				where b.id is null and a.city='$city'
-				and (a.company_id=$id or substring(a.company_name, 1, char_length('$code'))='$code' 
-				or a.company_name like concat('%','$name'));
-			";
+				where b.id is null and a.city='$city' and a.company_id=$id
+				";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
