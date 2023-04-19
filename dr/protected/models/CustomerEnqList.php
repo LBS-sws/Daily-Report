@@ -113,6 +113,7 @@ class CustomerEnqList extends CListPageModel
                 $chainSql = "(".implode("or",$chainSql).")";
             }
 			$clause .= (empty($clause) ? '' : ' and ').$chainSql;
+            $clause .= " and a.city not in ('RN')";//不需要查詢蔚諾
 
             $this->orderField = empty($this->orderField)?"a.name":$this->orderField;
 		}
