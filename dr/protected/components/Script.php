@@ -423,5 +423,118 @@ $('#$btnid').on('click', function() {
 		";
 		Yii::app()->clientScript->registerScript('fileUpload'.$doctype,$str,CClientScript::POS_READY);
 	}
+
+	public static function genFileUploadList($model, $formname, $doctype) {
+		$doc = new DocMan($doctype,$model->id,get_class($model));
+
+		$msg = Yii::t('dialog','Are you sure to delete record?');
+		$ctrlname = Yii::app()->controller->id;
+		$rmlink = Yii::app()->createAbsoluteUrl($ctrlname."/fileremove",array('doctype'=>$doctype));
+		$dwlink = Yii::app()->createAbsoluteUrl($ctrlname."/filedownload");
+		$dwList = Yii::app()->createAbsoluteUrl($ctrlname."/fileList");
+		$rmfldid = get_class($model).'_removeFileId_'.strtolower($doctype);
+		$tblid = $doc->tableName;
+		$rmfuncid = $doc->removeFunctionName;
+		$dlfuncid = $doc->downloadFunctionName;
+		$btnid = $doc->uploadButtonName;
+		$typeid = strtolower($doctype);
+		$modelname = get_class($model);
+
+		$str = "
+function $rmfuncid(id) {
+	if (confirm('$msg')) {
+		document.getElementById('$rmfldid').value = id;
+		var form = document.getElementById('$formname');
+		var formdata = new FormData(form);
+		$.ajax({
+			type: 'POST',
+			url: '$rmlink',
+			data: formdata,
+			mimeType: 'multipart/form-data',
+			contentType: false,
+			processData: false,
+			success: function(data) {
+				if (data!='NIL') {
+					$('#$tblid').find('tbody').html(data);
+                    var id = $('#{$modelname}_id').val();
+                    var num = $('#$tblid').find('tbody').eq(0).children('tr').length;
+                    num--;
+                    num = num<0?0:num;
+                    $('.click-doc[data-id=\"'+id+'\"]').data('num',num);
+                    $('.click-doc[data-id=\"'+id+'\"]>.badge').text(num);
+				}
+			},
+			error: function(data) { // if error occured
+				alert('Error occured.please try again');
+			}
+		});	
+	}
+}
+
+function $dlfuncid(mid, did, fid) {
+	href = '$dwlink?mastId='+mid+'&docId='+did+'&fileId='+fid+'&doctype=$doctype';
+	window.open(href);
+}
+		";
+		Yii::app()->clientScript->registerScript('removefile1'.$doctype,$str,CClientScript::POS_HEAD);
+
+		$link = Yii::app()->createAbsoluteUrl($ctrlname."/fileupload",array('doctype'=>$doctype));
+		$str = "
+$('#$btnid').on('click', function() {
+	var form = document.getElementById('$formname');
+	var formdata = new FormData(form);
+	$.ajax({
+		type: 'POST',
+		url: '$link',
+		data: formdata,
+		mimeType: 'multipart/form-data',
+		contentType: false,
+		processData: false,
+		success: function(data) {
+			if (data!='NIL') {
+				$('#$tblid').find('tbody').html(data);
+				$('input:file').MultiFile('reset');
+				var id = $('#{$modelname}_id').val();
+				var num = $('#$tblid').find('tbody').eq(0).children('tr').length;
+				num--;
+				num = num<0?0:num;
+				$('.click-doc[data-id=\"'+id+'\"]').data('num',num);
+				$('.click-doc[data-id=\"'+id+'\"]>.badge').text(num);
+			}
+		},
+		error: function(data) { // if error occured
+			alert('Error occured.please try again');
+		}
+	});
+});
+		";
+		Yii::app()->clientScript->registerScript('fileUpload'.$doctype,$str,CClientScript::POS_READY);
+
+
+		$link = Yii::app()->createAbsoluteUrl($ctrlname."/fileList",array('doctype'=>$doctype));
+		$str = "
+		function getFileListAll() {
+            var form = document.getElementById('$formname');
+            var formdata = new FormData(form);
+            $.ajax({
+                type: 'POST',
+                url: '$link',
+                data: formdata,
+                mimeType: 'multipart/form-data',
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    if (data!='NIL') {
+                        $('#$tblid').find('tbody').html(data);
+                    }
+                },
+                error: function(data) { // if error occured
+                    alert('Error occured.please try again');
+                }
+            });
+        }
+		";
+		Yii::app()->clientScript->registerScript('fileList'.$doctype,$str,CClientScript::POS_READY);
+	}
 }
 ?>

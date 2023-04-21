@@ -81,6 +81,7 @@ $this->pageTitle=Yii::app()->name . ' - Monthly Report Form';
 		echo TbHtml::hiddenField($name_prefix.'[updtype]',$data['updtype']);
 		echo TbHtml::hiddenField($name_prefix.'[fieldtype]',$data['fieldtype']);
 		echo TbHtml::hiddenField($name_prefix.'[manualinput]',$data['manualinput']);
+		echo TbHtml::hiddenField($name_prefix.'[num_i]',$cnt);
 		echo '</div>';
 		echo '</div>';
 	}

@@ -323,6 +323,11 @@ return array(
 				'url'=>'/announce/index',
 				'tag'=>'@',
 			),
+			'System Log'=>array(
+				'access'=>'D06',
+				'url'=>'/systemLog/index',
+				'tag'=>'@',
+			),
 		),
 	),
 );
