@@ -8,9 +8,10 @@ class ServiceStatusCommand extends CConsoleCommand {
 		$records = array();
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "
-			select a.contract_no, a.service_id, a.status_dt, date_add(date_add(a.status_dt, interval 3 month), interval 1 day) as target_dt, b.city 
+			select a.contract_no, a.service_id, a.status_dt, date_add(date_add(a.status_dt, interval 3 month), interval 1 day) as target_dt, c.city 
 			from swo_service_contract_no a
 			left outer join swo_service_contract_no b on a.contract_no=b.contract_no and a.status_dt < b.status_dt
+			inner join swo_service c on a.service_id=c.id
 			where a.status='S' and a.status_dt >= '2023-01-01' 
 			and date_add(date_add(a.status_dt, interval 3 month), interval 1 day) <= curdate() 
 			and b.id is null
@@ -113,7 +114,7 @@ class ServiceStatusCommand extends CConsoleCommand {
 				'subject'=>"超3个月暂停转终止客户明细 ($cityname)",
 				'description'=>'以下客户的服务已暂停超过3个月，系统已把服务转化终止记录',
 				'message'=>$this->printSuspensionList($ids),
-				'test'=>true,
+				'test'=>false,
 			);
 		$connection = Yii::app()->db;
 		$this->sendEmail($connection, $param);
@@ -131,7 +132,9 @@ class ServiceStatusCommand extends CConsoleCommand {
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         if ($rows){
             foreach ($rows as $row){
-                if(!in_array($row["email"],$rtn)) $rtn[] = $row["email"];
+                if(!in_array($row["email"],$rtn)) {
+					if ($row["email"]!="") $rtn[] = $row["email"];
+				}
             }
         }
 
@@ -142,7 +145,9 @@ class ServiceStatusCommand extends CConsoleCommand {
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         if ($rows){
             foreach ($rows as $row){
-                if(!in_array($row["email"],$rtn)) $rtn[] = $row["email"];
+                if(!in_array($row["email"],$rtn)) {
+					if ($row["email"]!="") $rtn[] = $row["email"];
+				}
             }
         }
 		
@@ -169,20 +174,20 @@ class ServiceStatusCommand extends CConsoleCommand {
 				from swo_service a
 				left outer join swo_customer_type b on a.cust_type=b.id
 				left outer join swo_nature c on a.nature_type=c.id
-				left outer join swo_service_contract_no d on a.id=b.service_id
+				left outer join swo_service_contract_no d on a.id=d.service_id
 				where a.id in ($idstring)
 				order by a.status_dt, a.company_name
 			";
 			$rows = Yii::app()->db->createCommand($sql)->queryAll();
 			if ($rows) {
 				foreach ($rows as $row) {
-					$output .= "<tr><td>".date('Y-m-d',$row['status_dt'])
+					$output .= "<tr><td>".date('Y-m-d',strtotime($row['status_dt']))
 						."</td><td>".$row['company_name']
 						."</td><td>".$row['cust_type_desc']
 						."</td><td>".$row['nature_type_desc']
 						."</td><td>".$row['service']
-						."</td><td align='right'>".($row['paid_type']=='1' ? $row['paid_amt'] : ($row['paid_type']=='M' ? $row['paid_amt'] : round($row['paid_amt']/12, 2)))
-						."</td><td align='right'>".($row['paid_type']=='1' ? $row['paid_amt'] : ($row['paid_type']=='M' ? $row['paid_amt']*12 : $row['paid_amt']))
+						."</td><td align='right'>".($row['paid_type']=='1' ? $row['amt_paid'] : ($row['paid_type']=='M' ? round($row['amt_paid']*1, 2) : round($row['amt_paid']/12, 2)))
+						."</td><td align='right'>".($row['paid_type']=='1' ? $row['amt_paid'] : ($row['paid_type']=='M' ? round($row['amt_paid']*12, 2) : round($row['amt_paid']*1, 2)))
 						."</td><td>".$row['reason']
 						."</td></tr>\n";
 				}
