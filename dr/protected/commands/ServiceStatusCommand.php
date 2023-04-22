@@ -42,8 +42,27 @@ class ServiceStatusCommand extends CConsoleCommand {
 			}
 
 			if (!empty($records)) {
+				$data = array();
+				$obj = new City();
 				foreach ($records as $key=>$rec) {
-					$this->notifySuspension($key, $rec);
+					$data[$key] = $rec;
+					$regions = $obj->getAncestor($key);
+					if (!empty($regions)) {
+						foreach ($regions as $region) {
+							if (strpos('HK/', $region.'/')===false) {
+								if (isset($data[$region])) {
+									$data[$region] = array_merge($data[$region],$rec);
+								} else {
+									$data[$region] = $rec;
+								}
+							}
+						}
+					}
+				}
+
+				$baseCities = General::getCityListWithNoDescendant();
+				foreach ($data as $key=>$rec) {
+					$this->notifySuspension($key, $rec, array_key_exists($key, $baseCities));
 				}
 			}
 		}
@@ -102,9 +121,9 @@ class ServiceStatusCommand extends CConsoleCommand {
 		$command->execute();
 	}
 
-	protected function notifySuspension($city, $ids) {
-		$cityname = $usr = City::model()->findByPk($city)->name;
-		$to = $this->getReceiver($city);
+	protected function notifySuspension($city, $ids, $isBaseCity) {
+		$cityname = City::model()->findByPk($city)->name;
+		$to = $this->getReceiver($city, $isBaseCity);
 		$cc = array();
 		
 		$param = array(
@@ -113,30 +132,32 @@ class ServiceStatusCommand extends CConsoleCommand {
 				'cc_addr'=>json_encode($cc),
 				'subject'=>"超3个月暂停转终止客户明细 ($cityname)",
 				'description'=>'以下客户的服务已暂停超过3个月，系统已把服务转化终止记录',
-				'message'=>$this->printSuspensionList($ids),
+				'message'=>$this->printSuspensionList($ids, $isBaseCity),
 				'test'=>false,
 			);
 		$connection = Yii::app()->db;
 		$this->sendEmail($connection, $param);
 	}
 
-	protected function getReceiver($city) {
+	protected function getReceiver($city, $isBaseCity) {
 		$rtn = array();
         $suffix = Yii::app()->params['envSuffix'];
         
-		$sql = "SELECT a.email 
-			FROM security$suffix.sec_user a,security$suffix.sec_user_access b 
-			WHERE a.username=b.username AND a.city='$city' 
-			AND b.a_read_write LIKE '%A02%' AND a.status='A' AND b.system_id='drs'
-		";
-        $rows = Yii::app()->db->createCommand($sql)->queryAll();
-        if ($rows){
-            foreach ($rows as $row){
-                if(!in_array($row["email"],$rtn)) {
-					if ($row["email"]!="") $rtn[] = $row["email"];
+		if ($isBaseCity) {
+			$sql = "SELECT a.email 
+				FROM security$suffix.sec_user a,security$suffix.sec_user_access b 
+				WHERE a.username=b.username AND a.city='$city' 
+				AND b.a_read_write LIKE '%A02%' AND a.status='A' AND b.system_id='drs'
+			";
+			$rows = Yii::app()->db->createCommand($sql)->queryAll();
+			if ($rows){
+				foreach ($rows as $row){
+					if(!in_array($row["email"],$rtn)) {
+						if ($row["email"]!="") $rtn[] = $row["email"];
+					}
 				}
-            }
-        }
+			}
+		}
 
 		$sql = "SELECT a.email 
 			FROM security$suffix.sec_user a,security$suffix.sec_city b 
@@ -154,11 +175,13 @@ class ServiceStatusCommand extends CConsoleCommand {
 		return $rtn;
 	}
 
-	protected function printSuspensionList($ids) {
+	protected function printSuspensionList($ids, $isBaseCity) {
 		$output = '';
 		if (!empty($ids)) {
 			$output = "<table border=1>";
-			$output .= "<tr><th>暂停日期"
+			$output .= "<tr>"
+					.($isBaseCity ? "" : "<th>城市</th>")
+					."<th>暂停日期"
 					."</th><th>客户编号及名称"
 					."</th><th>客户类别"
 					."</th><th>性质"
@@ -169,19 +192,23 @@ class ServiceStatusCommand extends CConsoleCommand {
 					."</th></tr>\n";
 
 			$idstring = implode(',',$ids);
+			$suffix = Yii::app()->params['envSuffix'];
 			$sql = "
-				select a.status_dt, a.company_name, b.description as cust_type_desc, c.description as nature_type_desc, a.service, a.amt_paid, a.paid_type, a.reason, d.contract_no
+				select a.status_dt, a.company_name, b.description as cust_type_desc, c.description as nature_type_desc, a.service, a.amt_paid, a.paid_type, a.reason, d.contract_no, e.name as cityname
 				from swo_service a
 				left outer join swo_customer_type b on a.cust_type=b.id
 				left outer join swo_nature c on a.nature_type=c.id
 				left outer join swo_service_contract_no d on a.id=d.service_id
+				left outer join security$suffix.sec_city e on a.city=e.code
 				where a.id in ($idstring)
-				order by a.status_dt, a.company_name
+				order by a.city, a.status_dt, a.company_name
 			";
 			$rows = Yii::app()->db->createCommand($sql)->queryAll();
 			if ($rows) {
 				foreach ($rows as $row) {
-					$output .= "<tr><td>".date('Y-m-d',strtotime($row['status_dt']))
+					$output .= "<tr>"
+						.($isBaseCity ? "" : "<td>".$row['cityname']."</td>")
+						."<td>".date('Y-m-d',strtotime($row['status_dt']))
 						."</td><td>".$row['company_name']
 						."</td><td>".$row['cust_type_desc']
 						."</td><td>".$row['nature_type_desc']
