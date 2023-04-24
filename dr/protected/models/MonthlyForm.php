@@ -84,6 +84,7 @@ class MonthlyForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveMonthly($connection);
+			$this->systemLog();
 			$transaction->commit();
 		}
 		catch(Exception $e) {
@@ -91,6 +92,32 @@ class MonthlyForm extends CFormModel
 			throw new CHttpException(404,'Cannot update. ('.$e->getMessage().')');
 		}
 	}
+
+	protected function systemLog(){
+        $datamonth = strval($this->year_no).substr('0'.strval($this->month_no),-2);
+        $targetmonth = date('Ym',strtotime(date('Y-m-1').' -2 month'));
+	    if($datamonth<=$targetmonth){//修改两个月以前的数据需要记录
+            $systemLogModel = new SystemLogForm();
+            $systemLogModel->log_date = date("Y-m-d H:i:s");
+            $systemLogModel->log_user = Yii::app()->user->id;
+            $systemLogModel->log_type = get_class($this);
+            $systemLogModel->log_type_name = "月报表数据输入";
+            $systemLogModel->option_str = "修改";
+            $systemLogModel->leave_log = 2;
+            $optionText = "";
+            foreach ($this->record as $row){
+                if($row["datavalueold"]!=$row["datavalue"]){
+                    $optionText.=empty($optionText)?"":"<br/>";
+                    $optionText.=$row["num_i"].".".$row["name"].":".$row["datavalueold"]." 修改为 ".$row["datavalue"];
+                }
+            }
+            if(!empty($optionText)){
+                $optionText = "id:{$this->id}  （{$this->year_no}年{$this->month_no}月）<br/>".$optionText;
+            }
+            $systemLogModel->option_text = $optionText;
+            $systemLogModel->insertSystemLog();
+        }
+    }
 
 	protected function saveMonthly(&$connection) {
 		$sql = '';
