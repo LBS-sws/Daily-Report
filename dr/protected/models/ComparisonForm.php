@@ -12,7 +12,7 @@ class ComparisonForm extends CFormModel
 
 	public $data=array();
 
-	public $th_sum=1;//所有th的个数
+	public $th_sum=2;//所有th的个数
 
 	/**
 	 * Declares customized attribute labels.
@@ -124,12 +124,28 @@ class ComparisonForm extends CFormModel
 
         $this->insertUData($this->start_date,$this->end_date,$data,$cityList);
         $this->insertUData($lastStartDate,$lastEndDate,$data,$cityList);
+        $this->insertUActualMoney($this->start_date,$this->end_date,$data,$cityList);
         $this->data = $data;
         $session = Yii::app()->session;
         $session['comparison_c01'] = $this->getCriteria();
         return true;
     }
 
+    //服务生意额
+    private function insertUActualMoney($startDate,$endDate,&$data,$cityList){
+        $city_allow = Yii::app()->user->city_allow();
+        $rows = SummaryForm::getUActualMoney($startDate,$endDate,$city_allow);
+        if(!empty($rows)){
+            foreach ($rows as $city=>$money){
+                if(key_exists($city,$cityList)){
+                    $region = $cityList[$city];
+                    $data[$region]["list"][$city]["u_actual_money"]+=$money;
+                }
+            }
+        }
+    }
+
+    //U系统的产品新增
     private function insertUData($startDate,$endDate,&$data,$cityList){
         $year = intval($startDate);//服务的年份
         $json = Invoice::getInvData($startDate,$endDate);
@@ -178,6 +194,7 @@ class ComparisonForm extends CFormModel
             $data[$region]["list"][$city]=array(
                 "city"=>$city,
                 "city_name"=>$row["city_name"],
+                "u_actual_money"=>0,//服务生意额
                 "u_sum_last"=>0,//U系统金额(上一年)
                 "u_sum"=>0,//U系统金额
                 "new_sum_last"=>0,//新增(上一年)
@@ -299,6 +316,7 @@ class ComparisonForm extends CFormModel
         $monthStr = "（{$this->month_start_date} ~ {$this->month_end_date}）";
         $topList=array(
             array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
+            array("name"=>Yii::t("summary","Actual monthly amount"),"rowspan"=>2),//服务生意额
             array("name"=>Yii::t("summary","YTD New").$monthStr,"background"=>"#f7fd9d",
                 "colspan"=>array(
                     array("name"=>$this->comparison_year-1),//对比年份
@@ -388,11 +406,11 @@ class ComparisonForm extends CFormModel
             if(key_exists("startKey",$list)){
                 $trOne.=" data-key='{$list['startKey']}'";
             }
-            $trOne.=" >".$clickName."</th>";
+            $trOne.=" ><span>".$clickName."</span></th>";
             if(!empty($colList)){
                 foreach ($colList as $col){
                     $this->th_sum++;
-                    $trTwo.="<th>".$col["name"]."</th>";
+                    $trTwo.="<th><span>".$col["name"]."</span></th>";
                 }
             }
         }
@@ -432,7 +450,7 @@ class ComparisonForm extends CFormModel
     //获取td对应的键名
     private function getDataAllKeyStr(){
         $bodyKey = array(
-            "city_name","new_sum_last","new_sum","new_rate","stop_sum_last","stop_sum","stop_rate",
+            "city_name","u_actual_money","new_sum_last","new_sum","new_rate","stop_sum_last","stop_sum","stop_rate",
             "net_sum_last","net_sum","net_rate"
         );
         if(SummaryForm::targetAllReady()){
@@ -466,7 +484,7 @@ class ComparisonForm extends CFormModel
                     $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                     $text = ComparisonForm::showNum($text);
                     $inputHide = TbHtml::hiddenField("excel[MO][]",$text);
-                    $html.="<td class='{$tdClass}'>{$text}{$inputHide}</td>";
+                    $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
                 }
                 $html.="</tr>";
             }
@@ -513,9 +531,9 @@ class ComparisonForm extends CFormModel
                             $text = ComparisonForm::showNum($text);
                             $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][]",$text);
                             if($keyStr=="new_sum"){//调试U系统同步数据
-                                $html.="<td class='{$tdClass}' data-u='{$cityList['u_sum']}'>{$text}{$inputHide}</td>";
+                                $html.="<td class='{$tdClass}' data-u='{$cityList['u_sum']}'><span>{$text}</span>{$inputHide}</td>";
                             }else{
-                                $html.="<td class='{$tdClass}'>{$text}{$inputHide}</td>";
+                                $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
                             }
                         }
                         $html.="</tr>";
@@ -545,7 +563,7 @@ class ComparisonForm extends CFormModel
             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
             $text = ComparisonForm::showNum($text);
             $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][]",$text);
-            $html.="<td class='{$tdClass}'><b>{$text}{$inputHide}</b></td>";
+            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span>{$inputHide}</td>";
         }
         $html.="</tr>";
         return $html;

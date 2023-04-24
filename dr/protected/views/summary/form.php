@@ -113,9 +113,9 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
 
 <?php
 $js="
-
     $('.click-th').click(function(){
-        var startNum=2;
+        var contNum = 2;
+        var startNum=contNum;
         var endNum = $(this).attr('colspan');
         $(this).prevAll('.click-th').each(function(){
             var colspan = $(this).attr('colspan');
@@ -123,34 +123,36 @@ $js="
         });
         endNum = parseInt(endNum,10)+startNum;
         if($(this).hasClass('active')){
-            $(this).text($(this).data('text')).removeClass('active');
+            $(this).children('span').text($(this).data('text'));
+            $(this).removeClass('active');
             $('#summary>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = $(this).data('width')+'px';
                 $(this).width(width);
             });
-            $('#summary>thead>tr').eq(2).children().slice(startNum-2,endNum-2).each(function(){
-                $(this).text($(this).data('text'));
+            $('#summary>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+                $(this).children('span').text($(this).data('text'));
             });
             $('#summary>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
-                    $(this).text($(this).data('text'));
+                    $(this).children('span').text($(this).data('text'));
                 });
             });
         }else{
             $(this).data('text',$(this).text());
-            $(this).text('.').addClass('active');
+            $(this).children('span').text('.');
+            $(this).addClass('active');
             $('#summary>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = '15px';
                 $(this).width(width);
             });
-            $('#summary>thead>tr').eq(2).children().slice(startNum-2,endNum-2).each(function(){
+            $('#summary>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
                 $(this).data('text',$(this).text());
-                $(this).text('');
+                $(this).children('span').text('');
             });
             $('#summary>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
                     $(this).data('text',$(this).text());
-                    $(this).text('');
+                    $(this).children('span').text('');
                 });
             });
         }

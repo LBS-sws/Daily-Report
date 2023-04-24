@@ -180,7 +180,7 @@ class SummaryForm extends CFormModel
     private function getTopArr(){
         $topList=array(
             array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
-            array("name"=>Yii::t("summary","Actual monthly amount"),"rowspan"=>2),//實際月金額
+            array("name"=>Yii::t("summary","Actual monthly amount"),"rowspan"=>2),//服务生意额
             array("name"=>Yii::t("summary","Signing status"),"background"=>"#f7fd9d",
                 "colspan"=>array(
                     array("name"=>Yii::t("summary","New(service)")),//新增服务
@@ -273,11 +273,11 @@ class SummaryForm extends CFormModel
             if(key_exists("startKey",$list)){
                 $trOne.=" data-key='{$list['startKey']}'";
             }
-            $trOne.=" >".$clickName."</th>";
+            $trOne.=" ><span>".$clickName."</span></th>";
             if(!empty($colList)){
                 foreach ($colList as $col){
                     $this->th_sum++;
-                    $trTwo.="<th>".$col["name"]."</th>";
+                    $trTwo.="<th><span>".$col["name"]."</span></th>";
                 }
             }
         }
@@ -355,7 +355,7 @@ class SummaryForm extends CFormModel
                     $text = ComparisonForm::showNum($text);
                     $inputHide = TbHtml::hiddenField("excel[MO][]",$text);
                     $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
-                    $html.="<td class='{$tdClass}'>{$text}{$inputHide}</td>";
+                    $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
                 }
                 $html.="</tr>";
             }
@@ -387,7 +387,7 @@ class SummaryForm extends CFormModel
                             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                             $text = ComparisonForm::showNum($text);
                             $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][]",$text);
-                            $html.="<td class='{$tdClass}'>{$text}{$inputHide}</td>";
+                            $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
                         }
                         $html.="</tr>";
                     }
@@ -416,7 +416,7 @@ class SummaryForm extends CFormModel
             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
             $text = ComparisonForm::showNum($text);
             $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][]",$text);
-            $html.="<td class='{$tdClass}'><b>{$text}{$inputHide}</b></td>";
+            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span>{$inputHide}</td>";
         }
         $html.="</tr>";
         return $html;

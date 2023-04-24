@@ -113,9 +113,9 @@ $this->pageTitle=Yii::app()->name . ' - Comparison Form';
 
 <?php
 $js="
-
     $('.click-th').click(function(){
-        var startNum=1;
+        var contNum = 2;
+        var startNum=contNum;
         var endNum = $(this).attr('colspan');
         $(this).prevAll('.click-th').each(function(){
             var colspan = $(this).attr('colspan');
@@ -123,34 +123,36 @@ $js="
         });
         endNum = parseInt(endNum,10)+startNum;
         if($(this).hasClass('active')){
-            $(this).text($(this).data('text')).removeClass('active');
+            $(this).children('span').text($(this).data('text'));
+            $(this).removeClass('active');
             $('#comparison>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = $(this).data('width')+'px';
                 $(this).width(width);
             });
-            $('#comparison>thead>tr').eq(2).children().slice(startNum-1,endNum-1).each(function(){
-                $(this).text($(this).data('text'));
+            $('#comparison>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+                $(this).children('span').text($(this).data('text'));
             });
             $('#comparison>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
-                    $(this).text($(this).data('text'));
+                    $(this).children('span').text($(this).data('text'));
                 });
             });
         }else{
             $(this).data('text',$(this).text());
-            $(this).text('.').addClass('active');
+            $(this).children('span').text('.');
+            $(this).addClass('active');
             $('#comparison>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = '15px';
                 $(this).width(width);
             });
-            $('#comparison>thead>tr').eq(2).children().slice(startNum-1,endNum-1).each(function(){
+            $('#comparison>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
                 $(this).data('text',$(this).text());
-                $(this).text('');
+                $(this).children('span').text('');
             });
             $('#comparison>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
                     $(this).data('text',$(this).text());
-                    $(this).text('');
+                    $(this).children('span').text('');
                 });
             });
         }
