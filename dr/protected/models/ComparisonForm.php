@@ -185,7 +185,8 @@ class ComparisonForm extends CFormModel
             }
         }
 
-        $this->insertUInvoiceMoney($this->start_date,$this->end_date,$lastStartDate,$lastEndDate,$data,$cityList);
+        $this->insertUData($this->start_date,$this->end_date,$data,$cityList);
+        $this->insertUData($lastStartDate,$lastEndDate,$data,$cityList);
         $this->insertUActualMoney($this->start_date,$this->end_date,$data,$cityList);//服务生意额
         $this->data = $data;
         $session = Yii::app()->session;
@@ -193,27 +194,14 @@ class ComparisonForm extends CFormModel
         return true;
     }
 
-    //获取U系统的账单数据
-    private function insertUInvoiceMoney($startDate,$endDate,$lastStartDate,$lastEndDate,&$data,$cityList){
-        $suffix = Yii::app()->params['envSuffix'];
-        $city_allow = Yii::app()->user->city_allow();
-        $citySql = "";
-        if(!empty($city_allow)){
-            $citySql = " and b.Text in ({$city_allow})";
-        }
-        $rows = Yii::app()->db->createCommand()
-            ->select("x.InvoiceDate,x.InvoiceAmount,b.Text AS City")
-            ->from("service{$suffix}.Invoice x")
-            ->leftJoin("service{$suffix}.OfficeCity a","x.City = a.City")
-            ->leftJoin("service{$suffix}.Enums b","a.Office = b.EnumID AND b.EnumType = 8")
-            ->where("x.status>0 and ((x.InvoiceDate BETWEEN '{$startDate}' AND '{$endDate}') or (x.InvoiceDate BETWEEN '{$lastStartDate}' AND '{$lastEndDate}'))AND SUBSTRING(x.InvoiceNumber, 3, 3) = 'INV' {$citySql}")
-            ->order("x.InvoiceDate,x.CustomerID,x.InvoiceNumber")
-            ->queryAll();
-        if($rows){
-            foreach ($rows as $row){
-                $year = intval($row["InvoiceDate"]);//服务的年份
-                $city = $row["City"];
-                $money = is_numeric($row["InvoiceAmount"])?floatval($row["InvoiceAmount"]):0;
+    private function insertUData($startDate,$endDate,&$data,$cityList){
+        $year = intval($startDate);//服务的年份
+        $json = Invoice::getInvData($startDate,$endDate);
+        if($json["message"]==="Success"){
+            $jsonData = $json["data"];
+            foreach ($jsonData as $row){
+                $city = $row["city"];
+                $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
                 if(key_exists($city,$cityList)){
                     $region = $cityList[$city];
                     if($year==$this->comparison_year){

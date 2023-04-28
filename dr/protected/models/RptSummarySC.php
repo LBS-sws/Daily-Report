@@ -110,12 +110,13 @@ class RptSummarySC extends ReportData2 {
         }
 
         //獲取U系統的數據
-        $this->insertUData($data,$cityList);
+        $this->getUData($data,$cityList);
 
         $this->data = $data;
 		return true;
 	}
 
+    //Invoice表未同步，無法使用
     public function insertUData(&$data,$cityList){
         $startDate = $this->criteria->start_dt;
         $endDate = $this->criteria->end_dt;
@@ -151,7 +152,7 @@ class RptSummarySC extends ReportData2 {
         }
     }
 
-    //獲取U系統的數據(棄用)
+    //獲取U系統的數據
 	protected function getUData(&$data,$cityList){
         $json = Invoice::getInvData($this->criteria->start_dt,$this->criteria->end_dt);
         if($json["message"]==="Success"){
