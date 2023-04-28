@@ -31,7 +31,10 @@ $this->pageTitle=Yii::app()->name . ' - SummarySet';
 <section class="content">
 	<?php
 
-    $search_add_html= TbHtml::dropDownList(get_class($model).'[summary_year]',$model->summary_year,SummarySetList::getSelectYear(),
+    $className = get_class($model);
+    $search_add_html= TbHtml::dropDownList($className.'[summary_year]',$model->summary_year,SummarySetList::getSelectYear(),
+        array("class"=>"form-control submitBtn"));
+    $search_add_html.= TbHtml::dropDownList($className.'[month_type]',$model->month_type,SummarySetList::getSummaryMonthList(),
         array("class"=>"form-control submitBtn"));
 
     $this->widget('ext.layout.ListPageWidget', array(
@@ -50,6 +53,7 @@ $this->pageTitle=Yii::app()->name . ' - SummarySet';
 	?>
 </section>
 <?php
+    echo TbHtml::hiddenField("cover_bool",1,array("id"=>"cover_bool"));
 	echo $form->hiddenField($model,'pageNum');
 	echo $form->hiddenField($model,'totalRow');
 	echo $form->hiddenField($model,'orderField');
@@ -96,6 +100,7 @@ $('#btnSave').click(function(){
     formData['two_net'] = $('#two_net').val();
     formData['three_gross'] = $('#three_gross').val();
     formData['three_net'] = $('#three_net').val();
+    formData['cover_bool'] = $('#cover_bool').val();
     $.ajax({
         type:'post',
         url:'{$ajaxUrl}',

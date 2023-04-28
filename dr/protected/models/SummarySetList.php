@@ -3,6 +3,7 @@
 class SummarySetList extends CListPageModel
 {
     public $summary_year;
+    public $month_type;
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -20,13 +21,14 @@ class SummarySetList extends CListPageModel
     public function rules()
     {
         return array(
-            array('attr, summary_year,  pageNum, noOfItem, totalRow,city, searchField, searchValue, orderField, orderType, filter, dateRangeValue','safe',),
+            array('attr, summary_year,month_type,  pageNum, noOfItem, totalRow,city, searchField, searchValue, orderField, orderType, filter, dateRangeValue','safe',),
         );
     }
 	
 	public function retrieveDataByPage($pageNum=1)
 	{
 	    $this->summary_year = (empty($this->summary_year)||!is_numeric($this->summary_year))?date("Y"):$this->summary_year;
+	    $this->month_type = (!in_array($this->month_type,array(1,4,7,10)))?1:$this->month_type;
         $suffix = Yii::app()->params['envSuffix'];
         $notCityStr = ComparisonSetList::notCitySqlStr();
         $sql1 = "select code,name 
@@ -94,6 +96,7 @@ class SummarySetList extends CListPageModel
 
     public function getCriteria() {
         return array(
+            'month_type'=>$this->month_type,
             'summary_year'=>$this->summary_year,
             'searchField'=>$this->searchField,
             'searchValue'=>$this->searchValue,
@@ -109,7 +112,7 @@ class SummarySetList extends CListPageModel
 
 	protected function resetSummaryArr(&$arr){
         $row = Yii::app()->db->createCommand()->select("*")->from("swo_summary_set")
-            ->where("city='{$arr['code']}' and summary_year={$this->summary_year}")
+            ->where("city='{$arr['code']}' and summary_year={$this->summary_year} and month_year={$this->month_type}")
             ->queryRow();
         if($row){
             $arr["id"]=$row["id"];
@@ -135,5 +138,57 @@ class SummarySetList extends CListPageModel
             }
         }
 	    return $arr;
+    }
+
+    public static function getSelectMonth(){
+        $arr = array();
+        for($i=1;$i<=12;$i++){
+            $arr[$i] = $i.Yii::t("report","Month");
+        }
+        return $arr;
+    }
+
+    public static function getSelectType(){
+        $arr = array(
+            1=>Yii::t("summary","search quarter"),//季度
+            2=>Yii::t("summary","search month"),//季度
+            3=>Yii::t("summary","search day"),//季度
+        );
+        return $arr;
+    }
+
+    public static function getSummaryMonthList($key=1,$bool=false){
+        $arr = array(
+            1=>Yii::t("summary","1 month - 3 month"),
+            4=>Yii::t("summary","4 month - 6 month"),
+            7=>Yii::t("summary","7 month - 9 month"),
+            10=>Yii::t("summary","10 month - 12 month"),
+        );
+        if($bool){
+            if(key_exists($key,$arr)){
+                return $arr[$key];
+            }else{
+                return $key;
+            }
+        }
+        return $arr;
+    }
+
+    public static function getReminderTitle($year,$month_type){
+        $monthList = self::getSummaryMonthList();
+        $titleStart = Yii::t("summary","Whether to modify ");
+        $list = array();
+        foreach ($monthList as $key=>$str){
+            if($month_type<$key){
+                $list[]=$year.Yii::t("report","Year").$str;
+            }
+        }
+        $titleEnd= Yii::t("summary"," for value?");
+        if(empty($list)){
+            $title = "<span id='reminderTitle'></span>";
+        }else{
+            $title = "<span id='reminderTitle'>".$titleStart.implode("、",$list).$titleEnd."</span>";
+        }
+        return $title;
     }
 }

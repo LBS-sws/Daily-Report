@@ -3,10 +3,19 @@
 class SummaryForm extends CFormModel
 {
 	/* User Fields */
+    public $search_start_date;//查詢開始日期
+    public $search_end_date;//查詢結束日期
+    public $search_type=1;//查詢類型 1：季度 2：月份 3：天
+    public $search_year;//查詢年份
+    public $search_month;//查詢月份
+    public $search_quarter;//查詢季度
 	public $start_date;
 	public $end_date;
+	public $month_type;
     public $day_num=0;
 	public $summary_year;
+
+	private $con_list=array("one_gross","one_net","two_gross","two_net","three_gross","three_net");
 
 	public $data=array();
 
@@ -23,6 +32,12 @@ class SummaryForm extends CFormModel
             'start_date'=>Yii::t('summary','start date'),
             'end_date'=>Yii::t('summary','end date'),
             'day_num'=>Yii::t('summary','day num'),
+            'search_type'=>Yii::t('summary','search type'),
+            'search_start_date'=>Yii::t('summary','start date'),
+            'search_end_date'=>Yii::t('summary','end date'),
+            'search_year'=>Yii::t('summary','search year'),
+            'search_quarter'=>Yii::t('summary','search quarter'),
+            'search_month'=>Yii::t('summary','search month'),
 		);
 	}
 
@@ -32,17 +47,53 @@ class SummaryForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('start_date,end_date','safe'),
-			array('start_date,end_date','required'),
-            array('start_date','validateDate'),
+            array('search_type,search_start_date,search_end_date,search_year,search_quarter,search_month','safe'),
+			array('search_type','required'),
+            array('search_type','validateDate'),
 		);
 	}
 
     public function validateDate($attribute, $params) {
-	    $startYear = date("Y",strtotime($this->start_date));
-	    $endYear = date("Y",strtotime($this->end_date));
-	    if($startYear!=$endYear){
-            $this->addError($attribute, "请把开始年份跟结束年份保持一致");
+	    switch ($this->search_type){
+            case 1://1：季度
+                if(empty($this->search_year)||empty($this->search_quarter)){
+                    $this->addError($attribute, "查询季度不能为空");
+                }else{
+                    $dateStr = $this->search_year."/".$this->search_quarter."/01";
+                    $this->start_date = date("Y/m/01",strtotime($dateStr));
+                    $this->end_date = date("Y/m/t",strtotime($dateStr." + 2 month"));
+                    $this->month_type = $this->search_quarter;
+                }
+                break;
+            case 2://2：月份
+                if(empty($this->search_year)||empty($this->search_month)){
+                    $this->addError($attribute, "查询月份不能为空");
+                }else{
+                    $dateTimer = strtotime($this->search_year."/".$this->search_month."/01");
+                    $this->start_date = date("Y/m/01",$dateTimer);
+                    $this->end_date = date("Y/m/t",$dateTimer);
+                    $i = ceil($this->search_month/3);//向上取整
+                    $this->month_type = 3*$i-2;
+                }
+                break;
+            case 3://3：天
+                if(empty($this->search_start_date)||empty($this->search_start_date)){
+                    $this->addError($attribute, "查询日期不能为空");
+                }else{
+                    $startYear = date("Y",strtotime($this->search_start_date));
+                    $endYear = date("Y",strtotime($this->search_end_date));
+                    if($startYear!=$endYear){
+                        $this->addError($attribute, "请把开始年份跟结束年份保持一致");
+                    }else{
+                        $this->search_month = date("n",strtotime($this->search_start_date));
+                        $i = ceil($this->search_month/3);//向上取整
+                        $this->month_type = 3*$i-2;
+                        $this->search_year = $startYear;
+                        $this->start_date = $this->search_start_date;
+                        $this->end_date = $this->search_end_date;
+                    }
+                }
+                break;
         }
     }
 
@@ -57,11 +108,16 @@ class SummaryForm extends CFormModel
 
     public function getCriteria() {
         return array(
-            'start_date'=>$this->start_date,
-            'end_date'=>$this->end_date
+            'search_year'=>$this->search_year,
+            'search_month'=>$this->search_month,
+            'search_type'=>$this->search_type,
+            'search_quarter'=>$this->search_quarter,
+            'search_start_date'=>$this->search_start_date,
+            'search_end_date'=>$this->search_end_date
         );
     }
 
+    //获取U系统的服务单数据
     public static function getUActualMoney($startDay,$endDay,$city_allow=""){
 	    $list = array();
 	    $citySql = "";
@@ -102,35 +158,37 @@ class SummaryForm extends CFormModel
         $this->data = $rptModel->data;
         $uActualMoneyList = SummaryForm::getUActualMoney($this->start_date,$this->end_date,$criteria->city);
         if($this->data){
+            $strSelect = implode(",",$this->con_list);
+
             foreach ($this->data as $regionKey=>$regionList){
                 if(!empty($regionList["list"])){
                     foreach ($regionList["list"] as $cityKey=>$cityList){
                         $this->data[$regionKey]["list"][$cityKey]["u_actual_money"]=key_exists($cityKey,$uActualMoneyList)?$uActualMoneyList[$cityKey]:0;//实际月金额
                         $this->data[$regionKey]["list"][$cityKey]["num_growth"]=0;//净增长
-                        $this->data[$regionKey]["list"][$cityKey]["one_gross"]=0;
-                        $this->data[$regionKey]["list"][$cityKey]["one_gross_rate"]=0;
-                        $this->data[$regionKey]["list"][$cityKey]["one_net"]=0;
-                        $this->data[$regionKey]["list"][$cityKey]["one_net_rate"]=0;
-                        $this->data[$regionKey]["list"][$cityKey]["two_gross"]=0;
-                        $this->data[$regionKey]["list"][$cityKey]["two_gross_rate"]=0;
-                        $this->data[$regionKey]["list"][$cityKey]["two_net"]=0;
-                        $this->data[$regionKey]["list"][$cityKey]["two_net_rate"]=0;
-                        $this->data[$regionKey]["list"][$cityKey]["three_gross"]=0;
-                        $this->data[$regionKey]["list"][$cityKey]["three_gross_rate"]=0;
-                        $this->data[$regionKey]["list"][$cityKey]["three_net"]=0;
-                        $this->data[$regionKey]["list"][$cityKey]["three_net_rate"]=0;
+                        foreach ($this->con_list as $itemStr){//初始化
+                            $this->data[$regionKey]["list"][$cityKey][$itemStr]=0;
+                            $this->data[$regionKey]["list"][$cityKey][$itemStr."_rate"]=0;
+                            $this->data[$regionKey]["list"][$cityKey]["start_".$itemStr]=0;
+                            $this->data[$regionKey]["list"][$cityKey]["start_".$itemStr."_rate"]=0;
+                        }
                         //放入目标金额
-                        $row = Yii::app()->db->createCommand()->select("*")->from("swo_comparison_set")
-                            ->where("comparison_year=:year and city=:city",
-                                array(":year"=>$this->summary_year,":city"=>$cityKey)
-                            )->queryRow();//2023/3/14日，目標金額配置統一調用swo_comparison_set
+                        $rowStart = Yii::app()->db->createCommand()->select($strSelect)->from("swo_comparison_set")
+                            ->where("comparison_year=:year and month_type=:month_type and city=:city",
+                                array(":year"=>$this->summary_year,":month_type"=>1,":city"=>$cityKey)
+                            )->queryRow();//年初生意额目标
+                        if($rowStart){
+                            foreach ($this->con_list as $itemStr){//写入年初生意额
+                                $this->data[$regionKey]["list"][$cityKey]["start_".$itemStr]=empty($rowStart[$itemStr])?0:floatval($rowStart[$itemStr]);
+                            }
+                        }
+                        $row = Yii::app()->db->createCommand()->select($strSelect)->from("swo_comparison_set")
+                            ->where("comparison_year=:year and month_type=:month_type and city=:city",
+                                array(":year"=>$this->summary_year,":month_type"=>$this->month_type,":city"=>$cityKey)
+                            )->queryRow();//滚动生意额目标
                         if($row){
-                            $this->data[$regionKey]["list"][$cityKey]["one_gross"]=empty($row["one_gross"])?0:floatval($row["one_gross"]);
-                            $this->data[$regionKey]["list"][$cityKey]["one_net"]=empty($row["one_net"])?0:floatval($row["one_net"]);
-                            $this->data[$regionKey]["list"][$cityKey]["two_gross"]=empty($row["two_gross"])?0:floatval($row["two_gross"]);
-                            $this->data[$regionKey]["list"][$cityKey]["two_net"]=empty($row["two_net"])?0:floatval($row["two_net"]);
-                            $this->data[$regionKey]["list"][$cityKey]["three_gross"]=empty($row["three_gross"])?0:floatval($row["three_gross"]);
-                            $this->data[$regionKey]["list"][$cityKey]["three_net"]=empty($row["three_net"])?0:floatval($row["three_net"]);
+                            foreach ($this->con_list as $itemStr){//写入滚动生意额
+                                $this->data[$regionKey]["list"][$cityKey][$itemStr]=empty($row[$itemStr])?0:floatval($row[$itemStr]);
+                            }
                         }
                     }
                 }
@@ -151,15 +209,29 @@ class SummaryForm extends CFormModel
 	    $list["num_growth"]+=$list["num_pause"];
 	    $list["num_growth"]+=$list["num_update"];
 
-        $list["two_gross"] = $bool?$list["two_gross"]:ComparisonForm::resetNetOrGross($list["two_gross"],$this->day_num);
-        $list["two_net"] = $bool?$list["two_net"]:ComparisonForm::resetNetOrGross($list["two_net"],$this->day_num);
+        $list["start_two_gross"] = $bool?$list["start_two_gross"]:ComparisonForm::resetNetOrGross($list["start_two_gross"],$this->day_num,$this->search_type);
+        $list["start_two_net"] = $bool?$list["start_two_net"]:ComparisonForm::resetNetOrGross($list["start_two_net"],$this->day_num,$this->search_type);
+        $list["start_two_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["start_two_gross"]);
+        $list["start_two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_two_net"]);
+
+        $list["two_gross"] = $bool?$list["two_gross"]:ComparisonForm::resetNetOrGross($list["two_gross"],$this->day_num,$this->search_type);
+        $list["two_net"] = $bool?$list["two_net"]:ComparisonForm::resetNetOrGross($list["two_net"],$this->day_num,$this->search_type);
         $list["two_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["two_gross"]);
         $list["two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["two_net"]);
         if(SummaryForm::targetAllReady()){
-            $list["one_gross"] = $bool?$list["one_gross"]:ComparisonForm::resetNetOrGross($list["one_gross"],$this->day_num);
-            $list["one_net"] = $bool?$list["one_net"]:ComparisonForm::resetNetOrGross($list["one_net"],$this->day_num);
-            $list["three_gross"] = $bool?$list["three_gross"]:ComparisonForm::resetNetOrGross($list["three_gross"],$this->day_num);
-            $list["three_net"] = $bool?$list["three_net"]:ComparisonForm::resetNetOrGross($list["three_net"],$this->day_num);
+            $list["start_one_gross"] = $bool?$list["start_one_gross"]:ComparisonForm::resetNetOrGross($list["start_one_gross"],$this->day_num,$this->search_type);
+            $list["start_one_net"] = $bool?$list["start_one_net"]:ComparisonForm::resetNetOrGross($list["start_one_net"],$this->day_num,$this->search_type);
+            $list["start_three_gross"] = $bool?$list["start_three_gross"]:ComparisonForm::resetNetOrGross($list["start_three_gross"],$this->day_num,$this->search_type);
+            $list["start_three_net"] = $bool?$list["start_three_net"]:ComparisonForm::resetNetOrGross($list["start_three_net"],$this->day_num,$this->search_type);
+            $list["start_one_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["start_one_gross"]);
+            $list["start_one_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_one_net"]);
+            $list["start_three_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["start_three_gross"]);
+            $list["start_three_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_three_net"]);
+
+            $list["one_gross"] = $bool?$list["one_gross"]:ComparisonForm::resetNetOrGross($list["one_gross"],$this->day_num,$this->search_type);
+            $list["one_net"] = $bool?$list["one_net"]:ComparisonForm::resetNetOrGross($list["one_net"],$this->day_num,$this->search_type);
+            $list["three_gross"] = $bool?$list["three_gross"]:ComparisonForm::resetNetOrGross($list["three_gross"],$this->day_num,$this->search_type);
+            $list["three_net"] = $bool?$list["three_net"]:ComparisonForm::resetNetOrGross($list["three_net"],$this->day_num,$this->search_type);
             $list["one_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["one_gross"]);
             $list["one_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["one_net"]);
             $list["three_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["three_gross"]);
@@ -210,12 +282,16 @@ class SummaryForm extends CFormModel
         if(SummaryForm::targetAllReady()){
             $topList[]=array("name"=>Yii::t("summary","Annual target (upside case)"),"background"=>"#FDE9D9",
                 "colspan"=>array(
+                    array("name"=>Yii::t("summary","Start Gross")),//Start Gross
+                    array("name"=>Yii::t("summary","Start Net")),//Start Net
                     array("name"=>Yii::t("summary","Gross")),//Gross
                     array("name"=>Yii::t("summary","Net")),//Net
                 )
             );//年金额目标 (upside case)
             $topList[]=array("name"=>Yii::t("summary","Goal degree (upside case)"),"background"=>"#FDE9D9",
                 "colspan"=>array(
+                    array("name"=>Yii::t("summary","Start Gross")),//Start Gross
+                    array("name"=>Yii::t("summary","Start Net")),//Start Net
                     array("name"=>Yii::t("summary","Gross")),//Gross
                     array("name"=>Yii::t("summary","Net")),//Net
                 )
@@ -223,12 +299,16 @@ class SummaryForm extends CFormModel
         }
         $topList[]=array("name"=>Yii::t("summary","Annual target (base case)"),"background"=>"#DCE6F1",
             "colspan"=>array(
+                array("name"=>Yii::t("summary","Start Gross")),//Start Gross
+                array("name"=>Yii::t("summary","Start Net")),//Start Net
                 array("name"=>Yii::t("summary","Gross")),//Gross
                 array("name"=>Yii::t("summary","Net")),//Net
             )
         );//年金额目标 (base case)
         $topList[]=array("name"=>Yii::t("summary","Goal degree (base case)"),"background"=>"#DCE6F1",
             "colspan"=>array(
+                array("name"=>Yii::t("summary","Start Gross")),//Start Gross
+                array("name"=>Yii::t("summary","Start Net")),//Start Net
                 array("name"=>Yii::t("summary","Gross")),//Gross
                 array("name"=>Yii::t("summary","Net")),//Net
             )
@@ -236,12 +316,16 @@ class SummaryForm extends CFormModel
         if(SummaryForm::targetAllReady()){
             $topList[]=array("name"=>Yii::t("summary","Annual target (minimum case)"),"background"=>"#FDE9D9",
                 "colspan"=>array(
+                    array("name"=>Yii::t("summary","Start Gross")),//Start Gross
+                    array("name"=>Yii::t("summary","Start Net")),//Start Net
                     array("name"=>Yii::t("summary","Gross")),//Gross
                     array("name"=>Yii::t("summary","Net")),//Net
                 )
             );//年金额目标 (minimum case)
             $topList[]=array("name"=>Yii::t("summary","Goal degree (minimum case)"),"background"=>"#FDE9D9",
                 "colspan"=>array(
+                    array("name"=>Yii::t("summary","Start Gross")),//Start Gross
+                    array("name"=>Yii::t("summary","Start Net")),//Start Net
                     array("name"=>Yii::t("summary","Gross")),//Gross
                     array("name"=>Yii::t("summary","Net")),//Net
                 )
@@ -325,18 +409,30 @@ class SummaryForm extends CFormModel
             "num_growth","num_long","num_short","num_cate","num_not_cate","u_num_cate","u_num_not_cate"
         );
         if(SummaryForm::targetAllReady()){
+            $bodyKey[]="start_one_gross";
+            $bodyKey[]="start_one_net";
             $bodyKey[]="one_gross";
             $bodyKey[]="one_net";
+            $bodyKey[]="start_one_gross_rate";
+            $bodyKey[]="start_one_net_rate";
             $bodyKey[]="one_gross_rate";
             $bodyKey[]="one_net_rate";
         }
+        $bodyKey[]="start_two_gross";
+        $bodyKey[]="start_two_net";
         $bodyKey[]="two_gross";
         $bodyKey[]="two_net";
+        $bodyKey[]="start_two_gross_rate";
+        $bodyKey[]="start_two_net_rate";
         $bodyKey[]="two_gross_rate";
         $bodyKey[]="two_net_rate";
         if(SummaryForm::targetAllReady()){
+            $bodyKey[]="start_three_gross";
+            $bodyKey[]="start_three_net";
             $bodyKey[]="three_gross";
             $bodyKey[]="three_net";
+            $bodyKey[]="start_three_gross_rate";
+            $bodyKey[]="start_three_net_rate";
             $bodyKey[]="three_gross_rate";
             $bodyKey[]="three_net_rate";
         }

@@ -30,8 +30,10 @@ $this->pageTitle=Yii::app()->name . ' - ComparisonSet';
 
 <section class="content">
 	<?php
-
-    $search_add_html= TbHtml::dropDownList(get_class($model).'[comparison_year]',$model->comparison_year,SummarySetList::getSelectYear(),
+    $className = get_class($model);
+    $search_add_html= TbHtml::dropDownList($className.'[comparison_year]',$model->comparison_year,SummarySetList::getSelectYear(),
+        array("class"=>"form-control submitBtn"));
+    $search_add_html.= TbHtml::dropDownList($className.'[month_type]',$model->month_type,SummarySetList::getSummaryMonthList(),
         array("class"=>"form-control submitBtn"));
 
     $this->widget('ext.layout.ListPageWidget', array(
@@ -50,6 +52,7 @@ $this->pageTitle=Yii::app()->name . ' - ComparisonSet';
 	?>
 </section>
 <?php
+    echo TbHtml::hiddenField("cover_bool",1,array("id"=>"cover_bool"));
 	echo $form->hiddenField($model,'pageNum');
 	echo $form->hiddenField($model,'totalRow');
 	echo $form->hiddenField($model,'orderField');
@@ -85,17 +88,18 @@ $('.update-row').click(function(){
     $('#comparisonModal span[data-id=\"city_name\"]').text(city_name);
     $('#comparisonModal').modal('show');
 });
-
-$('#btnSave').click(function(){
+function saveData(){
     var formData = {};
     formData['comparison_year'] = '{$model->comparison_year}';
-    formData['city'] = $(this).data('city');
+    formData['month_type'] = '{$model->month_type}';
+    formData['city'] = $('#btnSave').data('city');
     formData['one_gross'] = $('#one_gross').val();
     formData['one_net'] = $('#one_net').val();
     formData['two_gross'] = $('#two_gross').val();
     formData['two_net'] = $('#two_net').val();
     formData['three_gross'] = $('#three_gross').val();
     formData['three_net'] = $('#three_net').val();
+    formData['cover_bool'] = $('#cover_bool').val();
     $.ajax({
         type:'post',
         url:'{$ajaxUrl}',
@@ -111,12 +115,30 @@ $('#btnSave').click(function(){
                 tr.children('.three_gross').text(formData['three_gross']);
                 tr.children('.three_net').text(formData['three_net']);
                 $('#comparisonModal').modal('hide');
+                $('#configModal').modal('hide');
             }else{
                 $('#errorModal .modal-body').eq(0).html(data['message']);
+                $('#configModal').modal('hide');
                 $('#errorModal').modal('show');
             }
         }
     });
+}
+$('#coverNo').click(function(){
+    $('#cover_bool').val(0);
+    saveData();
+});
+$('#coverYes').click(function(){
+    $('#cover_bool').val(1);
+    saveData();
+});
+$('#btnSave').click(function(){
+    if($('#reminderTitle').text()!=''){
+        $('#configModal').modal('show');
+    }else{
+        $('#cover_bool').val(0);
+        saveData();
+    }
 });
 ";
 if(Yii::app()->user->validRWFunction('G06')){

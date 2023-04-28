@@ -5,7 +5,10 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">
-                        <?php echo Yii::t('summary',"Update Annual Target");?>
+                        <?php
+                        $monthStr = SummarySetList::getSummaryMonthList($model->month_type,true);
+                        echo Yii::t("summary","Update Annual Target")."<small>({$monthStr})</small>";
+                        ?>
                     </h4>
                 </div>
                 <div class="modal-body">
@@ -84,6 +87,20 @@ $this->widget('bootstrap.widgets.TbModal', array(
     'content'=>"",
     'footer'=>array(
         TbHtml::button(Yii::t('dialog','OK'), array('data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY)),
+    ),
+    'show'=>false,
+));
+?>
+
+<?php
+
+$this->widget('bootstrap.widgets.TbModal', array(
+    'id'=>"configModal",
+    'header'=>Yii::t('summary',"Reminder"),
+    'content'=>SummarySetList::getReminderTitle($model->comparison_year,$model->month_type),
+    'footer'=>array(
+        TbHtml::button(Yii::t('summary','No'), array('color'=>TbHtml::BUTTON_COLOR_DEFAULT,'id'=>'coverNo')),
+        TbHtml::button(Yii::t('summary','Yes'), array('color'=>TbHtml::BUTTON_COLOR_PRIMARY,'id'=>'coverYes')),
     ),
     'show'=>false,
 ));

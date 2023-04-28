@@ -110,13 +110,48 @@ class RptSummarySC extends ReportData2 {
         }
 
         //獲取U系統的數據
-        $this->getUData($data,$cityList);
+        $this->insertUData($data,$cityList);
 
         $this->data = $data;
 		return true;
 	}
 
-    //獲取U系統的數據
+    public function insertUData(&$data,$cityList){
+        $startDate = $this->criteria->start_dt;
+        $endDate = $this->criteria->end_dt;
+        $suffix = Yii::app()->params['envSuffix'];
+        $where = "";
+        if(isset($this->criteria->city)&&!empty($this->criteria->city)){
+            $where .= " and b.Text in ({$this->criteria->city})";
+        }
+        $rows = Yii::app()->db->createCommand()
+            ->select("x.InvoiceAmount,b.Text AS City,g.Text AS CusType")
+            ->from("service{$suffix}.Invoice x")
+            ->leftJoin("service{$suffix}.OfficeCity a", "x.City = a.City")
+            ->leftJoin("service{$suffix}.Enums b", "a.Office = b.EnumID AND b.EnumType = 8")
+            ->leftJoin("service{$suffix}.CustomerCompany c", "x.CustomerID = c.CustomerID")
+            ->leftJoin("service{$suffix}.Enums g", "(c.CustomerType - MOD (c.CustomerType, 100)) = g.EnumID AND g.EnumType = 4 ")
+            ->where("x.status>0 and x.InvoiceDate BETWEEN '{$startDate}' AND '{$endDate}'AND SUBSTRING(x.InvoiceNumber, 3, 3) = 'INV' {$where}")
+            ->order("x.InvoiceDate,x.CustomerID,x.InvoiceNumber")
+            ->queryAll();
+        if ($rows) {
+            foreach ($rows as $row){
+                $city = $row["City"];
+                $money = is_numeric($row["InvoiceAmount"])?floatval($row["InvoiceAmount"]):0;
+                if(key_exists($city,$cityList)){
+                    $region = $cityList[$city];
+                    $data[$region]["list"][$city]["u_invoice_sum"]+=$money;
+                    if($row["CusType"]==="餐饮类"){
+                        $data[$region]["list"][$city]["u_num_cate"]+=$money;
+                    }else{
+                        $data[$region]["list"][$city]["u_num_not_cate"]+=$money;
+                    }
+                }
+            }
+        }
+    }
+
+    //獲取U系統的數據(棄用)
 	protected function getUData(&$data,$cityList){
         $json = Invoice::getInvData($this->criteria->start_dt,$this->criteria->end_dt);
         if($json["message"]==="Success"){

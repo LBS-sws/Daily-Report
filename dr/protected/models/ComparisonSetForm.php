@@ -12,6 +12,8 @@ class ComparisonSetForm extends CFormModel
 	public $two_net;
 	public $three_gross;
 	public $three_net;
+	public $month_type;
+	public $cover_bool=0;//是否覆蓋本年之後的所有數據 0：否 1：是
 
 	/**
 	 * Declares customized attribute labels.
@@ -37,8 +39,8 @@ class ComparisonSetForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('id,city,comparison_year,one_gross,one_net,two_gross,two_net,three_gross,three_net','safe'),
-			array('city,comparison_year','required'),
+            array('id,city,cover_bool,month_type,comparison_year,one_gross,one_net,two_gross,two_net,three_gross,three_net','safe'),
+			array('city,comparison_year,month_type','required'),
             array('one_gross,one_net,two_gross,two_net,three_gross,three_net','numerical','allowEmpty'=>false,'integerOnly'=>false,'min'=>0),
             array('city','validateCity'),
 		);
@@ -46,8 +48,8 @@ class ComparisonSetForm extends CFormModel
 
     public function validateCity($attribute, $params) {
         $row = Yii::app()->db->createCommand()->select("id")->from("swo_comparison_set")
-            ->where("comparison_year=:year and city=:city",
-                array(":year"=>$this->comparison_year,":city"=>$this->city)
+            ->where("comparison_year=:year and month_type=:month_type and city=:city",
+                array(":year"=>$this->comparison_year,":month_type"=>$this->month_type,":city"=>$this->city)
             )->queryRow();
         if($row){
             $this->id = $row["id"];
@@ -65,6 +67,7 @@ class ComparisonSetForm extends CFormModel
 			$this->id = $row['id'];
 			$this->city = $row['city'];
 			$this->comparison_year = $row['comparison_year'];
+			$this->month_type = $row['month_type'];
             $this->one_gross = empty($row["one_gross"])?"":floatval($row["one_gross"]);
             $this->one_net = empty($row["one_net"])?"":floatval($row["one_net"]);
             $this->two_gross = empty($row["two_gross"])?"":floatval($row["two_gross"]);
@@ -86,16 +89,50 @@ class ComparisonSetForm extends CFormModel
         $arr["two_net"] = empty($this->two_net)?null:$this->two_net;
         $arr["three_gross"] = empty($this->three_gross)?null:$this->three_gross;
         $arr["three_net"] = empty($this->three_net)?null:$this->three_net;
+        $coverArr = $arr;
         if(!empty($this->id)){
-            $arr["lcu"] = Yii::app()->user->id;
+            $arr["luu"] = Yii::app()->user->id;
             Yii::app()->db->createCommand()->update("swo_comparison_set",$arr,"id=:id",
                 array(":id"=>$this->id)
             );
         }else{
             $arr["city"] = $this->city;
             $arr["comparison_year"] = $this->comparison_year;
-            $arr["luu"] = Yii::app()->user->id;
+            $arr["month_type"] = $this->month_type;
+            $arr["lcu"] = Yii::app()->user->id;
             Yii::app()->db->createCommand()->insert("swo_comparison_set",$arr);
         }
+        $this->saveCoverBool($coverArr);
 	}
+
+	//覆蓋保存本年以後的數據
+	protected function saveCoverBool($arr){
+        $arr["city"] = $this->city;
+        $arr["comparison_year"] = $this->comparison_year;
+        if(!empty($this->cover_bool)){
+            $monthList = SummarySetList::getSummaryMonthList();
+            foreach ($monthList as $month=>$str){
+                if ($month>$this->month_type){
+                    $arr["month_type"] = $month;
+                    $this->saveCoverForData($arr);
+                }
+            }
+        }
+    }
+
+    protected function saveCoverForData($arr){
+        $row = Yii::app()->db->createCommand()->select("id")->from("swo_comparison_set")
+            ->where("comparison_year=:year and month_type=:month_type and city=:city",
+                array(":year"=>$arr['comparison_year'],":month_type"=>$arr['month_type'],":city"=>$arr['city'])
+            )->queryRow();
+        if($row){
+            $arr["luu"] = Yii::app()->user->id;
+            Yii::app()->db->createCommand()->update("swo_comparison_set",$arr,"id=:id",
+                array(":id"=>$row['id'])
+            );
+        }else{
+            $arr["lcu"] = Yii::app()->user->id;
+            Yii::app()->db->createCommand()->insert("swo_comparison_set",$arr);
+        }
+    }
 }
