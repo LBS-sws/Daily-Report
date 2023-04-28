@@ -164,6 +164,7 @@ class SummaryForm extends CFormModel
                 if(!empty($regionList["list"])){
                     foreach ($regionList["list"] as $cityKey=>$cityList){
                         $this->data[$regionKey]["list"][$cityKey]["u_actual_money"]=key_exists($cityKey,$uActualMoneyList)?$uActualMoneyList[$cityKey]:0;//实际月金额
+                        $this->data[$regionKey]["list"][$cityKey]["u_actual_money"]+=$this->data[$regionKey]["list"][$cityKey]["u_invoice_sum"];//服务生意额需要加上产品金额
                         $this->data[$regionKey]["list"][$cityKey]["num_growth"]=0;//净增长
                         foreach ($this->con_list as $itemStr){//初始化
                             $this->data[$regionKey]["list"][$cityKey][$itemStr]=0;

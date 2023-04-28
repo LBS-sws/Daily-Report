@@ -205,6 +205,7 @@ class ComparisonForm extends CFormModel
                 if(key_exists($city,$cityList)){
                     $region = $cityList[$city];
                     if($year==$this->comparison_year){
+                        $data[$region]["list"][$city]["u_actual_money"]+=$money;//服务生意额需要加上产品金额
                         $uStr = "u_sum";
                         $newStr = "new_sum";
                         $netStr = "net_sum";
