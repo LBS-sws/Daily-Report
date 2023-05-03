@@ -60,5 +60,6 @@ return array(
     'search quarter'=>'季度',
     'search month'=>'月份',
     'search day'=>'日期',
+    'Month Stop Rate'=>'月停單率',
 );
 ?>

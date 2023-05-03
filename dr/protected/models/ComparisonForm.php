@@ -274,7 +274,7 @@ class ComparisonForm extends CFormModel
             "u_sum_last"=>0,//U系统金额(上一年)
             "u_sum"=>0,//U系统金额
             "stopSumOnly"=>0,//本月停單金額（月）
-            "uServiceMoney"=>0,//U系統內的實際服務金額（月）
+            "monthStopRate"=>0,//月停單率
             "new_sum_last"=>0,//新增(上一年)
             "new_sum"=>0,//新增
             "new_rate"=>0,//新增对比比例
@@ -362,6 +362,7 @@ class ComparisonForm extends CFormModel
     }
 
     protected function resetTdRow(&$list,$bool=false){
+        $list["monthStopRate"] = $this->comparisonRate($list["stopSumOnly"],$list["u_actual_money"]);
         $list["start_two_gross"] = $bool?$list["start_two_gross"]:ComparisonForm::resetNetOrGross($list["start_two_gross"],$this->day_num,$this->search_type);
         $list["start_two_net"] = $bool?$list["start_two_net"]:ComparisonForm::resetNetOrGross($list["start_two_net"],$this->day_num,$this->search_type);
         $list["start_two_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["start_two_gross"]);
@@ -466,6 +467,7 @@ class ComparisonForm extends CFormModel
                     array("name"=>$this->comparison_year-1),//对比年份
                     array("name"=>$this->comparison_year),//查询年份
                     array("name"=>Yii::t("summary","YoY change")),//YoY change
+                    array("name"=>Yii::t("summary","Month Stop Rate")),//月停单率
                 )
             ),//YTD终止
             array("name"=>Yii::t("summary","YTD Net").$monthStr,"background"=>"#f2dcdb",
@@ -599,7 +601,7 @@ class ComparisonForm extends CFormModel
     //获取td对应的键名
     private function getDataAllKeyStr(){
         $bodyKey = array(
-            "city_name","u_actual_money","new_sum_last","new_sum","new_rate","stop_sum_last","stop_sum","stop_rate",
+            "city_name","u_actual_money","new_sum_last","new_sum","new_rate","stop_sum_last","stop_sum","stop_rate","monthStopRate",
             "net_sum_last","net_sum","net_rate"
         );
         if(SummaryForm::targetAllReady()){
@@ -671,11 +673,13 @@ class ComparisonForm extends CFormModel
         $bodyKey = $this->getDataAllKeyStr();
         $html="";
         if(!empty($data)){
-            $allRow = [];//总计(所有地区)
+            $allRow = ["stopSumOnly"=>0];//总计(所有地区)
             foreach ($data as $regionList){
                 if(!empty($regionList["list"])) {
-                    $regionRow = [];//地区汇总
+                    $regionRow = ["stopSumOnly"=>0];//地区汇总
                     foreach ($regionList["list"] as $cityList) {
+                        $regionRow["stopSumOnly"]+=$cityList["stopSumOnly"];
+                        $allRow["stopSumOnly"]+=$cityList["stopSumOnly"];
                         $this->resetTdRow($cityList);
                         $html.="<tr>";
                         foreach ($bodyKey as $keyStr){
