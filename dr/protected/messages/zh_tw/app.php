@@ -139,5 +139,7 @@ return array(
     'Comparison Set'=>'生意額目標設置',
     'Target Ready All'=>'查看所有目標金額',
     'System Log'=>'系统记录',
+    'Quarter Summary'=>'季度合同同比查詢',
+    'Month Summary'=>'月度合同同比查詢',
 );
 ?>

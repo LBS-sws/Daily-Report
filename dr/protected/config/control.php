@@ -9,4 +9,6 @@ return array(
     'Integrated data email (regional)'=>array('access'=>'CN13',),
     'Integrated data email (all)'=>array('access'=>'CN14',),
     'Target Ready All'=>array('access'=>'CN15',),//可以查看所有目标金额
+    'Quarter Summary'=>array('access'=>'CN16',),//季度合同同比查詢
+    'Month Summary'=>array('access'=>'CN17',),//月度合同同比查詢
 );

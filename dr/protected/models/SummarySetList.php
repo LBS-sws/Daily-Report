@@ -149,11 +149,14 @@ class SummarySetList extends CListPageModel
     }
 
     public static function getSelectType(){
-        $arr = array(
-            1=>Yii::t("summary","search quarter"),//季度
-            2=>Yii::t("summary","search month"),//季度
-            3=>Yii::t("summary","search day"),//季度
-        );
+        $arr = array();
+        if(Yii::app()->user->validFunction('CN16')){
+            $arr[1]=Yii::t("summary","search quarter");//季度
+        }
+        if(Yii::app()->user->validFunction('CN17')){
+            $arr[2]=Yii::t("summary","search month");//月度
+        }
+        $arr[3]=Yii::t("summary","search day");//日期
         return $arr;
     }
 

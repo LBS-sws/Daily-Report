@@ -5,7 +5,7 @@ class SummaryForm extends CFormModel
 	/* User Fields */
     public $search_start_date;//查詢開始日期
     public $search_end_date;//查詢結束日期
-    public $search_type=1;//查詢類型 1：季度 2：月份 3：天
+    public $search_type=3;//查詢類型 1：季度 2：月份 3：天
     public $search_year;//查詢年份
     public $search_month;//查詢月份
     public $search_quarter;//查詢季度
@@ -195,6 +195,7 @@ class SummaryForm extends CFormModel
                 }
             }
         }
+
         $session = Yii::app()->session;
         $session['summary_c01'] = $this->getCriteria();
         return true;

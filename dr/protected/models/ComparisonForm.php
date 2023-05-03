@@ -5,7 +5,7 @@ class ComparisonForm extends CFormModel
 	/* User Fields */
     public $search_start_date;//查詢開始日期
     public $search_end_date;//查詢結束日期
-    public $search_type=1;//查詢類型 1：季度 2：月份 3：天
+    public $search_type=3;//查詢類型 1：季度 2：月份 3：天
     public $search_year;//查詢年份
     public $search_month;//查詢月份
     public $search_quarter;//查詢季度
@@ -185,6 +185,7 @@ class ComparisonForm extends CFormModel
                 $this->insertDataForRow($row,$data,$cityList,$uActualMoneyList);
             }
         }
+        $this->defaultRowForCity($data,$cityList,$uActualMoneyList);//填充默認城市（無數據的城市需要顯示0）
 
         $this->insertUData($this->start_date,$this->end_date,$data,$cityList);
         $this->insertUData($lastStartDate,$lastEndDate,$data,$cityList);
@@ -192,6 +193,47 @@ class ComparisonForm extends CFormModel
         $session = Yii::app()->session;
         $session['comparison_c01'] = $this->getCriteria();
         return true;
+    }
+
+    //填充默認城市
+    private function defaultRowForCity(&$data,&$cityList,&$uActualMoneyList){
+        $city_allow = Yii::app()->user->city_allow();
+        $notCity = ComparisonSetList::notCitySqlStr();
+        $notCity = explode("','",$notCity);
+        $hasCity = array_keys($cityList);
+        $notCity = array_merge($hasCity,$notCity);
+        $where="";
+        if(!empty($notCity)){
+            $notCity = implode("','",$notCity);
+            $where=" and b.code not in ('{$notCity}')";
+        }
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()
+            ->select("b.code,b.region,b.name as city_name,c.name as region_name")
+            ->from("security{$suffix}.sec_city b")
+            ->leftJoin("security{$suffix}.sec_city c","b.region=c.code")
+            ->where("b.code in ({$city_allow}) {$where}")
+            ->order("b.code")
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $row["region"] = RptSummarySC::strUnsetNumber($row["region"]);
+                $row["region_name"] = RptSummarySC::strUnsetNumber($row["region_name"]);
+                $city = $row["code"];
+                $region = $row["region"];
+                $region = $city==="MO"?"MO":$region;//澳門地區單獨顯示
+                if(!key_exists($region,$data)){
+                    $data[$region]=array(
+                        "region"=>$region,
+                        "region_name"=>$row["region_name"],
+                        "list"=>array()
+                    );
+                }
+                $cityList[$row["code"]]=$row["region"];//U系统同步使用
+                $arr = $this->defMoreCity($row["code"],$row["city_name"],$row["region"],$uActualMoneyList);
+                $data[$region]["list"][$city]=$arr;
+            }
+        }
     }
 
     private function insertUData($startDate,$endDate,&$data,$cityList){
@@ -222,6 +264,54 @@ class ComparisonForm extends CFormModel
         }
     }
 
+    //設置該城市的默認值
+    private function defMoreCity($city,$city_name,$region,$uActualMoneyList){
+        $cityList[$city] = $region;//U系统同步使用
+        $arr=array(
+            "city"=>$city,
+            "city_name"=>$city_name,
+            "u_actual_money"=>key_exists($city,$uActualMoneyList)?$uActualMoneyList[$city]:0,//服务生意额
+            "u_sum_last"=>0,//U系统金额(上一年)
+            "u_sum"=>0,//U系统金额
+            "stopSumOnly"=>0,//本月停單金額（月）
+            "uServiceMoney"=>0,//U系統內的實際服務金額（月）
+            "new_sum_last"=>0,//新增(上一年)
+            "new_sum"=>0,//新增
+            "new_rate"=>0,//新增对比比例
+            "stop_sum_last"=>0,//终止（上一年）
+            "stop_sum"=>0,//终止
+            "stop_rate"=>0,//终止对比比例
+            "net_sum_last"=>0,//总和（上一年）
+            "net_sum"=>0,//总和
+            "net_rate"=>0,//总和对比比例
+        );
+        foreach ($this->con_list as $itemStr){//初始化
+            $arr[$itemStr]=0;
+            $arr[$itemStr."_rate"]=0;
+            $arr["start_".$itemStr]=0;
+            $arr["start_".$itemStr."_rate"]=0;
+        }
+        $rowStart = Yii::app()->db->createCommand()->select("*")->from("swo_comparison_set")
+            ->where("comparison_year=:year and month_type=1 and city=:city",
+                array(":year"=>$this->comparison_year,":city"=>$city)
+            )->queryRow();//查询目标金额
+        if($rowStart){
+            foreach ($this->con_list as $itemStr){//写入年初生意额
+                $arr["start_".$itemStr]=empty($rowStart[$itemStr])?0:floatval($rowStart[$itemStr]);
+            }
+        }
+        $setRow = Yii::app()->db->createCommand()->select("*")->from("swo_comparison_set")
+            ->where("comparison_year=:year and month_type=:month_type and city=:city",
+                array(":year"=>$this->comparison_year,":month_type"=>$this->month_type,":city"=>$city)
+            )->queryRow();//查询目标金额
+        if($setRow){
+            foreach ($this->con_list as $itemStr){//写入滚动生意额
+                $arr[$itemStr]=empty($setRow[$itemStr])?0:floatval($setRow[$itemStr]);
+            }
+        }
+        return $arr;
+    }
+
     private function insertDataForRow($row,&$data,&$cityList,&$uActualMoneyList){
 	    $year = intval($row["status_dt"]);//服务的年份
         $region = empty($row["region"])?"none":$row["region"];
@@ -234,50 +324,9 @@ class ComparisonForm extends CFormModel
                 "list"=>array()
             );
         }
-        if(!key_exists($city,$data[$region]["list"])){
+        if(!key_exists($city,$data[$region]["list"])){//設置該城市的默認值
             $cityList[$city] = $region;//U系统同步使用
-            $arr=array(
-                "city"=>$city,
-                "city_name"=>$row["city_name"],
-                "u_actual_money"=>key_exists($city,$uActualMoneyList)?$uActualMoneyList[$city]:0,//服务生意额
-                "u_sum_last"=>0,//U系统金额(上一年)
-                "u_sum"=>0,//U系统金额
-                "stopSumOnly"=>0,//本月停單金額（月）
-                "uServiceMoney"=>0,//U系統內的實際服務金額（月）
-                "new_sum_last"=>0,//新增(上一年)
-                "new_sum"=>0,//新增
-                "new_rate"=>0,//新增对比比例
-                "stop_sum_last"=>0,//终止（上一年）
-                "stop_sum"=>0,//终止
-                "stop_rate"=>0,//终止对比比例
-                "net_sum_last"=>0,//总和（上一年）
-                "net_sum"=>0,//总和
-                "net_rate"=>0,//总和对比比例
-            );
-            foreach ($this->con_list as $itemStr){//初始化
-                $arr[$itemStr]=0;
-                $arr[$itemStr."_rate"]=0;
-                $arr["start_".$itemStr]=0;
-                $arr["start_".$itemStr."_rate"]=0;
-            }
-            $rowStart = Yii::app()->db->createCommand()->select("*")->from("swo_comparison_set")
-                ->where("comparison_year=:year and month_type=1 and city=:city",
-                    array(":year"=>$this->comparison_year,":city"=>$city)
-                )->queryRow();//查询目标金额
-            if($rowStart){
-                foreach ($this->con_list as $itemStr){//写入年初生意额
-                    $arr["start_".$itemStr]=empty($rowStart[$itemStr])?0:floatval($rowStart[$itemStr]);
-                }
-            }
-            $setRow = Yii::app()->db->createCommand()->select("*")->from("swo_comparison_set")
-                ->where("comparison_year=:year and month_type=:month_type and city=:city",
-                    array(":year"=>$this->comparison_year,":month_type"=>$this->month_type,":city"=>$city)
-                )->queryRow();//查询目标金额
-            if($setRow){
-                foreach ($this->con_list as $itemStr){//写入滚动生意额
-                    $arr[$itemStr]=empty($setRow[$itemStr])?0:floatval($setRow[$itemStr]);
-                }
-            }
+            $arr = $this->defMoreCity($city,$row["city_name"],$region,$uActualMoneyList);
             $data[$region]["list"][$city]=$arr;
         }
         if($row["paid_type"]=="M"){//月金额

@@ -145,5 +145,7 @@ return array(
 	'Comparison Set'=>'生意额目标设置',
 	'Target Ready All'=>'查看所有目标金额',
 	'System Log'=>'系统记录',
+    'Quarter Summary'=>'季度合同同比查询',
+    'Month Summary'=>'月度合同同比查询',
 );
 ?>
