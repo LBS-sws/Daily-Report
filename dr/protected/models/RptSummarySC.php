@@ -110,7 +110,7 @@ class RptSummarySC extends ReportData2 {
         }
 
         //獲取U系統的數據
-        $this->insertUData($data,$cityList);
+        $this->getUData($data,$cityList);
 
         $this->data = $data;
 		return true;
