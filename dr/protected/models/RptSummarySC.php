@@ -110,7 +110,7 @@ class RptSummarySC extends ReportData2 {
         }
 
         //獲取U系統的數據
-        $this->getUData($data,$cityList);
+        $this->insertUData($data,$cityList);
 
         $this->data = $data;
 		return true;
@@ -127,11 +127,11 @@ class RptSummarySC extends ReportData2 {
         }
         $rows = Yii::app()->db->createCommand()
             ->select("x.InvoiceAmount,b.Text AS City,g.Text AS CusType")
-            ->from("service{$suffix}.Invoice x")
-            ->leftJoin("service{$suffix}.OfficeCity a", "x.City = a.City")
-            ->leftJoin("service{$suffix}.Enums b", "a.Office = b.EnumID AND b.EnumType = 8")
-            ->leftJoin("service{$suffix}.CustomerCompany c", "x.CustomerID = c.CustomerID")
-            ->leftJoin("service{$suffix}.Enums g", "(c.CustomerType - MOD (c.CustomerType, 100)) = g.EnumID AND g.EnumType = 4 ")
+            ->from("service{$suffix}.invoice x")
+            ->leftJoin("service{$suffix}.officecity a", "x.City = a.City")
+            ->leftJoin("service{$suffix}.enums b", "a.Office = b.EnumID AND b.EnumType = 8")
+            ->leftJoin("service{$suffix}.customercompany c", "x.CustomerID = c.CustomerID")
+            ->leftJoin("service{$suffix}.enums g", "(c.CustomerType - MOD (c.CustomerType, 100)) = g.EnumID AND g.EnumType = 4 ")
             ->where("x.status>0 and x.InvoiceDate BETWEEN '{$startDate}' AND '{$endDate}'AND SUBSTRING(x.InvoiceNumber, 3, 3) = 'INV' {$where}")
             ->order("x.InvoiceDate,x.CustomerID,x.InvoiceNumber")
             ->queryAll();
