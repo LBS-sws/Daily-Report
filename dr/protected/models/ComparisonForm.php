@@ -156,6 +156,7 @@ class ComparisonForm extends CFormModel
         ComparisonForm::setDayNum($this->start_date,$this->end_date,$this->day_num);
         $lastStartDate = ($this->comparison_year-1)."/".$this->month_start_date;
         $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
+        $uActualMoneyList = SummaryForm::getUActualMoney($this->start_date,$this->end_date,$city_allow);
         $where="(a.status_dt BETWEEN '{$this->start_date}' and '{$this->end_date}')";
         $where.="or (a.status_dt BETWEEN '{$lastStartDate}' and '{$lastEndDate}')";
         $rows = Yii::app()->db->createCommand()
@@ -181,13 +182,12 @@ class ComparisonForm extends CFormModel
                 $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
                 $row["ctrt_period"] = is_numeric($row["ctrt_period"])?floatval($row["ctrt_period"]):0;
                 $row["b4_amt_paid"] = is_numeric($row["b4_amt_paid"])?floatval($row["b4_amt_paid"]):0;
-                $this->insertDataForRow($row,$data,$cityList);
+                $this->insertDataForRow($row,$data,$cityList,$uActualMoneyList);
             }
         }
 
         $this->insertUData($this->start_date,$this->end_date,$data,$cityList);
         $this->insertUData($lastStartDate,$lastEndDate,$data,$cityList);
-        $this->insertUActualMoney($this->start_date,$this->end_date,$data,$cityList);//服务生意额
         $this->data = $data;
         $session = Yii::app()->session;
         $session['comparison_c01'] = $this->getCriteria();
@@ -222,21 +222,7 @@ class ComparisonForm extends CFormModel
         }
     }
 
-    //服务生意额
-    private function insertUActualMoney($startDate,$endDate,&$data,$cityList){
-        $city_allow = Yii::app()->user->city_allow();
-        $rows = SummaryForm::getUActualMoney($startDate,$endDate,$city_allow);
-        if(!empty($rows)){
-            foreach ($rows as $city=>$money){
-                if(key_exists($city,$cityList)){
-                    $region = $cityList[$city];
-                    $data[$region]["list"][$city]["u_actual_money"]+=$money;
-                }
-            }
-        }
-    }
-
-    private function insertDataForRow($row,&$data,&$cityList){
+    private function insertDataForRow($row,&$data,&$cityList,&$uActualMoneyList){
 	    $year = intval($row["status_dt"]);//服务的年份
         $region = empty($row["region"])?"none":$row["region"];
         $city = empty($row["city"])?"none":$row["city"];
@@ -253,7 +239,7 @@ class ComparisonForm extends CFormModel
             $arr=array(
                 "city"=>$city,
                 "city_name"=>$row["city_name"],
-                "u_actual_money"=>0,//服务生意额
+                "u_actual_money"=>key_exists($city,$uActualMoneyList)?$uActualMoneyList[$city]:0,//服务生意额
                 "u_sum_last"=>0,//U系统金额(上一年)
                 "u_sum"=>0,//U系统金额
                 "stopSumOnly"=>0,//本月停單金額（月）
