@@ -17,6 +17,10 @@ return array(
 				'access'=>'A02',
 				'url'=>'/service/index',
 			),
+			'Customer Service Count'=>array(//客戶服務匯總
+				'access'=>'A12',
+				'url'=>'/serviceCount/index',
+			),
 			'Customer Service ID'=>array(
 				'access'=>'A11',
 				'url'=>'/serviceID/index',
