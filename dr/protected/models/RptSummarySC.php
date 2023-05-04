@@ -198,7 +198,8 @@ class RptSummarySC extends ReportData2 {
         $notCity = explode("','",$notCity);
         $hasCity = array_keys($cityList);
         $notCity = array_merge($hasCity,$notCity);
-        $where="1>0";
+        $suffix = Yii::app()->params['envSuffix'];
+        $where="b.code not in (SELECT f.region FROM security{$suffix}.sec_city f WHERE f.region is not NULL and f.region!='' GROUP BY f.region)";
         if(!empty($city_allow)){
             $where.=" and b.code in ({$city_allow})";
         }
@@ -206,7 +207,7 @@ class RptSummarySC extends ReportData2 {
             $notCity = implode("','",$notCity);
             $where.=" and b.code not in ('{$notCity}')";
         }
-        $suffix = Yii::app()->params['envSuffix'];
+
         $rows = Yii::app()->db->createCommand()
             ->select("b.code,b.region,b.name as city_name,c.name as region_name")
             ->from("security{$suffix}.sec_city b")

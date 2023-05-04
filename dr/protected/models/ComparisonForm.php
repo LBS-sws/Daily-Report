@@ -202,12 +202,13 @@ class ComparisonForm extends CFormModel
         $notCity = explode("','",$notCity);
         $hasCity = array_keys($cityList);
         $notCity = array_merge($hasCity,$notCity);
-        $where="";
+        $suffix = Yii::app()->params['envSuffix'];
+        $where=" and b.code not in (SELECT f.region FROM security{$suffix}.sec_city f WHERE f.region is not NULL and f.region!='' GROUP BY f.region)";
         if(!empty($notCity)){
             $notCity = implode("','",$notCity);
-            $where=" and b.code not in ('{$notCity}')";
+            $where.=" and b.code not in ('{$notCity}')";
         }
-        $suffix = Yii::app()->params['envSuffix'];
+        //where
         $rows = Yii::app()->db->createCommand()
             ->select("b.code,b.region,b.name as city_name,c.name as region_name")
             ->from("security{$suffix}.sec_city b")
