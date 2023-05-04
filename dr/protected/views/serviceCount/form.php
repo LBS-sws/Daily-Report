@@ -25,11 +25,9 @@ $this->pageTitle=Yii::app()->name . ' - ServiceCount Form';
 <section class="content">
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
-        <!--
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
 				'submit'=>Yii::app()->createUrl('serviceCount/index')));
 		?>
-		-->
 	</div>
 	</div></div>
 
@@ -38,13 +36,13 @@ $this->pageTitle=Yii::app()->name . ' - ServiceCount Form';
             <div class="form-group">
                 <?php echo $form->labelEx($model,'status',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'status',
+                    <?php echo $form->dropDownList($model, 'status',ServiceCountForm::getStatusList(),
                         array('class'=>'form-control','readonly'=>true,));
                     ?>
                 </div>
                 <?php echo $form->labelEx($model,'cust_type',array('class'=>"col-sm-1 control-label")); ?>
                 <div class="col-sm-2">
-                    <?php echo $form->textField($model, 'cust_type',
+                    <?php echo $form->dropDownList($model, 'cust_type',ServiceCountForm::getServiceTypeList(),
                         array('class'=>'form-control','readonly'=>true));
                     ?>
                 </div>
@@ -52,14 +50,22 @@ $this->pageTitle=Yii::app()->name . ' - ServiceCount Form';
             <div class="form-group">
                 <?php echo $form->labelEx($model,'search_year',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'search_year',
+                    <?php echo $form->dropDownList($model, 'search_year',ServiceCountForm::getYearList(),
                         array('class'=>'form-control','readonly'=>true,));
                     ?>
                 </div>
                 <?php echo $form->labelEx($model,'city_allow',array('class'=>"col-sm-1 control-label")); ?>
                 <div class="col-sm-2">
-                    <?php echo $form->textField($model, 'city_allow',
+                    <?php echo $form->dropDownList($model, 'city_allow',ServiceCountForm::getCityList(),
                         array('class'=>'form-control','readonly'=>true));
+                    ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'company_name',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-5">
+                    <?php echo $form->textField($model, 'company_name',
+                        array('class'=>'form-control','readonly'=>true,));
                     ?>
                 </div>
             </div>

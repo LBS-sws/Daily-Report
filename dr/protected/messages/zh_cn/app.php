@@ -147,5 +147,6 @@ return array(
 	'System Log'=>'系统记录',
     'Quarter Summary'=>'季度合同同比查询',
     'Month Summary'=>'月度合同同比查询',
+    'Customer Service Count'=>'客戶服務匯總查询',
 );
 ?>
