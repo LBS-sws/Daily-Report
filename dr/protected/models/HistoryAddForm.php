@@ -294,9 +294,11 @@ class HistoryAddForm extends CFormModel
         }
     }
 
-    public static function historyNumber($number){
-        $number = is_numeric($number)?floatval($number):0;
-        $number = round($number/1000);
+    public static function historyNumber($number,$bool=false){
+        if(!$bool){
+            $number = is_numeric($number)?floatval($number):0;
+            $number = round($number/1000);
+        }
         return $number;
     }
 
@@ -307,8 +309,8 @@ class HistoryAddForm extends CFormModel
             $list["last_week"]=($list["last_week"]/$this->last_week_day)*$this->month_day;
             $list["last_week"]=self::historyNumber($list["last_week"]);
         }
-        $list["start_two_gross"]=self::historyNumber($list["start_two_gross"]);
-        $list["two_gross"]=self::historyNumber($list["two_gross"]);
+        $list["start_two_gross"]=self::historyNumber($list["start_two_gross"],$bool);
+        $list["two_gross"]=self::historyNumber($list["two_gross"],$bool);
         $list["now_average"]=0;
         $list["last_average"]=0;
         $list["growth"]=self::comYes($list["now_week"],$list["last_week"]);
@@ -320,15 +322,13 @@ class HistoryAddForm extends CFormModel
             $lastStr = $this->last_year."/{$month}";
             $list[$nowStr] = key_exists($nowStr,$list)?$list[$nowStr]:0;
             $list[$lastStr] = key_exists($lastStr,$list)?$list[$lastStr]:0;
+            $list[$nowStr] = self::historyNumber($list[$nowStr],$bool);
+            $list[$lastStr] = self::historyNumber($list[$lastStr],$bool);
             $list["now_average"]+=$list[$nowStr];
             $list["last_average"]+=$list[$lastStr];
-            $list[$nowStr] = self::historyNumber($list[$nowStr]);
-            $list[$lastStr] = self::historyNumber($list[$lastStr]);
         }
-        $list["now_average"]=$list["now_average"]/$this->search_month;
-        $list["last_average"]=$list["last_average"]/$this->search_month;
-        $list["now_average"] = self::historyNumber($list["now_average"]);
-        $list["last_average"] = self::historyNumber($list["last_average"]);
+        $list["now_average"]=round($list["now_average"]/$this->search_month,2);
+        $list["last_average"]=round($list["last_average"]/$this->search_month,2);
     }
 
     //顯示提成表的表格內容

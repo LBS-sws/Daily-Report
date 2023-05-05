@@ -278,8 +278,8 @@ class HistoryStopForm extends CFormModel
             $list["last_week"]=($list["last_week"]/$this->last_week_day)*$this->month_day;
             $list["last_week"]=HistoryAddForm::historyNumber($list["last_week"]);
         }
-        $list["start_two_gross"]=HistoryAddForm::historyNumber($list["start_two_gross"]);
-        $list["two_gross"]=HistoryAddForm::historyNumber($list["two_gross"]);
+        $list["start_two_gross"]=HistoryAddForm::historyNumber($list["start_two_gross"],$bool);
+        $list["two_gross"]=HistoryAddForm::historyNumber($list["two_gross"],$bool);
         $list["now_average"]=0;
         $list["last_average"]=0;
         $list["growth"]=HistoryAddForm::comYes($list["now_week"],$list["last_week"]);
@@ -291,15 +291,13 @@ class HistoryStopForm extends CFormModel
             $lastStr = $this->last_year."/{$month}";
             $list[$nowStr] = key_exists($nowStr,$list)?$list[$nowStr]:0;
             $list[$lastStr] = key_exists($lastStr,$list)?$list[$lastStr]:0;
-            $list["now_average"]+=$list[$nowStr];
-            $list["last_average"]+=$list[$lastStr];
             $list[$nowStr] = HistoryAddForm::historyNumber($list[$nowStr]);
             $list[$lastStr] = HistoryAddForm::historyNumber($list[$lastStr]);
+            $list["now_average"]+=$list[$nowStr];
+            $list["last_average"]+=$list[$lastStr];
         }
-        $list["now_average"]=$list["now_average"]/$this->search_month;
-        $list["last_average"]=$list["last_average"]/$this->search_month;
-        $list["now_average"] = HistoryAddForm::historyNumber($list["now_average"]);
-        $list["last_average"] = HistoryAddForm::historyNumber($list["last_average"]);
+        $list["now_average"]=round($list["now_average"]/$this->search_month,2);
+        $list["last_average"]=round($list["last_average"]/$this->search_month,2);
     }
 
     //顯示提成表的表格內容
