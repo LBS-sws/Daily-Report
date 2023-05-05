@@ -195,6 +195,18 @@ return array(
                 'access'=>'G05',
                 'url'=>'/comparison/index',
             ),
+            'History Add'=>array(
+                'access'=>'G07',
+                'url'=>'/historyAdd/index',
+            ),
+            'History Stop'=>array(
+                'access'=>'G08',
+                'url'=>'/historyStop/index',
+            ),
+            'History Net'=>array(
+                'access'=>'G09',
+                'url'=>'/historyNet/index',
+            ),
             'Comparison Set'=>array(
                 'access'=>'G06',
                 'url'=>'/comparisonSet/index',

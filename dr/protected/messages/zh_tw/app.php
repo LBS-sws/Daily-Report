@@ -142,5 +142,8 @@ return array(
     'Quarter Summary'=>'季度合同同比查詢',
     'Month Summary'=>'月度合同同比查詢',
     'Customer Service Count'=>'客户服务汇总查詢',
+    'History Add'=>'地區歷史新增客戶',
+    'History Stop'=>'地區歷史終止客戶',
+    'History Net'=>'地區歷史凈增客戶',
 );
 ?>

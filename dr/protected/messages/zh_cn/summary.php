@@ -61,5 +61,18 @@ return array(
     'search month'=>'月份',
     'search day'=>'日期',
     'Month Stop Rate'=>'月停单率',
+    'Month'=>'月',
+    'Average'=>'平均',
+    ' month estimate'=>'月全月预估',
+    'now week'=>'本周',
+    'last week'=>'上周',
+    'growth'=>'加速增长',
+    'Target contrast'=>'目标对比',
+    'Start Target'=>'年初目标',
+    'Start Target result'=>'达成目标',
+    'Roll Target'=>'滚动目标',
+    'Roll Target result'=>'达成目标',
+    'search date'=>'查询日期',
+    'none'=>'无',
 );
 ?>
