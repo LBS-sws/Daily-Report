@@ -291,8 +291,8 @@ class HistoryStopForm extends CFormModel
             $lastStr = $this->last_year."/{$month}";
             $list[$nowStr] = key_exists($nowStr,$list)?$list[$nowStr]:0;
             $list[$lastStr] = key_exists($lastStr,$list)?$list[$lastStr]:0;
-            $list[$nowStr] = HistoryAddForm::historyNumber($list[$nowStr]);
-            $list[$lastStr] = HistoryAddForm::historyNumber($list[$lastStr]);
+            $list[$nowStr] = HistoryAddForm::historyNumber($list[$nowStr],$bool);
+            $list[$lastStr] = HistoryAddForm::historyNumber($list[$lastStr],$bool);
             $list["now_average"]+=$list[$nowStr];
             $list["last_average"]+=$list[$lastStr];
         }
