@@ -13,6 +13,7 @@ class DownSummary{
     protected $current_row = 0;
     protected $header_title;
     protected $header_string;
+    public $colTwo=2;
 
     public function SetHeaderTitle($invalue) {
         $this->header_title = $invalue;
@@ -35,8 +36,10 @@ class DownSummary{
     public function setSummaryHeader($headerArr){
         $this->setSummaryWidth();
         if(!empty($headerArr)){
-            $this->objPHPExcel->getActiveSheet()->mergeCells("A".$this->current_row.':'."A".($this->current_row+1));
-            $this->objPHPExcel->getActiveSheet()->mergeCells("B".$this->current_row.':'."B".($this->current_row+1));
+            for ($i=0;$i<$this->colTwo;$i++){
+                $startStr = $this->getColumn($i);
+                $this->objPHPExcel->getActiveSheet()->mergeCells($startStr.$this->current_row.':'.$startStr.($this->current_row+1));
+            }
             $this->objPHPExcel->getActiveSheet()->getStyle("A{$this->current_row}:Y".($this->current_row+1))->applyFromArray(
                 array(
                     'font'=>array(
@@ -54,7 +57,7 @@ class DownSummary{
                 )
             );
             $colOne = 0;
-            $colTwo = 2;
+            $colTwo = $this->colTwo;
             foreach ($headerArr as $list){
                 $startStr = $this->getColumn($colOne);
                 $colspan = key_exists("colspan",$list)?count($list["colspan"])-1:0;
@@ -178,6 +181,9 @@ class DownSummary{
         $this->objPHPExcel->setActiveSheetIndex($sheetid)
             ->setCellValueByColumnAndRow(0, 1, $this->header_title)
             ->setCellValueByColumnAndRow(0, 2, $this->header_string);
+        $this->objPHPExcel->getActiveSheet()->getRowDimension(1)->setRowHeight(20);
+        $height = $this->colTwo==2?20:50;
+        $this->objPHPExcel->getActiveSheet()->getRowDimension(2)->setRowHeight($height);
         $this->objPHPExcel->getActiveSheet()->mergeCells("A1:C1");
         $this->objPHPExcel->getActiveSheet()->mergeCells("A2:C2");
         $this->objPHPExcel->getActiveSheet()->getStyleByColumnAndRow(0, 1)->getFont()
@@ -190,7 +196,7 @@ class DownSummary{
             ->setBold(true)
             ->setItalic(true);
         $this->objPHPExcel->getActiveSheet()->getStyleByColumnAndRow(0, 2)->getAlignment()
-            ->setWrapText(false);
+            ->setWrapText(true);
 
         $this->current_row = 4;
     }

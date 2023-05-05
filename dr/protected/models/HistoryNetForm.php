@@ -96,9 +96,11 @@ class HistoryNetForm extends CFormModel
 
         $where="(a.status_dt BETWEEN '{$this->start_date}' and '{$this->end_date}')";
         $where.="or (a.status_dt BETWEEN '{$this->last_start_date}' and '{$this->last_end_date}')";
-        $rows = Yii::app()->db->createCommand()
-            ->select("a.status_dt,a.status,f.rpt_cat,f.single,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.paid_type,a.amt_paid,a.ctrt_period,a.b4_paid_type,a.b4_amt_paid
-            ,b.region,b.name as city_name,c.name as region_name")
+
+        $selectSql = "a.status_dt,a.status,f.rpt_cat,f.single,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid
+            ,b.region,b.name as city_name,c.name as region_name";
+        $serviceRows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
             ->from("swo_service a")
             ->leftJoin("swo_customer_type f","a.cust_type=f.id")
             ->leftJoin("swo_nature g","a.nature_type=g.id")
@@ -107,6 +109,20 @@ class HistoryNetForm extends CFormModel
             ->where("a.city in ({$city_allow}) and a.city not in ('ZY') and a.status in ('N','T') and ({$where})")
             ->order("a.city")
             ->queryAll();
+        //所有需要計算的客戶服務(ID客戶服務)
+        $serviceRowsID = Yii::app()->db->createCommand()
+            ->select("{$selectSql},CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+            ->from("swoper$suffix.swo_serviceid a")
+            ->leftJoin("swoper$suffix.swo_customer_type_id f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->leftJoin("security{$suffix}.sec_city b","a.city=b.code")
+            ->leftJoin("security{$suffix}.sec_city c","b.region=c.code")
+            ->where("a.city in ({$city_allow}) and a.city not in ('ZY') and a.status in ('N','T') and ({$where})")
+            ->order("a.city")
+            ->queryAll();
+        $serviceRows = $serviceRows?$serviceRows:array();
+        $serviceRowsID = $serviceRowsID?$serviceRowsID:array();
+        $rows = array_merge($serviceRows,$serviceRowsID);
         $uList = array();
         $this->insertUData($this->start_date,$this->end_date,$uList);
         $this->insertUData($this->last_start_date,$this->last_end_date,$uList);
@@ -525,13 +541,20 @@ class HistoryNetForm extends CFormModel
 
     //下載
     public function downExcel($excelData){
-        $this->search_year = date("Y",strtotime($this->start_date));
-        $this->month_start_date = date("m/d",strtotime($this->start_date));
-        $this->month_end_date = date("m/d",strtotime($this->end_date));
+        $this->validateDate("","");
         $headList = $this->getTopArr();
         $excel = new DownSummary();
-        $excel->SetHeaderTitle(Yii::t("app","HistoryNet"));
-        $excel->SetHeaderString($this->start_date." ~ ".$this->end_date);
+        $excel->colTwo=1;
+        $excel->SetHeaderTitle(Yii::t("app","History Stop")."（{$this->search_date}）");
+        $titleTwo = $this->start_date." ~ ".$this->end_date."\r\n";
+        $titleTwo.="本周:".date("Y/m/d",$this->week_start)." ~ ".date("Y/m/d",$this->week_end)." ({$this->week_day})\r\n";
+        $titleTwo.="上周:";
+        if($this->last_week_end===strtotime("1999/01/01")){
+            $titleTwo.="无";
+        }else{
+            $titleTwo.=date("Y/m/d",$this->last_week_start)." ~ ".date("Y/m/d",$this->last_week_end)." ({$this->last_week_day})";
+        }
+        $excel->SetHeaderString($titleTwo);
         $excel->init();
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);

@@ -159,9 +159,10 @@ class ComparisonForm extends CFormModel
         $uActualMoneyList = SummaryForm::getUActualMoney($this->start_date,$this->end_date,$city_allow);
         $where="(a.status_dt BETWEEN '{$this->start_date}' and '{$this->end_date}')";
         $where.="or (a.status_dt BETWEEN '{$lastStartDate}' and '{$lastEndDate}')";
-        $rows = Yii::app()->db->createCommand()
-            ->select("a.status_dt,a.status,f.rpt_cat,f.single,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.paid_type,a.amt_paid,a.ctrt_period,a.b4_paid_type,a.b4_amt_paid
-            ,b.region,b.name as city_name,c.name as region_name")
+        $selectSql = "a.status_dt,a.status,f.rpt_cat,f.single,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid
+            ,b.region,b.name as city_name,c.name as region_name";
+        $serviceRows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
             ->from("swo_service a")
             ->leftJoin("swo_customer_type f","a.cust_type=f.id")
             ->leftJoin("swo_nature g","a.nature_type=g.id")
@@ -170,8 +171,22 @@ class ComparisonForm extends CFormModel
             ->where("a.city in ({$city_allow}) and a.city not in ('ZY') and a.status in ('N','T') and ({$where})")
             ->order("a.city")
             ->queryAll();
+        //所有需要計算的客戶服務(ID客戶服務)
+        $serviceRowsID = Yii::app()->db->createCommand()
+            ->select("{$selectSql},CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+            ->from("swoper$suffix.swo_serviceid a")
+            ->leftJoin("swoper$suffix.swo_customer_type_id f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->leftJoin("security{$suffix}.sec_city b","a.city=b.code")
+            ->leftJoin("security{$suffix}.sec_city c","b.region=c.code")
+            ->where("a.city in ({$city_allow}) and a.city not in ('ZY') and a.status in ('N','T') and ({$where})")
+            ->order("a.city")
+            ->queryAll();
+        $serviceRows = $serviceRows?$serviceRows:array();
+        $serviceRowsID = $serviceRowsID?$serviceRowsID:array();
+        $rows = array_merge($serviceRows,$serviceRowsID);
         $cityList = array();
-        if($rows){
+        if(!empty($rows)){
             foreach ($rows as $row){
                 //rpt_cat='INV' and single=1的客户服务是产品，所以需要筛选出去
                 if($row["rpt_cat"]==="INV"&&intval($row["single"])===1){
