@@ -311,7 +311,8 @@ class HistoryAddForm extends CFormModel
     }
 
     public static function historyNumber($number,$bool=false){
-        if(!$bool){
+        return $number;
+        if(!$bool){//2023-5-8不需要除以1000
             $number = is_numeric($number)?floatval($number):0;
             $number = round($number/1000);
         }
