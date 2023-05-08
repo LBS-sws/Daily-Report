@@ -27,7 +27,9 @@ return array(
 	'ID-Customer-Terminate'=>'ID终止服务客户',
 	'Summary Service Cases Report'=>'生意额数据汇总表',
 	'Active Contract Report'=>'生效中合约报表',
+	'U Service Amount'=>'服务金额汇总',
 
+	'Area'=>'区域',
 	'City'=>'地区',
 	'Type'=>'类别',
 	'Year'=>'年',

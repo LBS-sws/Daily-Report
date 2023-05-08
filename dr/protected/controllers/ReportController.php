@@ -54,6 +54,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('feedbackstat'),'expression'=>array('ReportController','allowFeedbackstat')),
 			array('allow','actions'=>array('feedback'),'expression'=>array('ReportController','allowFeedback')),
 			array('allow','actions'=>array('summarySC','textCURL'),'expression'=>array('ReportController','allowSummarySC')),
+			array('allow','actions'=>array('uService'),'expression'=>array('ReportController','allowUService')),
 			array('allow','actions'=>array('activeService'),'expression'=>array('ReportController','allowActiveService')),
 			array('allow',
 				'actions'=>array('generate'),
@@ -532,6 +533,24 @@ class ReportController extends Controller
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
 
+// Report: UService
+	protected static function allowUService() {
+		return Yii::app()->user->validFunction('B32');
+	}
+
+	public function actionUService() {
+		$this->function_id = 'B32';
+		Yii::app()->session['active_func'] = $this->function_id;
+        $this->showUI('uService','U Service Amount', 'start_dt,end_dt');
+		//$this->showUIFbList('uService', 'Summary Service Cases Report', 'start_dt,end_dt,format');
+	}
+
+    protected function genUService($criteria) {
+        $criteria->city=Yii::app()->user->city_allow();
+        $this->addQueueItem('RptUService', $criteria, 'A4');
+        Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+    }
+
 // Report: ActiveService
 	protected static function allowActiveService() {
 		return Yii::app()->user->validFunction('B31');
@@ -664,6 +683,7 @@ class ReportController extends Controller
 				if ($model->id=='feedback') $this->genFeedback($model);
 				if ($model->id=='customerID') $this->genCustomerID($model);
 				if ($model->id=='summarySC') $this->genSummarySC($model);
+				if ($model->id=='uService') $this->genUService($model);
 				if ($model->id=='activeService') $this->genActiveService($model);
 //				Yii::app()->end();
 			} else {

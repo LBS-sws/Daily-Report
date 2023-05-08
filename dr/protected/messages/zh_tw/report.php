@@ -26,7 +26,10 @@ return array(
 'ID-Customer-Amendment'=>'更改服務客戶',
 'ID-Customer-Terminate'=>'終止服務客戶',
     'Summary Service Cases Report'=>'生意額數據匯總表',
-	'Active Contract Report'=>'生效中合約報表',
+    'Active Contract Report'=>'生效中合約報表',
+    'U Service Amount'=>'服務金額匯總',
+
+    'Area'=>'區域',
 'City'=>'地區',
 'Type'=>'類別',
 'Year'=>'年',

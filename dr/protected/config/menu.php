@@ -69,6 +69,10 @@ return array(
 		'access'=>'B',
 		'icon'=>'fa-file-text-o',
 		'items'=>array(
+			'U Service Amount'=>array( //服務金額匯總
+				'access'=>'B32',
+				'url'=>'/report/uService',
+			),
 			'Summary Service Cases'=>array( //客戶服務匯總
 				'access'=>'B30',
 				'url'=>'/report/summarySC',

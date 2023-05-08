@@ -151,5 +151,6 @@ return array(
     'History Add'=>'地区历史新增客户',
     'History Stop'=>'地区历史终止客户',
     'History Net'=>'地区历史净增客户',
+    'U Service Amount'=>'服务金额汇总',
 );
 ?>
