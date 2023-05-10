@@ -75,5 +75,9 @@ return array(
     'search date'=>'查詢日期',
     'none'=>'無',
     'stop growth'=>'丟單改善',
+    'Paid Amt'=>'服務金額',
+    'Staff Name'=>'員工',
+    'Area'=>'區域',
+    'Count：'=>'匯總：',
 );
 ?>

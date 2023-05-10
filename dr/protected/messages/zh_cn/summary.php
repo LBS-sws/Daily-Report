@@ -75,5 +75,9 @@ return array(
     'search date'=>'查询日期',
     'none'=>'无',
     'stop growth'=>'丢单改善',
+    'Paid Amt'=>'服务金额',
+    'Staff Name'=>'员工',
+    'Area'=>'区域',
+    'Count：'=>'汇总：',
 );
 ?>

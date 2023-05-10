@@ -3,7 +3,7 @@ class RptUService extends ReportData2 {
 	public function fields() {
 		return array(
 			'area'=>array('label'=>Yii::t('report','Area'),'width'=>18,'align'=>'L'),
-			'city'=>array('label'=>Yii::t('report','City'),'width'=>18,'align'=>'L'),
+			'city_name'=>array('label'=>Yii::t('report','City'),'width'=>18,'align'=>'L'),
 			'name'=>array('label'=>Yii::t('staff','Name'),'width'=>30,'align'=>'L'),
 			'amt'=>array('label'=>Yii::t('service','Paid Amt'),'width'=>18,'align'=>'L'),
 		);
@@ -43,7 +43,8 @@ class RptUService extends ReportData2 {
                         if(!key_exists($staff,$list)){
                             $list[$staff]=array(
                                 "area"=>$user["region_name"],//区域
-                                "city"=>$user["city_name"],//城市
+                                "city_code"=>$user["city"],//城市編號
+                                "city_name"=>$user["city_name"],//城市名稱
                                 "name"=>$user["name"]." ({$user["code"]})",//员工名称
                                 "amt"=>0,//服务金额
                             );
@@ -61,7 +62,7 @@ class RptUService extends ReportData2 {
 		if(key_exists($code,$list)){
 			return $list[$code];
 		}else{
-			return array("code"=>$code,"name"=>"","city_name"=>"","region_name"=>"");
+			return array("code"=>$code,"name"=>"","city"=>"","city_name"=>"","region_name"=>"");
 		}
 	}
 

@@ -211,6 +211,10 @@ return array(
                 'access'=>'G09',
                 'url'=>'/historyNet/index',
             ),
+            'U Service Amount'=>array(
+                'access'=>'G10',
+                'url'=>'/uService/index',
+            ),
             'Comparison Set'=>array(
                 'access'=>'G06',
                 'url'=>'/comparisonSet/index',
