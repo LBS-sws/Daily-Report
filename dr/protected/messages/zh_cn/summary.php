@@ -74,5 +74,6 @@ return array(
     'Roll Target result'=>'达成目标',
     'search date'=>'查询日期',
     'none'=>'无',
+    'stop growth'=>'丢单改善',
 );
 ?>

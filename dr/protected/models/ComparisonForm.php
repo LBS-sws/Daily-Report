@@ -761,6 +761,7 @@ class ComparisonForm extends CFormModel
 
     //下載
     public function downExcel($excelData){
+        $this->validateDate("","");
         $this->comparison_year = date("Y",strtotime($this->start_date));
         $this->month_start_date = date("m/d",strtotime($this->start_date));
         $this->month_end_date = date("m/d",strtotime($this->end_date));
