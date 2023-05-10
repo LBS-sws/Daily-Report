@@ -158,7 +158,7 @@ class UServiceForm extends CFormModel
     //获取td对应的键名
     private function getDataAllKeyStr(){
         $bodyKey = array(
-            "area","city_name","name","amt"
+            "area","u_city_name","name","amt"
         );
         return $bodyKey;
     }
@@ -175,14 +175,14 @@ class UServiceForm extends CFormModel
             $city = "none";
             $regionRow = [];//地区汇总
             foreach ($data as $staffCode=>$row) {
-                if($city==="none"||$row["city_code"]!=$city){//地區匯總
+                if($city==="none"||$row["u_city"]!=$city){//地區匯總
                     if($city!="none"){
                         $html.=$this->printTableTr($regionRow,$RegionKey);
                         $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
                     }
-                    $city = $row["city_code"];
+                    $city = $row["u_city"];
                     $regionRow=[];
-                    $regionRow["region"]=Yii::t("summary","Count：").$row["city_name"];
+                    $regionRow["region"]=Yii::t("summary","Count：").$row["u_city_name"];
                 }
                 $html.="<tr>";
                 foreach ($bodyKey as $keyStr){
