@@ -26,6 +26,7 @@ class RptUService extends ReportData2 {
         $userList = self::getUserList($city_allow);
         $staffStrList = array("Staff01","Staff02","Staff03");
         $list = array();
+        $outList=array();
 		if ($rows) {
 			foreach ($rows as $row) {
                 $city = $row["Text"];
@@ -40,21 +41,34 @@ class RptUService extends ReportData2 {
                     $staff = $row[$staffStr];//员工编号
 					$user = self::getUserListForCode($staff,$userList);
                     if(!empty($staff)){
-                        if(!key_exists($staff,$list)){
-                            $list[$staff]=array(
-                                "area"=>$user["region_name"],//区域
-                                "city_code"=>$user["city"],//城市編號
-                                "city_name"=>$user["city_name"],//城市名稱
-                                "name"=>$user["name"]." ({$user["code"]})",//员工名称
-                                "amt"=>0,//服务金额
-                            );
+                        if(!empty($user["city"])){
+                            if(!key_exists($staff,$list)){
+                                $list[$staff]=array(
+                                    "area"=>$user["region_name"],//区域
+                                    "city_code"=>$user["city"],//城市
+                                    "city_name"=>$user["city_name"],//城市
+                                    "name"=>$user["name"]." ({$user["code"]})",//员工名称
+                                    "amt"=>0,//服务金额
+                                );
+                            }
+                            $list[$staff]["amt"]+=$money;
+                        }else{//人事系统没有找到该员工
+                            if(!key_exists($staff,$outList)){
+                                $outList[$staff]=array(
+                                    "area"=>$user["region_name"],//区域
+                                    "city_code"=>$user["city"],//城市
+                                    "city_name"=>$user["city_name"],//城市
+                                    "name"=>$user["name"]." ({$user["code"]})",//员工名称
+                                    "amt"=>0,//服务金额
+                                );
+                            }
+                            $outList[$staff]["amt"]+=$money;
                         }
-                        $list[$staff]["amt"]+=$money;
                     }
                 }
 			}
 		}
-        $this->data = $list;
+        $this->data = array_merge($list,$outList);
 		return true;
 	}
 
