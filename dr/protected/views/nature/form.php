@@ -49,6 +49,7 @@ $this->pageTitle=Yii::app()->name . ' - Nature Form';
 
 	<div class="box box-info">
 		<div class="box-body">
+            <?php echo CHtml::hiddenField('dtltemplate'); ?>
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
 
@@ -74,7 +75,24 @@ $this->pageTitle=Yii::app()->name . ' - Nature Form';
                     <p class="form-control-static text-danger">报表类别为“A01”时，系统识别该类型为“餐饮”行业</p>
                 </div>
             </div>
-			
+
+
+            <div class="box">
+                <div class="box-body">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="table-responsive">
+                            <?php
+                            $this->widget('ext.layout.TableView2Widget', array(
+                                'model'=>$model,
+                                'attribute'=>'detail',
+                                'viewhdr'=>'//nature/_formhdr',
+                                'viewdtl'=>'//nature/_formdtl',
+                            ));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
 		</div>
 	</div>
 </section>
@@ -82,6 +100,61 @@ $this->pageTitle=Yii::app()->name . ' - Nature Form';
 <?php $this->renderPartial('//site/removedialog'); ?>
 
 <?php
+$js = "
+$('table').on('change','[id^=\"NatureForm\"]',function() {
+	var n=$(this).attr('id').split('_');
+	$('#NatureForm_'+n[1]+'_'+n[2]+'_uflag').val('Y');
+});
+";
+Yii::app()->clientScript->registerScript('setFlag',$js,CClientScript::POS_READY);
+
+if ($model->scenario!='view') {
+    $js = <<<EOF
+$('table').on('click','#btnDelRow', function() {
+	$(this).closest('tr').find('[id*=\"_uflag\"]').val('D');
+	$(this).closest('tr').hide();
+});
+EOF;
+    Yii::app()->clientScript->registerScript('removeRow',$js,CClientScript::POS_READY);
+
+    $js = <<<EOF
+$(document).ready(function(){
+	var ct = $('#tblDetail tr').eq(1).html();
+	$('#dtltemplate').attr('value',ct);
+});
+
+$('#btnAddRow').on('click',function() {
+	var r = $('#tblDetail tr').length;
+	if (r>0) {
+		var nid = '';
+		var ct = $('#dtltemplate').val();
+		$('#tblDetail tbody:last').append('<tr>'+ct+'</tr>');
+		$('#tblDetail tr').eq(-1).find('[id*=\"NatureForm_\"]').each(function(index) {
+			var id = $(this).attr('id');
+			var name = $(this).attr('name');
+
+			var oi = 0;
+			var ni = r;
+			id = id.replace('_'+oi.toString()+'_', '_'+ni.toString()+'_');
+			$(this).attr('id',id);
+			name = name.replace('['+oi.toString()+']', '['+ni.toString()+']');
+			$(this).attr('name',name);
+
+		
+			if (id.indexOf('_name') != -1) $(this).attr('value','');
+			if (id.indexOf('_rpt_u') != -1) $(this).attr('value','');
+			if (id.indexOf('_score_bool') != -1) $(this).val(0);
+			if (id.indexOf('_id') != -1) $(this).attr('value',0);
+		});
+		if (nid != '') {
+			var topos = $('#'+nid).position().top;
+			$('#tbl_detail').scrollTop(topos);
+		}
+	}
+});
+EOF;
+    Yii::app()->clientScript->registerScript('addRow',$js,CClientScript::POS_READY);
+}
 $js = Script::genDeleteData(Yii::app()->createUrl('nature/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 

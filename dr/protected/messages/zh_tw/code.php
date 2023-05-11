@@ -102,5 +102,8 @@ return array(
     'sales rate'=>'銷售提成計算',
     'participate'=>'參加',
     'not participate'=>'不參加',
+
+    'rpt u'=>'u系統對應id',
+    'score bool'=>'銷售積分計算',
 );
 ?>

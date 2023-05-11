@@ -197,8 +197,14 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'nature_type',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php echo $form->dropDownList($model, 'nature_type', General::getNatureList(), array('disabled'=>($model->scenario=='view')));
+					<?php echo $form->dropDownList($model, 'nature_type', NatureForm::getNatureList(), array('disabled'=>($model->scenario=='view'),'id'=>'nature_type'));
 					?>
+				</div>
+                <div class="col-sm-2">
+                    <?php
+                    $natureTwoList = NatureForm::getNatureTwoList();
+                    echo $form->dropDownList($model, 'nature_type_two', $natureTwoList["select"], array('disabled'=>($model->scenario=='view'),'options'=>$natureTwoList["options"],'id'=>'nature_type_two'));
+                    ?>
 				</div>
 			</div>
 <?php if ($model->status=='A') : ?>
@@ -835,6 +841,25 @@ if ($model->status=='T') {
 	";
     Yii::app()->clientScript->registerScript('surplus',$js,CClientScript::POS_READY);
 }
+$js = "
+$('#nature_type_two').change(function(){
+    if($(this).val()!=''){
+        var nature_id = $('#nature_type_two>option:selected').data('nature');
+        $('#nature_type').val(nature_id);
+        $('#nature_type').trigger('change');
+    }
+});
+$('#nature_type').change(function(){
+    var nature_id = $(this).val();
+    if(nature_id!=''){
+        $('#nature_type_two>option').slice(1).hide();
+        $('#nature_type_two>option[data-nature='+nature_id+']').show();
+    }else{
+        $('#nature_type_two>option').show();
+    }
+});
+	";
+Yii::app()->clientScript->registerScript('changeNatureType',$js,CClientScript::POS_READY);
 ?>
 
 <?php $this->endWidget(); ?>

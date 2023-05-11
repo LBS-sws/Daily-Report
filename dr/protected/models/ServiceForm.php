@@ -14,6 +14,7 @@ class ServiceForm extends CFormModel
 	public $company_id;
 	public $company_name;
 	public $nature_type;
+	public $nature_type_two;
 	public $cust_type;
     public $cust_type_name;
     public $pieces=0;
@@ -160,7 +161,7 @@ class ServiceForm extends CFormModel
 	{
 		return $this->getScenario()=="delete"
 		? array(
-			array('id, technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, cust_type, prepay_month,prepay_start,contract_no
+			array('id, technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, nature_type_two, cust_type, prepay_month,prepay_start,contract_no
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
 				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'),
@@ -179,11 +180,11 @@ class ServiceForm extends CFormModel
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
 */
-			array('id, technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, cust_type, prepay_month,prepay_start,contract_no
+			array('id, technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, nature_type_two, cust_type, prepay_month,prepay_start,contract_no
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
 				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm, company_id','safe'),
-			array('salesman_id,company_name,salesman, service,all_number,surplus, status_dt','required'),
+			array('salesman_id,company_name,salesman,nature_type, service,all_number,surplus, status_dt','required'),
 			array('ctrt_period','numerical','allowEmpty'=>true,'integerOnly'=>true),
 			array('amt_paid, amt_install','numerical','allowEmpty'=>true),
 			array('org_equip_qty, rtn_equip_qty','numerical','allowEmpty'=>true),
@@ -276,6 +277,7 @@ class ServiceForm extends CFormModel
 				$this->company_id = empty($row['company_id'])?"":$row['company_id'];
 				$this->company_name = empty($row['com_name'])?$row['company_name']:$row['com_code'].$row['com_name'];
 				$this->nature_type = $row['nature_type'];
+				$this->nature_type_two = $row['nature_type_two'];
 				$this->cust_type = $row['cust_type'];
 				$this->product_id = $row['product_id'];
 				$this->service = $row['service'];
@@ -392,7 +394,7 @@ class ServiceForm extends CFormModel
 			case 'terminate':
 			case 'resume':
 				$sql = "insert into swo_service(
-							service_new_id,company_id, company_name, product_id, service, nature_type, cust_type, 
+							service_new_id,company_id, company_name, product_id, service, nature_type, nature_type_two, cust_type, 
 							paid_type, amt_paid, amt_install, need_install, salesman_id, salesman,othersalesman_id,othersalesman,technician_id,technician, sign_dt, b4_product_id,
 							b4_service, b4_paid_type, b4_amt_paid, 
 							ctrt_period, cont_info, first_dt, first_tech_id, first_tech, reason,
@@ -400,7 +402,7 @@ class ServiceForm extends CFormModel
 							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,
 							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,prepay_month,prepay_start
 						) values (
-							:service_new_id,:company_id, :company_name, :product_id, :service, :nature_type, :cust_type, 
+							:service_new_id,:company_id, :company_name, :product_id, :service, :nature_type, :two_nature_type, :cust_type, 
 							:paid_type, :amt_paid, :amt_install, :need_install, :salesman_id, :salesman,:othersalesman_id,:othersalesman,:technician_id,:technician, :sign_dt, :b4_product_id,
 							:b4_service, :b4_paid_type, :b4_amt_paid, 
 							:ctrt_period, :cont_info, :first_dt, :first_tech_id, :first_tech, :reason,
@@ -422,6 +424,7 @@ class ServiceForm extends CFormModel
 							cust_type = :cust_type,
 							product_id = :product_id, 
 							nature_type = :nature_type,
+							nature_type_two = :two_nature_type,
 							pieces=:pieces,
 							service = :service, 
 							paid_type = :paid_type, 
@@ -498,6 +501,9 @@ class ServiceForm extends CFormModel
 			$command->bindParam(':service',$this->service,PDO::PARAM_STR);
 		if (strpos($sql,':nature_type')!==false)
 			$command->bindParam(':nature_type',$this->nature_type,PDO::PARAM_INT);
+		if (strpos($sql,':two_nature_type')!==false){
+            $command->bindParam(':two_nature_type',$this->nature_type_two,PDO::PARAM_INT);
+        }
         if (strpos($sql,':cust_type_name')!==false) {
             $cust_type_name= (empty($this->cust_type_name) ? 0 : $this->cust_type_name);
             $command->bindParam(':cust_type_name',$cust_type_name,PDO::PARAM_INT);

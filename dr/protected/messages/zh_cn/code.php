@@ -103,5 +103,8 @@ return array(
     'sales rate'=>'销售提成计算',
     'participate'=>'参加',
     'not participate'=>'不参加',
+
+    'rpt u'=>'u系统对应id',
+    'score bool'=>'销售积分计算',
 );
 ?>
