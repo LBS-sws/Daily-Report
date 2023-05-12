@@ -105,6 +105,6 @@ return array(
     'not participate'=>'不参加',
 
     'rpt u'=>'u系统对应id',
-    'score bool'=>'销售积分计算',
+    'score bool'=>'商业组重点开发客户',
 );
 ?>

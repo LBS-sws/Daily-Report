@@ -16,7 +16,7 @@
         ?>
     </td>
     <td>
-        <?php echo TbHtml::dropDownList($this->getFieldName('score_bool'),  $this->record['score_bool'], array('0'=>'不计算','1'=>'计算'),
+        <?php echo TbHtml::dropDownList($this->getFieldName('score_bool'),  $this->record['score_bool'], array('0'=>'否','1'=>'是'),
             array('disabled'=>$this->model->isReadOnly())
         ); ?>
     </td>

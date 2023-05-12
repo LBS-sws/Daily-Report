@@ -104,6 +104,6 @@ return array(
     'not participate'=>'不參加',
 
     'rpt u'=>'u系統對應id',
-    'score bool'=>'銷售積分計算',
+    'score bool'=>'商業組重點開發客戶',
 );
 ?>
