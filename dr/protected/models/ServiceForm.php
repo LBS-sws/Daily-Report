@@ -502,6 +502,7 @@ class ServiceForm extends CFormModel
 		if (strpos($sql,':nature_type')!==false)
 			$command->bindParam(':nature_type',$this->nature_type,PDO::PARAM_INT);
 		if (strpos($sql,':two_nature_type')!==false){
+            $this->nature_type_two = empty($this->nature_type_two)?null:$this->nature_type_two;
             $command->bindParam(':two_nature_type',$this->nature_type_two,PDO::PARAM_INT);
         }
         if (strpos($sql,':cust_type_name')!==false) {
