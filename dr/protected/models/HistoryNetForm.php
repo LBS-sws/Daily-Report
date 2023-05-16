@@ -239,7 +239,7 @@ class HistoryNetForm extends CFormModel
                 }
                 if($year == $this->search_year){//生意额需要加上产品金额
                     if(!key_exists("u_{$date}",$uList[$city])){
-                        $uActualMoneyList[$city][$date]=0;
+                        $uList[$city]["u_{$date}"]=0;
                     }
                     $uList[$city]["u_{$date}"]+=$money;
                 }
