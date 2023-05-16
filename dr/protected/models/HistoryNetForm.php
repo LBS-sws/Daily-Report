@@ -171,7 +171,7 @@ class HistoryNetForm extends CFormModel
                 if(!key_exists($city,$list)){
                     $list[$city]=array();
                 }
-                if(!key_exists($date,$list[$city])){
+                if(!key_exists("u_{$date}",$list[$city])){
                     $list[$city]["u_{$date}"]=0;
                 }
                 $list[$city]["u_{$date}"]+=$money;
