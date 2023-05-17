@@ -650,7 +650,7 @@ EOD;
 	public function actionNew($type='')
 	{
 		$model = new QcForm('new');
-
+        $model->city = Yii::app()->user->city();
 		switch ($type) {
 			case 'IA': $formfile = 'formia'; $model->new_form = true; break;
 			case 'IB' : $formfile = 'formib'; $model->new_form = true; break;

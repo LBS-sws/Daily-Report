@@ -9,6 +9,7 @@ class QcForm extends CFormModel
 {
 	/* User Fields */
 	public $id;
+	public $city;
 	public $entry_dt;
 	public $job_staff;
 	public $team;
@@ -112,6 +113,7 @@ class QcForm extends CFormModel
 	{
 		return array(
 			'id'=>Yii::t('qc','Record ID'),
+			'city'=>Yii::t('app','City'),
 			'entry_dt'=>Yii::t('qc','Entry Date'),
 			'job_staff'=>Yii::t('qc','Resp. Staff'),
 			'team'=>Yii::t('qc','Team'),
@@ -227,12 +229,12 @@ class QcForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, team, month, env_grade, cust_sign, qc_staff, company_id, cust_comment, 
+			array('id, city, team, month, env_grade, cust_sign, qc_staff, company_id, cust_comment, 
 				remarks, service_type, new_form, qc_score
 				','safe'),
 //			array('docType, files, removeFileId, no_of_attm','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'), 
-			array('job_staff, company_name','required'),
+			array('city,job_staff, company_name','required'),
 			array('entry_dt','date','allowEmpty'=>false,
 				'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
 			),
@@ -625,4 +627,18 @@ class QcForm extends CFormModel
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		return $row===false ? '' : $row['code'];
 	}
+
+	public static function getCityList(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $city_allow = Yii::app()->user->city_allow();
+        $list = array();
+        $rows = Yii::app()->db->createCommand()->select("code,name")
+            ->from("security{$suffix}.sec_city")->where("code in ($city_allow)")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $list[$row['code']]=$row["name"];
+            }
+        }
+        return $list;
+    }
 }

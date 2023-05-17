@@ -88,6 +88,15 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 			<?php echo TbHtml::hiddenField('QcForm[info][sign_tech]', $model->info['sign_tech']); ?>
             <?php echo TbHtml::hiddenField('QcForm[info][sign_qc]', $model->info['sign_qc']); ?>
 
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php
+                    echo $form->dropDownList($model,'city',QcForm::getCityList(),array('disabled'=>$model->readonly()));
+
+                    ?>
+                </div>
+            </div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'qc_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
