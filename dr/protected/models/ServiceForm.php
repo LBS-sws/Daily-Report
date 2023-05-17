@@ -151,6 +151,10 @@ class ServiceForm extends CFormModel
             'prepay_month'=>Yii::t('service','Prepay Month'),
             'prepay_start'=>Yii::t('service','Prepay Start'),
             'contract_no'=>Yii::t('service','Contract No'),
+            'lcu'=>Yii::t('service','lcu'),
+            'luu'=>Yii::t('service','luu'),
+            'lcd'=>Yii::t('service','lcd'),
+            'lud'=>Yii::t('service','lud'),
 		);
 	}
 
