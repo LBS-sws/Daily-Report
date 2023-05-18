@@ -5,6 +5,8 @@ class RptUService extends ReportData2 {
 			'area'=>array('label'=>Yii::t('report','Area'),'width'=>18,'align'=>'L'),
 			'u_city_name'=>array('label'=>Yii::t('report','City'),'width'=>18,'align'=>'L'),
 			'name'=>array('label'=>Yii::t('staff','Name'),'width'=>30,'align'=>'L'),
+			'dept_name'=>array('label'=>Yii::t('summary','dept name'),'width'=>30,'align'=>'L'),
+			'entry_month'=>array('label'=>Yii::t('summary','entry month'),'width'=>30,'align'=>'L'),
 			'amt'=>array('label'=>Yii::t('service','Paid Amt'),'width'=>18,'align'=>'L'),
 		);
 	}
@@ -23,7 +25,7 @@ class RptUService extends ReportData2 {
             ->where("a.Status=3 and b.Text not in ('ZY') and a.JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
             ->order("b.Text")
             ->queryAll();
-        $userList = self::getUserList($city_allow);
+        $userList = self::getUserList($city_allow,$endDay);
         $cityList = self::getCityList($city_allow);
         $staffStrList = array("Staff01","Staff02","Staff03");
         $list = array();
@@ -39,16 +41,18 @@ class RptUService extends ReportData2 {
                 $money = round($money,2);
                 foreach ($staffStrList as $staffStr){
                     $staff = $row[$staffStr];//员工编号
-					$user = self::getUserListForCode($staff,$userList);
-					$uCity = self::getCityListForCode($city,$cityList);
                     if(!empty($staff)){
                         if(!key_exists($staff,$list)){
                             $list[$staff]=array(
-                                "area"=>$uCity["region_name"],//区域(U系统)
+                                "city_code"=>$city,//城市编号
+                                "staff"=>$staff,//员工
+                                "area"=>"",//区域(U系统)
                                 "u_city"=>$city,//城市(U系统)
-                                "u_city_name"=>$uCity["city_name"],//城市(U系统)
-                                "city"=>$user["city"],//城市(LBS系统)
-                                "name"=>$user["name"]." ({$user["code"]})",//员工名称
+                                "u_city_name"=>"",//城市(U系统)
+                                "city"=>"",//城市(LBS系统)
+                                "name"=>"",//员工名称
+                                "dept_name"=>"",//员工名称
+                                "entry_month"=>"",//员工名称
                                 "amt"=>0,//服务金额
                             );
                         }
@@ -57,6 +61,16 @@ class RptUService extends ReportData2 {
                 }
 			}
 		}
+		foreach ($list as &$item){//由于数据太多，尝试优化
+            $user = self::getUserListForCode($item["staff"],$userList);
+            $uCity = self::getCityListForCode($item["city_code"],$cityList);
+            $item["area"] = $uCity["region_name"];
+            $item["u_city_name"] = $uCity["city_name"];
+            $item["city"] = $user["city"];
+            $item["dept_name"] = $user["dept_name"];
+            $item["entry_month"] = $user["entry_month"];
+            $item["name"] = $user["name"]." ({$user["code"]})";
+        }
         $this->data = $list;
 		return true;
 	}
@@ -65,7 +79,7 @@ class RptUService extends ReportData2 {
 		if(key_exists($code,$list)){
 			return $list[$code];
 		}else{
-			return array("code"=>$code,"name"=>"","city"=>"","city_name"=>"","region_name"=>"");
+			return array("code"=>$code,"name"=>"","city"=>"","dept_name"=>"","entry_month"=>"","city_name"=>"","region_name"=>"");
 		}
 	}
 
@@ -77,18 +91,23 @@ class RptUService extends ReportData2 {
 		}
 	}
 
-	public static function getUserList($city_allow){
+	public static function getUserList($city_allow,$endDate){
         $suffix = Yii::app()->params['envSuffix'];
-        $rows = Yii::app()->db->createCommand()->select("a.code,a.name,a.city,b.name as city_name,f.name as region_name")
+        $rows = Yii::app()->db->createCommand()->select("a.code,a.entry_time,g.name as dept_name,a.name,a.city,b.name as city_name,f.name as region_name")
             ->from("hr{$suffix}.hr_employee a")
             ->leftJoin("security{$suffix}.sec_city b","a.city = b.code")
             ->leftJoin("security{$suffix}.sec_city f","b.region = f.code")
+            ->leftJoin("hr{$suffix}.hr_dept g","a.position = g.id")
             ->where("a.city in ({$city_allow})")
             ->order("a.city")
             ->queryAll();
         $list = array();
         if($rows){
         	foreach ($rows as $row){
+        	    $entryMonth = strtotime($endDate)-strtotime($row["entry_time"]);
+                $entryMonth/=24*60*60*30;
+                $entryMonth = round($entryMonth);
+                $row["entry_month"] = $entryMonth;
                 $list[$row['code']]=$row;
 			}
 		}

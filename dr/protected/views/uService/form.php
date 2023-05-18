@@ -40,6 +40,11 @@ $this->pageTitle=Yii::app()->name . ' - UService Form';
 				'submit'=>Yii::app()->createUrl('uService/index')));
 		?>
 	</div>
+            <div class="btn-group pull-right" role="group">
+                <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('dialog','Download'), array(
+                    'submit'=>Yii::app()->createUrl('uService/downExcel')));
+                ?>
+            </div>
 	</div></div>
 
     <div class="box">

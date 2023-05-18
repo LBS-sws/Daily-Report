@@ -80,6 +80,8 @@ class UServiceForm extends CFormModel
             array("name"=>Yii::t("summary","Area")),//區域
             array("name"=>Yii::t("summary","City")),//城市
             array("name"=>Yii::t("summary","Staff Name")),//员工
+            array("name"=>Yii::t("summary","dept name")),//职位
+            array("name"=>Yii::t("summary","entry month")),//入职月数
             array("name"=>Yii::t("summary","Paid Amt")),//服务金额
         );
         return $topList;
@@ -158,17 +160,14 @@ class UServiceForm extends CFormModel
     //获取td对应的键名
     private function getDataAllKeyStr(){
         $bodyKey = array(
-            "area","u_city_name","name","amt"
+            "area","u_city_name","name","dept_name","entry_month","amt"
         );
         return $bodyKey;
     }
     //將城市数据寫入表格
     private function showServiceHtml($data){
         $bodyKey = $this->getDataAllKeyStr();
-        $RegionKey = $this->getDataAllKeyStr();
-        unset($RegionKey[0]);
-        unset($RegionKey[1]);
-        unset($RegionKey[2]);
+        $RegionKey = array("amt");
         $RegionKey = array_merge(array("region"),$RegionKey);
         $html="";
         if(!empty($data)){
@@ -191,7 +190,7 @@ class UServiceForm extends CFormModel
                     }
                     $text = key_exists($keyStr,$row)?$row[$keyStr]:"0";
                     $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
-                    $text = ComparisonForm::showNum($text);
+                    $text = self::showNum($text,$keyStr);
                     $inputHide = TbHtml::hiddenField("excel[{$staffCode}][]",$text);
                     $html.="<td><span>{$text}</span>{$inputHide}</td>";
                 }
@@ -205,13 +204,23 @@ class UServiceForm extends CFormModel
         return $html;
     }
 
+    public function showNum($num,$str=""){
+        if($str=="amt"){
+            $number = floatval($num);
+            $number=sprintf("%.2f",$number);
+        }else{
+            $number = $num;
+        }
+        return $number;
+    }
+
     protected function printTableTr($data,$bodyKey){
         $html="<tr class='tr-end click-tr'>";
         foreach ($bodyKey as $key=>$keyStr){
-            $colSpan = $key==0?3:1;
+            $colSpan = $key==0?5:1;
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
-            $text = ComparisonForm::showNum($text);
+            $text = self::showNum($text,$keyStr);
             $inputHide = TbHtml::hiddenField("excel[{$data['region']}][]",$text);
             $html.="<td class='{$tdClass}' colspan='$colSpan' style='font-weight: bold'><span>{$text}</span>{$inputHide}</td>";
         }
@@ -224,5 +233,17 @@ class UServiceForm extends CFormModel
         $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
         $html.="</tfoot>";
         return $html;
+    }
+
+    //下載
+    public function downExcel($excelData){
+        $headList = $this->getTopArr();
+        $excel = new DownSummary();
+        $excel->SetHeaderTitle(Yii::t("app","U Service Amount"));
+        $excel->SetHeaderString($this->start_date." ~ ".$this->end_date);
+        $excel->init();
+        $excel->setUServiceHeader($headList);
+        $excel->setUServiceData($excelData);
+        $excel->outExcel("uService");
     }
 }

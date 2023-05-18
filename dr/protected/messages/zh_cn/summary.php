@@ -79,5 +79,7 @@ return array(
     'Staff Name'=>'员工',
     'Area'=>'区域',
     'Count：'=>'汇总：',
+    'dept name'=>'职位',
+    'entry month'=>'服务年期（月）',
 );
 ?>

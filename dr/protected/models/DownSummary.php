@@ -87,6 +87,36 @@ class DownSummary{
         }
     }
 
+    public function setUServiceHeader($headerArr){
+        $this->setSummaryWidth();
+        if(!empty($headerArr)){
+            $endStr = $this->getColumn(count($headerArr)-1);
+            $this->objPHPExcel->getActiveSheet()->getStyle("A{$this->current_row}:{$endStr}".($this->current_row))->applyFromArray(
+                array(
+                    'font'=>array(
+                        'bold'=>true,
+                    ),
+                    'alignment'=>array(
+                        'horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                        'vertical'=>PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                    ),
+                    'borders'=>array(
+                        'allborders'=>array(
+                            'style'=>PHPExcel_Style_Border::BORDER_THIN,
+                        ),
+                    )
+                )
+            );
+            $colOne = 0;
+            foreach ($headerArr as $list){
+                $this->objPHPExcel->getActiveSheet()
+                    ->setCellValueByColumnAndRow($colOne, $this->current_row, $list["name"]);
+                $colOne++;
+            }
+            $this->current_row++;
+        }
+    }
+
     private function setSummaryWidth(){
         for ($col=0;$col<18;$col++){
             $width = 13;
@@ -134,6 +164,48 @@ class DownSummary{
                         )
                     );
                 $this->current_row++;
+                $this->current_row++;
+            }
+        }
+
+        if(!empty($moData)){
+            $col = 0;
+            foreach ($moData as $text){
+                $this->setCellValueForSummary($col, $this->current_row, $text);
+                $col++;
+            }
+        }
+    }
+
+    public function setUServiceData($data){
+        if(!empty($data)){
+            foreach ($data as $list){
+                if(count($list)==2){//汇总
+                    $this->setCellValueForSummary(0, $this->current_row, $list[0]);
+                    $this->setCellValueForSummary(5, $this->current_row, $list[1]);
+                    $this->objPHPExcel->getActiveSheet()->mergeCells("A".$this->current_row.':E'.$this->current_row);
+                    $this->objPHPExcel->getActiveSheet()
+                        ->getStyle("A{$this->current_row}:F{$this->current_row}")
+                        ->applyFromArray(
+                            array(
+                                'font'=>array(
+                                    'bold'=>true,
+                                ),
+                                'borders' => array(
+                                    'top' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THIN
+                                    )
+                                )
+                            )
+                        );
+                    $this->current_row++;
+                }else{
+                    $col = 0;
+                    foreach ($list as $item){
+                        $this->setCellValueForSummary($col, $this->current_row, $item);
+                        $col++;
+                    }
+                }
                 $this->current_row++;
             }
         }

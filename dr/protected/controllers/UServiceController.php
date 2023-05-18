@@ -28,7 +28,7 @@ class UServiceController extends Controller
 				'expression'=>array('UServiceController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','downExcel'),
 				'expression'=>array('UServiceController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -36,6 +36,18 @@ class UServiceController extends Controller
 			),
 		);
 	}
+    public function actionDownExcel()
+    {
+        $model = new UServiceForm('view');
+        if (isset($_POST['UServiceForm'])) {
+            $model->attributes = $_POST['UServiceForm'];
+            $excelData = key_exists("excel",$_POST)?$_POST["excel"]:array();
+            $model->downExcel($excelData);
+        }else{
+            $model->setScenario("index");
+            $this->render('index',array('model'=>$model));
+        }
+    }
 
 	public function actionIndex()
 	{
