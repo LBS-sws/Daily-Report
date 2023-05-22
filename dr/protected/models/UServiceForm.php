@@ -152,12 +152,12 @@ class UServiceForm extends CFormModel
 
     private function getTopArr(){
         $topList=array(
-            array("name"=>Yii::t("summary","Area")),//區域
-            array("name"=>Yii::t("summary","City")),//城市
-            array("name"=>Yii::t("summary","Staff Name")),//员工
-            array("name"=>Yii::t("summary","dept name")),//职位
-            array("name"=>Yii::t("summary","entry month")),//入职月数
-            array("name"=>Yii::t("summary","Paid Amt")),//服务金额
+            array("name"=>Yii::t("summary","Area"),"background"=>"#f7fd9d"),//區域
+            array("name"=>Yii::t("summary","City"),"background"=>"#fcd5b4"),//城市
+            array("name"=>Yii::t("summary","Staff Name"),"background"=>"#f2dcdb"),//员工
+            array("name"=>Yii::t("summary","dept name"),"background"=>"#FDE9D9"),//职位
+            array("name"=>Yii::t("summary","entry month"),"background"=>"#DCE6F1"),//入职月数
+            array("name"=>Yii::t("summary","Paid Amt"),"background"=>"#d1e2fb"),//服务金额
         );
         return $topList;
     }
