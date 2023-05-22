@@ -151,6 +151,8 @@ return array(
     'History Add'=>'地区历史新增客户',
     'History Stop'=>'地区历史终止客户',
     'History Net'=>'地区历史净增客户',
-    'U Service Amount'=>'服务金额汇总',
+    'U Service Amount'=>'技术员生产力分析',
+    'Quarter U Service'=>'季度技术员生产力分析',
+    'Month U Service'=>'月度技术员生产力分析',
 );
 ?>

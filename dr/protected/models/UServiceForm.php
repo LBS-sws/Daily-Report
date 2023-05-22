@@ -3,8 +3,17 @@
 class UServiceForm extends CFormModel
 {
 	/* User Fields */
+    public $search_start_date;//查詢開始日期
+    public $search_end_date;//查詢結束日期
+    public $search_type=3;//查詢類型 1：季度 2：月份 3：天
+    public $search_year;//查詢年份
+    public $search_month;//查詢月份
+    public $search_quarter;//查詢季度
 	public $start_date;//查詢開始日期
 	public $end_date;//查詢結束日期
+    public $month_type;
+    public $city;
+    public $city_allow;
 
 	public $data=array();
 
@@ -20,6 +29,13 @@ class UServiceForm extends CFormModel
 		return array(
             'start_date'=>Yii::t("summary",'start date'),
             'end_date'=>Yii::t("summary",'end date'),
+            'search_type'=>Yii::t('summary','search type'),
+            'search_start_date'=>Yii::t('summary','start date'),
+            'search_end_date'=>Yii::t('summary','end date'),
+            'search_year'=>Yii::t('summary','search year'),
+            'search_quarter'=>Yii::t('summary','search quarter'),
+            'search_month'=>Yii::t('summary','search month'),
+            'city'=>Yii::t('app','City'),
 		);
 	}
 
@@ -29,10 +45,64 @@ class UServiceForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('start_date,end_date','safe'),
-			array('start_date,end_date','required'),
+            array('search_type,city,search_start_date,search_end_date,search_year,search_quarter,search_month','safe'),
+            array('search_type,city','required'),
+            array('search_type','validateDate'),
+            array('city','validateCity'),
 		);
 	}
+
+    public function validateCity($attribute, $params) {
+        $this->city = empty($this->city)?Yii::app()->user->city():$this->city;
+        $city_allow = City::model()->getDescendantList($this->city);
+        $cstr = $this->city;
+        $city_allow .= (empty($city_allow)) ? "'$cstr'" : ",'$cstr'";
+        $this->city_allow = $city_allow;
+    }
+
+    public function validateDate($attribute, $params) {
+        switch ($this->search_type){
+            case 1://1：季度
+                if(empty($this->search_year)||empty($this->search_quarter)){
+                    $this->addError($attribute, "查询季度不能为空");
+                }else{
+                    $dateStr = $this->search_year."/".$this->search_quarter."/01";
+                    $this->start_date = date("Y/m/01",strtotime($dateStr));
+                    $this->end_date = date("Y/m/t",strtotime($dateStr." + 2 month"));
+                    $this->month_type = $this->search_quarter;
+                }
+                break;
+            case 2://2：月份
+                if(empty($this->search_year)||empty($this->search_month)){
+                    $this->addError($attribute, "查询月份不能为空");
+                }else{
+                    $dateTimer = strtotime($this->search_year."/".$this->search_month."/01");
+                    $this->start_date = date("Y/m/01",$dateTimer);
+                    $this->end_date = date("Y/m/t",$dateTimer);
+                    $i = ceil($this->search_month/3);//向上取整
+                    $this->month_type = 3*$i-2;
+                }
+                break;
+            case 3://3：天
+                if(empty($this->search_start_date)||empty($this->search_start_date)){
+                    $this->addError($attribute, "查询日期不能为空");
+                }else{
+                    $startYear = date("Y",strtotime($this->search_start_date));
+                    $endYear = date("Y",strtotime($this->search_end_date));
+                    if($startYear!=$endYear){
+                        $this->addError($attribute, "请把开始年份跟结束年份保持一致");
+                    }else{
+                        $this->search_month = date("n",strtotime($this->search_start_date));
+                        $i = ceil($this->search_month/3);//向上取整
+                        $this->month_type = 3*$i-2;
+                        $this->search_year = $startYear;
+                        $this->start_date = $this->search_start_date;
+                        $this->end_date = $this->search_end_date;
+                    }
+                }
+                break;
+        }
+    }
 
     public function setCriteria($criteria)
     {
@@ -45,8 +115,13 @@ class UServiceForm extends CFormModel
 
     public function getCriteria() {
         return array(
-            'start_date'=>$this->start_date,
-            'end_date'=>$this->end_date
+            'search_year'=>$this->search_year,
+            'search_month'=>$this->search_month,
+            'search_type'=>$this->search_type,
+            'search_quarter'=>$this->search_quarter,
+            'search_start_date'=>$this->search_start_date,
+            'search_end_date'=>$this->search_end_date,
+            'city'=>$this->city
         );
     }
 
@@ -55,7 +130,7 @@ class UServiceForm extends CFormModel
         $criteria = new ReportForm();
         $criteria->start_dt = $this->start_date;
         $criteria->end_dt = $this->end_date;
-        $criteria->city = Yii::app()->user->city_allow();
+        $criteria->city = $this->city_allow;
         $rptModel->criteria = $criteria;
         $rptModel->retrieveData();
         $this->data = $rptModel->data;
@@ -237,6 +312,7 @@ class UServiceForm extends CFormModel
 
     //下載
     public function downExcel($excelData){
+        $this->validateDate("","");
         $headList = $this->getTopArr();
         $excel = new DownSummary();
         $excel->SetHeaderTitle(Yii::t("app","U Service Amount"));
@@ -245,5 +321,35 @@ class UServiceForm extends CFormModel
         $excel->setUServiceHeader($headList);
         $excel->setUServiceData($excelData);
         $excel->outExcel("uService");
+    }
+
+    public static function getCityList(){
+        $city_allow = Yii::app()->user->city_allow();
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("code,name")
+            ->from("security{$suffix}.sec_city")
+            ->where("code in ({$city_allow})")
+            ->order("name")
+            ->queryAll();
+        $list = array();
+        if($rows){
+            foreach ($rows as $row){
+                $list[$row["code"]] =$row["name"];
+            }
+        }
+        return $list;
+    }
+
+
+    public static function getSelectType(){
+        $arr = array();
+        if(Yii::app()->user->validFunction('CN18')){
+            $arr[1]=Yii::t("summary","search quarter");//季度
+        }
+        if(Yii::app()->user->validFunction('CN19')){
+            $arr[2]=Yii::t("summary","search month");//月度
+        }
+        $arr[3]=Yii::t("summary","search day");//日期
+        return $arr;
     }
 }

@@ -53,18 +53,76 @@ $this->pageTitle=Yii::app()->name . ' - UService Form';
                 <div class="box-body" >
                     <div class="col-lg-12">
                         <div class="form-group">
-                            <?php echo $form->labelEx($model,'start_date',array('class'=>"col-sm-2 control-label")); ?>
-                            <div class="col-sm-2">
-                                <?php echo $form->textField($model, 'start_date',
-                                    array('readonly'=>true,'prepend'=>"<span class='fa fa-calendar'></span>")
+                            <?php echo $form->hiddenField($model,"month_type");?>
+                            <?php echo $form->labelEx($model,'search_type',array('class'=>"col-sm-2 control-label")); ?>
+                            <div class="col-sm-10">
+                                <?php echo $form->inlineRadioButtonList($model, 'search_type',UServiceForm::getSelectType(),
+                                    array('readonly'=>true,'id'=>'search_type')
                                 ); ?>
                             </div>
                         </div>
+                        <div id="search_div">
+                            <div data-id="1" <?php if ($model->search_type!=1){ echo "style='display:none'"; } ?>>
+                                <div class="form-group">
+                                    <?php echo $form->labelEx($model,'search_year',array('class'=>"col-sm-2 control-label")); ?>
+                                    <div class="col-sm-2">
+                                        <?php echo $form->dropDownList($model, 'search_year',SummarySetList::getSelectYear(),
+                                            array('readonly'=>true,'id'=>'year_one')
+                                        ); ?>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $form->labelEx($model,'search_quarter',array('class'=>"col-sm-2 control-label")); ?>
+                                    <div class="col-sm-2">
+                                        <?php echo $form->dropDownList($model, 'search_quarter',SummarySetList::getSummaryMonthList(),
+                                            array('readonly'=>true)
+                                        ); ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-id="2" <?php if ($model->search_type!=2){ echo "style='display:none'"; } ?>>
+                                <div class="form-group">
+                                    <?php echo $form->labelEx($model,'search_year',array('class'=>"col-sm-2 control-label")); ?>
+                                    <div class="col-sm-2">
+                                        <?php echo $form->dropDownList($model, 'search_year',SummarySetList::getSelectYear(),
+                                            array('readonly'=>true,'id'=>'year_two')
+                                        ); ?>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $form->labelEx($model,'search_month',array('class'=>"col-sm-2 control-label")); ?>
+                                    <div class="col-sm-2">
+                                        <?php echo $form->dropDownList($model, 'search_month',SummarySetList::getSelectMonth(),
+                                            array('readonly'=>true)
+                                        ); ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-id="3" <?php if ($model->search_type!=3){ echo "style='display:none'"; } ?>>
+                                <div class="form-group">
+                                    <?php echo $form->labelEx($model,'search_start_date',array('class'=>"col-sm-2 control-label")); ?>
+                                    <div class="col-sm-2">
+                                        <?php echo $form->textField($model, 'search_start_date',
+                                            array('readonly'=>true,'prepend'=>"<span class='fa fa-calendar'></span>")
+                                        ); ?>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <?php echo $form->labelEx($model,'search_end_date',array('class'=>"col-sm-2 control-label")); ?>
+                                    <div class="col-sm-2">
+                                        <?php echo $form->textField($model, 'search_end_date',
+                                            array('readonly'=>true,'prepend'=>"<span class='fa fa-calendar'></span>")
+                                        ); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group">
-                            <?php echo $form->labelEx($model,'end_date',array('class'=>"col-sm-2 control-label")); ?>
+                            <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
                             <div class="col-sm-2">
-                                <?php echo $form->textField($model, 'end_date',
-                                    array('readonly'=>true,'prepend'=>"<span class='fa fa-calendar'></span>")
+                                <?php echo $form->dropDownList($model, 'city',UServiceForm::getCityList(),
+                                    array('readonly'=>true)
                                 ); ?>
                             </div>
                         </div>

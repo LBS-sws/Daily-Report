@@ -145,6 +145,8 @@ return array(
     'History Add'=>'地區歷史新增客戶',
     'History Stop'=>'地區歷史終止客戶',
     'History Net'=>'地區歷史凈增客戶',
-    'U Service Amount'=>'服務金額匯總',
+    'U Service Amount'=>'技術員生產力分析',
+    'Quarter U Service'=>'季度技術員生產力分析',
+    'Month U Service'=>'月度技術員生產力分析',
 );
 ?>

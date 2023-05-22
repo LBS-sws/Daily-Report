@@ -57,14 +57,20 @@ class UServiceController extends Controller
             $criteria = $session['uService_c01'];
             $model->setCriteria($criteria);
         }else{
-            $model->start_date = date("Y/m/01");
-            $model->end_date = date("Y/m/t");
+            $model->search_year = date("Y");
+            $model->search_month = date("n");
+            $model->search_start_date = date("Y/m/01");
+            $model->search_end_date = date("Y/m/d");
+            $i = ceil($model->search_month/3);//向上取整
+            $model->search_quarter = 3*$i-2;
+            $model->city = Yii::app()->user->city();
         }
 		$this->render('index',array('model'=>$model));
 	}
 
 	public function actionView()
 	{
+	    set_time_limit(0);
         $model = new UServiceForm('view');
         if (isset($_POST['UServiceForm'])) {
             $model->attributes = $_POST['UServiceForm'];
@@ -72,7 +78,7 @@ class UServiceController extends Controller
                 $model->retrieveData();
                 $this->render('form',array('model'=>$model));
             } else {
-                $message = CHtml::errorUService($model);
+                $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('index',array('model'=>$model));
             }

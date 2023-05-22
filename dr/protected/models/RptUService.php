@@ -63,13 +63,17 @@ class RptUService extends ReportData2 {
 		}
 		foreach ($list as &$item){//由于数据太多，尝试优化
             $user = self::getUserListForCode($item["staff"],$userList);
-            $uCity = self::getCityListForCode($item["city_code"],$cityList);
-            $item["area"] = $uCity["region_name"];
-            $item["u_city_name"] = $uCity["city_name"];
-            $item["city"] = $user["city"];
-            $item["dept_name"] = $user["dept_name"];
-            $item["entry_month"] = $user["entry_month"];
-            $item["name"] = $user["name"]." ({$user["code"]})";
+            if($user){
+                $uCity = self::getCityListForCode($item["city_code"],$cityList);
+                $item["area"] = $uCity["region_name"];
+                $item["u_city_name"] = $uCity["city_name"];
+                $item["city"] = $user["city"];
+                $item["dept_name"] = $user["dept_name"];
+                $item["entry_month"] = $user["entry_month"];
+                $item["name"] = $user["name"]." ({$user["code"]})";
+            }else{
+                unset($list[$item["staff"]]);
+            }
         }
         $this->data = $list;
 		return true;
@@ -79,7 +83,8 @@ class RptUService extends ReportData2 {
 		if(key_exists($code,$list)){
 			return $list[$code];
 		}else{
-			return array("code"=>$code,"name"=>"","city"=>"","dept_name"=>"","entry_month"=>"","city_name"=>"","region_name"=>"");
+			return false;
+			//return array("code"=>$code,"name"=>"","city"=>"","dept_name"=>"","entry_month"=>"","city_name"=>"","region_name"=>"");
 		}
 	}
 
@@ -98,7 +103,8 @@ class RptUService extends ReportData2 {
             ->leftJoin("security{$suffix}.sec_city b","a.city = b.code")
             ->leftJoin("security{$suffix}.sec_city f","b.region = f.code")
             ->leftJoin("hr{$suffix}.hr_dept g","a.position = g.id")
-            ->where("a.city in ({$city_allow})")
+            //需要评核类型：技术员 并且 参与评分差异
+            ->where("a.city in ({$city_allow}) and g.review_type=2 and g.review_status=1")
             ->order("a.city")
             ->queryAll();
         $list = array();
@@ -107,8 +113,10 @@ class RptUService extends ReportData2 {
         	    $entryMonth = strtotime($endDate)-strtotime($row["entry_time"]);
                 $entryMonth/=24*60*60*30;
                 $entryMonth = round($entryMonth);
-                $row["entry_month"] = $entryMonth;
-                $list[$row['code']]=$row;
+                if($entryMonth>=6){ //在职月份大于6个月
+                    $row["entry_month"] = $entryMonth;
+                    $list[$row['code']]=$row;
+                }
 			}
 		}
         return $list;
