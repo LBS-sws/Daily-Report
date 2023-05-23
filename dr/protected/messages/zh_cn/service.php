@@ -152,5 +152,10 @@ return array(
     'lcd'=>'创建时间',
     'luu'=>'修改人',
     'lud'=>'修改时间',
+    'Flow Info'=>"操作记录",
+    'Operator User'=>"操作人",
+    'Operator Time'=>"操作时间",
+    'Operator Text'=>"操作内容",
+    'Paid Amt Type'=>'服务金额类型',
 );
 ?>
