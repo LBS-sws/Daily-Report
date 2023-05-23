@@ -107,6 +107,30 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
                     ); ?>
                 </div>
             </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'condition',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->dropDownList($model, 'condition',UServiceForm::getConditionList(),
+                        array('readonly'=>false)
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'seniority_min',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->numberField($model, 'seniority_min',
+                        array('readonly'=>false,'min'=>0)
+                    ); ?>
+                </div>
+                <div class="pull-left text-center">
+                    <p class="form-control-static"> 至 </p>
+                </div>
+                <div class="col-sm-2">
+                    <?php echo $form->numberField($model, 'seniority_max',
+                        array('readonly'=>false,'min'=>0)
+                    ); ?>
+                </div>
+            </div>
 		</div>
 	</div>
 </section>

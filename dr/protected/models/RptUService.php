@@ -1,5 +1,9 @@
 <?php
 class RptUService extends ReportData2 {
+    public $condition="";//筛选条件
+    public $seniority_min=0;//年资（最小）
+    public $seniority_max=9999;//年资（最大）
+
 	public function fields() {
 		return array(
 			'area'=>array('label'=>Yii::t('report','Area'),'width'=>18,'align'=>'L'),
@@ -25,8 +29,7 @@ class RptUService extends ReportData2 {
             ->where("a.Status=3 and b.Text not in ('ZY') and a.JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
             ->order("b.Text")
             ->queryAll();
-        $userList = self::getUserList($city_allow,$endDay);
-        $cityList = self::getCityList($city_allow);
+        $UStaffCodeList=array();
         $staffStrList = array("Staff01","Staff02","Staff03");
         $list = array();
 		if ($rows) {
@@ -43,6 +46,7 @@ class RptUService extends ReportData2 {
                     $staff = $row[$staffStr];//员工编号
                     if(!empty($staff)){
                         if(!key_exists($staff,$list)){
+                            $UStaffCodeList[$staff]="'{$staff}'";
                             $list[$staff]=array(
                                 "city_code"=>$city,//城市编号
                                 "staff"=>$staff,//员工
@@ -61,9 +65,15 @@ class RptUService extends ReportData2 {
                 }
 			}
 		}
+        $userList = $this->getUserList($UStaffCodeList,$endDay);
+        $cityList = self::getCityList($city_allow);
+        $conditionList = empty($this->condition)?array(1,2,3):array($this->condition);
 		foreach ($list as &$item){//由于数据太多，尝试优化
             $user = self::getUserListForCode($item["staff"],$userList);
-            if($user){
+            $entryMonth = empty($user["entry_month"])?0:$user["entry_month"];
+            //年资范围
+            $bool =$entryMonth>=$this->seniority_min&&$entryMonth<=$this->seniority_max;
+            if(in_array($user["level_type"],$conditionList)&&$bool){ //职位且年资范围
                 $uCity = self::getCityListForCode($item["city_code"],$cityList);
                 $item["area"] = $uCity["region_name"];
                 $item["u_city_name"] = $uCity["city_name"];
@@ -83,8 +93,7 @@ class RptUService extends ReportData2 {
 		if(key_exists($code,$list)){
 			return $list[$code];
 		}else{
-			return false;
-			//return array("code"=>$code,"name"=>"","city"=>"","dept_name"=>"","entry_month"=>"","city_name"=>"","region_name"=>"");
+			return array("level_type"=>3,"code"=>$code,"name"=>"","city"=>"","dept_name"=>"","entry_month"=>"","city_name"=>"");
 		}
 	}
 
@@ -96,27 +105,43 @@ class RptUService extends ReportData2 {
 		}
 	}
 
-	public static function getUserList($city_allow,$endDate){
+	public function getUserList($UStaffCodeList,$endDate){
         $suffix = Yii::app()->params['envSuffix'];
-        $rows = Yii::app()->db->createCommand()->select("a.code,a.entry_time,g.name as dept_name,a.name,a.city,b.name as city_name,f.name as region_name")
+        if(!empty($UStaffCodeList)){
+            $codeStr = implode(",",$UStaffCodeList);
+            $whereSql = "a.code in ({$codeStr})";
+        }else{
+            $whereSql = "a.code=0";
+        }
+        $rows = Yii::app()->db->createCommand()
+            ->select("a.code,a.entry_time,g.name as dept_name,a.name,a.city,b.name as city_name,
+            g.review_status,g.review_type,g.dept_class")
             ->from("hr{$suffix}.hr_employee a")
             ->leftJoin("security{$suffix}.sec_city b","a.city = b.code")
-            ->leftJoin("security{$suffix}.sec_city f","b.region = f.code")
             ->leftJoin("hr{$suffix}.hr_dept g","a.position = g.id")
             //需要评核类型：技术员 并且 参与评分差异
-            ->where("a.city in ({$city_allow}) and g.review_type=2 and g.review_status=1")
+            ->where($whereSql)
             ->order("a.city")
             ->queryAll();
         $list = array();
         if($rows){
         	foreach ($rows as $row){
+                $row["level_type"]=3;//1:技术员 2：技术主管 3：其它
+                if($row["review_type"]==2&&$row["review_status"]==1){
+                    //是否参与评分差异 ：参与 和 评核类型：技术员
+                    $row["level_type"]=1;
+                }elseif ($row["dept_class"]=='Technician'&&$row["review_status"]==0){
+                    //用职位类别：服务 和 是否参与评分差异 ：不参与
+                    $row["level_type"]=2;
+                }else{
+                    $row["level_type"]=3;
+                }
         	    $entryMonth = strtotime($endDate)-strtotime($row["entry_time"]);
                 $entryMonth/=24*60*60*30;
                 $entryMonth = round($entryMonth);
-                if($entryMonth>=6){ //在职月份大于6个月
-                    $row["entry_month"] = $entryMonth;
-                    $list[$row['code']]=$row;
-                }
+                //在职月份
+                $row["entry_month"] = $entryMonth;
+                $list[$row['code']]=$row;
 			}
 		}
         return $list;

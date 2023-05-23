@@ -11,6 +11,9 @@ class UServiceForm extends CFormModel
     public $search_quarter;//查詢季度
 	public $start_date;//查詢開始日期
 	public $end_date;//查詢結束日期
+	public $condition;//筛选条件
+	public $seniority_min=6;//年资（最小）
+	public $seniority_max=9999;//年资（最大）
     public $month_type;
     public $city;
     public $city_allow;
@@ -36,6 +39,8 @@ class UServiceForm extends CFormModel
             'search_quarter'=>Yii::t('summary','search quarter'),
             'search_month'=>Yii::t('summary','search month'),
             'city'=>Yii::t('app','City'),
+            'condition'=>Yii::t('summary','screening condition'),
+            'seniority_min'=>Yii::t('summary','seniority（month）'),
 		);
 	}
 
@@ -45,7 +50,7 @@ class UServiceForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('search_type,city,search_start_date,search_end_date,search_year,search_quarter,search_month','safe'),
+            array('condition,seniority_min,seniority_max,search_type,city,search_start_date,search_end_date,search_year,search_quarter,search_month','safe'),
             array('search_type,city','required'),
             array('search_type','validateDate'),
             array('city','validateCity'),
@@ -121,12 +126,18 @@ class UServiceForm extends CFormModel
             'search_quarter'=>$this->search_quarter,
             'search_start_date'=>$this->search_start_date,
             'search_end_date'=>$this->search_end_date,
+            'condition'=>$this->condition,
+            'seniority_min'=>$this->seniority_min,
+            'seniority_max'=>$this->seniority_max,
             'city'=>$this->city
         );
     }
 
     public function retrieveData() {
 	    $rptModel = new RptUService();
+	    $rptModel->condition = $this->condition;
+	    $rptModel->seniority_min = $this->seniority_min;
+	    $rptModel->seniority_max = $this->seniority_max;
         $criteria = new ReportForm();
         $criteria->start_dt = $this->start_date;
         $criteria->end_dt = $this->end_date;
@@ -340,6 +351,14 @@ class UServiceForm extends CFormModel
         return $list;
     }
 
+    public static function getConditionList(){
+        return array(
+            ""=>Yii::t("summary","-- all --"),
+            1=>Yii::t("summary","Technician level"),
+            2=>Yii::t("summary","Technical supervisor"),
+            3=>Yii::t("summary","Other personnel"),
+        );
+    }
 
     public static function getSelectType(){
         $arr = array();

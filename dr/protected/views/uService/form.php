@@ -126,6 +126,30 @@ $this->pageTitle=Yii::app()->name . ' - UService Form';
                                 ); ?>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <?php echo $form->labelEx($model,'condition',array('class'=>"col-sm-2 control-label")); ?>
+                            <div class="col-sm-2">
+                                <?php echo $form->dropDownList($model, 'condition',UServiceForm::getConditionList(),
+                                    array('readonly'=>true)
+                                ); ?>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $form->labelEx($model,'seniority_min',array('class'=>"col-sm-2 control-label")); ?>
+                            <div class="col-sm-2">
+                                <?php echo $form->numberField($model, 'seniority_min',
+                                    array('readonly'=>true,'min'=>0)
+                                ); ?>
+                            </div>
+                            <div class="pull-left text-center">
+                                <p class="form-control-static"> 至 </p>
+                            </div>
+                            <div class="col-sm-2">
+                                <?php echo $form->numberField($model, 'seniority_max',
+                                    array('readonly'=>true,'min'=>0)
+                                ); ?>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-lg-12" style="padding-top: 15px;">

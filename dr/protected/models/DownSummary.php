@@ -109,8 +109,15 @@ class DownSummary{
             );
             $colOne = 0;
             foreach ($headerArr as $list){
+                $startStr = $this->getColumn($colOne);
                 $this->objPHPExcel->getActiveSheet()
                     ->setCellValueByColumnAndRow($colOne, $this->current_row, $list["name"]);
+
+                if(key_exists("background",$list)){
+                    $background = $list["background"];
+                    $background = end(explode("#",$background));
+                    $this->setHeaderStyleTwo("{$startStr}{$this->current_row}",$background);
+                }
                 $colOne++;
             }
             $this->current_row++;

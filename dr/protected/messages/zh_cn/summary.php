@@ -81,5 +81,12 @@ return array(
     'Count：'=>'汇总：',
     'dept name'=>'职位',
     'entry month'=>'服务年期（月）',
+    'month'=>'月',
+    'seniority（month）'=>'年资（月）',
+    'screening condition'=>'筛选条件',
+    '-- all --'=>'-- 全部 --',
+    'Technician level'=>'技术员级别',
+    'Technical supervisor'=>'技术主管',
+    'Other personnel'=>'其它人员',
 );
 ?>
