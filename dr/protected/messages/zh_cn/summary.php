@@ -85,8 +85,8 @@ return array(
     'seniority（month）'=>'年资（月）',
     'screening condition'=>'筛选条件',
     '-- all --'=>'-- 全部 --',
-    'Technician level'=>'技术员级别',
-    'Technical supervisor'=>'技术主管',
+    'Technician level'=>'技术员级别（包括技术员、中级/高级技术员）',
+    'Technical supervisor'=>'技术主管（技术主管级以上级别）',
     'Other personnel'=>'其它人员',
 );
 ?>

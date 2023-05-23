@@ -109,7 +109,7 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'condition',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-2">
+                <div class="col-sm-5">
                     <?php echo $form->dropDownList($model, 'condition',UServiceForm::getConditionList(),
                         array('readonly'=>false)
                     ); ?>
