@@ -115,7 +115,7 @@ class RptUService extends ReportData2 {
         }
         $rows = Yii::app()->db->createCommand()
             ->select("a.code,a.entry_time,g.name as dept_name,a.name,a.city,b.name as city_name,
-            g.review_status,g.review_type,g.dept_class")
+            g.level_type")
             ->from("hr{$suffix}.hr_employee a")
             ->leftJoin("security{$suffix}.sec_city b","a.city = b.code")
             ->leftJoin("hr{$suffix}.hr_dept g","a.position = g.id")
@@ -126,16 +126,8 @@ class RptUService extends ReportData2 {
         $list = array();
         if($rows){
         	foreach ($rows as $row){
-                $row["level_type"]=3;//1:技术员 2：技术主管 3：其它
-                if($row["review_type"]==2&&$row["review_status"]==1){
-                    //是否参与评分差异 ：参与 和 评核类型：技术员
-                    $row["level_type"]=1;
-                }elseif ($row["dept_class"]=='Technician'&&$row["review_status"]==0){
-                    //用职位类别：服务 和 是否参与评分差异 ：不参与
-                    $row["level_type"]=2;
-                }else{
-                    $row["level_type"]=3;
-                }
+                //1:技术员 2：技术主管 3：其它
+                $row["level_type"]=empty($row["level_type"])?3:$row["level_type"];
         	    $entryMonth = strtotime($endDate)-strtotime($row["entry_time"]);
                 $entryMonth/=24*60*60*30;
                 $entryMonth = round($entryMonth);
