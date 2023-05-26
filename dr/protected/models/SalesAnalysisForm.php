@@ -283,7 +283,7 @@ class SalesAnalysisForm extends CFormModel
             array("name"=>Yii::t("summary","Reference"),"background"=>"#000000","color"=>"#FFFFFF",
                 "colspan"=>array(
                     array("name"=>$this->last_year.Yii::t("summary"," year average")),//参考平均值
-                    array("name"=>$this->last_year.Yii::t("summary"," life num")),//参考生命线
+                    array("name"=>$this->search_year.Yii::t("summary"," life num")),//参考生命线
                 )
             ),//参考
             array("name"=>$this->search_year.Yii::t("summary"," year sales"),"background"=>"#00B0F0","color"=>"#FFFFFF",
