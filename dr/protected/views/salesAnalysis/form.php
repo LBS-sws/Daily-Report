@@ -53,7 +53,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
         <div id="yw0" class="tabbable">
             <div class="box-info" >
                 <div class="box-body" >
-                    <div class="col-lg-12">
+                    <div class="col-lg-12" style="padding-bottom: 15px;">
                         <div class="form-group">
                             <?php echo $form->labelEx($model,'search_date',array('class'=>"col-sm-2 control-label")); ?>
                             <div class="col-sm-2">
@@ -64,29 +64,47 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                         </div>
                     </div>
 
-                    <div class="col-lg-12" style="padding-top: 15px;">
-                        <div class="row">
-                            <?php
-                            echo TbHtml::tabs(SalesAnalysisForm::getMenuList(1))
-                            ?>
-                        </div>
-                    </div>
-                    <div class="col-lg-12" style="padding-top: 15px;">
+                    <?php
+                    $contentHead='<div class="col-lg-12" style="padding-top: 15px;">
                         <div class="row panel panel-default" style="border-color: #333">
                             <!-- Default panel contents -->
                             <div class="panel-heading">
-                                <h3 style="margin-top:10px;">
-                                    <?php echo Yii::t('summary','Capacity Staff'); ?>
-                                    <small>(<?php echo $model->start_date." ~ ".$model->end_date;?>)</small>
+                                <h3 style="margin-top:10px;">{:head:}<small>('.$model->start_date ." ~ ".$model->end_date.')</small>
                                 </h3>
                             </div>
-
                             <!-- Table -->
-                            <div class="table-responsive">
-                                <?php echo $model->salesAnalysisHtml();?>
-                            </div>
-                        </div>
-                    </div>
+                            <div class="table-responsive">';
+
+                    $contentEnd='</div></div></div>';
+                    $tabs =array();
+                    $tabs[] = array(
+                        'label'=>Yii::t("summary","Capacity Staff"),
+                        'content'=>str_replace("{:head:}",Yii::t("summary","Capacity Staff"),$contentHead).$model->salesAnalysisHtml().$contentEnd,
+                        'active'=>true,
+                    );
+                    //地区统计表
+                    $areaModel = new SalesAnalysisAreaForm();
+                    $areaModel->search_date = $model->search_date;
+                    $areaModel->validateDate();
+                    $areaModel->data = $model->twoDate;
+                    $tabs[] = array(
+                        'label'=>Yii::t("summary","Capacity Area"),
+                        'content'=>str_replace("{:head:}",Yii::t("summary","Capacity Area"),$contentHead).$areaModel->salesAnalysisHtml().$contentEnd,
+                        'active'=>false,
+                    );
+                    //地区统计表
+                    $areaModel = new SalesAnalysisCityForm();
+                    $areaModel->search_date = $model->search_date;
+                    $areaModel->validateDate();
+                    $areaModel->data = $model->threeDate;
+                    $tabs[] = array(
+                        'label'=>Yii::t("summary","Capacity City"),
+                        'content'=>str_replace("{:head:}",Yii::t("summary","Capacity City"),$contentHead).$areaModel->salesAnalysisHtml().$contentEnd,
+                        'active'=>false,
+                    );
+                    //城市统计表
+                    echo TbHtml::tabbableTabs($tabs);
+                    ?>
                 </div>
             </div>
 

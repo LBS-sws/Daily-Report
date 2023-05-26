@@ -156,7 +156,7 @@ class LifelineForm extends CFormModel
                 $list[$row["code"]] = $row["name"];
             }
         }
-        if(!key_exists($code,$list)){
+        if(!empty($code)&&!key_exists($code,$list)){
             $list[$code] = $code;
         }
         return $list;

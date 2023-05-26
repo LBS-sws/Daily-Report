@@ -28,7 +28,7 @@ class SalesAnalysisController extends Controller
 				'expression'=>array('SalesAnalysisController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view','area','city','downExcel'),
+				'actions'=>array('index','view','downExcel'),
 				'expression'=>array('SalesAnalysisController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -76,48 +76,6 @@ class SalesAnalysisController extends Controller
         if ($model->validate()) {
             $model->retrieveData();
             $this->render('form',array('model'=>$model));
-        } else {
-            $message = CHtml::errorSummary($model);
-            Dialog::message(Yii::t('dialog','Validation Message'), $message);
-            $this->render('index',array('model'=>$model));
-        }
-	}
-
-	public function actionArea(){
-        $model = new SalesAnalysisForm('view');
-        if (isset($_POST['SalesAnalysisForm'])) {
-            $model->attributes = $_POST['SalesAnalysisForm'];
-        }else{
-            $session = Yii::app()->session;
-            if (isset($session['salesAnalysis_c01']) && !empty($session['salesAnalysis_c01'])) {
-                $criteria = $session['salesAnalysis_c01'];
-                $model->setCriteria($criteria);
-            }
-        }
-        if ($model->validate()) {
-            $model->retrieveData();
-            $this->render('form_area',array('model'=>$model));
-        } else {
-            $message = CHtml::errorSummary($model);
-            Dialog::message(Yii::t('dialog','Validation Message'), $message);
-            $this->render('index',array('model'=>$model));
-        }
-	}
-
-	public function actionCity(){
-        $model = new SalesAnalysisForm('view');
-        if (isset($_POST['SalesAnalysisForm'])) {
-            $model->attributes = $_POST['SalesAnalysisForm'];
-        }else{
-            $session = Yii::app()->session;
-            if (isset($session['salesAnalysis_c01']) && !empty($session['salesAnalysis_c01'])) {
-                $criteria = $session['salesAnalysis_c01'];
-                $model->setCriteria($criteria);
-            }
-        }
-        if ($model->validate()) {
-            $model->retrieveData();
-            $this->render('form_city',array('model'=>$model));
         } else {
             $message = CHtml::errorSummary($model);
             Dialog::message(Yii::t('dialog','Validation Message'), $message);

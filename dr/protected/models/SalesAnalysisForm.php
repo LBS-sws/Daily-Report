@@ -14,6 +14,8 @@ class SalesAnalysisForm extends CFormModel
     public $end_date;
 
     public $data=array();
+    public $twoDate=array();
+    public $threeDate=array();
 
 	public $th_sum=0;//所有th的个数
 
@@ -44,7 +46,7 @@ class SalesAnalysisForm extends CFormModel
         );
     }
 
-    public function validateDate($attribute, $params) {
+    public function validateDate($attribute="", $params="") {
         if(!empty($this->search_date)) {
             $timer = strtotime($this->search_date);
             $this->search_year = date("Y", $timer);
@@ -120,7 +122,7 @@ class SalesAnalysisForm extends CFormModel
             ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}' and (
                 (a.staff_status = 0)
                 or
-                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/%d')>='{$endDate}')
+                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/31')>='{$endDate}')
              ) AND a.city in ({$city_allow})"
             )->order("a.city desc")->queryAll();
         return $rows;
@@ -205,6 +207,59 @@ class SalesAnalysisForm extends CFormModel
         $staffRow["now_average"]=empty($count)?0:round($sum/$count);
     }
 
+    protected function groupAreaForStaffAndData($staffRows,$cityList,$nowData){
+        $data = array();
+        if($staffRows){
+            foreach ($staffRows as $staffRow){
+                $entry_timer = strtotime($staffRow["entry_time"]);
+                $city = $staffRow['city'];
+                $region = key_exists($city,$cityList)?$cityList[$city]["region"]:"none";
+                if(!key_exists($region,$data)){
+                    $data[$region]=array(
+                        "region"=>$region,
+                        "region_name"=>key_exists($city,$cityList)?$cityList[$city]["region_name"]:"none",
+                        "list"=>array(
+                            "now_sales"=>array("name"=>Yii::t("summary","now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array())
+                        ),
+                    );
+                }
+                $nowStaffDate = $this->search_year==2023?"{$this->search_year}/03/01":"{$this->search_year}/01/01";
+                if($entry_timer<strtotime($nowStaffDate)){
+                    $month = "sales";//老员工
+                }else{
+                    $month = date("n",$entry_timer);//某月新入职员工
+                    if(!key_exists("now_{$month}",$data[$region]["list"])){
+                        $data[$region]["list"]["now_{$month}"]=array(
+                            "name"=>$month.Yii::t("summary"," month now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array()
+                        );
+                    }
+                }
+                $data[$region]["list"]["now_{$month}"]["fte_num"]++;
+                $data[$region]["list"]["now_{$month}"]["user_name"][]=$staffRow["user_id"];
+                $this->setMonthAmt($data[$region]["list"]["now_{$month}"],$nowData,$staffRow["user_id"]);
+            }
+        }
+        return $data;
+    }
+
+    //将员工的金额汇总
+    protected function setMonthAmt(&$data,$nowData,$username){
+        $list = array();
+        $sum=0;
+        if(key_exists($username,$nowData)){
+            $list = $nowData[$username];
+        }
+        for($i=1;$i<=$this->search_month;$i++){
+            $key = $this->search_year."/".($i<10?"0{$i}":$i);
+            if(!key_exists($key,$data)){
+                $data[$key]=0;
+            }
+            $data[$key]+=key_exists($key,$list)?$list[$key]:0;
+            $sum+=$data[$key];
+        }
+        $data["now_average"]=round($sum/$this->search_month);
+    }
+
     public function retrieveData() {
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
@@ -213,6 +268,7 @@ class SalesAnalysisForm extends CFormModel
         $lastData = $this->getLastYearData($city_allow);//前一年的平均值
         $nowData = $this->getNowYearData($city_allow);//本年度的数据
         $cityList = self::getCityListAndRegion($city_allow);//城市信息
+        $this->twoDate = $this->groupAreaForStaffAndData($staffRows,$cityList,$nowData);
         if($staffRows){
             foreach ($staffRows as $staffRow){
                 $username = $staffRow["user_id"];

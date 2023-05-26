@@ -99,8 +99,11 @@ return array(
     ' life num'=>'年生命线',
     'Employee Name'=>'员工',
     'Capacity Staff'=>'在职销售人员产能',
-    'Capacity Area'=>'区域销售产能统计',
-    'Capacity City'=>'城市销售达标统计',
+    'Capacity Area'=>'在职销售产能统计',
+    'Capacity City'=>'在职销售达标统计',
     'FTE'=>'人数',
+    'Productivity'=>'生产力',
+    'now sales'=>'现有销售人员',
+    ' month now sales'=>'月新招募销售人员',
 );
 ?>
