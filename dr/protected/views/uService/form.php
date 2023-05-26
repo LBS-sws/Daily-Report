@@ -165,6 +165,7 @@ $this->pageTitle=Yii::app()->name . ' - UService Form';
                             <!-- Table -->
                             <div class="table-responsive">
                                 <?php echo $model->uServiceHtml();?>
+                                <?php echo $form->hiddenField($model,"downJsonText",array("name"=>"excel"));?>
                             </div>
                         </div>
                     </div>
