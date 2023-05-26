@@ -192,7 +192,7 @@ class SalesAnalysisForm extends CFormModel
             if($entry_year==$this->search_year){
                 if($entry_month>$i){//未入职显示空
                     $value="";
-                }elseif ($entry_month==$i){//未入职当月且没有签单金额
+                }elseif ($entry_month==$i&&empty($value)){//入职当月且没有签单金额
                     $value="-";
                 }
             }
