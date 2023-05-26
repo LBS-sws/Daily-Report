@@ -17,6 +17,7 @@ class SalesAnalysisForm extends CFormModel
 
 	public $th_sum=0;//所有th的个数
 
+    public $downJsonText='';
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -116,10 +117,10 @@ class SalesAnalysisForm extends CFormModel
             ->from("security{$suffix}.sec_user_access f")
             ->leftJoin("hr{$suffix}.hr_binding d","d.user_id=f.username")
             ->leftJoin("hr{$suffix}.hr_employee a","d.employee_id=a.id")
-            ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and (
-                (a.staff_status = 0 and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}')
+            ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}' and (
+                (a.staff_status = 0)
                 or
-                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/%d')<='{$endDate}' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}')
+                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/%d')>='{$this->start_date}')
              ) AND a.city in ({$city_allow})"
             )->order("a.city desc")->queryAll();
         return $rows;
@@ -175,7 +176,7 @@ class SalesAnalysisForm extends CFormModel
         return $list;
     }
 
-    private function setStaffRowForNowData(&$staffRow,$nowData){
+    protected function setStaffRowForNowData(&$staffRow,$nowData){
         $username = $staffRow["user_id"];
         $timer = strtotime($staffRow["entry_time"]);
         $entry_year = date("Y",$timer);
@@ -270,7 +271,7 @@ class SalesAnalysisForm extends CFormModel
         return $html;
     }
 
-    private function getTopArr(){
+    protected function getTopArr(){
         $monthArr = array();
         for($i=1;$i<=$this->search_month;$i++){
             $monthArr[]=array("name"=>$i.Yii::t("summary","Month"));
@@ -294,7 +295,7 @@ class SalesAnalysisForm extends CFormModel
     }
 
     //顯示提成表的表格內容（表頭）
-    private function tableTopHtml(){
+    protected function tableTopHtml(){
         $topList = self::getTopArr();
         $trOne="";
         $trTwo="";
@@ -336,7 +337,7 @@ class SalesAnalysisForm extends CFormModel
     }
 
     //設置表格的單元格寬度
-    private function tableHeaderWidth(){
+    protected function tableHeaderWidth(){
         $html="<tr>";
         for($i=0;$i<$this->th_sum;$i++){
             if($i==0){
@@ -352,15 +353,17 @@ class SalesAnalysisForm extends CFormModel
     public function tableBodyHtml(){
         $html="";
         if(!empty($this->data)){
+            $this->downJsonText=array();
             $html.="<tbody>";
             $html.=$this->showServiceHtml($this->data);
             $html.="</tbody>";
+            $this->downJsonText=json_encode($this->downJsonText);
         }
         return $html;
     }
 
     //获取td对应的键名
-    private function getDataAllKeyStr(){
+    protected function getDataAllKeyStr(){
         $bodyKey = array(
             "employee_name",
             "city_name",
@@ -390,7 +393,7 @@ class SalesAnalysisForm extends CFormModel
     }
 
     //將城市数据寫入表格
-    private function showServiceHtml($data){
+    protected function showServiceHtml($data){
         $bodyKey = $this->getDataAllKeyStr();
         $html="";
         if(!empty($data)){
@@ -412,9 +415,9 @@ class SalesAnalysisForm extends CFormModel
                             $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $tdClass = self::getTextColorForKeyStr($text,$keyStr,$cityList['life_num']);
-                            $inputHide = TbHtml::hiddenField("excel[{$cityList['region']}][{$cityList['id']}][{$keyStr}][value]",$text);
-                            $inputHide.= TbHtml::hiddenField("excel[{$cityList['region']}][{$cityList['id']}][{$keyStr}][color]",$tdClass);
-                            $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
+                            $this->downJsonText["excel"][$cityList['region']][$cityList['id']][$keyStr]["value"]=$text;
+                            $this->downJsonText["excel"][$cityList['region']][$cityList['id']][$keyStr]["color"]=$tdClass;
+                            $html.="<td class='{$tdClass}'><span>{$text}</span></td>";
                         }
                         $html.="</tr>";
                     }
@@ -443,8 +446,8 @@ class SalesAnalysisForm extends CFormModel
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
             $tdClass = HistoryAddForm::getTextColorForKeyStr($text,$keyStr);
-            $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][{$keyStr}][value]",$text);
-            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span>{$inputHide}</td>";
+            $this->downJsonText["excel"][$data['region']]["count"][$keyStr]["value"]=$text;
+            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span></td>";
         }
         $html.="</tr>";
         return $html;
@@ -459,11 +462,15 @@ class SalesAnalysisForm extends CFormModel
 
     //下載
     public function downExcel($excelData){
+        if(!is_array($excelData)){
+            $excelData = json_decode($excelData,true);
+            $excelData = key_exists("excel",$excelData)?$excelData["excel"]:array();
+        }
         $this->validateDate("","");
         $headList = $this->getTopArr();
         $excel = new DownSummary();
         $excel->colTwo=1;
-        $excel->SetHeaderTitle(Yii::t("app","History Stop")."（{$this->search_date}）");
+        $excel->SetHeaderTitle(Yii::t("summary","Capacity Staff")."（{$this->search_date}）");
         $titleTwo = $this->start_date." ~ ".$this->end_date;
         //"\r\n"
         $excel->SetHeaderString($titleTwo);
@@ -471,5 +478,25 @@ class SalesAnalysisForm extends CFormModel
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);
         $excel->outExcel("SalesAnalysis");
+    }
+
+    public static function getMenuList($active=1){
+        return array(
+            1=>array(
+                "url"=>Yii::app()->createUrl('salesAnalysis/view'),
+                "label"=>Yii::t("summary","Capacity Staff"),
+                "active"=>$active==1
+            ),
+            2=>array(
+                "url"=>Yii::app()->createUrl('salesAnalysis/area'),
+                "label"=>Yii::t("summary","Capacity Area"),
+                "active"=>$active==2
+            ),
+            3=>array(
+                "url"=>Yii::app()->createUrl('salesAnalysis/city'),
+                "label"=>Yii::t("summary","Capacity City"),
+                "active"=>$active==3
+            ),
+        );
     }
 }

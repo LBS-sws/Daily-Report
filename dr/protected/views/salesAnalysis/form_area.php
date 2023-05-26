@@ -67,7 +67,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                     <div class="col-lg-12" style="padding-top: 15px;">
                         <div class="row">
                             <?php
-                            echo TbHtml::tabs(SalesAnalysisForm::getMenuList(1))
+                            echo TbHtml::tabs(SalesAnalysisForm::getMenuList(2))
                             ?>
                         </div>
                     </div>
@@ -76,14 +76,17 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                             <!-- Default panel contents -->
                             <div class="panel-heading">
                                 <h3 style="margin-top:10px;">
-                                    <?php echo Yii::t('summary','Capacity Staff'); ?>
+                                    <?php echo Yii::t('summary','Capacity Area'); ?>
                                     <small>(<?php echo $model->start_date." ~ ".$model->end_date;?>)</small>
                                 </h3>
                             </div>
 
                             <!-- Table -->
                             <div class="table-responsive">
-                                <?php echo $model->salesAnalysisHtml();?>
+                                <?php
+                                echo "该功能还在开发.......";
+                                //echo $model->salesAnalysisHtml();
+                                ?>
                             </div>
                         </div>
                     </div>
