@@ -88,5 +88,18 @@ return array(
     'Technician level'=>'技术员级别（包括技术员、中级/高级技术员）',
     'Technical supervisor'=>'技术主管（技术主管级以上级别）',
     'Other personnel'=>'其它人员',
+
+    'Effective date'=>'生效日期',
+    'Effective Year'=>'生效年份',
+    'life num'=>'生命线',
+    'year'=>'年',
+    'Reference'=>'参考',
+    ' year average'=>'年平均值',
+    ' year sales'=>'年销售',
+    ' life num'=>'年生命线',
+    'Employee Name'=>'员工',
+    'Employee Name'=>'在职销售人员产能',
+    'Employee Name'=>'区域销售产能统计',
+    'Employee Name'=>'城市销售达标统计',
 );
 ?>

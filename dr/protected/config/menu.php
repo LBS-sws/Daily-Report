@@ -215,6 +215,14 @@ return array(
                 'access'=>'G10',
                 'url'=>'/uService/index',
             ),
+            'Sales Analysis'=>array(//销售生产力分析
+                'access'=>'G12',
+                'url'=>'/salesAnalysis/index',
+            ),
+            'Lifeline Set'=>array(//生命线设置
+                'access'=>'G11',
+                'url'=>'/lifeline/index',
+            ),
             'Comparison Set'=>array(
                 'access'=>'G06',
                 'url'=>'/comparisonSet/index',
