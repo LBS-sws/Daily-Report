@@ -2,13 +2,13 @@
 
 class SalesAnalysisCityForm extends SalesAnalysisForm
 {
-
     public function retrieveData() {
         $city_allow = Yii::app()->user->city_allow();
+        $lifelineList = LifelineForm::getLifeLineList($city_allow,$this->search_date);//生命线
         $staffRows = $this->getSalesForHr($city_allow);//员工信息
         $nowData = $this->getNowYearData($city_allow);//本年度的数据
         $cityList = self::getCityListAndRegion($city_allow);//城市信息
-        $this->data = $this->groupAreaForStaffAndData($staffRows,$cityList,$nowData);
+        $this->data = $this->groupCityForStaffAndData($staffRows,$cityList,$nowData,$lifelineList);
 
         $session = Yii::app()->session;
         $session['salesAnalysis_c01'] = $this->getCriteria();
@@ -27,18 +27,18 @@ class SalesAnalysisCityForm extends SalesAnalysisForm
     }
 
     protected function getTopArr(){
-        $area_name=key_exists("region_name",$this->data)?$this->data["region_name"]:"{city}";
-        $monthArr = array();
-        for($i=1;$i<=$this->search_month;$i++){
-            $monthArr[]=array("name"=>$i.Yii::t("summary","Month"));
-        }
-        $monthArr[]=array("name"=>Yii::t("summary","Average"));
         $topList=array(
-            array("name"=>$area_name,"rowspan"=>2,"background"=>"#00B0F0","color"=>"#FFFFFF"),//区域
-            array("name"=>Yii::t("summary","FTE"),"rowspan"=>2,"background"=>"#00B0F0","color"=>"#FFFFFF"),//销售人数
-            array("name"=>Yii::t("summary","Productivity"),"background"=>"#00B0F0","color"=>"#FFFFFF",
-                "colspan"=>$monthArr
-            ),//生产力
+            //月份
+            array("name"=>$this->search_month.Yii::t("summary"," month"),"rowspan"=>2,"background"=>"#00B0F0","color"=>"#FFFFFF"),//区域
+            //在职人数
+            array("name"=>Yii::t("summary","number staff"),"rowspan"=>2,"background"=>"#00B0F0","color"=>"#FFFFFF"),//销售人数
+            //超出目标
+            array("name"=>Yii::t("summary","exceed target"),"rowspan"=>2,"background"=>"#00B0F0","color"=>"#FFFFFF"),//销售人数
+            //低于目标
+            array("name"=>Yii::t("summary","below target"),"rowspan"=>2,"background"=>"#00B0F0","color"=>"#FFFFFF"),//销售人数
+            //4月新招
+            array("name"=>$this->search_month.Yii::t("summary"," month now"),"rowspan"=>2,"background"=>"#00B0F0","color"=>"#FFFFFF"),//销售人数
+
         );
         return $topList;
     }
@@ -46,17 +46,9 @@ class SalesAnalysisCityForm extends SalesAnalysisForm
     //顯示提成表的表格內容
     public function salesAnalysisHtml(){
         $html= '<table id="salesAnalysisArea" class="table table-fixed table-condensed table-bordered table-hover">';
-        if(!empty($this->data)){
-            $data = $this->data;
-            $this->downJsonText=array();
-            foreach ($data as $city_data){
-                $this->data = $city_data;
-                $html.=$this->tableTopHtml();
-                $html.=$this->tableBodyHtml();
-                //$html.=$this->tableFooterHtml();
-            }
-            $this->downJsonText=json_encode($this->downJsonText);
-        }
+        $html.=$this->tableTopHtml();
+        $html.=$this->tableBodyHtml();
+        $html.=$this->tableFooterHtml();
         $html.="</table>";
         return $html;
     }
@@ -121,9 +113,11 @@ class SalesAnalysisCityForm extends SalesAnalysisForm
     public function tableBodyHtml(){
         $html="";
         if(!empty($this->data)){
+            $this->downJsonText=array();
             $html.="<tbody>";
-            $html.=$this->showServiceHtml($this->data["list"]);
+            $html.=$this->showServiceHtml($this->data);
             $html.="</tbody>";
+            $this->downJsonText=json_encode($this->downJsonText);
         }
         return $html;
     }
@@ -131,14 +125,12 @@ class SalesAnalysisCityForm extends SalesAnalysisForm
     //获取td对应的键名
     protected function getDataAllKeyStr(){
         $bodyKey = array(
-            "name",
-            "fte_num"
+            "city_name",
+            "now_num",
+            "max_num",
+            "min_num",
+            "new_num"
         );
-        for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?$i:"0{$i}";
-            $bodyKey[]=$this->search_year."/{$month}";
-        }
-        $bodyKey[]="now_average";
         return $bodyKey;
     }
 
@@ -147,12 +139,13 @@ class SalesAnalysisCityForm extends SalesAnalysisForm
         $bodyKey = $this->getDataAllKeyStr();
         $html="";
         if(!empty($data)){
-            foreach ($data as $keyStr=>$cityList){
+            foreach ($data as $keyStr=>$regionList){
+                $cityList = $regionList["list"];
                 $this->resetTdRow($cityList);
                 $html.="<tr>";
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
-                    $this->downJsonText["excel"][$cityList['region']][$keyStr][]=$text;
+                    $this->downJsonText["excelThree"][$cityList['city_name']][]=$text;
                     $html.="<td><span>{$text}</span></td>";
                 }
                 $html.="</tr>";

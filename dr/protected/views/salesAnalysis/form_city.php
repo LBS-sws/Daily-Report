@@ -84,8 +84,8 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                             <!-- Table -->
                             <div class="table-responsive">
                                 <?php
-                                echo "该功能还在开发.......";
-                                //echo $model->salesAnalysisHtml();
+                                //echo "该功能还在开发.......";
+                                echo $model->salesAnalysisHtml();
                                 ?>
                             </div>
                         </div>

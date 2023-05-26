@@ -105,5 +105,10 @@ return array(
     'Productivity'=>'生产力',
     'now sales'=>'现有销售人员',
     ' month now sales'=>'月新招募销售人员',
+    'number staff'=>'在职人数',
+    'exceed target'=>'超出目标',
+    'below target'=>'低于目标',
+    ' month now'=>'月新招',
+    ' month'=>'月',
 );
 ?>

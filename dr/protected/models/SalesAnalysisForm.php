@@ -213,7 +213,7 @@ class SalesAnalysisForm extends CFormModel
             foreach ($staffRows as $staffRow){
                 $entry_timer = strtotime($staffRow["entry_time"]);
                 $city = $staffRow['city'];
-                $region = key_exists($city,$cityList)?$cityList[$city]["region"]:"none";
+                $region = key_exists($city,$cityList)?$cityList[$city]["region_name"]:"none";
                 if(!key_exists($region,$data)){
                     $data[$region]=array(
                         "region"=>$region,
@@ -260,6 +260,40 @@ class SalesAnalysisForm extends CFormModel
         $data["now_average"]=round($sum/$this->search_month);
     }
 
+    protected function groupCityForStaffAndData($staffRows,$cityList,$nowData,$lifelineList){
+        $yearMonth = $this->search_year."/".($this->search_month < 10 ? "0{$this->search_month}" : $this->search_month);
+        $data = array();
+        if($staffRows){
+            foreach ($staffRows as $staffRow){
+                $entry_time = date("Y/m",strtotime($staffRow["entry_time"]));
+                $city = $staffRow['city'];
+                $city_name = key_exists($city,$cityList)?$cityList[$city]["city_name"]:"none";
+                if(!key_exists($city,$data)){
+                    $data[$city]=array(
+                        "city"=>$city,
+                        "city_name"=>$city_name,
+                        "list"=>array("city_name"=>$city_name,"now_num"=>0,"max_num"=>0,"min_num"=>0,"new_num"=>0),
+                    );
+                }
+                $data[$city]["list"]["now_num"]++;//在职人数
+                if($entry_time<$yearMonth){//在职人数
+                    //达标人数
+                    $amt_sum = key_exists($staffRow["user_id"],$nowData)?$nowData[$staffRow["user_id"]]:array();
+                    $amt_sum = key_exists($yearMonth,$amt_sum)?$amt_sum[$yearMonth]:0;
+                    $tar_num = key_exists($city,$lifelineList)?$lifelineList[$city]:80000;
+                    if($amt_sum>$tar_num){
+                        $data[$city]["list"]["max_num"]++;
+                    }else{
+                        $data[$city]["list"]["min_num"]++;
+                    }
+                }else if($entry_time==$yearMonth){//新招人数
+                    $data[$city]["list"]["new_num"]++;
+                }
+            }
+        }
+        return $data;
+    }
+
     public function retrieveData() {
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
@@ -269,6 +303,7 @@ class SalesAnalysisForm extends CFormModel
         $nowData = $this->getNowYearData($city_allow);//本年度的数据
         $cityList = self::getCityListAndRegion($city_allow);//城市信息
         $this->twoDate = $this->groupAreaForStaffAndData($staffRows,$cityList,$nowData);
+        $this->threeDate = $this->groupCityForStaffAndData($staffRows,$cityList,$nowData,$lifelineList);
         if($staffRows){
             foreach ($staffRows as $staffRow){
                 $username = $staffRow["user_id"];
