@@ -120,7 +120,7 @@ class SalesAnalysisForm extends CFormModel
             ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}' and (
                 (a.staff_status = 0)
                 or
-                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/%d')>='{$this->start_date}')
+                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/%d')>='{$endDate}')
              ) AND a.city in ({$city_allow})"
             )->order("a.city desc")->queryAll();
         return $rows;
