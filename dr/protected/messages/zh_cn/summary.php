@@ -110,5 +110,9 @@ return array(
     'below target'=>'低于目标',
     ' month now'=>'月新招',
     ' month'=>'月',
+    ' day'=>'日',
+    'New Amt'=>'新增金额',
+    'sales num'=>'销售人数',
+    ' month expected full month'=>'月预计全月',
 );
 ?>

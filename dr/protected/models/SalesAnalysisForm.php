@@ -108,8 +108,8 @@ class SalesAnalysisForm extends CFormModel
         return $cityList;
     }
 
-    protected function getSalesForHr($city_allow,$endDate=""){
-        $endDate = empty($endDate)?$this->search_date:$endDate;
+    public static function getSalesForHr($city_allow,$endDate=""){
+        $endDate = empty($endDate)?date("Y/m/d"):$endDate;
         $suffix = Yii::app()->params['envSuffix'];
         $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
         $list=array('staff'=>array(),'user'=>array());
@@ -298,7 +298,7 @@ class SalesAnalysisForm extends CFormModel
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $lifelineList = LifelineForm::getLifeLineList($city_allow,$this->search_date);//生命线
-        $staffRows = $this->getSalesForHr($city_allow);//员工信息
+        $staffRows = $this->getSalesForHr($city_allow,$this->search_date);//员工信息
         $lastData = $this->getLastYearData($city_allow);//前一年的平均值
         $nowData = $this->getNowYearData($city_allow);//本年度的数据
         $cityList = self::getCityListAndRegion($city_allow);//城市信息
@@ -325,7 +325,7 @@ class SalesAnalysisForm extends CFormModel
                     $staffRow["life_num"] = 80000;
                 }
                 $this->setStaffRowForNowData($staffRow,$nowData);
-                $region = empty($staffRow["region"])?"null":$staffRow["region"];
+                $region = empty($staffRow["region_name"])?"null":$staffRow["region_name"];
                 if (!key_exists($region,$data)){
                     $data[$region]=array("list"=>array(),"region_code"=>$region,"region_name"=>$staffRow["region_name"]);
                 }
@@ -506,8 +506,7 @@ class SalesAnalysisForm extends CFormModel
                             $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $tdClass = self::getTextColorForKeyStr($text,$keyStr,$cityList['life_num']);
-                            $this->downJsonText["excel"][$cityList['region']][$cityList['id']][$keyStr]["value"]=$text;
-                            $this->downJsonText["excel"][$cityList['region']][$cityList['id']][$keyStr]["color"]=$tdClass;
+                            $this->downJsonText["excel"][$cityList['region']][$cityList['id']][$keyStr]=$text;
                             $html.="<td class='{$tdClass}'><span>{$text}</span></td>";
                         }
                         $html.="</tr>";

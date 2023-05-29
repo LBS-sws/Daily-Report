@@ -5,7 +5,7 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
 
     public function retrieveData() {
         $city_allow = Yii::app()->user->city_allow();
-        $staffRows = $this->getSalesForHr($city_allow);//员工信息
+        $staffRows = $this->getSalesForHr($city_allow,$this->search_date);//员工信息
         $nowData = $this->getNowYearData($city_allow);//本年度的数据
         $cityList = self::getCityListAndRegion($city_allow);//城市信息
         $this->data = $this->groupAreaForStaffAndData($staffRows,$cityList,$nowData);
