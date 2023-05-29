@@ -139,13 +139,13 @@ class SalesAnalysisCityForm extends SalesAnalysisForm
         $bodyKey = $this->getDataAllKeyStr();
         $html="";
         if(!empty($data)){
-            foreach ($data as $keyStr=>$regionList){
+            foreach ($data as $regionList){
                 $cityList = $regionList["list"];
                 $this->resetTdRow($cityList);
                 $html.="<tr>";
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
-                    $this->downJsonText["excelThree"][$cityList['city_name']][]=$text;
+                    $this->downJsonText["excelThree"][$cityList['city_name']][$keyStr]=$text;
                     $html.="<td><span>{$text}</span></td>";
                 }
                 $html.="</tr>";

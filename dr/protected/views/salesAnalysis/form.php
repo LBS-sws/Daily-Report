@@ -77,9 +77,13 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 
                     $contentEnd='</div></div></div>';
                     $tabs =array();
+                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity Staff"),$contentHead);
+                    $contentTable.=$model->salesAnalysisHtml();
+                    $contentTable.=$contentEnd;
+                    $contentTable.=TbHtml::hiddenField("excel[one]",$model->downJsonText);
                     $tabs[] = array(
                         'label'=>Yii::t("summary","Capacity Staff"),
-                        'content'=>str_replace("{:head:}",Yii::t("summary","Capacity Staff"),$contentHead).$model->salesAnalysisHtml().$contentEnd,
+                        'content'=>$contentTable,
                         'active'=>true,
                     );
                     //地区统计表
@@ -87,19 +91,27 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                     $areaModel->search_date = $model->search_date;
                     $areaModel->validateDate();
                     $areaModel->data = $model->twoDate;
+                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity Area"),$contentHead);
+                    $contentTable.=$areaModel->salesAnalysisHtml();
+                    $contentTable.=$contentEnd;
+                    $contentTable.=TbHtml::hiddenField("excel[two]",$areaModel->downJsonText);
                     $tabs[] = array(
                         'label'=>Yii::t("summary","Capacity Area"),
-                        'content'=>str_replace("{:head:}",Yii::t("summary","Capacity Area"),$contentHead).$areaModel->salesAnalysisHtml().$contentEnd,
+                        'content'=>$contentTable,
                         'active'=>false,
                     );
                     //地区统计表
-                    $areaModel = new SalesAnalysisCityForm();
-                    $areaModel->search_date = $model->search_date;
-                    $areaModel->validateDate();
-                    $areaModel->data = $model->threeDate;
+                    $cityModel = new SalesAnalysisCityForm();
+                    $cityModel->search_date = $model->search_date;
+                    $cityModel->validateDate();
+                    $cityModel->data = $model->threeDate;
+                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity City"),$contentHead);
+                    $contentTable.=$cityModel->salesAnalysisHtml();
+                    $contentTable.=$contentEnd;
+                    $contentTable.=TbHtml::hiddenField("excel[three]",$cityModel->downJsonText);
                     $tabs[] = array(
                         'label'=>Yii::t("summary","Capacity City"),
-                        'content'=>str_replace("{:head:}",Yii::t("summary","Capacity City"),$contentHead).$areaModel->salesAnalysisHtml().$contentEnd,
+                        'content'=>$contentTable,
                         'active'=>false,
                     );
                     //城市统计表

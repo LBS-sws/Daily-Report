@@ -219,24 +219,24 @@ class SalesAnalysisForm extends CFormModel
                         "region"=>$region,
                         "region_name"=>key_exists($city,$cityList)?$cityList[$city]["region_name"]:"none",
                         "list"=>array(
-                            "now_sales"=>array("name"=>Yii::t("summary","now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array())
+                            0=>array("name"=>Yii::t("summary","now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array())
                         ),
                     );
                 }
                 $nowStaffDate = $this->search_year==2023?"{$this->search_year}/03/01":"{$this->search_year}/01/01";
                 if($entry_timer<strtotime($nowStaffDate)){
-                    $month = "sales";//老员工
+                    $month = 0;//老员工
                 }else{
                     $month = date("n",$entry_timer);//某月新入职员工
-                    if(!key_exists("now_{$month}",$data[$region]["list"])){
-                        $data[$region]["list"]["now_{$month}"]=array(
+                    if(!key_exists($month,$data[$region]["list"])){
+                        $data[$region]["list"][$month]=array(
                             "name"=>$month.Yii::t("summary"," month now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array()
                         );
                     }
                 }
-                $data[$region]["list"]["now_{$month}"]["fte_num"]++;
-                $data[$region]["list"]["now_{$month}"]["user_name"][]=$staffRow["user_id"];
-                $this->setMonthAmt($data[$region]["list"]["now_{$month}"],$nowData,$staffRow["user_id"]);
+                $data[$region]["list"][$month]["fte_num"]++;
+                $data[$region]["list"][$month]["user_name"][]=$staffRow["user_id"];
+                $this->setMonthAmt($data[$region]["list"][$month],$nowData,$staffRow["user_id"]);
             }
         }
         return $data;
