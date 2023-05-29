@@ -257,12 +257,11 @@ class UServiceForm extends CFormModel
     //將城市数据寫入表格
     private function showServiceHtml($data){
         $bodyKey = $this->getDataAllKeyStr();
-        $RegionKey = array("amt");
-        $RegionKey = array_merge(array("region"),$RegionKey);
+        $RegionKey = array("region","entry_month","amt");
         $html="";
         if(!empty($data)){
             $city = "none";
-            $regionRow = [];//地区汇总
+            $regionRow = array("staff_num"=>0);//地区汇总
             foreach ($data as $staffCode=>$row) {
                 if($city==="none"||$row["u_city"]!=$city){//地區匯總
                     if($city!="none"){
@@ -270,9 +269,10 @@ class UServiceForm extends CFormModel
                         $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
                     }
                     $city = $row["u_city"];
-                    $regionRow=[];
+                    $regionRow = array("staff_num"=>0);
                     $regionRow["region"]=Yii::t("summary","Count：").$row["u_city_name"];
                 }
+                $regionRow["staff_num"]++;
                 $html.="<tr>";
                 foreach ($bodyKey as $keyStr){
                     if(!key_exists($keyStr,$regionRow)){
@@ -306,14 +306,28 @@ class UServiceForm extends CFormModel
 
     protected function printTableTr($data,$bodyKey){
         $html="<tr class='tr-end click-tr'>";
-        foreach ($bodyKey as $key=>$keyStr){
-            $colSpan = $key==0?5:1;
-            $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
-            $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
-            $text = self::showNum($text,$keyStr);
-            $this->downJsonText["excel"][$data['region']][]=$text;
-            $html.="<td class='{$tdClass}' colspan='$colSpan' style='font-weight: bold'><span>{$text}</span></td>";
-        }
+        $html.="<td colspan='4' style='font-weight: bold'>".$data["region"]."</td>";
+        $html.="<td style='font-weight: bold'>".$data["entry_month"]."</td>";
+        $html.="<td style='font-weight: bold'>".self::showNum($data["amt"],"amt")."</td>";
+        $html.="</tr>";
+        $this->downJsonText["excel"]["count_{$data['region']}"]=array(
+            "region"=>$data["region"],
+            "entry_month"=>$data["entry_month"],
+            "amt"=>$data["amt"],
+        );
+        $data["region"] = Yii::t("summary","average：");
+        $data["month_average"] = round($data["entry_month"]/$data["staff_num"]);
+        $data["amt_average"] = self::showNum(($data["amt"]/$data["staff_num"]),"amt");
+        $html.="<tr class='tr-end'>";
+        $html.="<td colspan='4' style='font-weight: bold'>".$data["region"]."</td>";
+        $html.="<td style='font-weight: bold;color:red;'>".$data["month_average"]."</td>";
+        $html.="<td style='font-weight: bold;color:red;'>".$data["amt_average"]."</td>";
+        $html.="</tr>";
+        $this->downJsonText["excel"]["average_{$data['region']}"]=array(
+            "region"=>$data["region"],
+            "entry_month"=>$data["month_average"],
+            "amt"=>$data["amt_average"],
+        );
         $html.="</tr>";
         return $html;
     }

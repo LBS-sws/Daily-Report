@@ -114,5 +114,7 @@ return array(
     'New Amt'=>'新增金額',
     'sales num'=>'銷售人數',
     ' month expected full month'=>'月預計全月',
+    ' - Leave'=>' - 已離職',
+    'average：'=>'平均值：',
 );
 ?>

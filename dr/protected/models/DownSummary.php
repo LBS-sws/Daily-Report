@@ -186,17 +186,19 @@ class DownSummary{
 
     public function setUServiceData($data){
         if(!empty($data)){
-            foreach ($data as $list){
-                if(count($list)==2){//汇总
-                    $this->setCellValueForSummary(0, $this->current_row, $list[0]);
-                    $this->setCellValueForSummary(5, $this->current_row, $list[1]);
-                    $this->objPHPExcel->getActiveSheet()->mergeCells("A".$this->current_row.':E'.$this->current_row);
+            foreach ($data as $keyStr=>$list){
+                if(count($list)==3){//汇总
+                    $this->setCellValueForSummary(0, $this->current_row, $list["region"]);
+                    $this->setCellValueForSummary(4, $this->current_row, $list["entry_month"]);
+                    $this->setCellValueForSummary(5, $this->current_row, $list["amt"]);
+                    $this->objPHPExcel->getActiveSheet()->mergeCells("A".$this->current_row.':D'.$this->current_row);
                     $this->objPHPExcel->getActiveSheet()
                         ->getStyle("A{$this->current_row}:F{$this->current_row}")
                         ->applyFromArray(
                             array(
                                 'font'=>array(
                                     'bold'=>true,
+                                    'color'=>array('rgb'=>strpos($keyStr,'average_')!==false?'FF0000':'000000')
                                 ),
                                 'borders' => array(
                                     'top' => array(
@@ -205,7 +207,9 @@ class DownSummary{
                                 )
                             )
                         );
-                    $this->current_row++;
+                    if (strpos($keyStr,'average_')!==false){
+                        $this->current_row++;
+                    }
                 }else{
                     $col = 0;
                     foreach ($list as $item){
@@ -214,14 +218,6 @@ class DownSummary{
                     }
                 }
                 $this->current_row++;
-            }
-        }
-
-        if(!empty($moData)){
-            $col = 0;
-            foreach ($moData as $text){
-                $this->setCellValueForSummary($col, $this->current_row, $text);
-                $col++;
             }
         }
     }
