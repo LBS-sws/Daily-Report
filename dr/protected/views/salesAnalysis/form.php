@@ -40,13 +40,11 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 				'submit'=>Yii::app()->createUrl('salesAnalysis/index')));
 		?>
 	</div>
-            <!--
             <div class="btn-group pull-right" role="group">
                 <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('dialog','Download'), array(
                     'submit'=>Yii::app()->createUrl('salesAnalysis/downExcel')));
                 ?>
             </div>
-            -->
 	</div></div>
 
     <div class="box">
@@ -89,7 +87,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                     //地区统计表
                     $areaModel = new SalesAnalysisAreaForm();
                     $areaModel->search_date = $model->search_date;
-                    $areaModel->validateDate();
+                    $areaModel->setAttrAll($model);
                     $areaModel->data = $model->twoDate;
                     $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity Area"),$contentHead);
                     $contentTable.=$areaModel->salesAnalysisHtml();
@@ -103,7 +101,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                     //地区统计表
                     $cityModel = new SalesAnalysisCityForm();
                     $cityModel->search_date = $model->search_date;
-                    $cityModel->validateDate();
+                    $cityModel->setAttrAll($model);
                     $cityModel->data = $model->threeDate;
                     $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity City"),$contentHead);
                     $contentTable.=$cityModel->salesAnalysisHtml();

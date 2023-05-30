@@ -26,7 +26,7 @@ class SalesAnalysisCityForm extends SalesAnalysisForm
         }
     }
 
-    protected function getTopArr(){
+    public function getTopArr(){
         $topList=array(
             //月份
             array("name"=>$this->search_month.Yii::t("summary"," month"),"rowspan"=>2,"background"=>"#00B0F0","color"=>"#FFFFFF"),//区域
@@ -145,7 +145,7 @@ class SalesAnalysisCityForm extends SalesAnalysisForm
                 $html.="<tr>";
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
-                    $this->downJsonText["excelThree"][$cityList['city_name']][$keyStr]=$text;
+                    $this->downJsonText[$cityList['city_name']][$keyStr]=$text;
                     $html.="<td><span>{$text}</span></td>";
                 }
                 $html.="</tr>";

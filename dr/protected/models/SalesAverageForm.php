@@ -200,17 +200,17 @@ class SalesAverageForm extends CFormModel
         $dateStr.=" ~ ".date("j",strtotime($this->end_date)).Yii::t("summary"," day");
         $topList=array(
             //城市
-            array("name"=>Yii::t("summary","City"),"rowspan"=>2),
+            array("name"=>Yii::t("summary","City")),
             //新增金额
-            array("name"=>Yii::t("summary","New Amt"),"rowspan"=>2,"background"=>"#f7fd9d"),
+            array("name"=>Yii::t("summary","New Amt"),"background"=>"#f7fd9d"),
             //销售人数
-            array("name"=>Yii::t("summary","sales num"),"rowspan"=>2,"background"=>"#fcd5b4"),
+            array("name"=>Yii::t("summary","sales num"),"background"=>"#fcd5b4"),
             //查询时间段
-            array("name"=>$dateStr,"rowspan"=>2,"background"=>"#f2dcdb"),
+            array("name"=>$dateStr,"background"=>"#f2dcdb"),
             //预计全月
-            array("name"=>$this->month.Yii::t("summary"," month expected full month"),"rowspan"=>2,"background"=>"#DCE6F1"),
+            array("name"=>$this->month.Yii::t("summary"," month expected full month"),"background"=>"#DCE6F1"),
             //每月生命线
-            array("name"=>Yii::t("summary","life num"),"rowspan"=>2,"background"=>"#FDE9D9"),
+            array("name"=>Yii::t("summary","life num"),"background"=>"#FDE9D9"),
         );
 
         return $topList;
@@ -369,15 +369,20 @@ class SalesAverageForm extends CFormModel
 
     //下載
     public function downExcel($excelData){
+        if(!is_array($excelData)){
+            $excelData = json_decode($excelData,true);
+            $excelData = key_exists("excel",$excelData)?$excelData["excel"]:array();
+        }
         $this->validateDate("","");
         $headList = $this->getTopArr();
         $excel = new DownSummary();
-        $excel->SetHeaderTitle(Yii::t("app","Average office"));
-        $titleTwo = $this->start_date." ~ ".$this->end_date."\r\n";
+        $excel->SetHeaderTitle(Yii::t("app","Average office")."（".$this->start_date." ~ ".$this->end_date."）");
+        $titleTwo = Yii::t("summary","day num").":".$this->day_num." ".Yii::t("summary","day");
+        $excel->colTwo=2;
         $excel->SetHeaderString($titleTwo);
         $excel->init();
-        $excel->setSummaryHeader($headList);
-        $excel->setSummaryData($excelData);
+        $excel->setUServiceHeader($headList);
+        $excel->setSalesAnalysisData($excelData);
         $excel->outExcel("SalesAverage");
     }
 }

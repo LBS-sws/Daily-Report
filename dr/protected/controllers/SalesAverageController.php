@@ -69,6 +69,7 @@ class SalesAverageController extends Controller
         if (isset($_POST['SalesAverageForm'])) {
             $model->attributes = $_POST['SalesAverageForm'];
             if ($model->validate()) {
+                set_time_limit(0);
                 $model->retrieveData();
                 $this->render('form',array('model'=>$model));
             } else {

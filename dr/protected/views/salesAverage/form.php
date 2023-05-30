@@ -40,13 +40,11 @@ $this->pageTitle=Yii::app()->name . ' - SalesAverage Form';
 				'submit'=>Yii::app()->createUrl('salesAverage/index')));
 		?>
 	</div>
-            <!--
             <div class="btn-group pull-right" role="group">
                 <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('dialog','Download'), array(
                     'submit'=>Yii::app()->createUrl('salesAverage/downExcel')));
                 ?>
             </div>
-            -->
 	</div></div>
 
     <div class="box">
@@ -93,6 +91,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAverage Form';
                             <!-- Table -->
                             <div class="table-responsive">
                                 <?php echo $model->salesAverageHtml();?>
+                                <?php echo TbHtml::hiddenField("excel",$model->downJsonText);?>
                             </div>
                         </div>
                     </div>

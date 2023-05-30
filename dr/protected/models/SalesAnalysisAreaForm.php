@@ -26,7 +26,7 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
         }
     }
 
-    protected function getTopArr(){
+    public function getTopArr(){
         $area_name=key_exists("region_name",$this->data)?$this->data["region_name"]:"{city}";
         $monthArr = array();
         for($i=1;$i<=$this->search_month;$i++){
@@ -153,7 +153,7 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
                 $html.="<tr>";
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
-                    $this->downJsonText["excel"][$cityList['region']][$monthStr][$keyStr]=$text;
+                    $this->downJsonText[$cityList['region']][$monthStr][$keyStr]=$text;
                     $html.="<td><span>{$text}</span></td>";
                 }
                 $html.="</tr>";

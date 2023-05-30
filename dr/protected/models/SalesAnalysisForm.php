@@ -362,7 +362,7 @@ class SalesAnalysisForm extends CFormModel
         return $html;
     }
 
-    protected function getTopArr(){
+    public function getTopArr(){
         $monthArr = array();
         for($i=1;$i<=$this->search_month;$i++){
             $monthArr[]=array("name"=>$i.Yii::t("summary","Month"));
@@ -506,7 +506,7 @@ class SalesAnalysisForm extends CFormModel
                             $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $tdClass = self::getTextColorForKeyStr($text,$keyStr,$cityList['life_num']);
-                            $this->downJsonText["excel"][$cityList['region']][$cityList['id']][$keyStr]=$text;
+                            $this->downJsonText[$cityList['region']][$cityList['id']][$keyStr]=$text;
                             $html.="<td class='{$tdClass}'><span>{$text}</span></td>";
                         }
                         $html.="</tr>";
@@ -536,7 +536,7 @@ class SalesAnalysisForm extends CFormModel
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
             $tdClass = HistoryAddForm::getTextColorForKeyStr($text,$keyStr);
-            $this->downJsonText["excel"][$data['region']]["count"][$keyStr]["value"]=$text;
+            $this->downJsonText[$data['region']]["count"][$keyStr]=$text;
             $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span></td>";
         }
         $html.="</tr>";
@@ -550,23 +550,50 @@ class SalesAnalysisForm extends CFormModel
         return $html;
     }
 
+    public function setAttrAll($model){
+        $this->search_date = $model->search_date;
+        $this->search_year = $model->search_year;
+        $this->search_month = $model->search_month;
+        $this->month_day = $model->month_day;
+        $this->last_year = $model->last_year;
+        $this->start_date = $model->start_date;
+        $this->end_date = $model->end_date;
+    }
+
     //下載
     public function downExcel($excelData){
-        if(!is_array($excelData)){
-            $excelData = json_decode($excelData,true);
-            $excelData = key_exists("excel",$excelData)?$excelData["excel"]:array();
-        }
         $this->validateDate("","");
         $headList = $this->getTopArr();
+        $twoModel = new SalesAnalysisAreaForm();
+        $twoModel->setAttrAll($this);
+        $threeModel = new SalesAnalysisCityForm();
+        $threeModel->setAttrAll($this);
         $excel = new DownSummary();
-        $excel->colTwo=1;
+        $excel->colTwo=2;
         $excel->SetHeaderTitle(Yii::t("summary","Capacity Staff")."（{$this->search_date}）");
         $titleTwo = $this->start_date." ~ ".$this->end_date;
-        //"\r\n"
         $excel->SetHeaderString($titleTwo);
         $excel->init();
-        $excel->setSummaryHeader($headList);
-        $excel->setSummaryData($excelData);
+        //第一页
+        $excel->setSheetName(Yii::t("summary","Capacity Staff"));
+        $excel->setSummaryHeader($headList,true);
+        $data = key_exists("one",$excelData)?json_decode($excelData["one"],true):array();
+        $excel->setSalesAnalysisData($data);
+        //第二页
+        $sheetName = Yii::t("summary","Capacity Area");
+        $excel->addSheet($sheetName);
+        $excel->SetHeaderTitle($sheetName."（{$this->search_date}）");
+        $excel->outHeader(1);
+        $data = key_exists("two",$excelData)?json_decode($excelData["two"],true):array();
+        $excel->setSalesAreaData($data,$twoModel->getTopArr());
+        //第三页
+        $sheetName = Yii::t("summary","Capacity City");
+        $excel->addSheet($sheetName);
+        $excel->SetHeaderTitle($sheetName."（{$this->search_date}）");
+        $excel->outHeader(2);
+        $excel->setUServiceHeader($threeModel->getTopArr());
+        $data = key_exists("three",$excelData)?json_decode($excelData["three"],true):array();
+        $excel->setUServiceData($data);
         $excel->outExcel("SalesAnalysis");
     }
 

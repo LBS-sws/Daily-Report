@@ -74,6 +74,7 @@ class SalesAnalysisController extends Controller
             }
         }
         if ($model->validate()) {
+            set_time_limit(0);
             $model->retrieveData();
             $this->render('form',array('model'=>$model));
         } else {

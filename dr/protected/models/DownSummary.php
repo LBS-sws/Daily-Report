@@ -13,7 +13,9 @@ class DownSummary{
     protected $current_row = 0;
     protected $header_title;
     protected $header_string;
+    protected $sheet_id=0;
     public $colTwo=2;
+    public $th_num=0;
 
     public function SetHeaderTitle($invalue) {
         $this->header_title = $invalue;
@@ -33,29 +35,13 @@ class DownSummary{
         $this->outHeader();
     }
 
-    public function setSummaryHeader($headerArr){
+    public function setSummaryHeader($headerArr,$bool=false){
         $this->setSummaryWidth();
         if(!empty($headerArr)){
             for ($i=0;$i<$this->colTwo;$i++){
                 $startStr = $this->getColumn($i);
                 $this->objPHPExcel->getActiveSheet()->mergeCells($startStr.$this->current_row.':'.$startStr.($this->current_row+1));
             }
-            $this->objPHPExcel->getActiveSheet()->getStyle("A{$this->current_row}:Y".($this->current_row+1))->applyFromArray(
-                array(
-                    'font'=>array(
-                        'bold'=>true,
-                    ),
-                    'alignment'=>array(
-                        'horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-                        'vertical'=>PHPExcel_Style_Alignment::VERTICAL_CENTER,
-                    ),
-                    'borders'=>array(
-                        'allborders'=>array(
-                            'style'=>PHPExcel_Style_Border::BORDER_THIN,
-                        ),
-                    )
-                )
-            );
             $colOne = 0;
             $colTwo = $this->colTwo;
             foreach ($headerArr as $list){
@@ -72,16 +58,38 @@ class DownSummary{
                 if(key_exists("background",$list)){
                     $background = $list["background"];
                     $background = end(explode("#",$background));
-                    $this->setHeaderStyleTwo("{$startStr}{$this->current_row}:{$endStr}{$this->current_row}",$background);
+                    $endRow = $bool?$this->current_row+1:$this->current_row;
+                    $this->setHeaderStyleTwo("{$startStr}{$this->current_row}:{$endStr}{$endRow}",$background);
                 }
                 if(isset($list["colspan"])){
                     foreach ($list["colspan"] as $item){
                         $this->objPHPExcel->getActiveSheet()
                             ->setCellValueByColumnAndRow($colTwo, $this->current_row+1, $item["name"]);
                         $colTwo++;
+                        $this->th_num++;
                     }
+                }else{
+                    $this->th_num++;
                 }
             }
+            $endStr = $this->getColumn($this->th_num-1);
+            $this->objPHPExcel->getActiveSheet()->getStyle("A{$this->current_row}:{$endStr}".($this->current_row+1))->applyFromArray(
+                array(
+                    'font'=>array(
+                        'bold'=>true,
+                        'color'=>array('rgb'=>$bool?'ffffff':'000000')
+                    ),
+                    'alignment'=>array(
+                        'horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                        'vertical'=>PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                    ),
+                    'borders'=>array(
+                        'allborders'=>array(
+                            'style'=>PHPExcel_Style_Border::BORDER_THIN,
+                        ),
+                    )
+                )
+            );
 
             $this->current_row+=2;
         }
@@ -119,6 +127,7 @@ class DownSummary{
                     $this->setHeaderStyleTwo("{$startStr}{$this->current_row}",$background);
                 }
                 $colOne++;
+                $this->th_num++;
             }
             $this->current_row++;
         }
@@ -156,8 +165,9 @@ class DownSummary{
                     $this->setCellValueForSummary($col, $this->current_row, $text);
                     $col++;
                 }
+                $thEndStr = $this->getColumn($this->th_num-1);
                 $this->objPHPExcel->getActiveSheet()
-                    ->getStyle("A{$this->current_row}:Y{$this->current_row}")
+                    ->getStyle("A{$this->current_row}:{$thEndStr}{$this->current_row}")
                     ->applyFromArray(
                         array(
                             'font'=>array(
@@ -186,6 +196,7 @@ class DownSummary{
 
     public function setUServiceData($data){
         if(!empty($data)){
+            $endStr = $this->getColumn($this->th_num-1);
             foreach ($data as $keyStr=>$list){
                 if(count($list)==3){//汇总
                     $this->setCellValueForSummary(0, $this->current_row, $list["region"]);
@@ -193,7 +204,7 @@ class DownSummary{
                     $this->setCellValueForSummary(5, $this->current_row, $list["amt"]);
                     $this->objPHPExcel->getActiveSheet()->mergeCells("A".$this->current_row.':D'.$this->current_row);
                     $this->objPHPExcel->getActiveSheet()
-                        ->getStyle("A{$this->current_row}:F{$this->current_row}")
+                        ->getStyle("A{$this->current_row}:{$endStr}{$this->current_row}")
                         ->applyFromArray(
                             array(
                                 'font'=>array(
@@ -217,6 +228,71 @@ class DownSummary{
                         $col++;
                     }
                 }
+                $this->current_row++;
+            }
+        }
+    }
+
+    public function setSalesAnalysisData($data){
+        if(!empty($data)){
+            $endStr = $this->getColumn($this->th_num-1);
+            foreach ($data as $region){
+                foreach ($region as $keyStr=>$list){
+                    $col = 0;
+                    foreach ($list as $item){
+                        $this->setCellValueForSummary($col, $this->current_row, $item);
+                        $col++;
+                    }
+                    if($keyStr=='count'){//汇总
+                        $this->objPHPExcel->getActiveSheet()
+                            ->getStyle("A{$this->current_row}:{$endStr}{$this->current_row}")
+                            ->applyFromArray(
+                                array(
+                                    'font'=>array(
+                                        'bold'=>true,
+                                        'color'=>array('rgb'=>strpos($keyStr,'average_')!==false?'FF0000':'000000')
+                                    ),
+                                    'borders' => array(
+                                        'top' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN
+                                        )
+                                    )
+                                )
+                            );
+                        $this->current_row++;
+                    }
+                    $this->current_row++;
+                }
+            }
+        }
+    }
+
+    public function setSalesAreaData($data,$headArr){
+        if(!empty($data)){
+            foreach ($data as $region=>$regionList){
+                $this->th_num=0;
+                $headArr[0]["name"]=$region;
+                $this->setSummaryHeader($headArr,true);
+                $endStr = $this->getColumn($this->th_num-1);
+                $startNum = $this->current_row;
+                foreach ($regionList as $list){
+                    $col = 0;
+                    foreach ($list as $item){
+                        $this->setCellValueForSummary($col, $this->current_row, $item);
+                        $col++;
+                    }
+                    $this->current_row++;
+                }
+                $this->objPHPExcel->getActiveSheet()->getStyle("A{$startNum}:{$endStr}".($this->current_row-1))->applyFromArray(
+                    array(
+                        'borders'=>array(
+                            'allborders'=>array(
+                                'style'=>PHPExcel_Style_Border::BORDER_THIN,
+                            ),
+                        )
+                    )
+                );
+                $this->current_row++;
                 $this->current_row++;
             }
         }
@@ -252,7 +328,7 @@ class DownSummary{
             ->setRowHeight(-1);
     }
 
-    protected function outHeader($sheetid=0){
+    public function outHeader($sheetid=0){
         $this->objPHPExcel->setActiveSheetIndex($sheetid)
             ->setCellValueByColumnAndRow(0, 1, $this->header_title)
             ->setCellValueByColumnAndRow(0, 2, $this->header_string);
@@ -329,5 +405,18 @@ class DownSummary{
         if (($quo == 1) && ($mod == 0)) return 'Z';
         if (($quo > 1) && ($mod == 0)) return chr($quo+63).'Z';
         if ($mod > 0) return chr($quo+64).chr($mod+64);
+    }
+
+    public function addSheet($sheet_name){
+        $this->current_row=0;
+        $this->th_num=0;
+        $this->sheet_id++;
+        $this->objPHPExcel->createSheet(); //插入工作表
+        $this->objPHPExcel->setActiveSheetIndex($this->sheet_id); //切换到新创建的工作表
+        $this->setSheetName($sheet_name);
+    }
+
+    public function setSheetName($sheet_name){
+        $this->objPHPExcel->getActiveSheet()->setTitle($sheet_name);
     }
 }
