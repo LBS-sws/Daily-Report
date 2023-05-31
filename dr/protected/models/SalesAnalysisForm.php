@@ -208,6 +208,13 @@ class SalesAnalysisForm extends CFormModel
     }
 
     protected function groupAreaForStaffAndData($staffRows,$cityList,$nowData){
+        if($this->search_year==2023){
+            $nowStaffDate = "{$this->search_year}/03/01";
+            $startMonth = 3;
+        }else{
+            $nowStaffDate = "{$this->search_year}/01/01";
+            $startMonth = 1;
+        }
         $data = array();
         if($staffRows){
             foreach ($staffRows as $staffRow){
@@ -215,15 +222,20 @@ class SalesAnalysisForm extends CFormModel
                 $city = $staffRow['city'];
                 $region = key_exists($city,$cityList)?$cityList[$city]["region_name"]:"none";
                 if(!key_exists($region,$data)){
+                    $monthDataList=array(
+                        0=>array("name"=>Yii::t("summary","now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array())
+                    );
+                    for($i=$startMonth;$i<=$this->search_month;$i++){
+                        $monthDataList[$i]=array(
+                            "name"=>$i.Yii::t("summary"," month now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array()
+                        );
+                    }
                     $data[$region]=array(
                         "region"=>$region,
                         "region_name"=>key_exists($city,$cityList)?$cityList[$city]["region_name"]:"none",
-                        "list"=>array(
-                            0=>array("name"=>Yii::t("summary","now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array())
-                        ),
+                        "list"=>$monthDataList,
                     );
                 }
-                $nowStaffDate = $this->search_year==2023?"{$this->search_year}/03/01":"{$this->search_year}/01/01";
                 if($entry_timer<strtotime($nowStaffDate)){
                     $month = 0;//老员工
                 }else{
