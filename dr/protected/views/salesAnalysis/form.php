@@ -67,7 +67,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                         <div class="row panel panel-default" style="border-color: #333">
                             <!-- Default panel contents -->
                             <div class="panel-heading">
-                                <h3 style="margin-top:10px;">{:head:}<small>('.$model->start_date ." ~ ".$model->end_date.')</small>
+                                <h3 style="margin-top:10px;">{:head:}<small>('.date("Y/m/01/",strtotime($model->end_date)) ." ~ ".$model->end_date.')</small>
                                 </h3>
                             </div>
                             <!-- Table -->

@@ -583,7 +583,7 @@ class SalesAnalysisForm extends CFormModel
         $excel = new DownSummary();
         $excel->colTwo=2;
         $excel->SetHeaderTitle(Yii::t("summary","Capacity Staff")."（{$this->search_date}）");
-        $titleTwo = $this->start_date." ~ ".$this->end_date;
+        $titleTwo = date("Y/m/01/",strtotime($this->end_date))." ~ ".$this->end_date;
         $excel->SetHeaderString($titleTwo);
         $excel->init();
         //第一页
