@@ -152,8 +152,8 @@ class DownSummary{
                 if(isset($regionList["list"])&&!empty($regionList["list"])){
                     foreach ($regionList["list"] as $city=>$cityList){
                         $col = 0;
-                        foreach ($cityList as $text){
-                            $this->setCellValueForSummary($col, $this->current_row, $text);
+                        foreach ($cityList as $keyStr=>$text){
+                            $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
                             $col++;
                         }
                         $this->current_row++;
@@ -161,8 +161,8 @@ class DownSummary{
                 }
                 //合计
                 $col = 0;
-                foreach ($regionList["count"] as $text){
-                    $this->setCellValueForSummary($col, $this->current_row, $text);
+                foreach ($regionList["count"] as $keyStr=>$text){
+                    $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
                     $col++;
                 }
                 $thEndStr = $this->getColumn($this->th_num-1);
@@ -187,8 +187,8 @@ class DownSummary{
 
         if(!empty($moData)){
             $col = 0;
-            foreach ($moData as $text){
-                $this->setCellValueForSummary($col, $this->current_row, $text);
+            foreach ($moData as $keyStr=>$text){
+                $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
                 $col++;
             }
         }
@@ -199,9 +199,12 @@ class DownSummary{
             $endStr = $this->getColumn($this->th_num-1);
             foreach ($data as $keyStr=>$list){
                 if(count($list)==3){//汇总
-                    $this->setCellValueForSummary(0, $this->current_row, $list["region"]);
-                    $this->setCellValueForSummary(4, $this->current_row, $list["entry_month"]);
-                    $this->setCellValueForSummary(5, $this->current_row, $list["amt"]);
+                    $this->objPHPExcel->getActiveSheet()
+                        ->setCellValueByColumnAndRow(0, $this->current_row, $list["region"]);
+                    $this->objPHPExcel->getActiveSheet()
+                        ->setCellValueByColumnAndRow(4, $this->current_row, $list["entry_month"]);
+                    $this->objPHPExcel->getActiveSheet()
+                        ->setCellValueByColumnAndRow(5, $this->current_row, $list["amt"]);
                     $this->objPHPExcel->getActiveSheet()->mergeCells("A".$this->current_row.':D'.$this->current_row);
                     $this->objPHPExcel->getActiveSheet()
                         ->getStyle("A{$this->current_row}:{$endStr}{$this->current_row}")
@@ -224,7 +227,8 @@ class DownSummary{
                 }else{
                     $col = 0;
                     foreach ($list as $item){
-                        $this->setCellValueForSummary($col, $this->current_row, $item);
+                        $this->objPHPExcel->getActiveSheet()
+                            ->setCellValueByColumnAndRow($col, $this->current_row, $item);
                         $col++;
                     }
                 }
@@ -240,7 +244,8 @@ class DownSummary{
                 foreach ($region as $keyStr=>$list){
                     $col = 0;
                     foreach ($list as $item){
-                        $this->setCellValueForSummary($col, $this->current_row, $item);
+                        $this->objPHPExcel->getActiveSheet()
+                            ->setCellValueByColumnAndRow($col, $this->current_row, $item);
                         $col++;
                     }
                     if($keyStr=='count'){//汇总
@@ -278,7 +283,8 @@ class DownSummary{
                 foreach ($regionList as $list){
                     $col = 0;
                     foreach ($list as $item){
-                        $this->setCellValueForSummary($col, $this->current_row, $item);
+                        $this->objPHPExcel->getActiveSheet()
+                            ->setCellValueByColumnAndRow($col, $this->current_row, $item);
                         $col++;
                     }
                     $this->current_row++;
@@ -298,23 +304,31 @@ class DownSummary{
         }
     }
 
-    private function setCellValueForSummary($col,$row,$text){
+    private function setCellValueForSummary($col,$row,$text,$keyStr=""){
         $this->objPHPExcel->getActiveSheet()
             ->setCellValueByColumnAndRow($col, $row, $text);
-        if (strpos($text,'%')!==false){
-            $number = floatval($text);
-            if($number>=100){
-                $str = $this->getColumn($col);
-                $this->objPHPExcel->getActiveSheet()
-                    ->getStyle($str.$row)->applyFromArray(
-                        array(
-                            'font'=>array(
-                                'color'=>array('rgb'=>'00a65a')
-                            )
-                        )
-                    );
+        $rgb="000000";
+        if(strpos($text,'%')!==false){
+            if(!in_array($keyStr,array("new_rate","stop_rate","net_rate"))){
+                $rgb =floatval($text)<=60?"a94442":$rgb;
+            }
+            $rgb =floatval($text)>=100?"00a65a":$rgb;
+        }elseif (strpos($keyStr,'net')!==false){ //所有淨增長為0時特殊處理
+            if(Yii::t("summary","completed")==$text){
+                $rgb="00a65a";
+            }elseif (Yii::t("summary","incomplete")==$text){
+                $rgb="a94442";
             }
         }
+        $str = $this->getColumn($col);
+        $this->objPHPExcel->getActiveSheet()
+            ->getStyle($str.$row)->applyFromArray(
+                array(
+                    'font'=>array(
+                        'color'=>array('rgb'=>$rgb)
+                    )
+                )
+            );
     }
 
     protected function setReportFormat() {

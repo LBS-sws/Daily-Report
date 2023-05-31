@@ -116,5 +116,7 @@ return array(
     ' month expected full month'=>'月预计全月',
     ' - Leave'=>' - 已离职',
     'average：'=>'平均值：',
+    'completed'=>'已完成',
+    'incomplete'=>'未完成',
 );
 ?>
