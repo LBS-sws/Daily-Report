@@ -60,10 +60,17 @@ class UServiceController extends Controller
             $model->search_year = date("Y");
             $model->search_month = date("n");
             $model->search_start_date = date("Y/m/01");
-            $model->search_end_date = date("Y/m/d");
+            $weekDay = date("w");
+            if($weekDay==6){
+                $model->search_end_date = date("Y/m/d",strtotime("+ 6 day"));
+            }else{
+                $model->search_end_date = date("Y/m/d",strtotime("+ ".(5-$weekDay)." day"));
+            }
             $i = ceil($model->search_month/3);//向上取整
             $model->search_quarter = 3*$i-2;
             $model->city = Yii::app()->user->city();
+            $model->condition = 1;
+            $model->seniority_min = 3;
         }
 		$this->render('index',array('model'=>$model));
 	}
