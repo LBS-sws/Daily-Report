@@ -105,9 +105,13 @@ class SalesAverageForm extends CFormModel
         $uList = $this->getUData($this->start_date,$this->end_date);
         $staffList = $this->getStaffListForCity($city_allow);
         $lineList = LifelineForm::getLifeLineList($city_allow,$this->end_date);
+        $cityList = General::getCityListWithNoDescendant($city_allow);
         if(!empty($rows)){
             foreach ($rows as $row){
                 $city = $row["city"];
+                if(key_exists($city,$cityList)){
+                    unset($cityList[$city]);
+                }
                 if(key_exists($city,$staffList)){
                     $region_name = $staffList[$city]["region_name"];
                     $city_name = $staffList[$city]["city_name"];
@@ -131,6 +135,27 @@ class SalesAverageForm extends CFormModel
                     );
                 }
                 $data[$region_name][$city]["amt_sum"]+=round($row["sum_amount"],2);
+            }
+        }
+        if(!empty($cityList)){
+            foreach ($cityList as $city=>$name){
+                if(key_exists($city,$staffList)){
+                    $region_name = $staffList[$city]["region_name"];
+                    $city_name = $staffList[$city]["city_name"];
+                    $staff_num = $staffList[$city]["staff_num"];
+                }else{
+                    $region_name = "none";
+                    $city_name = "none";
+                    $staff_num = 0;
+                }
+                $data[$region_name][$city] = array(
+                    "city"=>$city,
+                    "amt_sum"=>key_exists($city,$uList)?$uList[$city]:0,
+                    "life_num"=>key_exists($city,$lineList)?$lineList[$city]:0,
+                    "staff_num"=>$staff_num,
+                    "city_name"=>$city_name,
+                    "region_name"=>$region_name,
+                );
             }
         }
         $this->data = $data;
