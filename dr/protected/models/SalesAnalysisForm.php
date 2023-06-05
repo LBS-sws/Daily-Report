@@ -148,7 +148,7 @@ class SalesAnalysisForm extends CFormModel
                 if(!key_exists($row["username"],$list)){
                     $list[$row["username"]]=array("last_amt"=>0,"count_month"=>0);
                 }
-                $list[$row["username"]]["last_amt"]+=$row["last_amt"];
+                $list[$row["username"]]["last_amt"]+=round($row["last_amt"],2);
                 $list[$row["username"]]["count_month"]++;
             }
         }
@@ -172,7 +172,7 @@ class SalesAnalysisForm extends CFormModel
             )->group("b.username,DATE_FORMAT(b.visit_dt,'%Y/%m')")->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $list[$row["username"]][$row["month"]] = $row["now_amt"];
+                $list[$row["username"]][$row["month"]] = round($row["now_amt"],2);
             }
         }
         return $list;
