@@ -87,8 +87,8 @@ class LookupController extends Controller
 		print json_encode($result);
 	}
 	
-	public function actionCompanyEx2($search) {
-		$city = Yii::app()->user->city();
+	public function actionCompanyEx2($search,$city='') {
+		$city = empty($city)?Yii::app()->user->city():$city;
 		$result = array();
 		$hidden = '';
 		$searchx = str_replace("'","\'",$search);
@@ -184,8 +184,8 @@ class LookupController extends Controller
 		print json_encode($result);
 	}
 
-	public function actionStaffEx2($search)	{
-		$city = Yii::app()->user->city();
+	public function actionStaffEx2($search,$city='')	{
+		$city = empty($city)?Yii::app()->user->city():$city;
 		$result = array();
 		$searchx = str_replace("'","\'",$search);
 
