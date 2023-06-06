@@ -14,9 +14,12 @@ class SalesAnalysisForm extends CFormModel
     public $end_date;
 
     public $data=array();
+    public $twoDate=array();
+    public $threeDate=array();
 
 	public $th_sum=0;//所有th的个数
 
+    public $downJsonText='';
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -43,7 +46,7 @@ class SalesAnalysisForm extends CFormModel
         );
     }
 
-    public function validateDate($attribute, $params) {
+    public function validateDate($attribute="", $params="") {
         if(!empty($this->search_date)) {
             $timer = strtotime($this->search_date);
             $this->search_year = date("Y", $timer);
@@ -105,8 +108,8 @@ class SalesAnalysisForm extends CFormModel
         return $cityList;
     }
 
-    protected function getSalesForHr($city_allow,$endDate=""){
-        $endDate = empty($endDate)?$this->search_date:$endDate;
+    public static function getSalesForHr($city_allow,$endDate=""){
+        $endDate = empty($endDate)?date("Y/m/d"):$endDate;
         $suffix = Yii::app()->params['envSuffix'];
         $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
         $list=array('staff'=>array(),'user'=>array());
@@ -116,10 +119,10 @@ class SalesAnalysisForm extends CFormModel
             ->from("security{$suffix}.sec_user_access f")
             ->leftJoin("hr{$suffix}.hr_binding d","d.user_id=f.username")
             ->leftJoin("hr{$suffix}.hr_employee a","d.employee_id=a.id")
-            ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and (
-                (a.staff_status = 0 and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}')
+            ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}' and (
+                (a.staff_status = 0)
                 or
-                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/%d')<='{$endDate}' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}')
+                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/31')>='{$endDate}')
              ) AND a.city in ({$city_allow})"
             )->order("a.city desc")->queryAll();
         return $rows;
@@ -145,7 +148,7 @@ class SalesAnalysisForm extends CFormModel
                 if(!key_exists($row["username"],$list)){
                     $list[$row["username"]]=array("last_amt"=>0,"count_month"=>0);
                 }
-                $list[$row["username"]]["last_amt"]+=$row["last_amt"];
+                $list[$row["username"]]["last_amt"]+=round($row["last_amt"],2);
                 $list[$row["username"]]["count_month"]++;
             }
         }
@@ -169,13 +172,13 @@ class SalesAnalysisForm extends CFormModel
             )->group("b.username,DATE_FORMAT(b.visit_dt,'%Y/%m')")->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $list[$row["username"]][$row["month"]] = $row["now_amt"];
+                $list[$row["username"]][$row["month"]] = round($row["now_amt"],2);
             }
         }
         return $list;
     }
 
-    private function setStaffRowForNowData(&$staffRow,$nowData){
+    protected function setStaffRowForNowData(&$staffRow,$nowData){
         $username = $staffRow["user_id"];
         $timer = strtotime($staffRow["entry_time"]);
         $entry_year = date("Y",$timer);
@@ -191,7 +194,7 @@ class SalesAnalysisForm extends CFormModel
             if($entry_year==$this->search_year){
                 if($entry_month>$i){//未入职显示空
                     $value="";
-                }elseif ($entry_month==$i){//未入职当月且没有签单金额
+                }elseif ($entry_month==$i&&empty($value)){//入职当月且没有签单金额
                     $value="-";
                 }
             }
@@ -204,14 +207,115 @@ class SalesAnalysisForm extends CFormModel
         $staffRow["now_average"]=empty($count)?0:round($sum/$count);
     }
 
+    protected function groupAreaForStaffAndData($staffRows,$cityList,$nowData){
+        if($this->search_year==2023){
+            $nowStaffDate = "{$this->search_year}/03/01";
+            $startMonth = 3;
+        }else{
+            $nowStaffDate = "{$this->search_year}/01/01";
+            $startMonth = 1;
+        }
+        $data = array();
+        if($staffRows){
+            foreach ($staffRows as $staffRow){
+                $entry_timer = strtotime($staffRow["entry_time"]);
+                $city = $staffRow['city'];
+                $region = key_exists($city,$cityList)?$cityList[$city]["region_name"]:"none";
+                if(!key_exists($region,$data)){
+                    $monthDataList=array(
+                        0=>array("name"=>Yii::t("summary","now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array())
+                    );
+                    for($i=$startMonth;$i<=$this->search_month;$i++){
+                        $monthDataList[$i]=array(
+                            "name"=>$i.Yii::t("summary"," month now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array()
+                        );
+                    }
+                    $data[$region]=array(
+                        "region"=>$region,
+                        "region_name"=>key_exists($city,$cityList)?$cityList[$city]["region_name"]:"none",
+                        "list"=>$monthDataList,
+                    );
+                }
+                if($entry_timer<strtotime($nowStaffDate)){
+                    $month = 0;//老员工
+                }else{
+                    $month = date("n",$entry_timer);//某月新入职员工
+                    if(!key_exists($month,$data[$region]["list"])){
+                        $data[$region]["list"][$month]=array(
+                            "name"=>$month.Yii::t("summary"," month now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array()
+                        );
+                    }
+                }
+                $data[$region]["list"][$month]["fte_num"]++;
+                $data[$region]["list"][$month]["user_name"][]=$staffRow["user_id"];
+                $this->setMonthAmt($data[$region]["list"][$month],$nowData,$staffRow["user_id"]);
+            }
+        }
+        return $data;
+    }
+
+    //将员工的金额汇总
+    protected function setMonthAmt(&$data,$nowData,$username){
+        $list = array();
+        $sum=0;
+        if(key_exists($username,$nowData)){
+            $list = $nowData[$username];
+        }
+        for($i=1;$i<=$this->search_month;$i++){
+            $key = $this->search_year."/".($i<10?"0{$i}":$i);
+            if(!key_exists($key,$data)){
+                $data[$key]=0;
+            }
+            $data[$key]+=key_exists($key,$list)?$list[$key]:0;
+            $sum+=$data[$key];
+        }
+        $data["now_average"]=round($sum/$this->search_month);
+    }
+
+    protected function groupCityForStaffAndData($staffRows,$cityList,$nowData,$lifelineList){
+        $yearMonth = $this->search_year."/".($this->search_month < 10 ? "0{$this->search_month}" : $this->search_month);
+        $data = array();
+        if($staffRows){
+            foreach ($staffRows as $staffRow){
+                $entry_time = date("Y/m",strtotime($staffRow["entry_time"]));
+                $city = $staffRow['city'];
+                $city_name = key_exists($city,$cityList)?$cityList[$city]["city_name"]:"none";
+                if(!key_exists($city,$data)){
+                    $data[$city]=array(
+                        "city"=>$city,
+                        "city_name"=>$city_name,
+                        "list"=>array("city_name"=>$city_name,"now_num"=>0,"max_num"=>0,"min_num"=>0,"new_num"=>0),
+                    );
+                }
+                $data[$city]["list"]["now_num"]++;//在职人数
+                if($entry_time<$yearMonth){//在职人数
+                    //达标人数
+                    $amt_sum = key_exists($staffRow["user_id"],$nowData)?$nowData[$staffRow["user_id"]]:array();
+                    $amt_sum = key_exists($yearMonth,$amt_sum)?$amt_sum[$yearMonth]:0;
+                    $tar_num = key_exists($city,$lifelineList)?$lifelineList[$city]:80000;
+                    if($amt_sum>$tar_num){
+                        $data[$city]["list"]["max_num"]++;
+                    }else{
+                        $data[$city]["list"]["min_num"]++;
+                    }
+                }else if($entry_time==$yearMonth){//新招人数
+                    $data[$city]["list"]["new_num"]++;
+                }
+            }
+        }
+        return $data;
+    }
+
     public function retrieveData() {
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $lifelineList = LifelineForm::getLifeLineList($city_allow,$this->search_date);//生命线
-        $staffRows = $this->getSalesForHr($city_allow);//员工信息
+        $staffRows = $this->getSalesForHr($city_allow,$this->search_date);//员工信息
         $lastData = $this->getLastYearData($city_allow);//前一年的平均值
         $nowData = $this->getNowYearData($city_allow);//本年度的数据
         $cityList = self::getCityListAndRegion($city_allow);//城市信息
+        $this->twoDate = $this->groupAreaForStaffAndData($staffRows,$cityList,$nowData);
+        $this->threeDate = $this->groupCityForStaffAndData($staffRows,$cityList,$nowData,$lifelineList);
         if($staffRows){
             foreach ($staffRows as $staffRow){
                 $username = $staffRow["user_id"];
@@ -233,7 +337,7 @@ class SalesAnalysisForm extends CFormModel
                     $staffRow["life_num"] = 80000;
                 }
                 $this->setStaffRowForNowData($staffRow,$nowData);
-                $region = empty($staffRow["region"])?"null":$staffRow["region"];
+                $region = empty($staffRow["region_name"])?"null":$staffRow["region_name"];
                 if (!key_exists($region,$data)){
                     $data[$region]=array("list"=>array(),"region_code"=>$region,"region_name"=>$staffRow["region_name"]);
                 }
@@ -270,7 +374,7 @@ class SalesAnalysisForm extends CFormModel
         return $html;
     }
 
-    private function getTopArr(){
+    public function getTopArr(){
         $monthArr = array();
         for($i=1;$i<=$this->search_month;$i++){
             $monthArr[]=array("name"=>$i.Yii::t("summary","Month"));
@@ -282,7 +386,7 @@ class SalesAnalysisForm extends CFormModel
             array("name"=>Yii::t("summary","Reference"),"background"=>"#000000","color"=>"#FFFFFF",
                 "colspan"=>array(
                     array("name"=>$this->last_year.Yii::t("summary"," year average")),//参考平均值
-                    array("name"=>$this->last_year.Yii::t("summary"," life num")),//参考生命线
+                    array("name"=>$this->search_year.Yii::t("summary"," life num")),//参考生命线
                 )
             ),//参考
             array("name"=>$this->search_year.Yii::t("summary"," year sales"),"background"=>"#00B0F0","color"=>"#FFFFFF",
@@ -294,7 +398,7 @@ class SalesAnalysisForm extends CFormModel
     }
 
     //顯示提成表的表格內容（表頭）
-    private function tableTopHtml(){
+    protected function tableTopHtml(){
         $topList = self::getTopArr();
         $trOne="";
         $trTwo="";
@@ -336,7 +440,7 @@ class SalesAnalysisForm extends CFormModel
     }
 
     //設置表格的單元格寬度
-    private function tableHeaderWidth(){
+    protected function tableHeaderWidth(){
         $html="<tr>";
         for($i=0;$i<$this->th_sum;$i++){
             if($i==0){
@@ -352,15 +456,17 @@ class SalesAnalysisForm extends CFormModel
     public function tableBodyHtml(){
         $html="";
         if(!empty($this->data)){
+            $this->downJsonText=array();
             $html.="<tbody>";
             $html.=$this->showServiceHtml($this->data);
             $html.="</tbody>";
+            $this->downJsonText=json_encode($this->downJsonText);
         }
         return $html;
     }
 
     //获取td对应的键名
-    private function getDataAllKeyStr(){
+    protected function getDataAllKeyStr(){
         $bodyKey = array(
             "employee_name",
             "city_name",
@@ -390,7 +496,7 @@ class SalesAnalysisForm extends CFormModel
     }
 
     //將城市数据寫入表格
-    private function showServiceHtml($data){
+    protected function showServiceHtml($data){
         $bodyKey = $this->getDataAllKeyStr();
         $html="";
         if(!empty($data)){
@@ -412,9 +518,8 @@ class SalesAnalysisForm extends CFormModel
                             $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $tdClass = self::getTextColorForKeyStr($text,$keyStr,$cityList['life_num']);
-                            $inputHide = TbHtml::hiddenField("excel[{$cityList['region']}][{$cityList['id']}][{$keyStr}][value]",$text);
-                            $inputHide.= TbHtml::hiddenField("excel[{$cityList['region']}][{$cityList['id']}][{$keyStr}][color]",$tdClass);
-                            $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
+                            $this->downJsonText[$cityList['region']][$cityList['id']][$keyStr]=$text;
+                            $html.="<td class='{$tdClass}'><span>{$text}</span></td>";
                         }
                         $html.="</tr>";
                     }
@@ -443,8 +548,8 @@ class SalesAnalysisForm extends CFormModel
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
             $tdClass = HistoryAddForm::getTextColorForKeyStr($text,$keyStr);
-            $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][{$keyStr}][value]",$text);
-            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span>{$inputHide}</td>";
+            $this->downJsonText[$data['region']]["count"][$keyStr]=$text;
+            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span></td>";
         }
         $html.="</tr>";
         return $html;
@@ -457,19 +562,70 @@ class SalesAnalysisForm extends CFormModel
         return $html;
     }
 
+    public function setAttrAll($model){
+        $this->search_date = $model->search_date;
+        $this->search_year = $model->search_year;
+        $this->search_month = $model->search_month;
+        $this->month_day = $model->month_day;
+        $this->last_year = $model->last_year;
+        $this->start_date = $model->start_date;
+        $this->end_date = $model->end_date;
+    }
+
     //下載
     public function downExcel($excelData){
         $this->validateDate("","");
         $headList = $this->getTopArr();
+        $twoModel = new SalesAnalysisAreaForm();
+        $twoModel->setAttrAll($this);
+        $threeModel = new SalesAnalysisCityForm();
+        $threeModel->setAttrAll($this);
         $excel = new DownSummary();
-        $excel->colTwo=1;
-        $excel->SetHeaderTitle(Yii::t("app","History Stop")."（{$this->search_date}）");
-        $titleTwo = $this->start_date." ~ ".$this->end_date;
-        //"\r\n"
+        $excel->colTwo=2;
+        $excel->SetHeaderTitle(Yii::t("summary","Capacity Staff")."（{$this->search_date}）");
+        $titleTwo = date("Y/m/01/",strtotime($this->end_date))." ~ ".$this->end_date;
         $excel->SetHeaderString($titleTwo);
         $excel->init();
-        $excel->setSummaryHeader($headList);
-        $excel->setSummaryData($excelData);
+        //第一页
+        $excel->setSheetName(Yii::t("summary","Capacity Staff"));
+        $excel->setSummaryHeader($headList,true);
+        $data = key_exists("one",$excelData)?json_decode($excelData["one"],true):array();
+        $excel->setSalesAnalysisData($data);
+        //第二页
+        $sheetName = Yii::t("summary","Capacity Area");
+        $excel->addSheet($sheetName);
+        $excel->SetHeaderTitle($sheetName."（{$this->search_date}）");
+        $excel->outHeader(1);
+        $data = key_exists("two",$excelData)?json_decode($excelData["two"],true):array();
+        $excel->setSalesAreaData($data,$twoModel->getTopArr());
+        //第三页
+        $sheetName = Yii::t("summary","Capacity City");
+        $excel->addSheet($sheetName);
+        $excel->SetHeaderTitle($sheetName."（{$this->search_date}）");
+        $excel->outHeader(2);
+        $excel->setUServiceHeader($threeModel->getTopArr());
+        $data = key_exists("three",$excelData)?json_decode($excelData["three"],true):array();
+        $excel->setUServiceData($data);
         $excel->outExcel("SalesAnalysis");
+    }
+
+    public static function getMenuList($active=1){
+        return array(
+            1=>array(
+                "url"=>Yii::app()->createUrl('salesAnalysis/view'),
+                "label"=>Yii::t("summary","Capacity Staff"),
+                "active"=>$active==1
+            ),
+            2=>array(
+                "url"=>Yii::app()->createUrl('salesAnalysis/area'),
+                "label"=>Yii::t("summary","Capacity Area"),
+                "active"=>$active==2
+            ),
+            3=>array(
+                "url"=>Yii::app()->createUrl('salesAnalysis/city'),
+                "label"=>Yii::t("summary","Capacity City"),
+                "active"=>$active==3
+            ),
+        );
     }
 }

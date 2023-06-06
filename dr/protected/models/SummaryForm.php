@@ -214,30 +214,30 @@ class SummaryForm extends CFormModel
         $list["start_two_gross"] = $bool?$list["start_two_gross"]:ComparisonForm::resetNetOrGross($list["start_two_gross"],$this->day_num,$this->search_type);
         $list["start_two_net"] = $bool?$list["start_two_net"]:ComparisonForm::resetNetOrGross($list["start_two_net"],$this->day_num,$this->search_type);
         $list["start_two_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["start_two_gross"]);
-        $list["start_two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_two_net"]);
+        $list["start_two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_two_net"],"net");
 
         $list["two_gross"] = $bool?$list["two_gross"]:ComparisonForm::resetNetOrGross($list["two_gross"],$this->day_num,$this->search_type);
         $list["two_net"] = $bool?$list["two_net"]:ComparisonForm::resetNetOrGross($list["two_net"],$this->day_num,$this->search_type);
         $list["two_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["two_gross"]);
-        $list["two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["two_net"]);
+        $list["two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["two_net"],"net");
         if(SummaryForm::targetAllReady()){
             $list["start_one_gross"] = $bool?$list["start_one_gross"]:ComparisonForm::resetNetOrGross($list["start_one_gross"],$this->day_num,$this->search_type);
             $list["start_one_net"] = $bool?$list["start_one_net"]:ComparisonForm::resetNetOrGross($list["start_one_net"],$this->day_num,$this->search_type);
             $list["start_three_gross"] = $bool?$list["start_three_gross"]:ComparisonForm::resetNetOrGross($list["start_three_gross"],$this->day_num,$this->search_type);
             $list["start_three_net"] = $bool?$list["start_three_net"]:ComparisonForm::resetNetOrGross($list["start_three_net"],$this->day_num,$this->search_type);
             $list["start_one_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["start_one_gross"]);
-            $list["start_one_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_one_net"]);
+            $list["start_one_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_one_net"],"net");
             $list["start_three_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["start_three_gross"]);
-            $list["start_three_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_three_net"]);
+            $list["start_three_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_three_net"],"net");
 
             $list["one_gross"] = $bool?$list["one_gross"]:ComparisonForm::resetNetOrGross($list["one_gross"],$this->day_num,$this->search_type);
             $list["one_net"] = $bool?$list["one_net"]:ComparisonForm::resetNetOrGross($list["one_net"],$this->day_num,$this->search_type);
             $list["three_gross"] = $bool?$list["three_gross"]:ComparisonForm::resetNetOrGross($list["three_gross"],$this->day_num,$this->search_type);
             $list["three_net"] = $bool?$list["three_net"]:ComparisonForm::resetNetOrGross($list["three_net"],$this->day_num,$this->search_type);
             $list["one_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["one_gross"]);
-            $list["one_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["one_net"]);
+            $list["one_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["one_net"],"net");
             $list["three_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["three_gross"]);
-            $list["three_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["three_net"]);
+            $list["three_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["three_net"],"net");
         }
     }
 
@@ -451,7 +451,7 @@ class SummaryForm extends CFormModel
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                     $text = ComparisonForm::showNum($text);
-                    $inputHide = TbHtml::hiddenField("excel[MO][]",$text);
+                    $inputHide = TbHtml::hiddenField("excel[MO][{$keyStr}]",$text);
                     $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                     $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
                 }
@@ -484,7 +484,7 @@ class SummaryForm extends CFormModel
                             $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                             $text = ComparisonForm::showNum($text);
-                            $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][]",$text);
+                            $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
                             $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
                         }
                         $html.="</tr>";
@@ -513,7 +513,7 @@ class SummaryForm extends CFormModel
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
             $text = ComparisonForm::showNum($text);
-            $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][]",$text);
+            $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][{$keyStr}]",$text);
             $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span>{$inputHide}</td>";
         }
         $html.="</tr>";

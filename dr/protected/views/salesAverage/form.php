@@ -1,9 +1,9 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
+$this->pageTitle=Yii::app()->name . ' - SalesAverage Form';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'SalesAnalysis-form',
+'id'=>'SalesAverage-form',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
@@ -22,7 +22,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 
 <section class="content-header">
 	<h1>
-        <strong><?php echo Yii::t('app','Sales Analysis'); ?></strong>
+        <strong><?php echo Yii::t('app','Average office'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -37,12 +37,12 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('salesAnalysis/index')));
+				'submit'=>Yii::app()->createUrl('salesAverage/index')));
 		?>
 	</div>
             <div class="btn-group pull-right" role="group">
                 <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('dialog','Download'), array(
-                    'submit'=>Yii::app()->createUrl('salesAnalysis/downExcel')));
+                    'submit'=>Yii::app()->createUrl('salesAverage/downExcel')));
                 ?>
             </div>
 	</div></div>
@@ -51,70 +51,50 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
         <div id="yw0" class="tabbable">
             <div class="box-info" >
                 <div class="box-body" >
-                    <div class="col-lg-12" style="padding-bottom: 15px;">
+                    <div class="col-lg-12">
                         <div class="form-group">
-                            <?php echo $form->labelEx($model,'search_date',array('class'=>"col-sm-2 control-label")); ?>
+                            <?php echo $form->labelEx($model,'start_date',array('class'=>"col-sm-2 control-label")); ?>
                             <div class="col-sm-2">
-                                <?php echo $form->textField($model, 'search_date',
+                                <?php echo $form->textField($model, 'start_date',
                                     array('readonly'=>true,'prepend'=>"<span class='fa fa-calendar'></span>")
+                                ); ?>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $form->labelEx($model,'end_date',array('class'=>"col-sm-2 control-label")); ?>
+                            <div class="col-sm-2">
+                                <?php echo $form->textField($model, 'end_date',
+                                    array('readonly'=>true,'prepend'=>"<span class='fa fa-calendar'></span>")
+                                ); ?>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $form->labelEx($model,'day_num',array('class'=>"col-sm-2 control-label")); ?>
+                            <div class="col-sm-2">
+                                <?php echo $form->textField($model, 'day_num',
+                                    array('readonly'=>true,'append'=>Yii::t("summary","day"))
                                 ); ?>
                             </div>
                         </div>
                     </div>
 
-                    <?php
-                    $contentHead='<div class="col-lg-12" style="padding-top: 15px;">
+                    <div class="col-lg-12" style="padding-top: 15px;">
                         <div class="row panel panel-default" style="border-color: #333">
                             <!-- Default panel contents -->
                             <div class="panel-heading">
-                                <h3 style="margin-top:10px;">{:head:}<small>('.date("Y/m/01/",strtotime($model->end_date)) ." ~ ".$model->end_date.')</small>
+                                <h3 style="margin-top:10px;">
+                                    <?php echo Yii::t('app','Average office'); ?>
+                                    <small>(<?php echo $model->start_date." ~ ".$model->end_date;?>)</small>
                                 </h3>
                             </div>
-                            <!-- Table -->
-                            <div class="table-responsive">';
 
-                    $contentEnd='</div></div></div>';
-                    $tabs =array();
-                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity Staff"),$contentHead);
-                    $contentTable.=$model->salesAnalysisHtml();
-                    $contentTable.=$contentEnd;
-                    $contentTable.=TbHtml::hiddenField("excel[one]",$model->downJsonText);
-                    $tabs[] = array(
-                        'label'=>Yii::t("summary","Capacity Staff"),
-                        'content'=>$contentTable,
-                        'active'=>true,
-                    );
-                    //地区统计表
-                    $areaModel = new SalesAnalysisAreaForm();
-                    $areaModel->search_date = $model->search_date;
-                    $areaModel->setAttrAll($model);
-                    $areaModel->data = $model->twoDate;
-                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity Area"),$contentHead);
-                    $contentTable.=$areaModel->salesAnalysisHtml();
-                    $contentTable.=$contentEnd;
-                    $contentTable.=TbHtml::hiddenField("excel[two]",$areaModel->downJsonText);
-                    $tabs[] = array(
-                        'label'=>Yii::t("summary","Capacity Area"),
-                        'content'=>$contentTable,
-                        'active'=>false,
-                    );
-                    //地区统计表
-                    $cityModel = new SalesAnalysisCityForm();
-                    $cityModel->search_date = $model->search_date;
-                    $cityModel->setAttrAll($model);
-                    $cityModel->data = $model->threeDate;
-                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity City"),$contentHead);
-                    $contentTable.=$cityModel->salesAnalysisHtml();
-                    $contentTable.=$contentEnd;
-                    $contentTable.=TbHtml::hiddenField("excel[three]",$cityModel->downJsonText);
-                    $tabs[] = array(
-                        'label'=>Yii::t("summary","Capacity City"),
-                        'content'=>$contentTable,
-                        'active'=>false,
-                    );
-                    //城市统计表
-                    echo TbHtml::tabbableTabs($tabs);
-                    ?>
+                            <!-- Table -->
+                            <div class="table-responsive">
+                                <?php echo $model->salesAverageHtml();?>
+                                <?php echo TbHtml::hiddenField("excel",$model->downJsonText);?>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -124,10 +104,11 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 
 </section>
 
+
 <?php
 $js="
     $('.click-th').click(function(){
-        var contNum = 2;
+        var contNum = 1;
         var startNum=contNum;
         var endNum = $(this).attr('colspan');
         $(this).prevAll('.click-th').each(function(){
@@ -138,14 +119,14 @@ $js="
         if($(this).hasClass('active')){
             $(this).children('span').text($(this).data('text'));
             $(this).removeClass('active');
-            $('#salesAnalysis>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
+            $('#salesAverage>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = $(this).data('width')+'px';
                 $(this).width(width);
             });
-            $('#salesAnalysis>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#salesAverage>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
                 $(this).children('span').text($(this).data('text'));
             });
-            $('#salesAnalysis>tbody>tr').each(function(){
+            $('#salesAverage>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
                     $(this).children('span').text($(this).data('text'));
                 });
@@ -154,15 +135,15 @@ $js="
             $(this).data('text',$(this).text());
             $(this).children('span').text('.');
             $(this).addClass('active');
-            $('#salesAnalysis>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
+            $('#salesAverage>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = '15px';
                 $(this).width(width);
             });
-            $('#salesAnalysis>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#salesAverage>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
                 $(this).data('text',$(this).text());
                 $(this).children('span').text('');
             });
-            $('#salesAnalysis>tbody>tr').each(function(){
+            $('#salesAverage>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
                     $(this).data('text',$(this).text());
                     $(this).children('span').text('');

@@ -80,7 +80,7 @@ class RptUService extends ReportData2 {
                 $item["city"] = $user["city"];
                 $item["dept_name"] = $user["dept_name"];
                 $item["entry_month"] = $user["entry_month"];
-                $item["name"] = $user["name"]." ({$user["code"]})";
+                $item["name"] = $user["name"]." ({$user["code"]})".($user["staff_status"]==-1?Yii::t("summary"," - Leave"):"");
             }else{
                 unset($list[$item["staff"]]);
             }
@@ -93,7 +93,7 @@ class RptUService extends ReportData2 {
 		if(key_exists($code,$list)){
 			return $list[$code];
 		}else{
-			return array("level_type"=>3,"code"=>$code,"name"=>"","city"=>"","dept_name"=>"","entry_month"=>"","city_name"=>"");
+			return array("level_type"=>3,"staff_status"=>0,"code"=>$code,"name"=>"","city"=>"","dept_name"=>"","entry_month"=>"","city_name"=>"");
 		}
 	}
 
@@ -114,7 +114,7 @@ class RptUService extends ReportData2 {
             $whereSql = "a.code=0";
         }
         $rows = Yii::app()->db->createCommand()
-            ->select("a.code,a.entry_time,g.name as dept_name,a.name,a.city,b.name as city_name,
+            ->select("a.code,a.staff_status,a.entry_time,g.name as dept_name,a.name,a.city,b.name as city_name,
             g.level_type")
             ->from("hr{$suffix}.hr_employee a")
             ->leftJoin("security{$suffix}.sec_city b","a.city = b.code")

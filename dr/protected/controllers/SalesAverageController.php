@@ -1,8 +1,8 @@
 <?php
 
-class UServiceController extends Controller
+class SalesAverageController extends Controller
 {
-	public $function_id='G10';
+	public $function_id='G13';
 	
 	public function filters()
 	{
@@ -25,11 +25,11 @@ class UServiceController extends Controller
 		return array(
 			array('allow', 
 				'actions'=>array('ajaxSave'),
-				'expression'=>array('UServiceController','allowReadWrite'),
+				'expression'=>array('SalesAverageController','allowReadWrite'),
 			),
 			array('allow', 
 				'actions'=>array('index','view','downExcel'),
-				'expression'=>array('UServiceController','allowReadOnly'),
+				'expression'=>array('SalesAverageController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -38,9 +38,9 @@ class UServiceController extends Controller
 	}
     public function actionDownExcel()
     {
-        $model = new UServiceForm('view');
-        if (isset($_POST['UServiceForm'])) {
-            $model->attributes = $_POST['UServiceForm'];
+        $model = new SalesAverageForm('view');
+        if (isset($_POST['SalesAverageForm'])) {
+            $model->attributes = $_POST['SalesAverageForm'];
             $excelData = key_exists("excel",$_POST)?$_POST["excel"]:array();
             $model->downExcel($excelData);
         }else{
@@ -51,37 +51,25 @@ class UServiceController extends Controller
 
 	public function actionIndex()
 	{
-		$model = new UServiceForm('index');
+		$model = new SalesAverageForm('index');
         $session = Yii::app()->session;
-        if (isset($session['uService_c01']) && !empty($session['uService_c01'])) {
-            $criteria = $session['uService_c01'];
+        if (isset($session['salesAverage_c01']) && !empty($session['salesAverage_c01'])) {
+            $criteria = $session['salesAverage_c01'];
             $model->setCriteria($criteria);
         }else{
-            $model->search_year = date("Y");
-            $model->search_month = date("n");
-            $model->search_start_date = date("Y/m/01");
-            $weekDay = date("w");
-            if($weekDay==6){
-                $model->search_end_date = date("Y/m/d",strtotime("+ 6 day"));
-            }else{
-                $model->search_end_date = date("Y/m/d",strtotime("+ ".(5-$weekDay)." day"));
-            }
-            $i = ceil($model->search_month/3);//向上取整
-            $model->search_quarter = 3*$i-2;
-            $model->city = Yii::app()->user->city();
-            $model->condition = 1;
-            $model->seniority_min = 3;
+            $model->start_date = date("Y/m/01");
+            $model->end_date = date("Y/m/d");
         }
 		$this->render('index',array('model'=>$model));
 	}
 
 	public function actionView()
 	{
-	    set_time_limit(0);
-        $model = new UServiceForm('view');
-        if (isset($_POST['UServiceForm'])) {
-            $model->attributes = $_POST['UServiceForm'];
+        $model = new SalesAverageForm('view');
+        if (isset($_POST['SalesAverageForm'])) {
+            $model->attributes = $_POST['SalesAverageForm'];
             if ($model->validate()) {
+                set_time_limit(0);
                 $model->retrieveData();
                 $this->render('form',array('model'=>$model));
             } else {
@@ -96,10 +84,10 @@ class UServiceController extends Controller
 	}
 	
 	public static function allowReadWrite() {
-		return Yii::app()->user->validRWFunction('G10');
+		return Yii::app()->user->validRWFunction('G13');
 	}
 	
 	public static function allowReadOnly() {
-		return Yii::app()->user->validFunction('G10');
+		return Yii::app()->user->validFunction('G13');
 	}
 }

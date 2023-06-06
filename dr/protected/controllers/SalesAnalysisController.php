@@ -66,16 +66,20 @@ class SalesAnalysisController extends Controller
         $model = new SalesAnalysisForm('view');
         if (isset($_POST['SalesAnalysisForm'])) {
             $model->attributes = $_POST['SalesAnalysisForm'];
-            if ($model->validate()) {
-                $model->retrieveData();
-                $this->render('form',array('model'=>$model));
-            } else {
-                $message = CHtml::errorSummary($model);
-                Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $this->render('index',array('model'=>$model));
-            }
         }else{
-            $model->setScenario("index");
+            $session = Yii::app()->session;
+            if (isset($session['salesAnalysis_c01']) && !empty($session['salesAnalysis_c01'])) {
+                $criteria = $session['salesAnalysis_c01'];
+                $model->setCriteria($criteria);
+            }
+        }
+        if ($model->validate()) {
+            set_time_limit(0);
+            $model->retrieveData();
+            $this->render('form',array('model'=>$model));
+        } else {
+            $message = CHtml::errorSummary($model);
+            Dialog::message(Yii::t('dialog','Validation Message'), $message);
             $this->render('index',array('model'=>$model));
         }
 	}

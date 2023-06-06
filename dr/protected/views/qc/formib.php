@@ -647,15 +647,15 @@ Yii::app()->clientScript->registerScriptFile($baseUrl.'/js/dms-lookup.js', CClie
 
 $js = <<<EOF
 $('#btnStaffResp').on('click',function() {
-	opendialog('staff', '', 'job_staff', false, {}, {});
+	opendialog('staff', '', 'job_staff', false, {}, { city:$('#QcForm_city').val()});
 });
 
 $('#btnCompany').on('click',function() {
-	opendialog('company', 'company_id', 'company_name', false, {}, {});
+	opendialog('company', 'company_id', 'company_name', false, {}, { city:$('#QcForm_city').val()});
 });
 
 $('#btnStaffQc').on('click',function() {
-	opendialog('staff', '', 'qc_staff', false, {}, {});
+	opendialog('staff', '', 'qc_staff', false, {}, { city:$('#QcForm_city').val()});
 });
 
 EOF;

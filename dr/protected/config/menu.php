@@ -219,6 +219,10 @@ return array(
                 'access'=>'G12',
                 'url'=>'/salesAnalysis/index',
             ),
+            'Average office'=>array(//月预计平均人效
+                'access'=>'G13',
+                'url'=>'/salesAverage/index',
+            ),
             'Lifeline Set'=>array(//生命线设置
                 'access'=>'G11',
                 'url'=>'/lifeline/index',

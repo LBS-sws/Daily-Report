@@ -40,18 +40,20 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 				'submit'=>Yii::app()->createUrl('salesAnalysis/index')));
 		?>
 	</div>
+            <!--
             <div class="btn-group pull-right" role="group">
                 <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('dialog','Download'), array(
                     'submit'=>Yii::app()->createUrl('salesAnalysis/downExcel')));
                 ?>
             </div>
+            -->
 	</div></div>
 
     <div class="box">
         <div id="yw0" class="tabbable">
             <div class="box-info" >
                 <div class="box-body" >
-                    <div class="col-lg-12" style="padding-bottom: 15px;">
+                    <div class="col-lg-12">
                         <div class="form-group">
                             <?php echo $form->labelEx($model,'search_date',array('class'=>"col-sm-2 control-label")); ?>
                             <div class="col-sm-2">
@@ -62,59 +64,31 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                         </div>
                     </div>
 
-                    <?php
-                    $contentHead='<div class="col-lg-12" style="padding-top: 15px;">
+                    <div class="col-lg-12" style="padding-top: 15px;">
+                        <div class="row">
+                            <?php
+                            echo TbHtml::tabs(SalesAnalysisForm::getMenuList(2))
+                            ?>
+                        </div>
+                    </div>
+                    <div class="col-lg-12" style="padding-top: 15px;">
                         <div class="row panel panel-default" style="border-color: #333">
                             <!-- Default panel contents -->
                             <div class="panel-heading">
-                                <h3 style="margin-top:10px;">{:head:}<small>('.date("Y/m/01/",strtotime($model->end_date)) ." ~ ".$model->end_date.')</small>
+                                <h3 style="margin-top:10px;">
+                                    <?php echo Yii::t('summary','Capacity Area'); ?>
+                                    <small>(<?php echo $model->start_date." ~ ".$model->end_date;?>)</small>
                                 </h3>
                             </div>
-                            <!-- Table -->
-                            <div class="table-responsive">';
 
-                    $contentEnd='</div></div></div>';
-                    $tabs =array();
-                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity Staff"),$contentHead);
-                    $contentTable.=$model->salesAnalysisHtml();
-                    $contentTable.=$contentEnd;
-                    $contentTable.=TbHtml::hiddenField("excel[one]",$model->downJsonText);
-                    $tabs[] = array(
-                        'label'=>Yii::t("summary","Capacity Staff"),
-                        'content'=>$contentTable,
-                        'active'=>true,
-                    );
-                    //地区统计表
-                    $areaModel = new SalesAnalysisAreaForm();
-                    $areaModel->search_date = $model->search_date;
-                    $areaModel->setAttrAll($model);
-                    $areaModel->data = $model->twoDate;
-                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity Area"),$contentHead);
-                    $contentTable.=$areaModel->salesAnalysisHtml();
-                    $contentTable.=$contentEnd;
-                    $contentTable.=TbHtml::hiddenField("excel[two]",$areaModel->downJsonText);
-                    $tabs[] = array(
-                        'label'=>Yii::t("summary","Capacity Area"),
-                        'content'=>$contentTable,
-                        'active'=>false,
-                    );
-                    //地区统计表
-                    $cityModel = new SalesAnalysisCityForm();
-                    $cityModel->search_date = $model->search_date;
-                    $cityModel->setAttrAll($model);
-                    $cityModel->data = $model->threeDate;
-                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity City"),$contentHead);
-                    $contentTable.=$cityModel->salesAnalysisHtml();
-                    $contentTable.=$contentEnd;
-                    $contentTable.=TbHtml::hiddenField("excel[three]",$cityModel->downJsonText);
-                    $tabs[] = array(
-                        'label'=>Yii::t("summary","Capacity City"),
-                        'content'=>$contentTable,
-                        'active'=>false,
-                    );
-                    //城市统计表
-                    echo TbHtml::tabbableTabs($tabs);
-                    ?>
+                            <!-- Table -->
+                            <div class="table-responsive">
+                                <?php
+                                echo $model->salesAnalysisHtml();
+                                ?>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
