@@ -24,20 +24,26 @@ class ServiceStatusCommand extends CConsoleCommand {
 				$target_dt = $row['target_dt'];
 				$city = $row['city'];
 				echo "CTRT NO: $ctrt_no / STS_DT: $status_dt / TGT_DT: $target_dt / CITY: $city\n";
-				try {
-					$connection = Yii::app()->db;
-					$transaction=$connection->beginTransaction();
 				
-					$rid = $this->addStopService($connection, $row['service_id'], $target_dt);
-					$this->addStopContractStatus($connection, $rid, $ctrt_no, $target_dt);
-					$transaction->commit();
+				$find = Yii::app()->db->createCommand("select id from swo_service_contract_no where contract_no='$ctrt_no' and status='T' and status_dt='$status_dt' limit 1")->queryRow();
+				if ($find!==false) {
+					echo "... Termination record found. Abort record creation.\n";
+				} else {
+					try {
+						$connection = Yii::app()->db;
+						$transaction=$connection->beginTransaction();
+				
+						$rid = $this->addStopService($connection, $row['service_id'], $target_dt);
+						$this->addStopContractStatus($connection, $rid, $ctrt_no, $target_dt);
+						$transaction->commit();
 					
-					if (!isset($records[$city])) $records[$city] = array();
-					$records[$city][] = $row['service_id']; //$rid;
-				} catch(Exception $e) {
-					$transaction->rollback();
-					echo "EXCEPTION ERROR: ".$e->getMessage()."\n";
-					Yii::app()->end();
+						if (!isset($records[$city])) $records[$city] = array();
+						$records[$city][] = $row['service_id']; //$rid;
+					} catch(Exception $e) {
+						$transaction->rollback();
+						echo "EXCEPTION ERROR: ".$e->getMessage()."\n";
+						Yii::app()->end();
+					}
 				}
 			}
 
