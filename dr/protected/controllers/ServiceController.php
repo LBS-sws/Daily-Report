@@ -119,6 +119,8 @@ class ServiceController extends Controller
             $model->all_number = 0;
 			$model->org_equip_qty = 0;
 			$model->rtn_equip_qty = 0;
+            $model->other_commission = null;
+            $model->commission = null;
 			$model->id = 0;
 			$model->files = '';
 			$model->docMasterId['service'] = 0;
@@ -148,6 +150,8 @@ class ServiceController extends Controller
             $model->surplus = 0;
             $model->all_number = 0;
 			$model->rtn_equip_qty = 0;
+            $model->other_commission = null;
+            $model->commission = null;
 			$model->sign_dt = null;
 			$model->equip_install_dt = null;
 			$model->ctrt_end_dt = null;
@@ -197,6 +201,8 @@ class ServiceController extends Controller
 			$model->equip_install_dt = null;
 			$model->org_equip_qty = 0;
 			$model->rtn_equip_qty = 0;
+			$model->other_commission = null;
+			$model->commission = null;
 			$model->id = 0;
 			$model->files = '';
 			$model->docMasterId['service'] = 0;
@@ -229,6 +235,8 @@ class ServiceController extends Controller
 			$model->equip_install_dt = null;
 			$model->org_equip_qty = 0;
 			$model->rtn_equip_qty = 0;
+            $model->other_commission = null;
+            $model->commission = null;
 			$model->id = 0;
 			$model->files = '';
 			$model->docMasterId['service'] = 0;
@@ -260,6 +268,8 @@ class ServiceController extends Controller
 			$model->first_tech = '';
 			$model->remarks = '';
 			$model->equip_install_dt = null;
+            $model->other_commission = null;
+            $model->commission = null;
 			$model->id = 0;
 			$model->files = '';
 			$model->docMasterId['service'] = 0;
@@ -291,6 +301,8 @@ class ServiceController extends Controller
 			$model->first_tech = '';
 			$model->remarks = '';
 			$model->equip_install_dt = null;
+            $model->other_commission = null;
+            $model->commission = null;
 			$model->id = 0;
 			$model->files = '';
 			$model->docMasterId['service'] = 0;
