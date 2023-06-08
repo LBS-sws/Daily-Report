@@ -5,6 +5,8 @@ class RptStaff extends ReportData2 {
 			'lud'=>array('label'=>Yii::t('staff','Entry Date'),'width'=>18,'align'=>'L'),
 			'code'=>array('label'=>Yii::t('staff','Code'),'width'=>15,'align'=>'L'),
 			'name'=>array('label'=>Yii::t('staff','Name'),'width'=>30,'align'=>'L'),
+			'city_name'=>array('label'=>Yii::t('staff','City'),'width'=>30,'align'=>'L'),
+			'office_name'=>array('label'=>Yii::t('staff','Office Name'),'width'=>30,'align'=>'L'),
 			'department'=>array('label'=>Yii::t('staff','Department'),'width'=>30,'align'=>'L'),
 			'position'=>array('label'=>Yii::t('staff','Position'),'width'=>30,'align'=>'L'),
 			'staff_type'=>array('label'=>Yii::t('staff','Staff Type'),'width'=>20,'align'=>'C'),
@@ -57,6 +59,7 @@ class RptStaff extends ReportData2 {
 					e.remark AS remarks,
 					e.city,
 					y.name AS department,
+					office.name AS office_name,
 					e.lcu,
 					e.luu,
 					e.lcd,
@@ -64,7 +67,7 @@ class RptStaff extends ReportData2 {
 					z.dept_class
 				from (
 					select 
-						a.id as employee_id, a.code, a.name, a.position, a.staff_type, a.staff_leader, a.entry_time, a.start_time, a.end_time, a.email, 
+						a.id as employee_id, a.office_id, a.code, a.name, a.position, a.staff_type, a.staff_leader, a.entry_time, a.start_time, a.end_time, a.email, 
 						a.leave_time, a.leave_reason, a.remark, a.city, a.department, a.lcu, a.luu, a.lcd, a.lud
 					from hr$suffix.hr_employee a
 					where a.city='$city' and a.id not in (
@@ -75,7 +78,7 @@ class RptStaff extends ReportData2 {
 					)
 				union
 					select 
-						b.employee_id, b.code, b.name, b.position, b.staff_type, b.staff_leader, b.entry_time, b.start_time, b.end_time, b.email, 
+						b.employee_id, b.office_id, b.code, b.name, b.position, b.staff_type, b.staff_leader, b.entry_time, b.start_time, b.end_time, b.email, 
 						b.leave_time, b.leave_reason, b.remark, b.city, b.department, b.lcu, b.luu, b.lcd, b.lud
 					from hr$suffix.hr_employee_operate b
 					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
@@ -84,6 +87,7 @@ class RptStaff extends ReportData2 {
 				inner join hr$suffix.hr_employee f on f.id = e.employee_id
 				left join hr$suffix.hr_dept z on e.position = z.id 
 				left join hr$suffix.hr_dept y on e.department = y.id
+				left join hr$suffix.hr_office office on e.office_id = office.id
 				where (ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) is null or 
 				ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) < date_add('$start_dt', interval 1 month))
 				and (ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) is null or 
@@ -98,6 +102,8 @@ class RptStaff extends ReportData2 {
 				$temp['code'] = $row['code'];
 				$temp['name'] = $row['name'];
 				$temp['position'] = $row['position'];
+				$temp['city_name'] = General::getCityName($row['city']);
+				$temp['office_name'] = $row['office_name'];
 				$temp['department'] = $row['department'];
 				$temp['join_dt'] = General::toDate($row['join_dt']);
 				$temp['ctrt_start_dt'] = General::toDate($row['ctrt_start_dt']);
