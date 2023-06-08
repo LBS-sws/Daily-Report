@@ -336,6 +336,7 @@ class QcForm extends CFormModel
 			$this->qc_staff = $row['qc_staff'];
 			$this->remarks = $row['remarks'];
 			$this->service_type = $row['service_type'];
+			$this->city = $row['city'];
 			$this->lcu = $row['lcu'];
 			$this->luu = $row['luu'];
 			$this->lcd = $row['lcd'];
@@ -402,9 +403,10 @@ class QcForm extends CFormModel
 	protected function saveQc(&$connection)
 	{
 		$sql = '';
+        $city_allow = Yii::app()->user->city_allow();
 		switch ($this->scenario) {
 			case 'delete':
-				$sql = "delete from swo_qc where id = :id and city = :city";
+				$sql = "delete from swo_qc where id = :id and city in ({$city_allow})";
 				break;
 			case 'new':
 				$sql = "insert into swo_qc(
@@ -434,9 +436,10 @@ class QcForm extends CFormModel
 							cust_sign = :cust_sign, 
 							qc_staff = :qc_staff, 
 							remarks = :remarks,
+							city = :city,
 							service_type = :service_type,
 							luu = :luu 
-						where id = :id and city = :city
+						where id = :id and city in ({$city_allow})
 						";
 				break;
 		}
@@ -485,8 +488,10 @@ class QcForm extends CFormModel
 			$command->bindParam(':qc_staff',$this->qc_staff,PDO::PARAM_INT);
 		if (strpos($sql,':remarks')!==false)
 			$command->bindParam(':remarks',$this->remarks,PDO::PARAM_STR);
-		if (strpos($sql,':city')!==false)
-			$command->bindParam(':city',$city,PDO::PARAM_STR);
+		if (strpos($sql,':city')!==false){
+            $this->city=empty($this->city)?$city:$this->city;
+            $command->bindParam(':city',$this->city,PDO::PARAM_STR);
+        }
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)

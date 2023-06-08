@@ -92,7 +92,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php
-                    echo $form->dropDownList($model,'city',QcForm::getCityList(),array('disabled'=>$model->readonly()));
+                    echo $form->dropDownList($model,'city',QcForm::getCityList(),array('readonly'=>$model->readonly()));
 
 					?>
 				</div>
