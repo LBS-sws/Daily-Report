@@ -47,5 +47,8 @@ return array(
 	"Ranking"=>'排名',
 	"Score Number"=>'月报表总分',
 	"go back"=>'返回排行榜',
+
+	"City"=>'城市',
+	"Office Name"=>'办事处',
 );
 ?>
