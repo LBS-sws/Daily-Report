@@ -36,23 +36,22 @@ class ComparisonSetList extends CListPageModel
 	    $this->comparison_year = (empty($this->comparison_year)||!is_numeric($this->comparison_year))?date("Y"):$this->comparison_year;
         $this->month_type = (!in_array($this->month_type,array(1,4,7,10)))?1:$this->month_type;
         $suffix = Yii::app()->params['envSuffix'];
-        $notCityStr = ComparisonSetList::notCitySqlStr();
-        $sql1 = "select code,name 
-				from security{$suffix}.sec_city 
-				where code not in (SELECT b.region FROM security{$suffix}.sec_city b WHERE b.region is not NULL and b.region!='' GROUP BY b.region)
-				 AND code NOT in ('{$notCityStr}') AND name != '停用'
+        $sql1 = "select b.code,b.name 
+				from swo_city_set a 
+				LEFT JOIN security{$suffix}.sec_city b on a.code=b.code
+				where a.show_type=1 
 			";
-        $sql2 = "select count(code)
-				from security{$suffix}.sec_city 
-				where code not in (SELECT b.region FROM security{$suffix}.sec_city b WHERE b.region is not NULL and b.region!='' GROUP BY b.region) 
-				AND code NOT in ('{$notCityStr}') AND name != '停用'
+        $sql2 = "select count(a.code)
+				from swo_city_set a 
+				LEFT JOIN security{$suffix}.sec_city b on a.code=b.code
+				where a.show_type=1 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
 				case 'name':
-					$clause .= General::getSqlConditionClause('name',$svalue);
+					$clause .= General::getSqlConditionClause('b.name',$svalue);
 					break;
 			}
 		}

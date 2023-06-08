@@ -3,7 +3,7 @@
 </tr>
 <tr>
     <th width="10%" rowspan="2" class="text-center" style="vertical-align: middle">
-        <?php echo TbHtml::link($this->getLabelName('name').$this->drawOrderArrow('name'),'#',$this->createOrderLink('comparisonSet-list','name'))
+        <?php echo TbHtml::link($this->getLabelName('name').$this->drawOrderArrow('b.name'),'#',$this->createOrderLink('comparisonSet-list','b.name'))
         ;
         ?>
     </th>

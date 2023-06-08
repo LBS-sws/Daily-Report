@@ -258,6 +258,10 @@ class MyExcel {
                 $startNum = $this->current_row;
                 if(!empty($regionList["list"])){
                     foreach ($regionList["list"] as $cityList){
+                        if($cityList["add_type"]!=1) { //疊加的城市不需要重複統計
+                            //地区总结
+                            $countRowArr[]=$this->current_row;
+                        }
                         foreach ($bodyKey as $key=>$keyStr){
                             if($keyStr=="num_growth"){//净增长
                                 $text = "=SUM(B{$this->current_row}:G{$this->current_row})";
@@ -270,8 +274,6 @@ class MyExcel {
                         $this->current_row++;
                     }
                     $endNum = $this->current_row-1;
-                    //地区总结
-                    $countRowArr[]=$this->current_row;
                     foreach ($bodyKey as $key=>$keyStr){
                         $column1 = $this->getColumn($key);
                         $text = $key==0?$regionName:"=SUM({$column1}{$startNum}:{$column1}{$endNum})";

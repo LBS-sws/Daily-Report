@@ -93,7 +93,7 @@ class RptUService extends ReportData2 {
 		if(key_exists($code,$list)){
 			return $list[$code];
 		}else{
-			return array("level_type"=>3,"staff_status"=>0,"code"=>$code,"name"=>"","city"=>"","dept_name"=>"","entry_month"=>"","city_name"=>"");
+			return array("level_type"=>3,"staff_status"=>0,"code"=>$code,"name"=>"","city"=>"","dept_name"=>"","entry_month"=>"");
 		}
 	}
 
@@ -114,10 +114,9 @@ class RptUService extends ReportData2 {
             $whereSql = "a.code=0";
         }
         $rows = Yii::app()->db->createCommand()
-            ->select("a.code,a.staff_status,a.entry_time,g.name as dept_name,a.name,a.city,b.name as city_name,
+            ->select("a.code,a.staff_status,a.entry_time,g.name as dept_name,a.name,a.city,
             g.level_type")
             ->from("hr{$suffix}.hr_employee a")
-            ->leftJoin("security{$suffix}.sec_city b","a.city = b.code")
             ->leftJoin("hr{$suffix}.hr_dept g","a.position = g.id")
             //需要评核类型：技术员 并且 参与评分差异
             ->where($whereSql)

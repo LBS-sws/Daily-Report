@@ -144,11 +144,10 @@ class LifelineForm extends CFormModel
 
 	public static function getCityList($code){
 	    $list = array(""=>"");
-        $notCityStr = ComparisonSetList::notCitySqlStr();
         $suffix = Yii::app()->params['envSuffix'];
-        $sql = "select code,name from security{$suffix}.sec_city 
-				where code not in (SELECT b.region FROM security{$suffix}.sec_city b WHERE b.region is not NULL and b.region!='' GROUP BY b.region)
-				 AND code NOT in ('{$notCityStr}') AND name != '停用'
+        $sql = "select b.code,b.name from swo_city_set a
+                LEFT JOIN security{$suffix}.sec_city b ON a.code=b.code
+				where a.show_type=1 
 			";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         if($rows){

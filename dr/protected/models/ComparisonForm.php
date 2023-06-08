@@ -156,19 +156,54 @@ class ComparisonForm extends CFormModel
         ComparisonForm::setDayNum($this->start_date,$this->end_date,$this->day_num);
         $lastStartDate = ($this->comparison_year-1)."/".$this->month_start_date;
         $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
-        $uActualMoneyList = SummaryForm::getUActualMoney($this->start_date,$this->end_date,$city_allow);
+        $citySetList = CitySetForm::getCitySetList();
+        $uActualMoneyList = SummaryForm::getUActualMoney($this->start_date,$this->end_date,$city_allow,$citySetList);
+        $serviceList = $this->getServiceData($citySetList,$uActualMoneyList);
+        foreach ($citySetList as $cityRow){
+            $city = $cityRow["code"];
+            $region = $cityRow["region_code"];
+            if(!key_exists($region,$data)){
+                $data[$region]=array(
+                    "region"=>$region,
+                    "region_name"=>$cityRow["region_name"],
+                    "list"=>array()
+                );
+            }
+            if(key_exists($city,$serviceList)){
+                $arr = $serviceList[$city];
+            }else{
+                $arr = $this->defMoreCity($city,$cityRow["city_name"],$uActualMoneyList);
+            }
+            $arr["add_type"]=$cityRow["add_type"];
+            $data[$region]["list"][$city]=$arr;
+        }
+        //$this->defaultRowForCity($data,$cityList,$uActualMoneyList);//填充默認城市（無數據的城市需要顯示0）
+
+        $this->insertUData($this->start_date,$this->end_date,$data,$citySetList);
+        $this->insertUData($lastStartDate,$lastEndDate,$data,$citySetList);
+        $this->data = $data;
+        $session = Yii::app()->session;
+        $session['comparison_c01'] = $this->getCriteria();
+        return true;
+    }
+
+    private function getServiceData($citySetList,$uActualMoneyList){
+        $data=array();
+        $lastStartDate = ($this->comparison_year-1)."/".$this->month_start_date;
+        $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
+        $city_allow = Yii::app()->user->city_allow();
+        $suffix = Yii::app()->params['envSuffix'];
+
         $where="(a.status_dt BETWEEN '{$this->start_date}' and '{$this->end_date}')";
         $where.="or (a.status_dt BETWEEN '{$lastStartDate}' and '{$lastEndDate}')";
-        $selectSql = "a.status_dt,a.status,f.rpt_cat,f.single,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid
-            ,b.region,b.name as city_name,c.name as region_name";
+        $selectSql = "a.status_dt,a.status,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid
+            ";
         $serviceRows = Yii::app()->db->createCommand()
             ->select("{$selectSql},a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
             ->from("swo_service a")
             ->leftJoin("swo_customer_type f","a.cust_type=f.id")
             ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->leftJoin("security{$suffix}.sec_city b","a.city=b.code")
-            ->leftJoin("security{$suffix}.sec_city c","b.region=c.code")
-            ->where("a.city in ({$city_allow}) and a.city not in ('ZY') and a.status in ('N','T') and ({$where})")
+            ->where("not(f.rpt_cat='INV' and f.single=1) and a.city in ({$city_allow}) and a.city not in ('ZY') and a.status in ('N','T') and ({$where})")
             ->order("a.city")
             ->queryAll();
         //所有需要計算的客戶服務(ID客戶服務)
@@ -177,79 +212,21 @@ class ComparisonForm extends CFormModel
             ->from("swoper$suffix.swo_serviceid a")
             ->leftJoin("swoper$suffix.swo_customer_type_id f","a.cust_type=f.id")
             ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->leftJoin("security{$suffix}.sec_city b","a.city=b.code")
-            ->leftJoin("security{$suffix}.sec_city c","b.region=c.code")
-            ->where("a.city in ({$city_allow}) and a.city not in ('ZY') and a.status in ('N','T') and ({$where})")
+            ->where("not(f.rpt_cat='INV' and f.single=1) and a.city in ({$city_allow}) and a.city not in ('ZY') and a.status in ('N','T') and ({$where})")
             ->order("a.city")
             ->queryAll();
         $serviceRows = $serviceRows?$serviceRows:array();
         $serviceRowsID = $serviceRowsID?$serviceRowsID:array();
         $rows = array_merge($serviceRows,$serviceRowsID);
-        $cityList = array();
         if(!empty($rows)){
             foreach ($rows as $row){
-                //rpt_cat='INV' and single=1的客户服务是产品，所以需要筛选出去
-                if($row["rpt_cat"]==="INV"&&intval($row["single"])===1){
-                    continue;
-                }
-                $row["region"] = RptSummarySC::strUnsetNumber($row["region"]);
-                $row["region_name"] = RptSummarySC::strUnsetNumber($row["region_name"]);
                 $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
                 $row["ctrt_period"] = is_numeric($row["ctrt_period"])?floatval($row["ctrt_period"]):0;
                 $row["b4_amt_paid"] = is_numeric($row["b4_amt_paid"])?floatval($row["b4_amt_paid"]):0;
-                $this->insertDataForRow($row,$data,$cityList,$uActualMoneyList);
+                $this->insertDataForRow($row,$data,$citySetList,$uActualMoneyList);
             }
         }
-        $this->defaultRowForCity($data,$cityList,$uActualMoneyList);//填充默認城市（無數據的城市需要顯示0）
-
-        $this->insertUData($this->start_date,$this->end_date,$data,$cityList);
-        $this->insertUData($lastStartDate,$lastEndDate,$data,$cityList);
-        $this->data = $data;
-        $session = Yii::app()->session;
-        $session['comparison_c01'] = $this->getCriteria();
-        return true;
-    }
-
-    //填充默認城市
-    private function defaultRowForCity(&$data,&$cityList,&$uActualMoneyList){
-        $city_allow = Yii::app()->user->city_allow();
-        $notCity = ComparisonSetList::notCitySqlStr();
-        $notCity = explode("','",$notCity);
-        $hasCity = array_keys($cityList);
-        $notCity = array_merge($hasCity,$notCity);
-        $suffix = Yii::app()->params['envSuffix'];
-        $where=" and b.code not in (SELECT f.region FROM security{$suffix}.sec_city f WHERE f.region is not NULL and f.region!='' GROUP BY f.region)";
-        if(!empty($notCity)){
-            $notCity = implode("','",$notCity);
-            $where.=" and b.code not in ('{$notCity}')";
-        }
-        //where
-        $rows = Yii::app()->db->createCommand()
-            ->select("b.code,b.region,b.name as city_name,c.name as region_name")
-            ->from("security{$suffix}.sec_city b")
-            ->leftJoin("security{$suffix}.sec_city c","b.region=c.code")
-            ->where("b.code in ({$city_allow}) {$where}")
-            ->order("b.code")
-            ->queryAll();
-        if($rows){
-            foreach ($rows as $row){
-                $row["region"] = RptSummarySC::strUnsetNumber($row["region"]);
-                $row["region_name"] = RptSummarySC::strUnsetNumber($row["region_name"]);
-                $city = $row["code"];
-                $region = $row["region"];
-                $region = $city==="MO"?"MO":$region;//澳門地區單獨顯示
-                if(!key_exists($region,$data)){
-                    $data[$region]=array(
-                        "region"=>$region,
-                        "region_name"=>$row["region_name"],
-                        "list"=>array()
-                    );
-                }
-                $cityList[$row["code"]]=$row["region"];//U系统同步使用
-                $arr = $this->defMoreCity($row["code"],$row["city_name"],$row["region"],$uActualMoneyList);
-                $data[$region]["list"][$city]=$arr;
-            }
-        }
+        return $data;
     }
 
     private function insertUData($startDate,$endDate,&$data,$cityList){
@@ -261,7 +238,7 @@ class ComparisonForm extends CFormModel
                 $city = $row["city"];
                 $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
                 if(key_exists($city,$cityList)){
-                    $region = $cityList[$city];
+                    $region = $cityList[$city]["region_code"];
                     if($year==$this->comparison_year){
                         $data[$region]["list"][$city]["u_actual_money"]+=$money;//服务生意额需要加上产品金额
                         $uStr = "u_sum";
@@ -275,14 +252,29 @@ class ComparisonForm extends CFormModel
                     $data[$region]["list"][$city][$uStr]+=$money;
                     $data[$region]["list"][$city][$newStr]+=$money;
                     $data[$region]["list"][$city][$netStr]+=$money;
+
+                    if($cityList[$city]["add_type"]==1){//叠加(城市配置的叠加)
+                        $city = $cityList[$city]["region_code"];
+                        $region = "";
+                        if(key_exists($city,$cityList)){
+                            $region = $cityList[$city]["region_code"];
+                        }
+                        if(key_exists($region,$data)){
+                            if($year==$this->comparison_year){
+                                $data[$region]["list"][$city]["u_actual_money"]+=$money;//服务生意额需要加上产品金额
+                            }
+                            $data[$region]["list"][$city][$uStr]+=$money;
+                            $data[$region]["list"][$city][$newStr]+=$money;
+                            $data[$region]["list"][$city][$netStr]+=$money;
+                        }
+                    }
                 }
             }
         }
     }
 
     //設置該城市的默認值
-    private function defMoreCity($city,$city_name,$region,$uActualMoneyList){
-        $cityList[$city] = $region;//U系统同步使用
+    private function defMoreCity($city,$city_name,$uActualMoneyList){
         $arr=array(
             "city"=>$city,
             "city_name"=>$city_name,
@@ -328,22 +320,18 @@ class ComparisonForm extends CFormModel
         return $arr;
     }
 
-    private function insertDataForRow($row,&$data,&$cityList,&$uActualMoneyList){
+    private function insertDataForRow($row,&$data,$citySetList,$uActualMoneyList){
 	    $year = intval($row["status_dt"]);//服务的年份
-        $region = empty($row["region"])?"none":$row["region"];
         $city = empty($row["city"])?"none":$row["city"];
-        $region = $city==="MO"?"MO":$region;//澳門地區單獨顯示
-        if(!key_exists($region,$data)){
-            $data[$region]=array(
-                "region"=>$region,
-                "region_name"=>$row["region_name"],
-                "list"=>array()
-            );
+        $citySet = CitySetForm::getListForCityCode($city,$citySetList);
+        if(!key_exists($city,$data)){//設置該城市的默認值
+            $arr = $this->defMoreCity($city,$citySet["city_name"],$uActualMoneyList);
+            $data[$city]=$arr;
         }
-        if(!key_exists($city,$data[$region]["list"])){//設置該城市的默認值
-            $cityList[$city] = $region;//U系统同步使用
-            $arr = $this->defMoreCity($city,$row["city_name"],$region,$uActualMoneyList);
-            $data[$region]["list"][$city]=$arr;
+        if($citySet["add_type"]==1){//叠加(城市配置的叠加)
+            if(!key_exists($citySet["region_code"],$data)){
+                $data[$citySet["region_code"]]=$this->defMoreCity($citySet["region_code"],$citySet["region_name"],$uActualMoneyList);
+            }
         }
         if($row["paid_type"]=="M"){//月金额
             $money = $row["amt_paid"]*$row["ctrt_period"];
@@ -364,17 +352,29 @@ class ComparisonForm extends CFormModel
         }
         switch ($row["status"]) {
             case "N"://新增
-                $data[$region]["list"][$city][$newStr] += $money;
+                $data[$city][$newStr] += $money;
+                if($citySet["add_type"]==1){//叠加(城市配置的叠加)
+                    $data[$citySet["region_code"]][$newStr] += $money;
+                }
                 break;
             case "T"://终止
                 if($this->comparison_year==$year){
-                    $data[$region]["list"][$city]["stopSumOnly"] += $monthMoney;
+                    $data[$city]["stopSumOnly"] += $monthMoney;
+                    if($citySet["add_type"]==1){//叠加(城市配置的叠加)
+                        $data[$citySet["region_code"]]["stopSumOnly"] += $monthMoney;
+                    }
                 }
                 $money *= -1;
-                $data[$region]["list"][$city][$stopStr] += $money;
+                $data[$city][$stopStr] += $money;
+                if($citySet["add_type"]==1){//叠加(城市配置的叠加)
+                    $data[$citySet["region_code"]][$stopStr] += $money;
+                }
                 break;
         }
-        $data[$region]["list"][$city][$netStr] += $money;
+        $data[$city][$netStr] += $money;
+        if($citySet["add_type"]==1){//叠加(城市配置的叠加)
+            $data[$citySet["region_code"]][$netStr] += $money;
+        }
     }
 
     protected function resetTdRow(&$list,$bool=false){
@@ -721,7 +721,9 @@ class ComparisonForm extends CFormModel
                             }
                             $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                             $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
-                            $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
+                            if($cityList["add_type"]!=1){ //疊加的城市不需要重複統計
+                                $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
+                            }
                             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                             $text = ComparisonForm::showNum($text);
                             $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);

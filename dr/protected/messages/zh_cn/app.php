@@ -157,5 +157,6 @@ return array(
     'Sales Analysis'=>'销售生产力分析',
     'Lifeline Set'=>'生命线设置',
     'Average office'=>'月预计平均人效',
+    'City Count Set'=>'城市统计设置',
 );
 ?>

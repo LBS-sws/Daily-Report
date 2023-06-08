@@ -151,5 +151,6 @@ return array(
     'Sales Analysis'=>'銷售生產力分析',
     'Lifeline Set'=>'生命線設置',
     'Average office'=>'月預計平均人效',
+    'City Count Set'=>'城市統計設置',
 );
 ?>

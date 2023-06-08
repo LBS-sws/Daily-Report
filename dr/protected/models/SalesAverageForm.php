@@ -76,6 +76,40 @@ class SalesAverageForm extends CFormModel
     public function retrieveData() {
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
+        $citySetList = CitySetForm::getCitySetList();
+        $lineList = LifelineForm::getLifeLineList($city_allow,$this->end_date);
+        $staffList = $this->getStaffCountForCity($city_allow,$citySetList);
+        $uList = $this->getUData($this->start_date,$this->end_date,$citySetList);
+        $serviceList = $this->getServiceData($citySetList);
+
+        foreach ($citySetList as $cityRow){
+            $city = $cityRow["code"];
+            $region = $cityRow["region_code"];
+            if(!key_exists($region,$data)){
+                $data[$region]=array();
+            }
+            if(key_exists($city,$serviceList)){
+                $arr=$serviceList[$city];
+            }else{
+                $arr=$this->defMoreCity($city,$cityRow["city_name"]);
+            }
+            $arr["life_num"]=key_exists($city,$lineList)?$lineList[$city]:0;
+            $arr["staff_num"]=key_exists($city,$staffList)?$staffList[$city]:0;
+            $arr["amt_sum"]+=key_exists($city,$uList)?$uList[$city]:0;
+            $arr["region_name"]=$cityRow["region_name"];
+            $arr["add_type"]=$cityRow["add_type"];
+            $data[$region][$city]=$arr;
+        }
+
+        $this->data = $data;
+        $session = Yii::app()->session;
+        $session['salesAverage_c01'] = $this->getCriteria();
+        return true;
+    }
+
+    private function getServiceData($citySetList){
+        $data=array();
+        $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $where="not(f.rpt_cat='INV' and f.single=1) and a.status_dt BETWEEN '{$this->start_date}' and '{$this->end_date}'";
         $selectSql = "a.city,sum(case a.paid_type
@@ -102,101 +136,98 @@ class SalesAverageForm extends CFormModel
         $serviceRows = $serviceRows?$serviceRows:array();
         $serviceRowsID = $serviceRowsID?$serviceRowsID:array();
         $rows = array_merge($serviceRows,$serviceRowsID);
-        $uList = $this->getUData($this->start_date,$this->end_date);
-        $staffList = $this->getStaffListForCity($city_allow);
-        $lineList = LifelineForm::getLifeLineList($city_allow,$this->end_date);
-        $cityList = General::getCityListWithNoDescendant($city_allow);
+
         if(!empty($rows)){
             foreach ($rows as $row){
                 $city = $row["city"];
-                if(key_exists($city,$cityList)){
-                    unset($cityList[$city]);
+                $citySet = CitySetForm::getListForCityCode($city,$citySetList);
+                if(!key_exists($city,$data)){
+                    $data[$city]=$this->defMoreCity($city,$citySet["city_name"]);
                 }
-                if(key_exists($city,$staffList)){
-                    $region_name = $staffList[$city]["region_name"];
-                    $city_name = $staffList[$city]["city_name"];
-                    $staff_num = $staffList[$city]["staff_num"];
-                }else{
-                    $region_name = "none";
-                    $city_name = "none";
-                    $staff_num = 0;
+                if($citySet["add_type"]==1){//叠加(城市配置的叠加)
+                    if(!key_exists($citySet["region_code"],$data)){
+                        $data[$citySet["region_code"]]=$this->defMoreCity($citySet["region_code"],$citySet["region_name"]);
+                    }
                 }
-                if(!key_exists($region_name,$data)){
-                    $data[$region_name]=array();
+                $sumAmount = round($row["sum_amount"],2);
+                $data[$city]["amt_sum"]+=$sumAmount;
+
+                if($citySet["add_type"]==1){//叠加(城市配置的叠加)
+                    $data[$citySet["region_code"]]["amt_sum"]+=$sumAmount;
                 }
-                if(!key_exists($city,$data[$region_name])){
-                    $data[$region_name][$city] = array(
-                        "city"=>$city,
-                        "amt_sum"=>key_exists($city,$uList)?$uList[$city]:0,
-                        "life_num"=>key_exists($city,$lineList)?$lineList[$city]:0,
-                        "staff_num"=>$staff_num,
-                        "city_name"=>$city_name,
-                        "region_name"=>$region_name,
-                    );
-                }
-                $data[$region_name][$city]["amt_sum"]+=round($row["sum_amount"],2);
             }
         }
-        if(!empty($cityList)){
-            foreach ($cityList as $city=>$name){
-                if(key_exists($city,$staffList)){
-                    $region_name = $staffList[$city]["region_name"];
-                    $city_name = $staffList[$city]["city_name"];
-                    $staff_num = $staffList[$city]["staff_num"];
-                }else{
-                    $region_name = "none";
-                    $city_name = "none";
-                    $staff_num = 0;
-                }
-                $data[$region_name][$city] = array(
-                    "city"=>$city,
-                    "amt_sum"=>key_exists($city,$uList)?$uList[$city]:0,
-                    "life_num"=>key_exists($city,$lineList)?$lineList[$city]:0,
-                    "staff_num"=>$staff_num,
-                    "city_name"=>$city_name,
-                    "region_name"=>$region_name,
-                );
-            }
-        }
-        $this->data = $data;
-        $session = Yii::app()->session;
-        $session['salesAverage_c01'] = $this->getCriteria();
-        return true;
+        return $data;
     }
 
-    private function getStaffListForCity($city_allow){
+    private function defMoreCity($city,$city_name){
+        return array(
+            "city"=>$city,
+            "amt_sum"=>0,
+            "life_num"=>0,
+            "staff_num"=>0,
+            "city_name"=>$city_name,
+            "region_name"=>"none",
+        );
+    }
+
+    private function getStaffCountForCity($city_allow,$citySetList){
         $list = array();
-        $staffList = SalesAnalysisForm::getSalesForHr($city_allow,$this->end_date);
-        $cityList = SalesAnalysisForm::getCityListAndRegion($city_allow);
-        if($staffList){
-            foreach ($staffList as $row){
+        $endDate = $this->end_date;
+        $suffix = Yii::app()->params['envSuffix'];
+        $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
+        $rows = Yii::app()->db->createCommand()
+            ->select("a.city,count(a.id) as staff_count")
+            ->from("security{$suffix}.sec_user_access f")
+            ->leftJoin("hr{$suffix}.hr_binding d","d.user_id=f.username")
+            ->leftJoin("hr{$suffix}.hr_employee a","d.employee_id=a.id")
+            ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}' and (
+                (a.staff_status = 0)
+                or
+                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/31')>='{$endDate}')
+             ) AND a.city in ({$city_allow})"
+            )->group("a.city")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
                 $city = $row["city"];
+                $citySet = CitySetForm::getListForCityCode($city,$citySetList);
+                $staff_count=empty($row["staff_count"])?0:$row["staff_count"];
                 if(!key_exists($city,$list)){
-                    $list[$city]=array(
-                        "staff_num"=>0,
-                        "city"=>$city,
-                        "city_name"=>key_exists($city,$cityList)?$cityList[$city]["city_name"]:"",
-                        "region_name"=>key_exists($city,$cityList)?$cityList[$city]["region_name"]:""
-                    );
+                    $list[$city]=0;
                 }
-                $list[$city]["staff_num"]++;
+                $list[$city]+=$staff_count;
+
+                if($citySet["add_type"]==1){//叠加(城市配置的叠加)
+                    if(!key_exists($citySet["region_code"],$list)){
+                        $list[$citySet["region_code"]]=0;
+                    }
+                    $list[$citySet["region_code"]]+=$staff_count;
+                }
             }
         }
         return $list;
     }
 
-    private function getUData($startDate,$endDate){
+    private function getUData($startDate,$endDate,$citySetList){
         $list=array();
         $json = Invoice::getInvData($startDate,$endDate);
         if($json["message"]==="Success"){
             $jsonData = $json["data"];
             foreach ($jsonData as $row){
                 $city = $row["city"];
+                $citySet = CitySetForm::getListForCityCode($city,$citySetList);
                 if(!key_exists($city,$list)){
                     $list[$city]=0;
                 }
                 $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
                 $list[$city]+=$money;
+
+                if($citySet["add_type"]==1){//叠加(城市配置的叠加)
+                    if(!key_exists($citySet["region_code"],$list)){
+                        $list[$citySet["region_code"]]=0;
+                    }
+                    $list[$citySet["region_code"]]+=$money;
+                }
             }
         }
         return $list;
@@ -351,7 +382,9 @@ class SalesAverageForm extends CFormModel
                             }
                             $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                             $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
-                            $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
+                            if($cityList["add_type"]!=1) { //疊加的城市不需要重複統計
+                                $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
+                            }
                             $tdClass = $this->getTdClassForRow($cityList);
                             $this->downJsonText["excel"][$cityList['region_name']][$cityList['city']][$keyStr]=$text;
                             $html.="<td class='{$tdClass}'><span>{$text}</span></td>";
