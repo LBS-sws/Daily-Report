@@ -50,5 +50,6 @@ return array(
 
 	"City"=>'城市',
 	"Office Name"=>'办事处',
+	"local office"=>'本部',
 );
 ?>

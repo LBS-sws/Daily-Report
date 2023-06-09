@@ -29,6 +29,7 @@ class RptStaff extends ReportData2 {
 //		$city = Yii::app()->user->city();
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = $this->criteria->city;
+        $localOffice = Yii::t("staff","local office");
 		$cutoff = isset($this->criteria->end_dt) ? $this->criteria->end_dt : date("Y/m/d");
 		
 		$start_dt = isset($this->criteria->start_dt) ? $this->criteria->start_dt : '2000-01-01';
@@ -59,7 +60,7 @@ class RptStaff extends ReportData2 {
 					e.remark AS remarks,
 					e.city,
 					y.name AS department,
-					office.name AS office_name,
+					if(office.name=0 or office.name is null,'{$localOffice}',office.name) AS office_name,
 					e.lcu,
 					e.luu,
 					e.lcd,
