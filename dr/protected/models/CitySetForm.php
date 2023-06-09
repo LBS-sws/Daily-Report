@@ -66,16 +66,20 @@ class CitySetForm extends CFormModel
 		return true;
 	}
 
-	public static function getCitySetList(){
+	public static function getCitySetList($city_allow=""){
 	    $list=array();
-        $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
+        $cityWhere="";
+        if($city_allow!=="all"){
+            $city_allow = empty($city_allow)?Yii::app()->user->city_allow():$city_allow;
+            $cityWhere=" and b.code in ({$city_allow})";
+        }
 		$rows = Yii::app()->db->createCommand()
             ->select("a.code,a.name as city_name,b.show_type,b.add_type,b.region_code,f.name as region_name")
             ->from("swo_city_set b")
             ->leftJoin("security$suffix.sec_city a","a.code=b.code")
             ->leftJoin("security$suffix.sec_city f","b.region_code=f.code")
-            ->where("b.show_type=1 and b.code in ({$city_allow})")
+            ->where("b.show_type=1 {$cityWhere}")
             ->order("b.z_index desc,a.name asc")
             ->queryAll();
 		if ($rows){

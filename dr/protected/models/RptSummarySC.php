@@ -11,7 +11,11 @@ class RptSummarySC extends ReportData2 {
         $this->criteria->start_dt = General::toDate($this->criteria->start_dt);
         $this->criteria->end_dt = General::toDate($this->criteria->end_dt);
         $data = array();
-        $citySetList = CitySetForm::getCitySetList();
+        $city_allow="all";
+        if(isset($this->criteria->city)&&!empty($this->criteria->city)){
+            $city_allow = $this->criteria->city;
+        }
+        $citySetList = CitySetForm::getCitySetList($city_allow);
         $serviceList = $this->getServiceData($citySetList);
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
