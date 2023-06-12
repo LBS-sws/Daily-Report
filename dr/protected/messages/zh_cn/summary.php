@@ -126,5 +126,9 @@ return array(
     'end region'=>'最终统计区域',
     'add type'=>'是否叠加',
     'z index'=>'层级',
+
+    'staff office'=>'办事处',
+    'office Name'=>'办事处名称',
+    'local office'=>'本部',
 );
 ?>

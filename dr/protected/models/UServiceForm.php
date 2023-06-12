@@ -343,6 +343,7 @@ class UServiceForm extends CFormModel
     public function downExcel($excelData){
         if(!is_array($excelData)){
             $excelData = json_decode($excelData,true);
+            $excelData = empty($excelData)?array():$excelData;
             $excelData = key_exists("excel",$excelData)?$excelData["excel"]:array();
         }
         $this->validateDate("","");
@@ -353,7 +354,7 @@ class UServiceForm extends CFormModel
         $excel->init();
         $excel->setUServiceHeader($headList);
         $excel->setUServiceData($excelData);
-        $excel->outExcel("uService");
+        $excel->outExcel(Yii::t("app","U Service Amount"));
     }
 
     public static function getCityList(){

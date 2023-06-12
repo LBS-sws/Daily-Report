@@ -516,6 +516,6 @@ class HistoryStopForm extends CFormModel
         $excel->init();
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);
-        $excel->outExcel("HistoryStop");
+        $excel->outExcel(Yii::t("app","History Stop"));
     }
 }

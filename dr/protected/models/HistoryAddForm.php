@@ -591,6 +591,6 @@ class HistoryAddForm extends CFormModel
         $excel->init();
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);
-        $excel->outExcel("HistoryAdd");
+        $excel->outExcel(Yii::t("app","History Add"));
     }
 }

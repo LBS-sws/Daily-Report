@@ -114,11 +114,12 @@ class SalesAnalysisForm extends CFormModel
         $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
         $list=array('staff'=>array(),'user'=>array());
         $rows = Yii::app()->db->createCommand()
-            ->select("a.id,a.code,a.name,a.city,d.user_id,a.entry_time,
+            ->select("a.id,a.code,a.name,a.city,d.user_id,a.entry_time,a.office_id,g.name as office_name,
             CONCAT('') as city_name,CONCAT('') as region,CONCAT('') as region_name")
             ->from("security{$suffix}.sec_user_access f")
             ->leftJoin("hr{$suffix}.hr_binding d","d.user_id=f.username")
             ->leftJoin("hr{$suffix}.hr_employee a","d.employee_id=a.id")
+            ->leftJoin("hr{$suffix}.hr_office g","a.office_id=g.id")
             ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}' and (
                 (a.staff_status = 0)
                 or
@@ -323,6 +324,7 @@ class SalesAnalysisForm extends CFormModel
                 $name_label = $staffRow["name"]." ({$staffRow["code"]})";
                 $name_label.= empty($staffRow["staff_status"])?"":"（已离职）";
                 $staffRow["employee_name"] = $name_label;
+                $staffRow["office_name"] = empty($staffRow["office_id"])?Yii::t("summary","local office"):$staffRow["office_name"];
                 if(key_exists($city,$cityList)){
                     $staffRow["region"] = $cityList[$city]["region"];
                     $staffRow["city_name"] = $cityList[$city]["city_name"];
@@ -331,11 +333,8 @@ class SalesAnalysisForm extends CFormModel
                 if(key_exists($username,$lastData)){//上一年平均生意额
                     $staffRow["last_average"] = round($lastData[$username]["last_amt"]/$lastData[$username]["count_month"]);
                 }
-                if(key_exists($city,$lifelineList)){//生命线
-                    $staffRow["life_num"] = $lifelineList[$city];
-                }else{
-                    $staffRow["life_num"] = 80000;
-                }
+                //生命线
+                $staffRow["life_num"] = LifelineForm::getLineValueForC_O($lifelineList,$city,$staffRow["office_id"]);
                 $this->setStaffRowForNowData($staffRow,$nowData);
                 $region = empty($staffRow["region_name"])?"null":$staffRow["region_name"];
                 if (!key_exists($region,$data)){
@@ -383,6 +382,7 @@ class SalesAnalysisForm extends CFormModel
         $topList=array(
             array("name"=>Yii::t("summary","Employee Name"),"rowspan"=>2,"background"=>"#000000","color"=>"#FFFFFF"),//姓名
             array("name"=>Yii::t("summary","City"),"rowspan"=>2,"background"=>"#000000","color"=>"#FFFFFF"),//城市
+            array("name"=>Yii::t("summary","staff office"),"rowspan"=>2,"background"=>"#000000","color"=>"#FFFFFF"),//辦事處
             array("name"=>Yii::t("summary","Reference"),"background"=>"#000000","color"=>"#FFFFFF",
                 "colspan"=>array(
                     array("name"=>$this->last_year.Yii::t("summary"," year average")),//参考平均值
@@ -470,6 +470,7 @@ class SalesAnalysisForm extends CFormModel
         $bodyKey = array(
             "employee_name",
             "city_name",
+            "office_name",
             "last_average",
             "life_num"
         );
@@ -484,7 +485,7 @@ class SalesAnalysisForm extends CFormModel
     //設置顏色
     public static function getTextColorForKeyStr($text,$keyStr,$num){
         $tdClass = "";
-        if($text!==""&&strpos($keyStr,'/')!==false&&is_numeric($text)){
+        if($text!==""&&(strpos($keyStr,'/')!==false||$keyStr=="now_average")&&is_numeric($text)){
             if($text>=$num){
                 $tdClass="text-green";
             }else{
@@ -527,6 +528,7 @@ class SalesAnalysisForm extends CFormModel
                     $regionRow["region"]=$regionList["region_code"];
                     $regionRow["city_name"]=$regionList["region_name"];
                     $regionRow["employee_name"]="";
+                    $regionRow["office_name"]="-";
                     $html.=$this->printTableTr($regionRow,$bodyKey);
                     $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
                 }
@@ -534,6 +536,7 @@ class SalesAnalysisForm extends CFormModel
             //地区汇总
             $allRow["employee_name"]="";
             $allRow["region"]="allRow";
+            $allRow["office_name"]="-";
             $allRow["city_name"]=Yii::t("summary","all total");
             $html.=$this->printTableTr($allRow,$bodyKey);
             $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
@@ -581,7 +584,7 @@ class SalesAnalysisForm extends CFormModel
         $threeModel = new SalesAnalysisCityForm();
         $threeModel->setAttrAll($this);
         $excel = new DownSummary();
-        $excel->colTwo=2;
+        $excel->colTwo=3;
         $excel->SetHeaderTitle(Yii::t("summary","Capacity Staff")."（{$this->search_date}）");
         $titleTwo = date("Y/m/01/",strtotime($this->end_date))." ~ ".$this->end_date;
         $excel->SetHeaderString($titleTwo);
@@ -592,6 +595,7 @@ class SalesAnalysisForm extends CFormModel
         $data = key_exists("one",$excelData)?json_decode($excelData["one"],true):array();
         $excel->setSalesAnalysisData($data);
         //第二页
+        $excel->colTwo=2;
         $sheetName = Yii::t("summary","Capacity Area");
         $excel->addSheet($sheetName);
         $excel->SetHeaderTitle($sheetName."（{$this->search_date}）");
@@ -606,7 +610,7 @@ class SalesAnalysisForm extends CFormModel
         $excel->setUServiceHeader($threeModel->getTopArr());
         $data = key_exists("three",$excelData)?json_decode($excelData["three"],true):array();
         $excel->setUServiceData($data);
-        $excel->outExcel("SalesAnalysis");
+        $excel->outExcel(Yii::t("app","Sales Analysis"));
     }
 
     public static function getMenuList($active=1){

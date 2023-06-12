@@ -551,6 +551,6 @@ class SummaryForm extends CFormModel
         $excel->init();
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);
-        $excel->outExcel("Summary");
+        $excel->outExcel(Yii::t("app","Summary"));
     }
 }

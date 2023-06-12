@@ -613,6 +613,6 @@ class HistoryNetForm extends CFormModel
         $excel->init();
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);
-        $excel->outExcel("HistoryNet");
+        $excel->outExcel(Yii::t("app","History Net"));
     }
 }

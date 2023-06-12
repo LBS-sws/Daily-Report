@@ -372,8 +372,7 @@ class DownSummary{
         $objWriter->save('php://output');
         $output = ob_get_clean();
         spl_autoload_register(array('YiiBase','autoload'));
-        $time=time();
-        $str="{$name}_".$time.".xlsx";
+        $filename= iconv('utf-8','gb2312',$name);
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
@@ -381,7 +380,7 @@ class DownSummary{
         header("Content-Type:application/vnd.ms-execl");
         header("Content-Type:application/octet-stream");
         header("Content-Type:application/download");;
-        header('Content-Disposition:attachment;filename="'.$str.'"');
+        header('Content-Disposition:attachment;filename="'.$filename.'.xlsx"');
         header("Content-Transfer-Encoding:binary");
         echo $output;
     }

@@ -84,7 +84,7 @@ class SalesAverageForm extends CFormModel
 
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
-            $region = $cityRow["region_code"];
+            $region = $cityRow["region_name"];
             if(!key_exists($region,$data)){
                 $data[$region]=array();
             }
@@ -93,7 +93,7 @@ class SalesAverageForm extends CFormModel
             }else{
                 $arr=$this->defMoreCity($city,$cityRow["city_name"]);
             }
-            $arr["life_num"]=key_exists($city,$lineList)?$lineList[$city]:0;
+            $arr["life_num"]=key_exists($city,$lineList)?$lineList[$city]:80000;
             $arr["staff_num"]=key_exists($city,$staffList)?$staffList[$city]:0;
             $arr["amt_sum"]+=key_exists($city,$uList)?$uList[$city]:0;
             $arr["region_name"]=$cityRow["region_name"];
@@ -369,6 +369,7 @@ class SalesAverageForm extends CFormModel
                 if(!empty($regionList)) {
                     $regionRow = array('city_num'=>0);//地区汇总
                     foreach ($regionList as $cityList) {
+                        $city = $cityList["city"];
                         $allRow["city_num"]++;
                         $regionRow["city_num"]++;
                         $this->resetTdRow($cityList);
@@ -386,8 +387,13 @@ class SalesAverageForm extends CFormModel
                                 $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             }
                             $tdClass = $this->getTdClassForRow($cityList);
+                            $dataClick="";
+                            if ($keyStr=="staff_num"){
+                                $tdClass.=" show_staff";
+                                $dataClick=" data-city='{$city}' ";
+                            }
                             $this->downJsonText["excel"][$cityList['region_name']][$cityList['city']][$keyStr]=$text;
-                            $html.="<td class='{$tdClass}'><span>{$text}</span></td>";
+                            $html.="<td class='{$tdClass}' {$dataClick}><span>{$text}</span></td>";
                         }
                         $html.="</tr>";
                     }
@@ -441,6 +447,6 @@ class SalesAverageForm extends CFormModel
         $excel->init();
         $excel->setUServiceHeader($headList);
         $excel->setSalesAnalysisData($excelData);
-        $excel->outExcel("SalesAverage");
+        $excel->outExcel(Yii::t("app","Average office"));
     }
 }

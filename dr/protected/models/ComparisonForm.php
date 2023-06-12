@@ -788,6 +788,6 @@ class ComparisonForm extends CFormModel
         $excel->init();
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);
-        $excel->outExcel("Comparison");
+        $excel->outExcel(Yii::t("app","Comparison"));
     }
 }

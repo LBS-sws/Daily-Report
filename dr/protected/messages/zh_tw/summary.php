@@ -126,5 +126,9 @@ return array(
     'end region'=>'最終統計區域',
     'add type'=>'是否疊加',
     'z index'=>'層級',
+
+    'staff office'=>'辦事處',
+    'office Name'=>'辦事處名稱',
+    'local office'=>'本部',
 );
 ?>
