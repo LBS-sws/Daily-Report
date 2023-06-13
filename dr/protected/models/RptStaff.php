@@ -60,7 +60,7 @@ class RptStaff extends ReportData2 {
 					e.remark AS remarks,
 					e.city,
 					y.name AS department,
-					if(office.name=0 or office.name is null,'{$localOffice}',office.name) AS office_name,
+					if(e.office_id=0,'{$localOffice}',office.name) AS office_name,
 					e.lcu,
 					e.luu,
 					e.lcd,
