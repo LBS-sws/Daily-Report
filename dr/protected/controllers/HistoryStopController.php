@@ -64,6 +64,7 @@ class HistoryStopController extends Controller
 
 	public function actionView()
 	{
+        set_time_limit(0);
         $model = new HistoryStopForm('view');
         if (isset($_POST['HistoryStopForm'])) {
             $model->attributes = $_POST['HistoryStopForm'];

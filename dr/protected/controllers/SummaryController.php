@@ -57,6 +57,7 @@ class SummaryController extends Controller
 
 	public function actionView()
 	{
+        set_time_limit(0);
         $model = new SummaryForm('view');
         if (isset($_POST['SummaryForm'])) {
             $model->attributes = $_POST['SummaryForm'];

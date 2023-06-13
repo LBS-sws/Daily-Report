@@ -69,6 +69,7 @@ class ComparisonController extends Controller
 
 	public function actionView()
 	{
+	    set_time_limit(0);
         $model = new ComparisonForm('view');
         if (isset($_POST['ComparisonForm'])) {
             $model->attributes = $_POST['ComparisonForm'];

@@ -64,6 +64,7 @@ class HistoryNetController extends Controller
 
 	public function actionView()
 	{
+        set_time_limit(0);
         $model = new HistoryNetForm('view');
         if (isset($_POST['HistoryNetForm'])) {
             $model->attributes = $_POST['HistoryNetForm'];

@@ -64,6 +64,7 @@ class HistoryAddController extends Controller
 
 	public function actionView()
 	{
+        set_time_limit(0);
         $model = new HistoryAddForm('view');
         if (isset($_POST['HistoryAddForm'])) {
             $model->attributes = $_POST['HistoryAddForm'];
