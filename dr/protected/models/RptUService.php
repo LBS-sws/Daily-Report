@@ -34,7 +34,7 @@ class RptUService extends ReportData2 {
         $list = array();
 		if ($rows) {
 			foreach ($rows as $row) {
-                $city = $row["Text"];
+                $city = SummaryForm::resetCity($row["Text"]);
                 $money = empty($row["TermCount"])?0:floatval($row["Fee"])/floatval($row["TermCount"]);
 
                 $staffCount = 1;

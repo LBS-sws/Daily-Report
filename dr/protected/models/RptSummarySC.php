@@ -191,7 +191,7 @@ class RptSummarySC extends ReportData2 {
             ->queryAll();
         if ($rows) {
             foreach ($rows as $row){
-                $city = $row["City"];
+                $city = SummaryForm::resetCity($row["Text"]);
                 $money = is_numeric($row["InvoiceAmount"])?floatval($row["InvoiceAmount"]):0;
                 if(key_exists($city,$cityList)){
                     $region = $cityList[$city];
@@ -212,7 +212,7 @@ class RptSummarySC extends ReportData2 {
         if($json["message"]==="Success"){
             $jsonData = $json["data"];
             foreach ($jsonData as $row){
-                $city = $row["city"];
+                $city = SummaryForm::resetCity($row["city"]);
                 $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
                 if(key_exists($city,$cityList)){
                     $region = $cityList[$city]["region_code"];

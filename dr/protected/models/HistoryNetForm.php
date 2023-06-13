@@ -183,7 +183,7 @@ class HistoryNetForm extends CFormModel
             ->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $city = $row["Text"];
+                $city = SummaryForm::resetCity($row["Text"]);
                 $date = $row["JobDate"];
                 $money = empty($row["sum_amount"])?0:round($row["sum_amount"],2);
 
@@ -213,7 +213,7 @@ class HistoryNetForm extends CFormModel
         if($json["message"]==="Success"){
             $jsonData = $json["data"];
             foreach ($jsonData as $row){
-                $city = $row["city"];
+                $city = SummaryForm::resetCity($row["city"]);
                 $date = date("Y/m",strtotime($row["invoice_dt"]));
                 $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
                 if(key_exists($city,$citySetList)){

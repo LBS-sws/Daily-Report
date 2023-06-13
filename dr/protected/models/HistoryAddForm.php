@@ -183,7 +183,7 @@ class HistoryAddForm extends CFormModel
         if($json["message"]==="Success"){
             $jsonData = $json["data"];
             foreach ($jsonData as $row){
-                $city = $row["city"];
+                $city = SummaryForm::resetCity($row["city"]);
                 $date = date("Y/m",strtotime($row["invoice_dt"]));
                 if(key_exists($city,$citySetList)){
                     $region = $citySetList[$city]["region_code"];

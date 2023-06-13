@@ -214,7 +214,7 @@ class SalesAverageForm extends CFormModel
         if($json["message"]==="Success"){
             $jsonData = $json["data"];
             foreach ($jsonData as $row){
-                $city = $row["city"];
+                $city = SummaryForm::resetCity($row["city"]);
                 $citySet = CitySetForm::getListForCityCode($city,$citySetList);
                 if(!key_exists($city,$list)){
                     $list[$city]=0;

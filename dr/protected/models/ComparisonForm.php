@@ -235,7 +235,7 @@ class ComparisonForm extends CFormModel
         if($json["message"]==="Success"){
             $jsonData = $json["data"];
             foreach ($jsonData as $row){
-                $city = $row["city"];
+                $city = SummaryForm::resetCity($row["city"]);
                 $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
                 if(key_exists($city,$cityList)){
                     $region = $cityList[$city]["region_code"];

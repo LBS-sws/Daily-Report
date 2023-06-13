@@ -116,6 +116,17 @@ class SummaryForm extends CFormModel
             'search_end_date'=>$this->search_end_date
         );
     }
+	
+	//轉換U系統的城市（國際版專用）
+	public static function resetCity($city){
+		switch($city){
+			case "KL":
+				return "MY";
+			case "SL":
+				return "MY";
+		}
+		return $city;
+	}
 
     //获取U系统的服务单数据
     public static function getUActualMoney($startDay,$endDay,$city_allow="",$citySetList=array()){
@@ -137,7 +148,7 @@ class SummaryForm extends CFormModel
             ->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $city = $row["Text"];
+                $city = SummaryForm::resetCity($row["Text"]);
                 $money = empty($row["sum_amount"])?0:round($row["sum_amount"],2);
                 if(!key_exists($city,$list)){
                     $list[$city]=0;
