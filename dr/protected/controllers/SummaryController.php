@@ -28,7 +28,7 @@ class SummaryController extends Controller
 				'expression'=>array('SummaryController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view','downExcel'),
+				'actions'=>array('index','view','downExcel','test'),
 				'expression'=>array('SummaryController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -36,6 +36,14 @@ class SummaryController extends Controller
 			),
 		);
 	}
+
+	public function actionTest($startDate="",$endDate=""){
+        $startDate=empty($startDate)?date("Y/m/01"):$startDate;
+        $endDate=empty($endDate)?date("Y/m/d"):$endDate;
+        $arr = SummaryForm::getUActualMoney($startDate,$endDate);
+        var_dump($arr);
+        die();
+    }
 
 	public function actionIndex()
 	{

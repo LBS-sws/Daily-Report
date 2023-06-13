@@ -372,7 +372,7 @@ class DownSummary{
         $objWriter->save('php://output');
         $output = ob_get_clean();
         spl_autoload_register(array('YiiBase','autoload'));
-        $filename= iconv('utf-8','gb2312',$name);
+        $filename= iconv('utf-8','gbk//ignore',$name);
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate, post-check=0, pre-check=0");

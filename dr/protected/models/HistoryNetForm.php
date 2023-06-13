@@ -603,7 +603,7 @@ class HistoryNetForm extends CFormModel
         $headList = $this->getTopArr();
         $excel = new DownSummary();
         $excel->colTwo=1;
-        $excel->SetHeaderTitle(Yii::t("app","History Stop")."（{$this->search_date}）");
+        $excel->SetHeaderTitle(Yii::t("app","History Net")."（{$this->search_date}）");
         $titleTwo = $this->start_date." ~ ".$this->end_date."\r\n";
         $titleTwo.="本周:".date("Y/m/d",$this->week_start)." ~ ".date("Y/m/d",$this->week_end)." ({$this->week_day})\r\n";
         $titleTwo.="上周:";
