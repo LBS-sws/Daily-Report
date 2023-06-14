@@ -70,7 +70,7 @@ class ReportController extends Controller
         $startDate = empty($startDate)?date("Y/m/01"):$startDate;
         $endDate = empty($endDate)?date("Y/m/d"):$endDate;
         $json = Invoice::getInvData($startDate,$endDate);
-        var_dump($json);
+        var_export($json);
         die();
 	}
 
