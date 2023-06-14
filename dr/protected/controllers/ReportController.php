@@ -66,8 +66,10 @@ class ReportController extends Controller
 		);
 	}
 
-	public function actionTextCURL(){
-        $json = Invoice::getInvData("2023/02/01","2023/02/31");
+	public function actionTextCURL($startDate="",$endDate=""){
+        $startDate = empty($startDate)?date("Y/m/01"):$startDate;
+        $endDate = empty($endDate)?date("Y/m/d"):$endDate;
+        $json = Invoice::getInvData($startDate,$endDate);
         var_dump($json);
         die();
 	}
