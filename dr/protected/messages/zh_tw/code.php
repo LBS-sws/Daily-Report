@@ -105,5 +105,9 @@ return array(
 
     'rpt u'=>'u系統對應id',
     'score bool'=>'商業組重點開發客戶',
+    'city type'=>'城市類型',
+    'city'=>'城市',
+    'ka city'=>'ka城市',
+    'area'=>'區域',
 );
 ?>

@@ -18,6 +18,7 @@ class RptUService extends ReportData2 {
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
         $city_allow = $this->criteria->city;
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $startDay = isset($this->criteria->start_dt)?date("Y/m/d",strtotime($this->criteria->start_dt)):date("Y/m/d");
         $endDay = isset($this->criteria->end_dt)?date("Y/m/d",strtotime($this->criteria->end_dt)):date("Y/m/d");
         $citySql = " and b.Text in ({$city_allow})";

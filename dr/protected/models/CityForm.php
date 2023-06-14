@@ -6,6 +6,7 @@ class CityForm extends CFormModel
 	public $code;
 	public $name;
 	public $region;
+	public $ka_bool;//城市类型 0：城市 1：ka城市 2：区域
 	public $incharge;
 	public $currency;
 
@@ -26,6 +27,7 @@ class CityForm extends CFormModel
 			'region'=>Yii::t('code','Region'),
 			'incharge'=>Yii::t('code','In Charge'),
 			'currency'=>Yii::t('code','Currency'),
+			'ka_bool'=>Yii::t('code','city type'),
 		);
 	}
 
@@ -41,8 +43,8 @@ class CityForm extends CFormModel
 					'className'=>'City',
 					'on'=>'new',
 				),
-			array('name,code','required'),
-			array('region,incharge,currency','safe'),
+			array('name,code,ka_bool','required'),
+			array('region,ka_bool,incharge,currency','safe'),
 		);
 	}
 
@@ -55,6 +57,7 @@ class CityForm extends CFormModel
 			$this->code = $row['code'];
 			$this->name = $row['name'];
 			$this->region = $row['region'];
+			$this->ka_bool = $row['ka_bool'];
 			$this->incharge = $row['incharge'];
 			
 			$sql = "select * from security$suffix.sec_city_info where code='".$index."'";
@@ -96,13 +99,14 @@ class CityForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into security$suffix.sec_city(
-						code, name, region, lcu, luu) values (
-						:code, :name, :region, :lcu, :luu)";
+						code, name, region,ka_bool, lcu, luu) values (
+						:code, :name, :region,:ka_bool, :lcu, :luu)";
 				break;
 			case 'edit':
 				$sql = "update security$suffix.sec_city set 
 					name = :name, 
 					region = :region,
+					ka_bool = :ka_bool,
 					incharge = :incharge, 
 					luu = :luu
 					where code = :code";
@@ -116,6 +120,8 @@ class CityForm extends CFormModel
 			$command->bindParam(':code',$this->code,PDO::PARAM_STR);
 		if (strpos($sql,':name')!==false)
 			$command->bindParam(':name',$this->name,PDO::PARAM_STR);
+		if (strpos($sql,':ka_bool')!==false)
+			$command->bindParam(':ka_bool',$this->ka_bool,PDO::PARAM_INT);
 		if (strpos($sql,':region')!==false)
 			$command->bindParam(':region',$this->region,PDO::PARAM_STR);
 		if (strpos($sql,':incharge')!==false)

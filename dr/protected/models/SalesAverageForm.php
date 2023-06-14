@@ -76,11 +76,12 @@ class SalesAverageForm extends CFormModel
     public function retrieveData() {
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
-        $citySetList = CitySetForm::getCitySetList();
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
+        $citySetList = CitySetForm::getCitySetList($city_allow);
         $lineList = LifelineForm::getLifeLineList($city_allow,$this->end_date);
         $staffList = $this->getStaffCountForCity($city_allow,$citySetList);
         $uList = $this->getUData($this->start_date,$this->end_date,$citySetList);
-        $serviceList = $this->getServiceData($citySetList);
+        $serviceList = $this->getServiceData($citySetList,$city_allow);
 
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
@@ -107,9 +108,8 @@ class SalesAverageForm extends CFormModel
         return true;
     }
 
-    private function getServiceData($citySetList){
+    private function getServiceData($citySetList,$city_allow){
         $data=array();
-        $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $where="not(f.rpt_cat='INV' and f.single=1) and a.status_dt BETWEEN '{$this->start_date}' and '{$this->end_date}'";
         $selectSql = "a.city,sum(case a.paid_type

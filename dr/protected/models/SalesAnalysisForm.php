@@ -92,20 +92,7 @@ class SalesAnalysisForm extends CFormModel
     }
 
     public static function getCityListAndRegion($city_allow){
-        $suffix = Yii::app()->params['envSuffix'];
-        $cityList=array();
-        $cityRows = Yii::app()->db->createCommand()
-            ->select("a.code,a.region,a.name as city_name,d.name as region_name")
-            ->from("security{$suffix}.sec_city a")
-            ->leftJoin("security{$suffix}.sec_city d","a.region=d.code")
-            ->where("a.code in ({$city_allow})")->queryAll();
-        if($cityRows){
-            foreach ($cityRows as $cityRow){
-                $cityRow["region_name"] = RptSummarySC::strUnsetNumber($cityRow["region_name"]);
-                $cityList[$cityRow["code"]]=$cityRow;
-            }
-        }
-        return $cityList;
+        return CitySetForm::getCitySetList($city_allow);
     }
 
     public static function getSalesForHr($city_allow,$endDate=""){
@@ -307,9 +294,26 @@ class SalesAnalysisForm extends CFormModel
         return $data;
     }
 
+    public static function getCitySetForCityAllow($city_allow){
+        $rows = Yii::app()->db->createCommand()
+            ->select("code")->from("swo_city_set")
+            ->where("code in ({$city_allow}) or region_code in ({$city_allow})")
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $city = "'{$row["code"]}'";
+                if (strpos($city_allow,$city)===false){
+                    $city_allow.=",".$city;
+                }
+            }
+        }
+        return $city_allow;
+    }
+
     public function retrieveData() {
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $lifelineList = LifelineForm::getLifeLineList($city_allow,$this->search_date);//生命线
         $staffRows = $this->getSalesForHr($city_allow,$this->search_date);//员工信息
         $lastData = $this->getLastYearData($city_allow);//前一年的平均值

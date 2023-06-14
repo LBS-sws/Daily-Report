@@ -92,8 +92,9 @@ class HistoryNetForm extends CFormModel
     public function retrieveData() {
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
-        $citySetList = CitySetForm::getCitySetList();
-        $serviceList = $this->getServiceData($citySetList);
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
+        $citySetList = CitySetForm::getCitySetList($city_allow);
+        $serviceList = $this->getServiceData($citySetList,$city_allow);
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
             $region = $cityRow["region_code"];
@@ -122,9 +123,8 @@ class HistoryNetForm extends CFormModel
         return true;
     }
 
-    private function getServiceData($citySetList){
+    private function getServiceData($citySetList,$city_allow){
         $data = array();
-        $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
 
         $where="(a.status_dt BETWEEN '{$this->start_date}' and '{$this->end_date}')";

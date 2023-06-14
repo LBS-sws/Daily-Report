@@ -71,14 +71,25 @@ $this->pageTitle=Yii::app()->name . ' - City Form';
 			</div>
 
 			<div class="form-group">
+				<?php echo $form->labelEx($model,'ka_bool',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-3">
+					<?php
+                    echo $form->dropDownList($model, 'ka_bool', CityList::getCityTypeList(),
+                        array('disabled'=>($model->scenario=='view'))
+                    );
+                    ?>
+				</div>
+			</div>
+
+			<div class="form-group">
 				<?php echo $form->labelEx($model,'region',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php 
+					<?php
 						$item = General::getCityList();
 						$item = array_merge(array(''=>Yii::t('misc','-- None --')),$item);
 						echo $form->dropDownList($model, 'region', $item,
 							array('disabled'=>($model->scenario=='view'))
-						); 
+						);
 					?>
 				</div>
 			</div>

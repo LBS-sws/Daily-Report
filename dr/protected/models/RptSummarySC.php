@@ -16,7 +16,7 @@ class RptSummarySC extends ReportData2 {
             $city_allow = $this->criteria->city;
         }
         $citySetList = CitySetForm::getCitySetList($city_allow);
-        $serviceList = $this->getServiceData($citySetList);
+        $serviceList = $this->getServiceData($citySetList,$city_allow);
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
             $region = $cityRow["region_code"];
@@ -63,15 +63,15 @@ class RptSummarySC extends ReportData2 {
         );
     }
 
-    private function getServiceData($citySetList){
+    private function getServiceData($citySetList,$city_allow){
 	    $data = array();
         $suffix = Yii::app()->params['envSuffix'];
         $where = '';
         $where .= " and "."a.status_dt>='{$this->criteria->start_dt} 00:00:00'";
         $where .= " and "."a.status_dt<='{$this->criteria->end_dt} 23:59:59'";
         $where .= " and not(f.rpt_cat='INV' and f.single=1)";
-        if(isset($this->criteria->city)&&!empty($this->criteria->city)){
-            $where .= " and "."a.city in ({$this->criteria->city})";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $where .= " and "."a.city in ({$city_allow})";
         }
         $selectSql = "a.status,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid
             ";

@@ -14,6 +14,7 @@ class CityList extends CListPageModel
 			'name'=>Yii::t('code','Name'),
 			'region_name'=>Yii::t('code','Region'),
 			'incharge'=>Yii::t('code','In Charge'),
+			'ka_bool'=>Yii::t('code','city type'),
 		);
 	}
 	
@@ -64,6 +65,9 @@ class CityList extends CListPageModel
 				case 'incharge':
 					$order .= " order by c.disp_name ";
 					break;
+				case 'ka_bool':
+					$order .= " order by a.ka_bool ";
+					break;
 			}
 			if ($this->orderType=='D') $order .= "desc ";
 		}
@@ -84,6 +88,7 @@ class CityList extends CListPageModel
 						'name'=>$record['name'],
 						'region_name'=>$record['region_name'],
 						'incharge'=>$record['incharge'],
+						'ka_bool'=>self::getCityTypeList($record['ka_bool'],true),
 					);
 			}
 		}
@@ -92,4 +97,20 @@ class CityList extends CListPageModel
 		return true;
 	}
 
+	public static function getCityTypeList($key=0,$bool=false){
+	    $list = array(
+	        0=>Yii::t("code","city"),
+	        1=>Yii::t("code","ka city"),
+	        2=>Yii::t("code","area"),
+        );
+	    if($bool){
+	        if(key_exists($key,$list)){
+	            return $list[$key];
+            }else{
+	            return $key;
+            }
+        }else{
+	        return $list;
+        }
+    }
 }

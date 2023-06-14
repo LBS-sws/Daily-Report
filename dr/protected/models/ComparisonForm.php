@@ -147,6 +147,7 @@ class ComparisonForm extends CFormModel
     public function retrieveData() {
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $suffix = Yii::app()->params['envSuffix'];
         $this->start_date = empty($this->start_date)?date("Y/01/01"):$this->start_date;
         $this->end_date = empty($this->end_date)?date("Y/m/t"):$this->end_date;
@@ -156,9 +157,9 @@ class ComparisonForm extends CFormModel
         ComparisonForm::setDayNum($this->start_date,$this->end_date,$this->day_num);
         $lastStartDate = ($this->comparison_year-1)."/".$this->month_start_date;
         $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
-        $citySetList = CitySetForm::getCitySetList();
+        $citySetList = CitySetForm::getCitySetList($city_allow);
         $uActualMoneyList = SummaryForm::getUActualMoney($this->start_date,$this->end_date,$city_allow,$citySetList);
-        $serviceList = $this->getServiceData($citySetList,$uActualMoneyList);
+        $serviceList = $this->getServiceData($citySetList,$uActualMoneyList,$city_allow);
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
             $region = $cityRow["region_code"];
@@ -187,11 +188,10 @@ class ComparisonForm extends CFormModel
         return true;
     }
 
-    private function getServiceData($citySetList,$uActualMoneyList){
+    private function getServiceData($citySetList,$uActualMoneyList,$city_allow){
         $data=array();
         $lastStartDate = ($this->comparison_year-1)."/".$this->month_start_date;
         $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
-        $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
 
         $where="(a.status_dt BETWEEN '{$this->start_date}' and '{$this->end_date}')";

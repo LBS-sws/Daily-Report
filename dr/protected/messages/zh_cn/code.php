@@ -47,6 +47,7 @@ return array(
 	'Type'=>'类别',
 	'Currency'=>'货币',
 	
+	'Taxpayer No.'=>'纳税人登记号',
 	'SSM No.'=>'纳税人登记号',
 	
 	'Maintenance'=>'维修',
@@ -106,5 +107,9 @@ return array(
 
     'rpt u'=>'u系统对应id',
     'score bool'=>'商业组重点开发客户',
+    'city type'=>'城市类型',
+    'city'=>'城市',
+    'ka city'=>'ka城市',
+    'area'=>'区域',
 );
 ?>

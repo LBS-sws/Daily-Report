@@ -173,12 +173,14 @@ class SummaryForm extends CFormModel
         $criteria->start_dt = $this->start_date;
         $criteria->end_dt = $this->end_date;
         ComparisonForm::setDayNum($this->start_date,$this->end_date,$this->day_num);
-        $criteria->city = Yii::app()->user->city_allow();
+        $city_allow = Yii::app()->user->city_allow();
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
+        $criteria->city = $city_allow;
         $rptModel->criteria = $criteria;
         $rptModel->retrieveData();
         $this->data = $rptModel->data;
-        $citySetList = CitySetForm::getCitySetList();
-        $uActualMoneyList = SummaryForm::getUActualMoney($this->start_date,$this->end_date,$criteria->city,$citySetList);
+        $citySetList = CitySetForm::getCitySetList($city_allow);
+        $uActualMoneyList = SummaryForm::getUActualMoney($this->start_date,$this->end_date,$city_allow,$citySetList);
         if($this->data){
             $strSelect = implode(",",$this->con_list);
 

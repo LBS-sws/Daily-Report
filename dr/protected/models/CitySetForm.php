@@ -75,7 +75,7 @@ class CitySetForm extends CFormModel
             $cityWhere=" and b.code in ({$city_allow})";
         }
 		$rows = Yii::app()->db->createCommand()
-            ->select("a.code,a.name as city_name,b.show_type,b.add_type,b.region_code,f.name as region_name")
+            ->select("a.code,a.name as city_name,b.show_type,b.add_type,b.region_code,b.region_code as region,f.name as region_name")
             ->from("swo_city_set b")
             ->leftJoin("security$suffix.sec_city a","a.code=b.code")
             ->leftJoin("security$suffix.sec_city f","b.region_code=f.code")
