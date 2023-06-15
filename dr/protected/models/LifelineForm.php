@@ -61,6 +61,7 @@ class LifelineForm extends CFormModel
             foreach ($rows as $row){
                 if(!key_exists($row["city"],$list)){ //城市的生命線
                     $list[$row["city"]] = $row["life_num"];
+                    $list[$row["city"]."_0"] = $row["life_num"];//本部
                     $infoRows = Yii::app()->db->createCommand()->select("office_id,life_num")->from("swo_lifeline_info")
                         ->where("lifeline_id=:id",array(":id"=>$row["id"]))->queryAll();
                     if($infoRows){ //辦事處的生命線
@@ -81,8 +82,8 @@ class LifelineForm extends CFormModel
         $officeKey = $city."_".$office_id;
         if(key_exists($officeKey,$list)){
             return $list[$officeKey];
-        }elseif (key_exists($city,$list)){
-            return $list[$city];
+        }elseif (!empty($office_id)){//辦事處沒配置時數值調高，提醒相關人員去設置
+            return 999999;
         }else{
             return 80000;
         }
