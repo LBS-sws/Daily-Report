@@ -158,5 +158,6 @@ return array(
     'Lifeline Set'=>'生命线设置',
     'Average office'=>'月预计平均人效',
     'City Count Set'=>'城市统计设置',
+    'Chain customer report'=>'连锁客户报表',
 );
 ?>

@@ -19,6 +19,8 @@ class ReportForm extends CFormModel
 	public $month;
 	public $type;
 	public $form;
+	public $company_status;
+	public $chain_num;
 
 	/**
 	 * Declares customized attribute labels.

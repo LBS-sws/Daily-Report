@@ -69,6 +69,10 @@ return array(
 		'access'=>'B',
 		'icon'=>'fa-file-text-o',
 		'items'=>array(
+			'Chain customer report'=>array( //连锁客户报表
+				'access'=>'B33',
+				'url'=>'/report/chain',
+			),
 			'U Service Amount'=>array( //服務金額匯總
 				'access'=>'B32',
 				'url'=>'/report/uService',

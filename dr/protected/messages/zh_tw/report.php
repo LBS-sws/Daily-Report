@@ -28,6 +28,7 @@ return array(
     'Summary Service Cases Report'=>'生意額數據匯總表',
     'Active Contract Report'=>'生效中合約報表',
     'U Service Amount'=>'技術員生產力分析',
+    'Chain customer report'=>'連鎖客戶報表',
 
     'Area'=>'區域',
 'City'=>'地區',

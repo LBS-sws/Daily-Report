@@ -490,6 +490,16 @@ class MyExcel {
 				$col++;
 			}
 		}
+        if($crow-$this->current_row>1){
+            foreach ($this->report_structure as $i=>$item) {
+                if (!is_array($item)) {
+                    $str = $this->getColumn($i);
+                    $rang = $str.$this->current_row.":".$str.($crow-1);
+                    //$this->objPHPExcel->mergeCells($this->current_row, $i, $crow-1, $i);
+                    $this->objPHPExcel->getActiveSheet()->mergeCells($rang);
+                }
+            }
+        }
 		$this->current_row = $crow;
 	}
 	

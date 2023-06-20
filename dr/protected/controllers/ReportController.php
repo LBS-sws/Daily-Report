@@ -55,6 +55,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('feedback'),'expression'=>array('ReportController','allowFeedback')),
 			array('allow','actions'=>array('summarySC','textCURL'),'expression'=>array('ReportController','allowSummarySC')),
 			array('allow','actions'=>array('uService'),'expression'=>array('ReportController','allowUService')),
+			array('allow','actions'=>array('chain'),'expression'=>array('ReportController','allowChain')),
 			array('allow','actions'=>array('activeService'),'expression'=>array('ReportController','allowActiveService')),
 			array('allow',
 				'actions'=>array('generate'),
@@ -553,6 +554,29 @@ class ReportController extends Controller
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
 
+// Report: chain
+	protected static function allowChain() {
+		return Yii::app()->user->validFunction('B33');
+	}
+
+	public function actionChain() {
+        $this->function_id = "B33";
+        Yii::app()->session['active_func'] = $this->function_id;
+        $model = new ReportChainForm();
+        if (isset($_POST['ReportChainForm'])) {
+            $model->attributes = $_POST['ReportChainForm'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            }
+            else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('chain',array('model'=>$model));
+	}
+
 // Report: ActiveService
 	protected static function allowActiveService() {
 		return Yii::app()->user->validFunction('B31');
@@ -686,6 +710,7 @@ class ReportController extends Controller
 				if ($model->id=='customerID') $this->genCustomerID($model);
 				if ($model->id=='summarySC') $this->genSummarySC($model);
 				if ($model->id=='uService') $this->genUService($model);
+				if ($model->id=='chain') $this->genChain($model);
 				if ($model->id=='activeService') $this->genActiveService($model);
 //				Yii::app()->end();
 			} else {

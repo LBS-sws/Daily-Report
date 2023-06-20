@@ -330,6 +330,8 @@ EOF;
 		$criteria->touser = isset($param['TOUSER']) ? $param['TOUSER'] : '';
 		$criteria->ccuser = isset($param['CCUSER']) ? $param['CCUSER'] : '';
 		$criteria->type = isset($param['TYPE']) ? $param['TYPE'] : '';
+		$criteria->company_status = isset($param['COMPANYSTATUS']) ? $param['COMPANYSTATUS'] : '';
+		$criteria->chain_num = isset($param['CHAINNUM']) ? $param['CHAINNUM'] : '';
 		$paper_sz = $param['PAPER_SZ'];
 		$rpt_array = json_decode($param['RPT_ARRAY']);
 
@@ -424,6 +426,7 @@ EOF;
 			case 'RptSummarySC': $model = new RptSummarySC(); break;
 			case 'RptActiveService': $model = new RptActiveService(); break;
 			case 'RptUService': $model = new RptUService(); break;
+			case 'RptChain': $model = new RptChain(); break;
 		}
 		return $model;
 	}

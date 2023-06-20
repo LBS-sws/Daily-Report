@@ -151,7 +151,7 @@ class CustomerEnqList extends CListPageModel
 		$name = str_replace("'","\'",$name);
 		$sql = "select a.*, c.description as cust_type_desc, d.description as product_desc   
 				from swo_service a
-				left outer join swo_service b on substring(a.company_name, 1, char_length('$code'))=substring(b.company_name, 1, char_length('$code')) 
+				left outer join swo_service b on a.company_id=b.company_id 
 					and a.status_dt < b.status_dt and a.cust_type=b.cust_type
 				left outer join swo_customer_type c on a.cust_type=c.id 
 				left outer join swo_product d on a.product_id=d.id 
