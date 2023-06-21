@@ -112,7 +112,7 @@ class SalesAnalysisForm extends CFormModel
                 or
                 (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/31')>='{$endDate}')
              ) AND a.city in ({$city_allow})"
-            )->order("a.city desc")->queryAll();
+            )->order("a.city desc,a.office_id asc,a.id asc")->queryAll();
         return $rows;
     }
 
