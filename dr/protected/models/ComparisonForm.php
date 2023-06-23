@@ -698,6 +698,29 @@ class ComparisonForm extends CFormModel
         return $tdClass;
     }
 
+    //設置顏色(2023/06/23年继续额外增加)
+    public static function setTextColorForKeyStr(&$color,$keyStr,$arr){
+        $setArr = array(
+            "start_one_gross_rate","start_one_net_rate","one_gross_rate","one_net_rate",
+            "start_two_gross_rate","start_two_net_rate","two_gross_rate","two_net_rate",
+            "start_three_gross_rate","start_three_net_rate","three_gross_rate","three_net_rate",
+        );
+        if($color=="text-green"&&in_array($keyStr,$setArr)){
+            if(strpos($keyStr,'one_')!==false){
+                $str = "one";
+            }elseif (strpos($keyStr,'three_')!==false){
+                $str = "three";
+            }elseif (strpos($keyStr,'two_')!==false){
+                $str = "two";
+            }else{
+                return;
+            }
+            if($arr["start_{$str}_gross"]==$arr["{$str}_gross"]&&$arr["start_{$str}_gross"]==$arr["{$str}_gross"]){
+                $color = "text-orange";
+            }
+        }
+    }
+
     //將城市数据寫入表格
     private function showServiceHtml($data){
         $bodyKey = $this->getDataAllKeyStr();
@@ -725,6 +748,7 @@ class ComparisonForm extends CFormModel
                                 $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             }
                             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
+                            ComparisonForm::setTextColorForKeyStr($tdClass,$keyStr,$cityList);
                             $text = ComparisonForm::showNum($text);
                             $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
                             if($keyStr=="new_sum"){//调试U系统同步数据

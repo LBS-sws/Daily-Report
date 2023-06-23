@@ -509,6 +509,7 @@ class SummaryForm extends CFormModel
                                 $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             }
                             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
+                            ComparisonForm::setTextColorForKeyStr($tdClass,$keyStr,$cityList);
                             $text = ComparisonForm::showNum($text);
                             $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
                             $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
