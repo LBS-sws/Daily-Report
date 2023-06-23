@@ -51,11 +51,11 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
         <div id="yw0" class="tabbable">
             <div class="box-info" >
                 <div class="box-body" >
-                    <div class="col-lg-12">
+                    <div class="col-lg-5">
                         <div class="form-group">
                             <?php echo $form->hiddenField($model,"month_type");?>
-                            <?php echo $form->labelEx($model,'search_type',array('class'=>"col-sm-2 control-label")); ?>
-                            <div class="col-sm-10">
+                            <?php echo $form->labelEx($model,'search_type',array('class'=>"col-lg-5 control-label")); ?>
+                            <div class="col-lg-7">
                                 <?php echo $form->inlineRadioButtonList($model, 'search_type',SummarySetList::getSelectType(),
                                     array('readonly'=>true,'id'=>'search_type')
                                 ); ?>
@@ -64,16 +64,16 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
                         <div id="search_div">
                             <div data-id="1" <?php if ($model->search_type!=1){ echo "style='display:none'"; } ?>>
                                 <div class="form-group">
-                                    <?php echo $form->labelEx($model,'search_year',array('class'=>"col-sm-2 control-label")); ?>
-                                    <div class="col-sm-2">
+                                    <?php echo $form->labelEx($model,'search_year',array('class'=>"col-lg-5 control-label")); ?>
+                                    <div class="col-lg-5">
                                         <?php echo $form->dropDownList($model, 'search_year',SummarySetList::getSelectYear(),
                                             array('readonly'=>true,'id'=>'year_one')
                                         ); ?>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <?php echo $form->labelEx($model,'search_quarter',array('class'=>"col-sm-2 control-label")); ?>
-                                    <div class="col-sm-2">
+                                    <?php echo $form->labelEx($model,'search_quarter',array('class'=>"col-lg-5 control-label")); ?>
+                                    <div class="col-lg-5">
                                         <?php echo $form->dropDownList($model, 'search_quarter',SummarySetList::getSummaryMonthList(),
                                             array('readonly'=>true)
                                         ); ?>
@@ -82,16 +82,16 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
                             </div>
                             <div data-id="2" <?php if ($model->search_type!=2){ echo "style='display:none'"; } ?>>
                                 <div class="form-group">
-                                    <?php echo $form->labelEx($model,'search_year',array('class'=>"col-sm-2 control-label")); ?>
-                                    <div class="col-sm-2">
+                                    <?php echo $form->labelEx($model,'search_year',array('class'=>"col-lg-5 control-label")); ?>
+                                    <div class="col-lg-5">
                                         <?php echo $form->dropDownList($model, 'search_year',SummarySetList::getSelectYear(),
                                             array('readonly'=>true,'id'=>'year_two')
                                         ); ?>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <?php echo $form->labelEx($model,'search_month',array('class'=>"col-sm-2 control-label")); ?>
-                                    <div class="col-sm-2">
+                                    <?php echo $form->labelEx($model,'search_month',array('class'=>"col-lg-5 control-label")); ?>
+                                    <div class="col-lg-5">
                                         <?php echo $form->dropDownList($model, 'search_month',SummarySetList::getSelectMonth(),
                                             array('readonly'=>true)
                                         ); ?>
@@ -100,24 +100,24 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
                             </div>
                             <div data-id="3" <?php if ($model->search_type!=3){ echo "style='display:none'"; } ?>>
                                 <div class="form-group">
-                                    <?php echo $form->labelEx($model,'search_start_date',array('class'=>"col-sm-2 control-label")); ?>
-                                    <div class="col-sm-2">
+                                    <?php echo $form->labelEx($model,'search_start_date',array('class'=>"col-lg-5 control-label")); ?>
+                                    <div class="col-lg-5">
                                         <?php echo $form->textField($model, 'search_start_date',
                                             array('readonly'=>true,'prepend'=>"<span class='fa fa-calendar'></span>")
                                         ); ?>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <?php echo $form->labelEx($model,'search_end_date',array('class'=>"col-sm-2 control-label")); ?>
-                                    <div class="col-sm-2">
+                                    <?php echo $form->labelEx($model,'search_end_date',array('class'=>"col-lg-5 control-label")); ?>
+                                    <div class="col-lg-5">
                                         <?php echo $form->textField($model, 'search_end_date',
                                             array('readonly'=>true,'prepend'=>"<span class='fa fa-calendar'></span>")
                                         ); ?>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <?php echo $form->labelEx($model,'day_num',array('class'=>"col-sm-2 control-label")); ?>
-                                    <div class="col-sm-2">
+                                    <?php echo $form->labelEx($model,'day_num',array('class'=>"col-lg-5 control-label")); ?>
+                                    <div class="col-lg-5">
                                         <?php echo $form->textField($model, 'day_num',
                                             array('readonly'=>true,'append'=>Yii::t("summary","day"))
                                         ); ?>
@@ -126,6 +126,9 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
                             </div>
                         </div>
                     </div>
+
+                    <!--颜色說明-->
+                    <?php $this->renderPartial('//comparison/colorNote'); ?>
 
                     <div class="col-lg-12" style="padding-top: 15px;">
                         <div class="row panel panel-default" style="border-color: #333">

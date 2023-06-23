@@ -150,5 +150,10 @@ return array(
     'staff office'=>'办事处',
     'office Name'=>'办事处名称',
     'local office'=>'本部',
+
+    'color_remark'=>'目标完成度颜色意义',
+    'color_remark_1'=>'1、红色：百分比小于60%',
+    'color_remark_2'=>'2、绿色：百分比小于100%',
+    'color_remark_3'=>'3、橙色：当年初目标 = 滚动目标，目标完成度大于100%，显示橙色',
 );
 ?>

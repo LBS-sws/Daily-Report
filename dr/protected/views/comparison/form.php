@@ -126,6 +126,8 @@ $this->pageTitle=Yii::app()->name . ' - Comparison Form';
                             </div>
                         </div>
                     </div>
+                    <!--颜色說明-->
+                    <?php $this->renderPartial('//comparison/colorNote'); ?>
 
                     <div class="col-lg-12" style="padding-top: 15px;">
                         <div class="row panel panel-default" style="border-color: #333">
