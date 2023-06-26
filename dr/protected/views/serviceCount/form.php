@@ -80,10 +80,53 @@ $this->pageTitle=Yii::app()->name . ' - ServiceCount Form';
     </div>
 
 </section>
-
+<!--詳情彈窗-->
+<div class="modal fade" tabindex="-1" role="dialog" id="detailDialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <p>加载中....</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <?php
-$js="
+$ajaxUrl = Yii::app()->createUrl('serviceCount/ajaxDetail');
+$js = "
+$('.td_detail').on('click',function(){
+    var tdOne = $(this).parent('tr').children('td').eq(0).text();
+    var titleStatus=$('#ServiceCountForm_status>option:selected').text();
+    $('#detailDialog').find('.modal-title').text(titleStatus+' - '+tdOne);
+    $('#detailDialog').find('.modal-body').html('<p>加载中....</p>');
+    $('#detailDialog').modal('show');
+    $.ajax({
+        type: 'GET',
+        url: '{$ajaxUrl}',
+        data: {
+            'city':$(this).data('city'),
+            'status':$('#ServiceCountForm_status').val(),
+            'search_year':$('#ServiceCountForm_search_year').val(),
+            'city_allow':$('#ServiceCountForm_city_allow').val(),
+            'company_name':$('#ServiceCountForm_company_name').val(),
+            'cust_type':$('#ServiceCountForm_cust_type').val()
+        },
+        dataType: 'json',
+        success: function(data) {
+            $('#detailDialog').find('.modal-body').html(data['html']);
+        },
+        error: function(data) { // if error occured
+            alert('Error occured.please try again');
+        }
+    });
+});
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

@@ -24,7 +24,7 @@ class ServiceCountController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('index','edit'),
+				'actions'=>array('index','edit','ajaxDetail'),
 				'expression'=>array('ServiceCountController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -32,6 +32,17 @@ class ServiceCountController extends Controller
 			),
 		);
 	}
+
+    //详情列表的異步請求
+    public function actionAjaxDetail(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $model = new ServiceCountForm();
+            $html =$model->ajaxDetailForHtml();
+            echo CJSON::encode(array('status'=>1,'html'=>$html));//Yii 的方法将数组处理成json数据
+        }else{
+            $this->redirect(Yii::app()->createUrl('RankingMonth/index'));
+        }
+    }
 
 	public function actionIndex()
 	{
