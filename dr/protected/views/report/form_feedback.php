@@ -50,7 +50,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php echo $form->dropDownList($model, 'city', General::getCityListWithNoDescendant(Yii::app()->user->city_allow()),
+					<?php echo $form->dropDownList($model, 'city', General::getCityListWithCityAllow(Yii::app()->user->city_allow()),
 						array('disabled'=>($model->scenario=='view'))
 					); ?>
 				</div>
