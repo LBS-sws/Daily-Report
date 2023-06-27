@@ -2,6 +2,7 @@
 class RptCustresume extends ReportData2 {
 	public function fields() {
 		return array(
+            'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
 			'lud'=>array('label'=>Yii::t('service','Entry Date'),'width'=>18,'align'=>'C'),
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
 			'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
@@ -31,11 +32,13 @@ class RptCustresume extends ReportData2 {
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
+        $city_allow = City::model()->getDescendantList($city);
+        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
 		$sql = "select a.*, b.description as nature, c.description as customer_type
 					from swo_service a
 					left outer join swo_nature b on a.nature_type=b.id 
 					left outer join swo_customer_type c on a.cust_type=c.id
-				where a.status='R' and a.city='".$city."' 
+				where a.status='R' and a.city in ({$city_allow}) 
 		";
 		if (isset($this->criteria)) {
 			$where = '';
@@ -45,11 +48,12 @@ class RptCustresume extends ReportData2 {
 				$where .= " and "."a.status_dt<='".General::toDate($this->criteria->end_dt)." 23:59:59'";
 			if ($where!='') $sql .= $where;	
 		}
-		$sql .= " order by c.description, a.status_dt";
+		$sql .= " order by a.city,c.description, a.status_dt";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
 				$temp = array();
+                $temp['city_name'] = General::getCityName($row["city"]);
 				$temp['type'] = $row['customer_type'];
 				$temp['status_dt'] = General::toDate($row['status_dt']);
 				$temp['company_name'] = $row['company_name'];

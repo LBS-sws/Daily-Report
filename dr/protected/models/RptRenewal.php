@@ -2,6 +2,7 @@
 class RptRenewal extends ReportData2 {
 	public function fields() {
 		return array(
+            'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
 			'expiry_dt'=>array('label'=>Yii::t('service','Expiry Date'),'width'=>18,'align'=>'C'),
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
 			'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
@@ -30,6 +31,8 @@ class RptRenewal extends ReportData2 {
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
+        $city_allow = City::model()->getDescendantList($city);
+        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
 		
 		$sql = "select
 					a.*, d.description as nature, c.description as customer_type
@@ -49,7 +52,7 @@ class RptRenewal extends ReportData2 {
 					b.id is null and 
 					a.paid_type <> '1' and
 					a.ctrt_end_dt is not null and 
-					a.city='$city' 
+					a.city in ({$city_allow})
 		";
 		if (isset($this->criteria)) {
 			$where = '';
@@ -58,13 +61,14 @@ class RptRenewal extends ReportData2 {
 				$where .= " and datediff(a.ctrt_end_dt,'".General::toDate($this->criteria->target_dt)." 00:00:00') <= 60";
 			if ($where!='') $sql .= $where;	
 		}
-		$sql .= " order by a.ctrt_end_dt";
+		$sql .= " order by a.city,a.ctrt_end_dt";
 		echo $sql;
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
 				if ($row['status']!='S' && $row['status']!='T') {
 					$temp = array();
+                    $temp['city_name'] = General::getCityName($row["city"]);
 					$temp['type'] = $row['customer_type'];
 					$temp['status_dt'] = General::toDate($row['status_dt']);
 					$temp['company_name'] = $row['company_name'];

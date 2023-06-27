@@ -2,6 +2,7 @@
 class RptCustterall extends ReportData2 {
 	public function fields() {
 		return array(
+            'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
 		    //狀態
 			'status_desc'=>array('label'=>Yii::t('service','Record Type'),'width'=>12,'align'=>'C'),
 			//日期
@@ -45,12 +46,14 @@ class RptCustterall extends ReportData2 {
 	    $this->data=array();
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
+        $city_allow = City::model()->getDescendantList($city);
+        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
 		$sql = "select a.*, b.description as nature, c.description as customer_type, d.cont_name, d.cont_phone, d.address
 					from swo_service a
 					left outer join swo_nature b on a.nature_type=b.id 
 					left outer join swo_customer_type c on a.cust_type=c.id
 					left outer join swo_company d on a.company_id=d.id
-				where a.status in ('T','S','R') and a.city='".$city."' 
+				where a.status in ('T','S','R') and a.city in ({$city_allow})
 		";
 		if (isset($this->criteria)) {
 			$where = '';
@@ -60,7 +63,7 @@ class RptCustterall extends ReportData2 {
 				$where .= " and "."a.status_dt<='".General::toDate($this->criteria->end_dt)." 23:59:59'";
 			if ($where!='') $sql .= $where;	
 		}
-		$sql .= " order by d.id asc,a.status_dt asc";
+		$sql .= " order by a.city,d.id asc,a.status_dt asc";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
@@ -85,6 +88,7 @@ class RptCustterall extends ReportData2 {
 				}
 
 				$temp = array();
+                $temp['city_name'] = General::getCityName($row["city"]);
 				$temp['status_desc'] = self::statusDesc($row['status']);
 				$temp['type'] = $row['customer_type'];
 				$temp['status_dt'] = General::toDate($row['status_dt']);

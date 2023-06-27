@@ -2,6 +2,7 @@
 class RptLogistic extends ReportData2 {
 	public function fields() {
 		return array(
+            'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
 			'seq'=>array('label'=>Yii::t('logistic','No.'),'width'=>10,'align'=>'C'),
 			'company_name'=>array('label'=>Yii::t('logistic','Customer'),'width'=>30,'align'=>'L'),
 			'address'=>array('label'=>Yii::t('logistic','Address'),'width'=>30,'align'=>'L'),
@@ -31,6 +32,7 @@ class RptLogistic extends ReportData2 {
 	
 	public function report_structure() {
 		return array(
+			'city_name',
 			'seq',
 			'company_name',
 			'address',
@@ -57,11 +59,13 @@ class RptLogistic extends ReportData2 {
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
+        $city_allow = City::model()->getDescendantList($city);
+        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
 		$sql = "select a.*, b.description as location_name 
 					from swo_logistic a 
 					left outer join swo_location b on a.location=b.id 
 		";
-		$where = "where a.city='".$city."'";
+		$where = "where a.city in ({$city_allow})";
 		if (isset($this->criteria)) {
 			if (isset($this->criteria->start_dt))
 				$where .= (($where=='where') ? " " : " and ")."a.log_dt>='".General::toDate($this->criteria->start_dt)."'";
@@ -69,11 +73,12 @@ class RptLogistic extends ReportData2 {
 				$where .= (($where=='where') ? " " : " and ")."a.log_dt<='".General::toDate($this->criteria->end_dt)."'";
 		}
 		if ($where!='where') $sql .= $where;	
-		$sql .= " order by a.log_dt, a.seq";
+		$sql .= " order by a.city,a.log_dt, a.seq";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
 				$temp = array();
+                $temp['city_name'] = General::getCityName($row["city"]);
 				$temp['log_dt'] = General::toDate($row['log_dt']);
 				$temp['seq'] = $row['seq'];
 				$temp['follow_staff'] = $row['follow_staff'];

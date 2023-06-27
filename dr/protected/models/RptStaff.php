@@ -29,6 +29,8 @@ class RptStaff extends ReportData2 {
 //		$city = Yii::app()->user->city();
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = $this->criteria->city;
+        $city_allow = City::model()->getDescendantList($city);
+        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
         $localOffice = Yii::t("staff","local office");
 		$cutoff = isset($this->criteria->end_dt) ? $this->criteria->end_dt : date("Y/m/d");
 		
@@ -71,11 +73,11 @@ class RptStaff extends ReportData2 {
 						a.id as employee_id, a.office_id, a.code, a.name, a.position, a.staff_type, a.staff_leader, a.entry_time, a.start_time, a.end_time, a.email, 
 						a.leave_time, a.leave_reason, a.remark, a.city, a.department, a.lcu, a.luu, a.lcd, a.lud
 					from hr$suffix.hr_employee a
-					where a.city='$city' and a.id not in (
+					where a.city in ({$city_allow}) and a.id not in (
 						select w.employee_id
 						from hr$suffix.hr_employee_operate w
 						left outer join hr$suffix.hr_employee_operate x on w.employee_id=x.employee_id and x.id > w.id
-						where x.id is null and w.lud > '$end_dt 23:59:59' and w.city='$city'
+						where x.id is null and w.lud > '$end_dt 23:59:59' and w.city in ({$city_allow})
 					)
 				union
 					select 
@@ -83,7 +85,7 @@ class RptStaff extends ReportData2 {
 						b.leave_time, b.leave_reason, b.remark, b.city, b.department, b.lcu, b.luu, b.lcd, b.lud
 					from hr$suffix.hr_employee_operate b
 					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
-					where c.id is null and b.lud > '$end_dt 23:59:59' and b.city='$city'
+					where c.id is null and b.lud > '$end_dt 23:59:59' and b.city in ({$city_allow})
 				) e
 				inner join hr$suffix.hr_employee f on f.id = e.employee_id
 				left join hr$suffix.hr_dept z on e.position = z.id 
@@ -93,7 +95,7 @@ class RptStaff extends ReportData2 {
 				ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) < date_add('$start_dt', interval 1 month))
 				and (ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) is null or 
 				ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) >= '$start_dt')
-				order by e.lud desc
+				order by e.city,e.lud desc
 		";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
