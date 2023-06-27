@@ -159,5 +159,6 @@ return array(
     'Average office'=>'月预计平均人效',
     'City Count Set'=>'城市统计设置',
     'Chain customer report'=>'连锁客户报表',
+    'Gross And Net'=>'滚动目标',
 );
 ?>

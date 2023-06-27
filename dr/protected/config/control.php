@@ -11,6 +11,7 @@ return array(
     'Target Ready All'=>array('access'=>'CN15',),//可以查看所有目标金额
     'Quarter Summary'=>array('access'=>'CN16',),//季度合同同比查詢
     'Month Summary'=>array('access'=>'CN17',),//月度合同同比查詢
+    'Gross And Net'=>array('access'=>'CN20',),//滚动目标
     'Quarter U Service'=>array('access'=>'CN18',),//季度技术员生产力分析
     'Month U Service'=>array('access'=>'CN19',),//月度技术员生产力分析
 );

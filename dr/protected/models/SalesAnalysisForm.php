@@ -102,11 +102,13 @@ class SalesAnalysisForm extends CFormModel
         $list=array('staff'=>array(),'user'=>array());
         $rows = Yii::app()->db->createCommand()
             ->select("a.id,a.code,a.name,a.city,d.user_id,a.entry_time,a.office_id,g.name as office_name,
+            dept.name as dept_name,
             CONCAT('') as city_name,CONCAT('') as region,CONCAT('') as region_name")
             ->from("security{$suffix}.sec_user_access f")
             ->leftJoin("hr{$suffix}.hr_binding d","d.user_id=f.username")
             ->leftJoin("hr{$suffix}.hr_employee a","d.employee_id=a.id")
             ->leftJoin("hr{$suffix}.hr_office g","a.office_id=g.id")
+            ->leftJoin("hr{$suffix}.hr_dept dept","a.position=dept.id")
             ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}' and (
                 (a.staff_status = 0)
                 or
@@ -385,6 +387,7 @@ class SalesAnalysisForm extends CFormModel
         $monthArr[]=array("name"=>Yii::t("summary","Average"));
         $topList=array(
             array("name"=>Yii::t("summary","Employee Name"),"rowspan"=>2,"background"=>"#000000","color"=>"#FFFFFF"),//姓名
+            array("name"=>Yii::t("summary","dept name"),"rowspan"=>2,"background"=>"#000000","color"=>"#FFFFFF"),//职位
             array("name"=>Yii::t("summary","City"),"rowspan"=>2,"background"=>"#000000","color"=>"#FFFFFF"),//城市
             array("name"=>Yii::t("summary","staff office"),"rowspan"=>2,"background"=>"#000000","color"=>"#FFFFFF"),//辦事處
             array("name"=>Yii::t("summary","Reference"),"background"=>"#000000","color"=>"#FFFFFF",
@@ -473,6 +476,7 @@ class SalesAnalysisForm extends CFormModel
     protected function getDataAllKeyStr(){
         $bodyKey = array(
             "employee_name",
+            "dept_name",
             "city_name",
             "office_name",
             "last_average",
@@ -532,6 +536,7 @@ class SalesAnalysisForm extends CFormModel
                     $regionRow["region"]=$regionList["region_code"];
                     $regionRow["city_name"]=$regionList["region_name"];
                     $regionRow["employee_name"]="";
+                    $regionRow["dept_name"]="";
                     $regionRow["office_name"]="-";
                     $html.=$this->printTableTr($regionRow,$bodyKey);
                     $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
@@ -539,6 +544,7 @@ class SalesAnalysisForm extends CFormModel
             }
             //地区汇总
             $allRow["employee_name"]="";
+            $allRow["dept_name"]="";
             $allRow["region"]="allRow";
             $allRow["office_name"]="-";
             $allRow["city_name"]=Yii::t("summary","all total");
@@ -588,7 +594,7 @@ class SalesAnalysisForm extends CFormModel
         $threeModel = new SalesAnalysisCityForm();
         $threeModel->setAttrAll($this);
         $excel = new DownSummary();
-        $excel->colTwo=3;
+        $excel->colTwo=4;
         $excel->SetHeaderTitle(Yii::t("summary","Capacity Staff")."（{$this->search_date}）");
         $titleTwo = date("Y/m/01/",strtotime($this->end_date))." ~ ".$this->end_date;
         $excel->SetHeaderString($titleTwo);
