@@ -28,7 +28,7 @@ class SummaryController extends Controller
 				'expression'=>array('SummaryController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view','downExcel','test'),
+				'actions'=>array('index','view','downExcel','test','ajaxDetail'),
 				'expression'=>array('SummaryController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -36,6 +36,17 @@ class SummaryController extends Controller
 			),
 		);
 	}
+
+    //详情列表的異步請求
+    public function actionAjaxDetail(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $model = new SummaryForm();
+            $html =$model->ajaxDetailForHtml();
+            echo CJSON::encode(array('status'=>1,'html'=>$html));//Yii 的方法将数组处理成json数据
+        }else{
+            $this->redirect(Yii::app()->createUrl('summary/index'));
+        }
+    }
 
 	public function actionTest($startDate="",$endDate=""){
         $startDate=empty($startDate)?date("Y/m/01"):$startDate;

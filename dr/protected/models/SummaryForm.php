@@ -502,9 +502,10 @@ class SummaryForm extends CFormModel
                             }
                             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                             ComparisonForm::setTextColorForKeyStr($tdClass,$keyStr,$cityList);
+                            $exprData = self::tdClick($tdClass,$keyStr,$cityList["city"]);//点击后弹窗详细内容
                             $text = ComparisonForm::showNum($text);
                             $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
-                            $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
+                            $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span>{$inputHide}</td>";
                         }
                         $html.="</tr>";
                     }
@@ -565,5 +566,95 @@ class SummaryForm extends CFormModel
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);
         $excel->outExcel(Yii::t("app","Summary"));
+    }
+
+    private function tdClick(&$tdClass,$keyStr,$city){
+        $expr = " data-city='{$city}'";
+        $list = array(
+            "num_pause"=>array("title"=>Yii::t("summary","Suspended service"),"type"=>"S"),
+            "num_restore"=>array("title"=>Yii::t("summary","Resume service"),"type"=>"R"),
+            "num_stop"=>array("title"=>Yii::t("summary","Terminate service"),"type"=>"T"),
+        );
+        if(key_exists($keyStr,$list)){
+            $tdClass.=" td_detail";
+            $expr.= " data-type='{$list[$keyStr]['type']}'";
+            $expr.= " data-title='{$list[$keyStr]['title']}'";
+        }
+
+        return $expr;
+    }
+
+    //顯示表格內的數據來源
+    public function ajaxDetailForHtml(){
+        $city = key_exists("city",$_GET)?$_GET["city"]:0;
+        $city_allow = "'{$city}'";
+        $type = key_exists("type",$_GET)?$_GET["type"]:"";
+        $startDate = key_exists("startDate",$_GET)?$_GET["startDate"]:"";
+        $endDate = key_exists("endDate",$_GET)?$_GET["endDate"]:"";
+        $rows = RptSummarySC::getSRTRowsAll($city_allow,$startDate,$endDate,$type);
+        $companyList = GetNameToId::getCompanyList($city_allow);
+
+        $html = "<table class='table table-bordered table-striped table-hover'>";
+        $html.="<thead><tr>";
+        $html.="<th width='90px'>".Yii::t('service','Contract No')."</th>";//合同编号
+        $html.="<th width='90px'>".Yii::t('summary','search day')."</th>";//日期
+        $html.="<th>".Yii::t('service','Customer')."</th>";//客户编号及名称
+        $html.="<th width='80px'>".Yii::t('service','Customer Type')."</th>";//客户类别
+        $html.="<th width='120px'>".Yii::t('service','Paid Amt')."</th>";//服务金额
+        $html.="<th width='80px'>".Yii::t('customer','Contract Period')."</th>";//合同年限(月)
+        $html.="<th width='100px'>".Yii::t('service','all money')."</th>";//合同总金额
+        $html.="<th width='1px'></th>";
+        $html.="</tr></thead>";
+        if($rows){
+            $sum = 0;
+            $html.="<tbody>";
+            foreach ($rows as $row){
+                if($row["sql_type_name"]=="D"){//ID服务
+                    $link = self::drawEditButton('A11', 'serviceID/edit', 'serviceID/view', array('index'=>$row['id']));
+                }else{
+                    $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
+                }
+                $companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
+                $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
+                $row["ctrt_period"] = is_numeric($row["ctrt_period"])?floatval($row["ctrt_period"]):0;
+
+                if($row["paid_type"]=="M") {//月金额
+                    $row["sum_amount"] = $row["amt_paid"]*$row["ctrt_period"];
+                }else{
+                    $row["sum_amount"] = $row["amt_paid"];
+                }
+                $row["sum_amount"]=round($row["sum_amount"],2);
+                $sum+=$row["sum_amount"];
+                $html.="<tr data-id='{$row["id"]}'>";
+                $html.="<td>".$row["contract_no"]."</td>";
+                $html.="<td>".General::toDate($row["status_dt"])."</td>";
+                $html.="<td>".$companyName."</td>";
+                $html.="<td>".$row["cust_type_name"]."</td>";
+                $html.="<td class='text-right'>(".GetNameToId::getPaidTypeForId($row["paid_type"]).") ".$row["amt_paid"]."</td>";
+                $html.="<td>".$row["ctrt_period"]."</td>";
+                $html.="<td class='text-right'>".$row["sum_amount"]."</td>";
+                $html.="<td>{$link}</td>";
+                $html.="</tr>";
+            }
+            $html.="</tbody><tfoot>";
+            $html.="<tr>";
+            $html.="<td colspan='6' class='text-right'>汇总：</td>";
+            $html.="<td colspan='2'>".$sum."</td>";
+            $html.="</tr>";
+            $html.="</tfoot>";
+        }else{
+            $html.="<tbody><tr><td colspan='8'>无数据</td></tr></tbody>";
+        }
+        $html.="</table>";
+        return $html;
+    }
+
+    public static function drawEditButton($access, $writeurl, $readurl, $param) {
+        $rw = Yii::app()->user->validRWFunction($access);
+        $url = $rw ? $writeurl : $readurl;
+        $icon = $rw ? "glyphicon glyphicon-pencil" : "glyphicon glyphicon-eye-open";
+        $lnk=Yii::app()->createUrl($url,$param);
+
+        return "<a href=\"$lnk\" target='_blank'><span class=\"$icon\"></span></a>";
     }
 }

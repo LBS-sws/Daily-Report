@@ -121,4 +121,24 @@ class GetNameToId{
         }
         return $id;
     }
+
+    //获取管辖城市下的所有客户名称
+    public static function getCompanyList($city_allow=""){
+        $list=array();
+        $whereSql = "a.id>0";
+        if(!empty($city_allow)){
+            $whereSql = "a.city in ({$city_allow})";
+        }
+        $companyRows = Yii::app()->db->createCommand()->select("a.*")
+            ->from("swo_company a")
+            ->where($whereSql)
+            ->queryAll();
+        if($companyRows){
+            foreach ($companyRows as $row){
+                $row["codeAndName"]=$row["code"].$row["name"];
+                $list[$row["id"]] = $row;
+            }
+        }
+        return $list;
+    }
 }

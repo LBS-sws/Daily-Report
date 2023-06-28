@@ -80,9 +80,10 @@ class RptSummarySC extends ReportData2 {
             ->from("swo_service a")
             ->leftJoin("swo_customer_type f","a.cust_type=f.id")
             ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->where("a.city not in ('ZY') {$where}")
+            ->where("a.city not in ('ZY') and a.status in ('N','A') {$where}")
             ->order("a.city")
-            ->queryAll();
+            ->queryAll(); //客戶服務的暫停、恢復、終止需要特殊處理
+        $SRTRows = self::getSRTRows($city_allow,$this->criteria->start_dt,$this->criteria->end_dt);
         //所有需要計算的客戶服務(ID客戶服務)
         $serviceRowsID = Yii::app()->db->createCommand()
             ->select("{$selectSql},CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
@@ -94,7 +95,7 @@ class RptSummarySC extends ReportData2 {
             ->queryAll();
         $serviceRows = $serviceRows?$serviceRows:array();
         $serviceRowsID = $serviceRowsID?$serviceRowsID:array();
-        $rows = array_merge($serviceRows,$serviceRowsID);
+        $rows = array_merge($serviceRows,$SRTRows,$serviceRowsID);
         if(!empty($rows)){
             foreach ($rows as $row) {
                 $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
@@ -168,6 +169,86 @@ class RptSummarySC extends ReportData2 {
         }
 
         return $data;
+    }
+
+    //獲取暫停、恢復、終止的最後一條記錄(包含ID服务)
+    public static function getSRTRowsAll($city_allow,$start_dt,$end_dt,$type=""){
+        $rows = self::getSRTRows($city_allow,$start_dt,$end_dt,$type);//所有需要計算的客戶服務
+        $serviceRowsID = self::getSRTRowsForID($city_allow,$start_dt,$end_dt,$type);//所有需要計算的客戶服務(ID客戶服務)
+
+        return array_merge($rows,$serviceRowsID);
+    }
+
+    //獲取暫停、恢復、終止的最後一條記錄
+    public static function getSRTRows($city_allow,$start_dt,$end_dt,$type=""){
+        $where = "";
+        $where .= " and ser.status_dt>='{$start_dt} 00:00:00'";
+        $where .= " and ser.status_dt<='{$end_dt} 23:59:59'";
+        $where .= " and ser.status in ('S','R','T')";
+        $where .= " and not(ser_type.rpt_cat='INV' and ser_type.single=1)";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $where .= " and "."ser.city in ({$city_allow})";
+        }
+        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+            f.description as cust_type_name";
+        $sqlText= Yii::app()->db->createCommand()
+            ->select("ser.company_id,ser.cust_type,ser_no.contract_no,MAX(ser.id) AS id,MAX(ser.status_dt) AS status_dt")
+            ->from("swo_service ser")
+            ->leftJoin("swo_customer_type ser_type","ser.cust_type=ser_type.id")
+            ->leftJoin("swo_service_contract_no ser_no","ser.id=ser_no.service_id")
+            ->where("ser.city not in ('ZY') {$where}")
+            ->group("ser.company_id,ser.cust_type,ser_no.contract_no")->getText();
+        $where = str_ireplace("ser.", "a.", $where);
+        $where = str_ireplace("ser_type.", "f.", $where);
+        if(!empty($type)&&in_array($type,array("S","R","T"))){
+            $where .= " and a.status='{$type}'";
+        }
+        $serviceRows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
+            ->from("swo_service a")
+            ->leftJoin("swo_service_contract_no n","a.id=n.service_id")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->leftJoin("({$sqlText}) b","a.company_id = b.company_id AND a.cust_type = b.cust_type AND IFNULL(b.contract_no,'sb')=IFNULL(n.contract_no,'sb')")
+            ->where("a.id>0 {$where} AND (a.status_dt>b.status_dt or (a.status_dt=b.status_dt and a.id=b.id))")
+            ->order("a.city")
+            ->queryAll(); //客戶服務的暫停、恢復、終止需要特殊處理
+        return $serviceRows?$serviceRows:array();
+    }
+
+    //獲取暫停、恢復、終止的記錄(ID)
+    public static function getSRTRowsForID($city_allow,$start_dt,$end_dt,$type=""){
+        $where = "";
+        $where .= " and a.status_dt>='{$start_dt} 00:00:00'";
+        $where .= " and a.status_dt<='{$end_dt} 23:59:59'";
+        switch ($type){
+            case "S"://暫停
+                $where .= " and a.status='S' ";
+                break;
+            case "R"://恢复
+                $where .= " and a.status='R' ";
+                break;
+            case "T"://終止
+                $where .= " and a.status='T' ";
+                break;
+            default:
+                $where .= " and a.status in ('S','R','T')";
+        }
+        $where .= " and not(f.rpt_cat='INV' and f.single=1)";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $where .= " and "."a.city in ({$city_allow})";
+        }
+        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+            f.description as cust_type_name";
+        $serviceRowsID = Yii::app()->db->createCommand()
+            ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+            ->from("swo_serviceid a")
+            ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where("a.city not in ('ZY') {$where}")
+            ->order("a.city")
+            ->queryAll();
+        return $serviceRowsID?$serviceRowsID:array();
     }
 
     //Invoice表未同步，無法使用
