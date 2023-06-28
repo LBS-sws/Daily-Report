@@ -9,7 +9,7 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 )); ?>
 <style>
-    .click-th,.click-tr{ cursor: pointer;}
+    .click-th,.click-tr,.td_detail{ cursor: pointer;}
     .click-tr>.fa:before{ content: "\f062";}
     .click-tr.show-tr>.fa:before{ content: "\f063";}
     .table-fixed{ table-layout: fixed;}
