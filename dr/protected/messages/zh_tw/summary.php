@@ -152,8 +152,8 @@ return array(
     'local office'=>'本部',
 
     'color_remark'=>'目標完成度顏色意義',
-    'color_remark_1'=>'1、紅色：百分比小於60%',
-    'color_remark_2'=>'2、綠色：百分比小於100%',
-    'color_remark_3'=>'3、橙色：當年初目標 = 滾動目標，目標完成度大於100%',
+    'color_remark_1'=>'1、紅色：百分比小於等於60%',
+    'color_remark_2'=>'2、綠色：百分比大於等於100%',
+    'color_remark_3'=>'3、橙色：當年初目標 = 滾動目標，目標完成度大於等於100%',
 );
 ?>
