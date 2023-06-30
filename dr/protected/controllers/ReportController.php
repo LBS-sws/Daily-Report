@@ -55,6 +55,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('feedback'),'expression'=>array('ReportController','allowFeedback')),
 			array('allow','actions'=>array('summarySC','textCURL'),'expression'=>array('ReportController','allowSummarySC')),
 			array('allow','actions'=>array('uService'),'expression'=>array('ReportController','allowUService')),
+			array('allow','actions'=>array('customerKA'),'expression'=>array('ReportController','allowCustomerKA')),
 			array('allow','actions'=>array('chain'),'expression'=>array('ReportController','allowChain')),
 			array('allow','actions'=>array('activeService'),'expression'=>array('ReportController','allowActiveService')),
 			array('allow',
@@ -554,6 +555,30 @@ class ReportController extends Controller
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
 
+// Report: CustomerKA
+	protected static function allowCustomerKA() {
+		return Yii::app()->user->validFunction('B34');
+	}
+
+	public function actionCustomerKA() {
+		$this->function_id = 'B34';
+		Yii::app()->session['active_func'] = $this->function_id;
+        $this->showUI('customerKA','KA customer report', 'start_dt,end_dt,city');
+	}
+
+    protected function genCustomerKA($criteria) {
+        $rptname = array(
+            'RptCustomerKA'=>'KA customer report',//新增
+            'RptCustomerKAC'=>'KA customer report',//续约
+            'RptCustomerKAS'=>'KA customer report',//暂停
+            'RptCustomerKAR'=>'KA customer report',//恢复
+            'RptCustomerKAA'=>'KA customer report',//更改
+            'RptCustomerKAT'=>'KA customer report',//终止
+        );
+        $this->addQueueItem('RptCustomerKA', $criteria, 'A4',$rptname);
+        Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+    }
+
 // Report: chain
 	protected static function allowChain() {
 		return Yii::app()->user->validFunction('B33');
@@ -710,6 +735,7 @@ class ReportController extends Controller
 				if ($model->id=='customerID') $this->genCustomerID($model);
 				if ($model->id=='summarySC') $this->genSummarySC($model);
 				if ($model->id=='uService') $this->genUService($model);
+				if ($model->id=='customerKA') $this->genCustomerKA($model);
 				if ($model->id=='chain') $this->genChain($model);
 				if ($model->id=='activeService') $this->genActiveService($model);
 //				Yii::app()->end();

@@ -110,6 +110,28 @@ class GetNameToId{
         return $id;
     }
 
+    //获取客户服务状态
+    public static function getServiceStatusList(){
+        $list = array(
+            'N'=>Yii::t('report','New'),
+            'C'=>Yii::t('report','Renewal'),
+            'S'=>Yii::t('report','Suspended'),
+            'R'=>Yii::t('report','Resume'),
+            'A'=>Yii::t('report','Amendment'),
+            'T'=>Yii::t('report','Terminate'),
+        );
+        return $list;
+    }
+
+    //获取客户服务状态
+    public static function getServiceStatusForKey($id){
+        $list = self::getServiceStatusList();
+        if(key_exists($id,$list)){
+            return $list[$id];
+        }
+        return $id;
+    }
+
     //获取需安装名字
     public static function getNeedInstallForId($id){
         $list = array(

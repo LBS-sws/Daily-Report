@@ -426,6 +426,12 @@ EOF;
 			case 'RptSummarySC': $model = new RptSummarySC(); break;
 			case 'RptActiveService': $model = new RptActiveService(); break;
 			case 'RptUService': $model = new RptUService(); break;
+			case 'RptCustomerKA': $model = new RptCustomerKA("N"); break;
+			case 'RptCustomerKAC': $model = new RptCustomerKA("C"); break;
+			case 'RptCustomerKAR': $model = new RptCustomerKA("R"); break;
+			case 'RptCustomerKAA': $model = new RptCustomerKA("A"); break;
+			case 'RptCustomerKAT': $model = new RptCustomerKA("T"); break;
+			case 'RptCustomerKAS': $model = new RptCustomerKA("S"); break;
 			case 'RptChain': $model = new RptChain(); break;
 		}
 		return $model;

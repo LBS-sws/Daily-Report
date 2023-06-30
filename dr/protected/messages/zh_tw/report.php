@@ -67,6 +67,13 @@ return array(
 'Total Score'=>'總分',
 'State'=>'狀態',
 
-    'Refresh every day at 6'=>'每天六點刷新'
+    'Refresh every day at 6'=>'每天六點刷新',
+    'KA customer report'=>'KA客戶報表',
+    'New'=>'新增',
+    'Renewal'=>'續約',
+    'Suspended'=>'暫停',
+    'Resume'=>'恢復',
+    'Amendment'=>'更改',
+    'Terminate'=>'終止',
 );
 ?>

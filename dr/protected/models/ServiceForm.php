@@ -383,7 +383,7 @@ class ServiceForm extends CFormModel
         return $rows;
     }
     //哪些字段修改后需要记录
-    private static function historyUpdateList(){
+    protected static function historyUpdateList(){
         return array(
             'company_id','nature_type',
             'nature_type_two','cust_type','product_id','paid_type','amt_paid',
@@ -397,7 +397,7 @@ class ServiceForm extends CFormModel
     }
 
     //哪些字段修改后需要记录
-    private static function getNameForValue($type,$value){
+    protected static function getNameForValue($type,$value){
         switch ($type){
             case "first_tech_id":
                 $value = GetNameToId::getEmployeeNameForStr($value);
@@ -779,7 +779,7 @@ class ServiceForm extends CFormModel
 		}
 	}
 
-    public function getCustTypeList($a=1) {
+    public static function getCustTypeList($a=1) {
         $city = Yii::app()->user->city();
         $rtn = array(0=>Yii::t('misc','-- None --'));
         $sql = "select id, cust_type_name from swo_customer_type_twoname where  cust_type_id=$a order by cust_type_name";

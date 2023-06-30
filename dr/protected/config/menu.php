@@ -17,6 +17,10 @@ return array(
 				'access'=>'A02',
 				'url'=>'/service/index',
 			),
+			'Customer Service KA'=>array(
+				'access'=>'A13',
+				'url'=>'/serviceKA/index',
+			),
 			'Customer Service Count'=>array(//客戶服務匯總
 				'access'=>'A12',
 				'url'=>'/serviceCount/index',
@@ -69,6 +73,10 @@ return array(
 		'access'=>'B',
 		'icon'=>'fa-file-text-o',
 		'items'=>array(
+			'KA customer report'=>array( //ke客户报表
+				'access'=>'B34',
+				'url'=>'/report/customerKA',
+			),
 			'Chain customer report'=>array( //连锁客户报表
 				'access'=>'B33',
 				'url'=>'/report/chain',

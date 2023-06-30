@@ -67,6 +67,13 @@ return array(
 	'Total Score'=>'总分',
     'State'=>'状态',
 
-    'Refresh every day at 6'=>'每天六点刷新'
+    'Refresh every day at 6'=>'每天六点刷新',
+    'KA customer report'=>'KA客户报表',
+    'New'=>'新增',
+    'Renewal'=>'续约',
+    'Suspended'=>'暂停',
+    'Resume'=>'恢复',
+    'Amendment'=>'更改',
+    'Terminate'=>'终止',
 );
 ?>

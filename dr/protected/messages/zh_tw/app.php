@@ -154,5 +154,7 @@ return array(
     'City Count Set'=>'城市統計設置',
     'Chain customer report'=>'連鎖客戶報表',
     'Gross And Net'=>'滚动目标',
+    'Customer Service KA'=>'KA客戶服務',
+    'KA customer report'=>'KA客戶報表',
 );
 ?>
