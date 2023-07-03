@@ -491,12 +491,16 @@ class MyExcel {
 			}
 		}
         if($crow-$this->current_row>1){
+		    $startNum=0;
             foreach ($this->report_structure as $i=>$item) {
                 if (!is_array($item)) {
-                    $str = $this->getColumn($i);
+                    $str = $this->getColumn($startNum);
                     $rang = $str.$this->current_row.":".$str.($crow-1);
                     //$this->objPHPExcel->mergeCells($this->current_row, $i, $crow-1, $i);
                     $this->objPHPExcel->getActiveSheet()->mergeCells($rang);
+                    $startNum++;
+                }else{
+                    $startNum+=count($item);
                 }
             }
         }
