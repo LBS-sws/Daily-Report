@@ -458,7 +458,9 @@ class MyExcel {
 			if (is_array($item)) {
 				foreach ($data['detail'] as $idx=>$row) {
 					$ccol = $col;
+                    $testNum = 0;//是否第一次啟動
 					foreach ($item as $key) {
+                        $crow+=$testNum===0?0:1;
 						$text = $row[$key];
 						$align = ($this->line_def[$key]['align']=='C' ? PHPExcel_Style_Alignment::HORIZONTAL_CENTER :
 									($this->line_def[$key]['align']=='R' ? PHPExcel_Style_Alignment::HORIZONTAL_RIGHT :
@@ -471,8 +473,8 @@ class MyExcel {
 							->setHorizontal($align)
 							->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
 						$ccol++;
+                        $testNum++;
 					}
-					$crow++;
 				}
 				$col = $ccol;
 			} else {
@@ -490,17 +492,17 @@ class MyExcel {
 				$col++;
 			}
 		}
-        if($crow-$this->current_row>1){
+        if($crow-$this->current_row>=1){
             foreach ($this->report_structure as $i=>$item) {
                 if (!is_array($item)) {
                     $str = $this->getColumn($i);
-                    $rang = $str.$this->current_row.":".$str.($crow-1);
+                    $rang = $str.$this->current_row.":".$str.$crow;
                     //$this->objPHPExcel->mergeCells($this->current_row, $i, $crow-1, $i);
                     $this->objPHPExcel->getActiveSheet()->mergeCells($rang);
                 }
             }
         }
-		$this->current_row = $crow;
+		$this->current_row = $crow+1;
 	}
 	
 	protected function outLineHiddenRepeat($data, $definition, $group_def, $repeat) {
