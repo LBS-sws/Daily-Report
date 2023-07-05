@@ -162,5 +162,8 @@ return array(
     'Gross And Net'=>'滚动目标',
     'Customer Service KA'=>'KA客户服务',
     'KA customer report'=>'KA客户报表',
+    'Target Ready Upside'=>'年金额目标(upside)',
+    'Target Ready Base'=>'年金额目标(base)',
+    'Target Ready Minimum'=>'年金额目标(minimum)',
 );
 ?>

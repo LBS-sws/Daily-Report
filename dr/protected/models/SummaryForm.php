@@ -235,32 +235,38 @@ class SummaryForm extends CFormModel
 	    $list["num_growth"]+=$list["num_pause"];
 	    $list["num_growth"]+=$list["num_update"];
 
-        $list["start_two_gross"] = $bool?$list["start_two_gross"]:ComparisonForm::resetNetOrGross($list["start_two_gross"],$this->day_num,$this->search_type);
-        $list["start_two_net"] = $bool?$list["start_two_net"]:ComparisonForm::resetNetOrGross($list["start_two_net"],$this->day_num,$this->search_type);
-        $list["start_two_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["start_two_gross"]);
-        $list["start_two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_two_net"],"net");
-        if(SummaryForm::grossAndNet()){
-            $list["two_gross"] = $bool?$list["two_gross"]:ComparisonForm::resetNetOrGross($list["two_gross"],$this->day_num,$this->search_type);
-            $list["two_net"] = $bool?$list["two_net"]:ComparisonForm::resetNetOrGross($list["two_net"],$this->day_num,$this->search_type);
-            $list["two_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["two_gross"]);
-            $list["two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["two_net"],"net");
+        if(SummaryForm::targetReadyBase()){
+            $list["start_two_gross"] = $bool?$list["start_two_gross"]:ComparisonForm::resetNetOrGross($list["start_two_gross"],$this->day_num,$this->search_type);
+            $list["start_two_net"] = $bool?$list["start_two_net"]:ComparisonForm::resetNetOrGross($list["start_two_net"],$this->day_num,$this->search_type);
+            $list["start_two_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["start_two_gross"]);
+            $list["start_two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_two_net"],"net");
+            if(SummaryForm::grossAndNet()){
+                $list["two_gross"] = $bool?$list["two_gross"]:ComparisonForm::resetNetOrGross($list["two_gross"],$this->day_num,$this->search_type);
+                $list["two_net"] = $bool?$list["two_net"]:ComparisonForm::resetNetOrGross($list["two_net"],$this->day_num,$this->search_type);
+                $list["two_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["two_gross"]);
+                $list["two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["two_net"],"net");
+            }
         }
-        if(SummaryForm::targetAllReady()){
+        if(SummaryForm::targetReadyUpside()){
             $list["start_one_gross"] = $bool?$list["start_one_gross"]:ComparisonForm::resetNetOrGross($list["start_one_gross"],$this->day_num,$this->search_type);
             $list["start_one_net"] = $bool?$list["start_one_net"]:ComparisonForm::resetNetOrGross($list["start_one_net"],$this->day_num,$this->search_type);
-            $list["start_three_gross"] = $bool?$list["start_three_gross"]:ComparisonForm::resetNetOrGross($list["start_three_gross"],$this->day_num,$this->search_type);
-            $list["start_three_net"] = $bool?$list["start_three_net"]:ComparisonForm::resetNetOrGross($list["start_three_net"],$this->day_num,$this->search_type);
             $list["start_one_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["start_one_gross"]);
             $list["start_one_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_one_net"],"net");
-            $list["start_three_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["start_three_gross"]);
-            $list["start_three_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_three_net"],"net");
             if(SummaryForm::grossAndNet()){
                 $list["one_gross"] = $bool?$list["one_gross"]:ComparisonForm::resetNetOrGross($list["one_gross"],$this->day_num,$this->search_type);
                 $list["one_net"] = $bool?$list["one_net"]:ComparisonForm::resetNetOrGross($list["one_net"],$this->day_num,$this->search_type);
-                $list["three_gross"] = $bool?$list["three_gross"]:ComparisonForm::resetNetOrGross($list["three_gross"],$this->day_num,$this->search_type);
-                $list["three_net"] = $bool?$list["three_net"]:ComparisonForm::resetNetOrGross($list["three_net"],$this->day_num,$this->search_type);
                 $list["one_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["one_gross"]);
                 $list["one_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["one_net"],"net");
+            }
+        }
+        if(SummaryForm::targetReadyMinimum()){
+            $list["start_three_gross"] = $bool?$list["start_three_gross"]:ComparisonForm::resetNetOrGross($list["start_three_gross"],$this->day_num,$this->search_type);
+            $list["start_three_net"] = $bool?$list["start_three_net"]:ComparisonForm::resetNetOrGross($list["start_three_net"],$this->day_num,$this->search_type);
+            $list["start_three_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["start_three_gross"]);
+            $list["start_three_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["start_three_net"],"net");
+            if(SummaryForm::grossAndNet()){
+                $list["three_gross"] = $bool?$list["three_gross"]:ComparisonForm::resetNetOrGross($list["three_gross"],$this->day_num,$this->search_type);
+                $list["three_net"] = $bool?$list["three_net"]:ComparisonForm::resetNetOrGross($list["three_net"],$this->day_num,$this->search_type);
                 $list["three_gross_rate"] = ComparisonForm::comparisonRate($newSum,$list["three_gross"]);
                 $list["three_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["three_net"],"net");
             }
@@ -315,7 +321,7 @@ class SummaryForm extends CFormModel
             $colspan[]=array("name"=>Yii::t("summary","Gross"));
             $colspan[]=array("name"=>Yii::t("summary","Net"));
         }
-        if(SummaryForm::targetAllReady()){
+        if(SummaryForm::targetReadyUpside()){
             $topList[]=array("name"=>Yii::t("summary","Annual target (upside case)"),"background"=>"#FDE9D9",
                 "colspan"=>$colspan
             );//年金额目标 (upside case)
@@ -323,13 +329,15 @@ class SummaryForm extends CFormModel
                 "colspan"=>$colspan
             );//目标完成度 (upside case)
         }
-        $topList[]=array("name"=>Yii::t("summary","Annual target (base case)"),"background"=>"#DCE6F1",
-            "colspan"=>$colspan
-        );//年金额目标 (base case)
-        $topList[]=array("name"=>Yii::t("summary","Goal degree (base case)"),"background"=>"#DCE6F1",
-            "colspan"=>$colspan
-        );//目标完成度 (base case)
-        if(SummaryForm::targetAllReady()){
+        if(SummaryForm::targetReadyBase()) {
+            $topList[] = array("name" => Yii::t("summary", "Annual target (base case)"), "background" => "#DCE6F1",
+                "colspan" => $colspan
+            );//年金额目标 (base case)
+            $topList[] = array("name" => Yii::t("summary", "Goal degree (base case)"), "background" => "#DCE6F1",
+                "colspan" => $colspan
+            );//目标完成度 (base case)
+        }
+        if(SummaryForm::targetReadyMinimum()){
             $topList[]=array("name"=>Yii::t("summary","Annual target (minimum case)"),"background"=>"#FDE9D9",
                 "colspan"=>$colspan
             );//年金额目标 (minimum case)
@@ -414,7 +422,7 @@ class SummaryForm extends CFormModel
             "city_name","u_actual_money","num_new","u_invoice_sum","num_stop","num_restore","num_pause","num_update",
             "num_growth","num_long","num_short","num_cate","num_not_cate","u_num_cate","u_num_not_cate"
         );
-        if(SummaryForm::targetAllReady()){
+        if(SummaryForm::targetReadyUpside()){
             $bodyKey[]="start_one_gross";
             $bodyKey[]="start_one_net";
             if(SummaryForm::grossAndNet()){
@@ -428,19 +436,21 @@ class SummaryForm extends CFormModel
                 $bodyKey[]="one_net_rate";
             }
         }
-        $bodyKey[]="start_two_gross";
-        $bodyKey[]="start_two_net";
-        if(SummaryForm::grossAndNet()){
-            $bodyKey[]="two_gross";
-            $bodyKey[]="two_net";
+        if(SummaryForm::targetReadyBase()){
+            $bodyKey[]="start_two_gross";
+            $bodyKey[]="start_two_net";
+            if(SummaryForm::grossAndNet()){
+                $bodyKey[]="two_gross";
+                $bodyKey[]="two_net";
+            }
+            $bodyKey[]="start_two_gross_rate";
+            $bodyKey[]="start_two_net_rate";
+            if(SummaryForm::grossAndNet()){
+                $bodyKey[]="two_gross_rate";
+                $bodyKey[]="two_net_rate";
+            }
         }
-        $bodyKey[]="start_two_gross_rate";
-        $bodyKey[]="start_two_net_rate";
-        if(SummaryForm::grossAndNet()){
-            $bodyKey[]="two_gross_rate";
-            $bodyKey[]="two_net_rate";
-        }
-        if(SummaryForm::targetAllReady()){
+        if(SummaryForm::targetReadyMinimum()){
             $bodyKey[]="start_three_gross";
             $bodyKey[]="start_three_net";
             if(SummaryForm::grossAndNet()){
@@ -549,6 +559,18 @@ class SummaryForm extends CFormModel
 
     public static function targetAllReady(){
         return Yii::app()->user->validFunction('CN15');
+    }
+
+    public static function targetReadyUpside(){
+        return Yii::app()->user->validFunction('CN23');
+    }
+
+    public static function targetReadyBase(){
+        return Yii::app()->user->validFunction('CN21');
+    }
+
+    public static function targetReadyMinimum(){
+        return Yii::app()->user->validFunction('CN22');
     }
 
     public static function grossAndNet(){
