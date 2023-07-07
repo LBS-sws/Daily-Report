@@ -325,7 +325,7 @@ class ServiceForm extends CFormModel
 				$this->equip_install_dt = General::toDate($row['equip_install_dt']);
 				$this->org_equip_qty = $row['org_equip_qty'];
 				$this->rtn_equip_qty = $row['rtn_equip_qty'];
-				$this->need_install = $row['need_install'];
+				$this->need_install = $row['need_install']=="N"?"":$row['need_install'];
 				$this->no_of_attm['service'] = $row['no_of_attm'];
                 $this->city = $row['city'];
                 $this->surplus = $row['surplus'];
