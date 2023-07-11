@@ -157,5 +157,6 @@ return array(
     'Operator Time'=>"操作时间",
     'Operator Text'=>"操作内容",
     'Paid Amt Type'=>'服务金额类型',
+    'tracking'=>'跟踪因素详情',
 );
 ?>

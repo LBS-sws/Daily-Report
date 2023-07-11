@@ -11,6 +11,7 @@ class RptCustterminate extends ReportData2 {
 			'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
 			'service'=>array('label'=>Yii::t('service','Service'),'width'=>30,'align'=>'L'),
 			'reason'=>array('label'=>Yii::t('service','Reason'),'width'=>30,'align'=>'L'),
+			'tracking'=>array('label'=>Yii::t('service','tracking'),'width'=>30,'align'=>'L'),
 			'amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C'),
 			'amt_year'=>array('label'=>Yii::t('service','Yearly'),'width'=>15,'align'=>'C'),
             'all_number'=>array('label'=>Yii::t('service','All Number'),'width'=>15,'align'=>'C'),
@@ -102,6 +103,7 @@ class RptCustterminate extends ReportData2 {
 				$temp['ctrt_period'] = $row['ctrt_period'];
 				$temp['ctrt_end_dt'] = General::toDate($row['ctrt_end_dt']);
 				$temp['reason'] = $row['reason'];
+				$temp['tracking'] = $row['tracking'];
 				$temp['lud'] = General::toDate($row['lcd']);
 				$temp['org_equip_qty'] = $row['org_equip_qty'];
 				$temp['rtn_equip_qty'] = $row['rtn_equip_qty'];

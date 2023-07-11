@@ -61,7 +61,7 @@ class RptCustomerID extends ReportData2 {
                     "city_name","status_dt","company_name","cust_type","nature","pieces","service","pay_week",
                     "amt_paid","ctrt_period","amt_money","all_number","surplus",
 					"need_install","amt_install","sign_dt",
-                    "ctrt_end_dt","equip_install_dt","salesman","othersalesman","technician","reason","cont_info",
+                    "ctrt_end_dt","equip_install_dt","salesman","othersalesman","technician","reason","tracking","cont_info",
                     "remarks2","remarks"
                 );
             	break;
@@ -128,6 +128,8 @@ class RptCustomerID extends ReportData2 {
         $arr['remarks'] = array('label'=>Yii::t('service','Cross Area Remarks'),'width'=>40,'align'=>'L');
         //終止原因
         $arr['reason'] = array('label'=>Yii::t('service','Stop Remark'),'width'=>40,'align'=>'L');
+        //跟踪因素详情
+        $arr['tracking'] = array('label'=>Yii::t('service','tracking'),'width'=>40,'align'=>'L');
         //回款日期
         $arr['back_date'] = array('label'=>Yii::t('service','back date'),'width'=>15,'align'=>'C');
         //回款金额
@@ -285,6 +287,7 @@ class RptCustomerID extends ReportData2 {
 				$temp['pieces'] = $row['pieces'];
 				$temp['all_number'] = $row['all_number'];
 				$temp['reason'] = $row['reason'];
+				$temp['tracking'] = $row['tracking'];
 				$temp['surplus'] = $row['surplus']."天";
 				$temp['service'] = $row['product_code']." ".$row['product_name'];
 				$temp['pay_week'] = $row['pay_week_name'];

@@ -23,6 +23,8 @@ class RptCustterall extends ReportData2 {
             'service'=>array('label'=>Yii::t('service','Service'),'width'=>25,'align'=>'C'),
             //变动原因
             'reason'=>array('label'=>Yii::t('service','Reason'),'width'=>25,'align'=>'C'),
+            //跟踪因素详情
+            'tracking'=>array('label'=>Yii::t('service','tracking'),'width'=>25,'align'=>'C'),
             //月金额 paid_type,ctrt_period
             'amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>12,'align'=>'C'),
             //年金额
@@ -109,6 +111,7 @@ class RptCustterall extends ReportData2 {
 				$temp['ctrt_period'] = $row['ctrt_period'];
 				$temp['ctrt_end_dt'] = General::toDate($row['ctrt_end_dt']);
 				$temp['reason'] = $row['reason'];
+				$temp['tracking'] = $row['tracking'];
 				$temp['lud'] = General::toDate($row['lcd']);
 				$this->data[] = $temp;
 			}

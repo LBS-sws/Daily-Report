@@ -121,6 +121,7 @@ class ServiceKAForm extends ServiceForm
 				$this->first_tech = $row['first_tech'];
 				$this->first_tech_id = $row['first_tech_id'];
 				$this->reason = $row['reason'];
+				$this->tracking = $row['tracking'];
 				$this->status_dt = General::toDate($row['status_dt']);
 				$this->status = $row['status'];
 				$this->remarks = $row['remarks'];
@@ -248,7 +249,7 @@ class ServiceKAForm extends ServiceForm
 							service_new_id,company_id, company_name, product_id, service, nature_type, nature_type_two, cust_type, 
 							paid_type, amt_paid, amt_install, need_install, salesman_id, salesman,othersalesman_id,othersalesman,technician_id,technician, sign_dt, b4_product_id,
 							b4_service, b4_paid_type, b4_amt_paid, 
-							ctrt_period, cont_info, first_dt, first_tech_id, first_tech, reason,
+							ctrt_period, cont_info, first_dt, first_tech_id, first_tech, reason,tracking,
 							status, status_dt, remarks, remarks2, ctrt_end_dt,
 							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,
 							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,prepay_month,prepay_start
@@ -256,7 +257,7 @@ class ServiceKAForm extends ServiceForm
 							:service_new_id,:company_id, :company_name, :product_id, :service, :nature_type, :two_nature_type, :cust_type, 
 							:paid_type, :amt_paid, :amt_install, :need_install, :salesman_id, :salesman,:othersalesman_id,:othersalesman,:technician_id,:technician, :sign_dt, :b4_product_id,
 							:b4_service, :b4_paid_type, :b4_amt_paid, 
-							:ctrt_period, :cont_info, :first_dt, :first_tech_id, :first_tech, :reason,
+							:ctrt_period, :cont_info, :first_dt, :first_tech_id, :first_tech, :reason,:tracking,
 							:status, :status_dt, :remarks, :remarks2, :ctrt_end_dt,
 							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, :cust_type_name,:pieces,
 							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3,:prepay_month,:prepay_start
@@ -300,6 +301,7 @@ class ServiceKAForm extends ServiceForm
 							first_tech_id = :first_tech_id, 
 							first_tech = :first_tech, 
 							reason = :reason,
+							tracking = :tracking,
 							remarks = :remarks,
 							remarks2 = :remarks2,
 							status = :status, 

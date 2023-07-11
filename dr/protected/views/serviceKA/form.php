@@ -498,6 +498,14 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 				</div>
 			</div>
 			<div class="form-group">
+				<?php echo $form->labelEx($model,'tracking',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-7">
+					<?php echo $form->textArea($model, 'tracking',
+						array('rows'=>3,'cols'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'))
+					); ?>
+				</div>
+			</div>
+			<div class="form-group">
 				<?php echo $form->labelEx($model,'org_equip_qty',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
 					<?php echo $form->numberField($model, 'org_equip_qty',

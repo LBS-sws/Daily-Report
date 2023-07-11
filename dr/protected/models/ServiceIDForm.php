@@ -46,6 +46,7 @@ class ServiceIDForm extends CFormModel
     public $first_dt;//服务日期
     public $freq;//服务次數
     public $reason;//終止原因
+    public $tracking;//跟踪因素详情
     public $status="N";//N:新增 C:續約 A:更改 S:暫停 R:恢復 T:終止
     public $status_dt;//新增日期
     public $remarks;
@@ -111,6 +112,7 @@ class ServiceIDForm extends CFormModel
             'first_dt'=>Yii::t('service','Service Date'),
             'first_tech'=>Yii::t('service','First Service Tech.'),
             'reason'=>Yii::t('service','Stop Remark'),//
+            'tracking'=>Yii::t('service','tracking'),//
             'status'=>Yii::t('service','Record Type'),
             'status_dt'=>Yii::t('service','Record Date'),
             'remarks'=>Yii::t('service','Cross Area Remarks'),
@@ -180,7 +182,7 @@ class ServiceIDForm extends CFormModel
                 service,pay_week,b4_amt_paid,amt_paid,b4_amt_money,amt_money,amt_install,need_install,salesman_id,
                 salesman,technician_id,technician,othersalesman_id,othersalesman,sign_dt,
                 ctrt_end_dt,ctrt_period,cont_info,first_dt,status,status_dt,
-                b4_cust_type_end,b4_pieces,all_number,equip_install_dt,freq,reason,
+                b4_cust_type_end,b4_pieces,all_number,equip_install_dt,freq,reason,tracking,
                 remarks,remarks2,surplus,prepay_month,prepay_start,service_info','safe'),
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
             array('company_name,amt_paid,amt_money,salesman, service,status_dt,ctrt_period','required'),
@@ -367,6 +369,7 @@ class ServiceIDForm extends CFormModel
             $this->need_install = $row['need_install'];
             $this->city = $row['city'];
             $this->reason = $row['reason'];
+            $this->tracking = $row['tracking'];
             $this->surplus = $row['surplus'];
             $this->all_number = $row['all_number'];
             //var_dump($row['cust_type_name']);
@@ -508,6 +511,7 @@ class ServiceIDForm extends CFormModel
         $this->setEmptyToArr($arr,"product_id");
         $this->setEmptyToArr($arr,"service");
         $this->setEmptyToArr($arr,"reason");
+        $this->setEmptyToArr($arr,"tracking");
         $this->setEmptyToArr($arr,"pay_week",true);
         $this->setEmptyToArr($arr,"amt_paid");
         $this->setEmptyToArr($arr,"amt_money");
