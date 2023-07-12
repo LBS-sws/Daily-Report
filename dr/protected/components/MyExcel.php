@@ -243,13 +243,13 @@ class MyExcel {
         $this->setHeaderStyleTwo("M{$this->current_row}:N".($this->current_row+1),"F8E57F");
         $this->current_row++;
         $this->objPHPExcel->getActiveSheet()->freezePane('B7');
-        $heardArr = array("RMB","新增服务","新增（产品）","终止服务","恢复服务","暂停服务","更改服务","净增长","长约（>=12月）","短约","餐饮客户","非餐饮客户","餐饮客户","非餐饮客户");
+        $heardArr = array("RMB","新增服务","新增（产品）","终止服务","恢复服务","暂停服务","更改服务","净增长","长约（>=12月）","短约","一次性服務","餐饮客户","非餐饮客户","餐饮客户","非餐饮客户");
         foreach ($heardArr as $key=>$heardStr){
             $this->fillHeaderCell($key, $this->current_row, $heardStr,17);
         }
         $bodyKey = array(
             "city_name","num_new","u_invoice_sum","num_stop","num_restore","num_pause","num_update",
-            "num_growth","num_long","num_short","num_cate","num_not_cate","u_num_cate","u_num_not_cate"
+            "num_growth","num_long","num_short","one_service","num_cate","num_not_cate","u_num_cate","u_num_not_cate"
         );
         if(!empty($data)){
             foreach ($data as $regionList){

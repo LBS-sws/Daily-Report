@@ -155,5 +155,10 @@ return array(
     'color_remark_1'=>'1、紅色：百分比小於等於60%',
     'color_remark_2'=>'2、綠色：百分比大於等於100%',
     'color_remark_3'=>'3、橙色：當年初目標 = 滾動目標，目標完成度大於等於100%',
+    'one service'=>'一次性服務',
+    'added last month'=>'上月新增',
+    'Difference'=>'變更金額',
+    '(After)'=>'(更改後)',
+    '(Before)'=>'(更改前)',
 );
 ?>

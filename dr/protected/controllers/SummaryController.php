@@ -40,7 +40,7 @@ class SummaryController extends Controller
     //详情列表的異步請求
     public function actionAjaxDetail(){
         if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
-            $model = new SummaryForm();
+            $model = new SummaryTable();
             $html =$model->ajaxDetailForHtml();
             echo CJSON::encode(array('status'=>1,'html'=>$html));//Yii 的方法将数组处理成json数据
         }else{

@@ -56,10 +56,13 @@ class RptSummarySC extends ReportData2 {
             "num_growth"=>0,//净增长
             "num_long"=>0,//长约（>=12月）
             "num_short"=>0,//短约
+            "one_service"=>0,//一次性服務
             "num_cate"=>0,//餐饮客户
             "num_not_cate"=>0,//非餐饮客户
             "u_num_cate"=>0,//餐饮客户(U系统同步数据)
             "u_num_not_cate"=>0,//非餐饮客户(U系统同步数据)
+            "last_one_service"=>0,//一次性服務（上月）
+            "last_u_invoice_sum"=>0,//U系统同步数据（上個月）
         );
     }
 
@@ -125,14 +128,28 @@ class RptSummarySC extends ReportData2 {
                 switch ($row["status"]){
                     case "N"://新增
                         $data[$city]["num_new"]+=$money;
-                        $data[$city]["num_long"]+=$row["ctrt_period"]>=12?$money:0;
-                        $data[$city]["num_short"]+=$row["ctrt_period"]<12?$money:0;
+                        if($row["ctrt_period"]>=12){//長約
+                            $data[$city]["num_long"]+=$money;
+                        }else{//短約
+                            if($row["paid_type"]==1) {//一次性服務
+                                $data[$city]["one_service"]+=$money;
+                            }else{
+                                $data[$city]["num_short"]+=$money;
+                            }
+                        }
                         $data[$city]["num_cate"]+=$row["nature_rpt_cat"]=="A01"?$money:0;
                         $data[$city]["num_not_cate"]+=$row["nature_rpt_cat"]!="A01"?$money:0;
                         if($citySet["add_type"]==1){//叠加(城市配置的叠加)
                             $data[$citySet["region_code"]]["num_new"]+=$money;
-                            $data[$citySet["region_code"]]["num_long"]+=$row["ctrt_period"]>=12?$money:0;
-                            $data[$citySet["region_code"]]["num_short"]+=$row["ctrt_period"]<12?$money:0;
+                            if($row["ctrt_period"]>=12){//長約
+                                $data[$citySet["region_code"]]["num_long"]+=$money;
+                            }else{//短約
+                                if($row["paid_type"]==1) {//一次性服務
+                                    $data[$citySet["region_code"]]["one_service"]+=$money;
+                                }else{
+                                    $data[$citySet["region_code"]]["num_short"]+=$money;
+                                }
+                            }
                             $data[$citySet["region_code"]]["num_cate"]+=$row["nature_rpt_cat"]=="A01"?$money:0;
                             $data[$citySet["region_code"]]["num_not_cate"]+=$row["nature_rpt_cat"]!="A01"?$money:0;
                         }
@@ -211,7 +228,7 @@ class RptSummarySC extends ReportData2 {
             ->leftJoin("swo_nature g","a.nature_type=g.id")
             ->leftJoin("({$sqlText}) b","a.company_id = b.company_id AND a.cust_type = b.cust_type AND IFNULL(b.contract_no,'sb')=IFNULL(n.contract_no,'sb')")
             ->where("a.id>0 {$where} AND (a.status_dt>b.status_dt or (a.status_dt=b.status_dt and a.id=b.id))")
-            ->order("a.city")
+            ->order("a.city,a.status_dt desc")
             ->queryAll(); //客戶服務的暫停、恢復、終止需要特殊處理
         return $serviceRows?$serviceRows:array();
     }
@@ -246,7 +263,7 @@ class RptSummarySC extends ReportData2 {
             ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
             ->leftJoin("swo_nature g","a.nature_type=g.id")
             ->where("a.city not in ('ZY') {$where}")
-            ->order("a.city")
+            ->order("a.city,a.status_dt desc")
             ->queryAll();
         return $serviceRowsID?$serviceRowsID:array();
     }
