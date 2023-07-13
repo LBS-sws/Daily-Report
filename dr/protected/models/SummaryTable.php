@@ -12,7 +12,7 @@ class SummaryTable extends SummaryForm{
     //顯示表格內的數據來源
     public function ajaxDetailForHtml(){
         $city = key_exists("city",$_GET)?$_GET["city"]:0;
-        $this->city_allow = "'{$city}'";
+        $this->city_allow = CitySetForm::getCityAllowForCity($city);
         $this->start_date = key_exists("startDate",$_GET)?$_GET["startDate"]:"";
         $this->end_date = key_exists("endDate",$_GET)?$_GET["endDate"]:"";
         $type = key_exists("type",$_GET)?$_GET["type"]:"";
@@ -95,6 +95,7 @@ class SummaryTable extends SummaryForm{
         $html = "<table class='table table-bordered table-striped table-hover'>";
         $html.="<thead><tr>";
         $html.="<th width='90px'>".Yii::t('service','Contract No')."</th>";//合同编号
+        $html.="<th width='90px'>".Yii::t('summary','City')."</th>";//城市
         $html.="<th width='90px'>".Yii::t('summary','search day')."</th>";//日期
         $html.="<th>".Yii::t('service','Customer')."</th>";//客户编号及名称
         $html.="<th width='80px'>".Yii::t('service','Customer Type')."</th>";//客户类别
@@ -105,8 +106,16 @@ class SummaryTable extends SummaryForm{
         $html.="</tr></thead>";
         if($rows){
             $sum = 0;
+            $count=0;
             $html.="<tbody>";
+            $city="";
+            $cityName = "";
             foreach ($rows as $row){
+                $count++;
+                if($city!=$row["city"]){
+                    $cityName= General::getCityName($row["city"]);
+                    $city = $row["city"];
+                }
                 if($row["sql_type_name"]=="D"){//ID服务
                     $link = self::drawEditButton('A11', 'serviceID/edit', 'serviceID/view', array('index'=>$row['id']));
                 }else{
@@ -125,6 +134,7 @@ class SummaryTable extends SummaryForm{
                 $sum+=$row["sum_amount"];
                 $html.="<tr data-id='{$row["id"]}'>";
                 $html.="<td>".$row["contract_no"]."</td>";
+                $html.="<td>".$cityName."</td>";
                 $html.="<td>".General::toDate($row["status_dt"])."</td>";
                 $html.="<td>".$companyName."</td>";
                 $html.="<td>".$row["cust_type_name"]."</td>";
@@ -136,12 +146,14 @@ class SummaryTable extends SummaryForm{
             }
             $html.="</tbody><tfoot>";
             $html.="<tr>";
-            $html.="<td colspan='6' class='text-right'>汇总：</td>";
+            $html.="<td colspan='2' class='text-right'>".Yii::t("summary","total count:")."</td>";
+            $html.="<td colspan='2'>".$count."</td>";
+            $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
             $html.="<td colspan='2'>".$sum."</td>";
             $html.="</tr>";
             $html.="</tfoot>";
         }else{
-            $html.="<tbody><tr><td colspan='8'>无数据</td></tr></tbody>";
+            $html.="<tbody><tr><td colspan='9'>".Yii::t("summary","none data")."</td></tr></tbody>";
         }
         $html.="</table>";
         return $html;
@@ -153,6 +165,7 @@ class SummaryTable extends SummaryForm{
         $html = "<table class='table table-bordered table-striped table-hover'>";
         $html.="<thead><tr>";
         $html.="<th width='90px'>".Yii::t('service','Contract No')."</th>";//合同编号
+        $html.="<th width='90px'>".Yii::t('summary','City')."</th>";//城市
         $html.="<th width='90px'>".Yii::t('summary','search day')."</th>";//日期
         $html.="<th>".Yii::t('service','Customer')."</th>";//客户编号及名称
         $html.="<th width='80px'>".Yii::t('service','Customer Type')."</th>";//客户类别
@@ -164,8 +177,16 @@ class SummaryTable extends SummaryForm{
         $html.="</tr></thead>";
         if($rows){
             $sum = 0;
+            $count=0;
+            $city="";
+            $cityName = "";
             $html.="<tbody>";
             foreach ($rows as $row){
+                $count++;
+                if($city!=$row["city"]){
+                    $cityName= General::getCityName($row["city"]);
+                    $city = $row["city"];
+                }
                 if($row["sql_type_name"]=="D"){//ID服务
                     $link = self::drawEditButton('A11', 'serviceID/edit', 'serviceID/view', array('index'=>$row['id']));
                 }else{
@@ -192,6 +213,7 @@ class SummaryTable extends SummaryForm{
                 $sum+=$row["sum_amount"];
                 $html.="<tr data-id='{$row["id"]}'>";
                 $html.="<td>".$row["contract_no"]."</td>";
+                $html.="<td>".$cityName."</td>";
                 $html.="<td>".General::toDate($row["status_dt"])."</td>";
                 $html.="<td>".$companyName."</td>";
                 $html.="<td>".$row["cust_type_name"]."</td>";
@@ -204,12 +226,14 @@ class SummaryTable extends SummaryForm{
             }
             $html.="</tbody><tfoot>";
             $html.="<tr>";
-            $html.="<td colspan='6' class='text-right'>汇总：</td>";
+            $html.="<td colspan='2' class='text-right'>".Yii::t("summary","total count:")."</td>";
+            $html.="<td colspan='2'>".$count."</td>";
+            $html.="<td colspan='4' class='text-right'>".Yii::t("summary","total amt:")."</td>";
             $html.="<td colspan='2'>".$sum."</td>";
             $html.="</tr>";
             $html.="</tfoot>";
         }else{
-            $html.="<tbody><tr><td colspan='8'>无数据</td></tr></tbody>";
+            $html.="<tbody><tr><td colspan='10'>".Yii::t("summary","none data")."</td></tr></tbody>";
         }
         $html.="</table>";
         return $html;
@@ -228,19 +252,15 @@ class SummaryTable extends SummaryForm{
             ->leftJoin("swo_service_contract_no n","a.id=n.service_id")
             ->leftJoin("swo_customer_type f","a.cust_type=f.id")
             ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->where($whereSql)->order("a.status_dt desc")->queryAll();
+            ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
         $queryIARows = $queryIARows?$queryIARows:array();
-        $whereSql = str_ireplace("a.","a_ID.",$whereSql);
-        $whereSql = str_ireplace("f.","f_ID.",$whereSql);
-        $selectSql = str_ireplace("a.","a_ID.",$selectSql);
-        $selectSql = str_ireplace("f.","f_ID.",$selectSql);
-        $selectSql = str_ireplace("g.","g_ID.",$selectSql);
+
         $queryIDRows = Yii::app()->db->createCommand()
             ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
-            ->from("swo_serviceid a_ID")
-            ->leftJoin("swo_customer_type_id f_ID","a_ID.cust_type=f_ID.id")
-            ->leftJoin("swo_nature g_ID","a_ID.nature_type=g_ID.id")
-            ->where($whereSql)->order("a_ID.status_dt desc")->queryAll();
+            ->from("swo_serviceid a")
+            ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
         $queryIDRows = $queryIDRows?$queryIDRows:array();
         return array_merge($queryIARows,$queryIDRows);
     }
@@ -272,10 +292,10 @@ class SummaryTable extends SummaryForm{
         }
         if($type=="long"){
             $whereSqlIA= " and a.ctrt_period>=12";
-            $whereSqlID= " and a_ID.ctrt_period>=12";
+            $whereSqlID= " and a.ctrt_period>=12";
         }else{
             $whereSqlIA= " and a.ctrt_period<12 and a.paid_type!=1";
-            $whereSqlID= " and a_ID.ctrt_period<12";
+            $whereSqlID= " and a.ctrt_period<12";
         }
         $whereSql .= " and not(f.rpt_cat='INV' and f.single=1)";
         $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
@@ -288,17 +308,13 @@ class SummaryTable extends SummaryForm{
             ->leftJoin("swo_nature g","a.nature_type=g.id")
             ->where($whereSql.$whereSqlIA)->queryAll();
         $queryIARows = $queryIARows?$queryIARows:array();
-        $whereSql = str_ireplace("a.","a_ID.",$whereSql);
-        $whereSql = str_ireplace("f.","f_ID.",$whereSql);
-        $selectSql = str_ireplace("a.","a_ID.",$selectSql);
-        $selectSql = str_ireplace("f.","f_ID.",$selectSql);
-        $selectSql = str_ireplace("g.","g_ID.",$selectSql);
+
         $queryIDRows = Yii::app()->db->createCommand()
             ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
-            ->from("swo_serviceid a_ID")
-            ->leftJoin("swo_customer_type_id f_ID","a_ID.cust_type=f_ID.id")
-            ->leftJoin("swo_nature g_ID","a_ID.nature_type=g_ID.id")
-            ->where($whereSql.$whereSqlID)->order("a_ID.status_dt desc")->queryAll();
+            ->from("swo_serviceid a")
+            ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where($whereSql.$whereSqlID)->order("a.status_dt desc")->queryAll();
         $queryIDRows = $queryIDRows?$queryIDRows:array();
         return array_merge($queryIARows,$queryIDRows);
     }
@@ -326,18 +342,12 @@ class SummaryTable extends SummaryForm{
             ->leftJoin("swo_nature g","a.nature_type=g.id")
             ->where($whereSql)->queryAll();
         $queryIARows = $queryIARows?$queryIARows:array();
-        $whereSql = str_ireplace("a.","a_ID.",$whereSql);
-        $whereSql = str_ireplace("f.","f_ID.",$whereSql);
-        $whereSql = str_ireplace("g.","g_ID.",$whereSql);
-        $selectSql = str_ireplace("a.","a_ID.",$selectSql);
-        $selectSql = str_ireplace("f.","f_ID.",$selectSql);
-        $selectSql = str_ireplace("g.","g_ID.",$selectSql);
         $queryIDRows = Yii::app()->db->createCommand()
             ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
-            ->from("swo_serviceid a_ID")
-            ->leftJoin("swo_customer_type_id f_ID","a_ID.cust_type=f_ID.id")
-            ->leftJoin("swo_nature g_ID","a_ID.nature_type=g_ID.id")
-            ->where($whereSql)->order("a_ID.status_dt desc")->queryAll();
+            ->from("swo_serviceid a")
+            ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
         $queryIDRows = $queryIDRows?$queryIDRows:array();
         return array_merge($queryIARows,$queryIDRows);
     }

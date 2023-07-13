@@ -160,5 +160,8 @@ return array(
     'Difference'=>'變更金額',
     '(After)'=>'(更改後)',
     '(Before)'=>'(更改前)',
+    'total count:'=>'匯總數量：',
+    'total amt:'=>'匯總金額：',
+    'none data'=>'無數據',
 );
 ?>

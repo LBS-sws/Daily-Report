@@ -90,6 +90,20 @@ class CitySetForm extends CFormModel
 		return $list;
 	}
 
+	public static function getCityAllowForCity($city){
+	    $list=array("'{$city}'");
+		$rows = Yii::app()->db->createCommand()
+            ->select("code")->from("swo_city_set")
+            ->where("region_code=:city and show_type=1",array(":city"=>$city))
+            ->queryAll();
+		if ($rows){
+		    foreach ($rows as $row){
+		        $list[] = "'".$row["code"]."'";
+            }
+		}
+		return implode(",",$list);
+	}
+
 	public static function getListForCityCode($city_code,$list){
 	    if(key_exists($city_code,$list)){
 	        return $list[$city_code];
