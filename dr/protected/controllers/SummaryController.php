@@ -1,5 +1,5 @@
 <?php
-
+//強制刷新文件
 class SummaryController extends Controller
 {
 	public $function_id='G03';
