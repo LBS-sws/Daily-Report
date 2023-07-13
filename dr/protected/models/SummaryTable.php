@@ -79,7 +79,7 @@ class SummaryTable extends SummaryForm{
 
     //恢复服务
     private function ServiceRenewal(){
-        $rows = RptSummarySC::getSRTRowsAll($this->city_allow,$this->start_date,$this->end_date,"R");
+        $rows = self::getServiceRows($this->start_date,$this->end_date,$this->city_allow,"R");
         return self::getTableForRows($rows,$this->city_allow);
     }
 
