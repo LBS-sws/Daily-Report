@@ -28,7 +28,7 @@ class SummaryController extends Controller
 				'expression'=>array('SummaryController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view','downExcel','test','ajaxDetail'),
+				'actions'=>array('index','view','downExcel','test','uTest','ajaxDetail'),
 				'expression'=>array('SummaryController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -53,6 +53,14 @@ class SummaryController extends Controller
         $endDate=empty($endDate)?date("Y/m/d"):$endDate;
         $arr = SummaryForm::getUActualMoney($startDate,$endDate);
         var_dump($arr);
+        die();
+    }
+
+	public function actionUTest($year="",$month=""){
+        $year=empty($year)?date("Y"):$year;
+        $month=empty($month)?date("n"):$month;
+        $list = Invoice::getActualAmount($year,$month);
+        var_dump($list);
         die();
     }
 
