@@ -12,12 +12,59 @@ class SummaryTable extends SummaryForm{
     //顯示表格內的數據來源
     public function ajaxDetailForHtml(){
         $city = key_exists("city",$_GET)?$_GET["city"]:0;
-        $this->city_allow = CitySetForm::getCityAllowForCity($city);
+        $cityList = CitySetForm::getCityAllowForCity($city);
+        $this->city_allow = "'".implode("','",$cityList)."'";
         $this->start_date = key_exists("startDate",$_GET)?$_GET["startDate"]:"";
         $this->end_date = key_exists("endDate",$_GET)?$_GET["endDate"]:"";
+        $clickList = parent::clickList();
+        $clickList = array_column($clickList,"type");
         $type = key_exists("type",$_GET)?$_GET["type"]:"";
+        if(in_array($type,$clickList)){
+            return $this->$type();
+        }else{
+            return "<p>数据异常，请刷新重试</p>";
+        }
+    }
 
-        return $this->$type();
+    //餐饮 新增（产品）
+    private function ServiceINVCate(){
+        $invRows = SummaryTable::getUInvListForType($this->start_date,$this->end_date,$this->city_allow,$type="cate");
+        $invTable = SummaryTable::getTableForInv($invRows,$this->city_allow);
+        return $invTable["html"];
+    }
+
+    //非餐饮 新增（产品）
+    private function ServiceINVCateNot(){
+        $invRows = SummaryTable::getUInvListForType($this->start_date,$this->end_date,$this->city_allow,$type="");
+        $invTable = SummaryTable::getTableForInv($invRows,$this->city_allow);
+        return $invTable["html"];
+    }
+
+    //一次性服务+新增（产品）
+    private function ServiceINVNew(){
+        $invRows = SummaryTable::getUInvList($this->start_date,$this->end_date,$this->city_allow);
+        $invTable = SummaryTable::getTableForInv($invRows,$this->city_allow);
+        $rows = SummaryTable::getOneServiceRows($this->start_date,$this->end_date,$this->city_allow);
+        return SummaryTable::getTableForRows($rows,$this->city_allow,$invTable);
+    }
+
+    //新增（产品）(上个月)
+    private function ServiceINVLast(){
+        $monthStartDate = date("Y/m/d",strtotime($this->start_date." - 1 months"));
+        $monthEndDate = date("Y/m/d",strtotime($this->end_date." - 1 months"));
+        $invRows = SummaryTable::getUInvList($monthStartDate,$monthEndDate,$this->city_allow);
+        $invTable = SummaryTable::getTableForInv($invRows,$this->city_allow);
+        return $invTable["html"];
+    }
+
+    //一次性服务+新增（产品）(上个月)
+    private function ServiceINVMonthNew(){
+        $monthStartDate = date("Y/m/d",strtotime($this->start_date." - 1 months"));
+        $monthEndDate = date("Y/m/d",strtotime($this->end_date." - 1 months"));
+        $invRows = SummaryTable::getUInvList($monthStartDate,$monthEndDate,$this->city_allow);
+        $invTable = SummaryTable::getTableForInv($invRows,$this->city_allow);
+        $rows = SummaryTable::getOneServiceRows($monthStartDate,$monthEndDate,$this->city_allow);
+        return SummaryTable::getTableForRows($rows,$this->city_allow,$invTable);
     }
 
     //餐饮（客户服务）
@@ -61,7 +108,7 @@ class SummaryTable extends SummaryForm{
 
     //新增服务
     private function ServiceNew(){
-        $rows = self::getServiceRows($this->start_date,$this->end_date,$this->city_allow,"N");
+        $rows = self::getServiceRowsForAdd($this->start_date,$this->end_date,$this->city_allow);
         return self::getTableForRows($rows,$this->city_allow);
     }
 
@@ -89,10 +136,14 @@ class SummaryTable extends SummaryForm{
         return self::getTableForRows($rows,$this->city_allow);
     }
 
-    public static function getTableForRows($rows,$city_allow){
+    public static function getTableForRows($rows,$city_allow,$invTable=array()){
         $companyList = GetNameToId::getCompanyList($city_allow);
-
-        $html = "<table class='table table-bordered table-striped table-hover'>";
+        $html="";
+        if(!empty($invTable)){
+            $html.=$invTable["html"];
+            $html.="<p>&nbsp;</p>";
+        }
+        $html.= "<table class='table table-bordered table-striped table-hover'>";
         $html.="<thead><tr>";
         $html.="<th width='90px'>".Yii::t('service','Contract No')."</th>";//合同编号
         $html.="<th width='90px'>".Yii::t('summary','City')."</th>";//城市
@@ -151,12 +202,79 @@ class SummaryTable extends SummaryForm{
             $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
             $html.="<td colspan='2'>".$sum."</td>";
             $html.="</tr>";
+            if(!empty($invTable)){
+                $html.="<tr><td colspan='9'>&nbsp;</td></tr>";
+                $count+=$invTable["count"];
+                $sum+=$invTable["sum"];
+                $html.="<tr>";
+                $html.="<td colspan='2' class='text-right'>".Yii::t("summary","total count:")."</td>";
+                $html.="<td colspan='2'>".$count."</td>";
+                $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
+                $html.="<td colspan='2'>".$sum."</td>";
+                $html.="</tr>";
+            }
             $html.="</tfoot>";
         }else{
             $html.="<tbody><tr><td colspan='9'>".Yii::t("summary","none data")."</td></tr></tbody>";
         }
         $html.="</table>";
         return $html;
+    }
+
+    public static function getTableForInv($rows,$city_allow){
+/*        array (
+            'invoice_dt' => '2023-07-01',
+            'customer_code' => '11YJS0001-ZH',
+            'invoice_no' => 'ZHINV2307000002',
+            'customer_type' => '餐饮类',
+            'invoice_amt' => '450.00',
+            'city' => 'ZH',
+        );*/
+        $html = "<table class='table table-bordered table-striped table-hover'>";
+        $html.="<thead><tr>";
+        $html.="<th width='100px'>".Yii::t('summary','INV code')."</th>";//产品编号
+        $html.="<th width='90px'>".Yii::t('summary','City')."</th>";//城市
+        $html.="<th width='100px'>".Yii::t('summary','search day')."</th>";//日期
+        $html.="<th width='100px'>".Yii::t('summary','Customer Code')."</th>";//客户编号
+        $html.="<th width='100px'>".Yii::t('summary','Customer Type')."</th>";//客户类别
+        $html.="<th width='100px'>".Yii::t('summary','INV Amt')."</th>";//产品金额
+        $html.="</tr></thead>";
+        $sum = 0;
+        $count=0;
+        if($rows){
+            $html.="<tbody>";
+            $city="";
+            $cityName = "";
+            foreach ($rows as $row){
+                $count++;
+                if($city!=$row["city"]){
+                    $cityName= General::getCityName($row["city"]);
+                    $city = $row["city"];
+                }
+                $row["sum_amount"]=round($row["invoice_amt"],2);
+                $sum+=$row["sum_amount"];
+                $html.="<tr data-id='{$row["id"]}'>";
+                $html.="<td>".$row["invoice_no"]."</td>";
+                $html.="<td>".$cityName."</td>";
+                $html.="<td>".General::toDate($row["invoice_dt"])."</td>";
+                $html.="<td>".$row["customer_code"]."</td>";
+                $html.="<td>".$row["customer_type"]."</td>";
+                $html.="<td class='text-right'>".$row["sum_amount"]."</td>";
+                $html.="</tr>";
+            }
+            $html.="</tbody><tfoot>";
+            $html.="<tr>";
+            $html.="<td colspan='2' class='text-right'>".Yii::t("summary","total count:")."</td>";
+            $html.="<td colspan='2'>".$count."</td>";
+            $html.="<td class='text-right'>".Yii::t("summary","total amt:")."</td>";
+            $html.="<td>".$sum."</td>";
+            $html.="</tr>";
+            $html.="</tfoot>";
+        }else{
+            $html.="<tbody><tr><td colspan='6'>".Yii::t("summary","none data")."</td></tr></tbody>";
+        }
+        $html.="</table>";
+        return array("html"=>$html,"count"=>$count,"sum"=>$sum);
     }
 
     public static function getTableForRowsTwo($rows,$city_allow){
@@ -239,8 +357,34 @@ class SummaryTable extends SummaryForm{
         return $html;
     }
 
+    //客户服务查询(新增非一次性)
+    public static function getServiceRowsForAdd($startDate,$endDate,$city_allow){
+        $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        $whereSql.= " and a.city in ({$city_allow})";
+        $whereSql .= " and not(f.rpt_cat='INV' and f.single=1)";
+        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+            f.description as cust_type_name";
+        $queryIARows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
+            ->from("swo_service a")
+            ->leftJoin("swo_service_contract_no n","a.id=n.service_id")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where($whereSql." and not (a.paid_type=1 and a.ctrt_period<12)")->order("a.city,a.status_dt desc")->queryAll();
+        $queryIARows = $queryIARows?$queryIARows:array();
+
+        $queryIDRows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+            ->from("swo_serviceid a")
+            ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
+        $queryIDRows = $queryIDRows?$queryIDRows:array();
+        return array_merge($queryIARows,$queryIDRows);
+    }
+
     //客户服务查询
-    public function getServiceRows($startDate,$endDate,$city_allow,$type){
+    public static function getServiceRows($startDate,$endDate,$city_allow,$type){
         $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         $whereSql.= " and a.city in ({$city_allow})";
         $whereSql .= " and not(f.rpt_cat='INV' and f.single=1)";
@@ -266,8 +410,8 @@ class SummaryTable extends SummaryForm{
     }
 
     //一次性查询
-    public function getOneServiceRows($startDay,$endDay,$city_allow=""){
-        $whereSql = "a.status='N' and a.paid_type=1 and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
+    public static function getOneServiceRows($startDay,$endDay,$city_allow=""){
+        $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
         if(!empty($city_allow)){
             $whereSql.= " and a.city in ({$city_allow})";
         }
@@ -280,12 +424,12 @@ class SummaryTable extends SummaryForm{
             ->leftJoin("swo_service_contract_no n","a.id=n.service_id")
             ->leftJoin("swo_customer_type f","a.cust_type=f.id")
             ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->where($whereSql)->queryAll();
+            ->where($whereSql." and a.paid_type=1 and a.ctrt_period<12")->queryAll();
         return $rows;
     }
 
     //长约、短约查询
-    public function getServiceForMonthType($startDay,$endDay,$city_allow="",$type="long"){
+    public static function getServiceForMonthType($startDay,$endDay,$city_allow="",$type="long"){
         $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
         if(!empty($city_allow)){
             $whereSql.= " and a.city in ({$city_allow})";
@@ -320,7 +464,7 @@ class SummaryTable extends SummaryForm{
     }
 
     //餐饮、非餐饮查询
-    public function getServiceForCate($startDay,$endDay,$city_allow="",$type="cate"){
+    public static function getServiceForCate($startDay,$endDay,$city_allow="",$type="cate"){
         //cate==A01
         $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
         if(!empty($city_allow)){
@@ -350,5 +494,32 @@ class SummaryTable extends SummaryForm{
             ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
         $queryIDRows = $queryIDRows?$queryIDRows:array();
         return array_merge($queryIARows,$queryIDRows);
+    }
+
+    //U系统的产品
+    public static function getUInvList($startDay,$endDay,$city_allow=""){
+        $list = array();
+        $json = Invoice::getInvData($startDay,$endDay,$city_allow);
+        if($json["message"]==="Success"){
+            $list = $json["data"];
+        }
+        return $list;
+    }
+
+    //U系统的产品
+    public static function getUInvListForType($startDay,$endDay,$city_allow="",$type=""){
+        $list = array();
+        $json = Invoice::getInvData($startDay,$endDay,$city_allow);
+        if($json["message"]==="Success"){
+            foreach ($json["data"] as $row){
+                if($type==="cate"&&$row["customer_type"]==="餐饮类"){
+                    $list[]=$row;
+                }
+                if ($type==="not"&&$row["customer_type"]!=="餐饮类"){
+                    $list[]=$row;
+                }
+            }
+        }
+        return $list;
     }
 }

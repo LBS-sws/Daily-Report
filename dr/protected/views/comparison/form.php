@@ -9,7 +9,7 @@ $this->pageTitle=Yii::app()->name . ' - Comparison Form';
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 )); ?>
 <style>
-    .click-th,.click-tr{ cursor: pointer;}
+    .click-th,.click-tr,.td_detail{ cursor: pointer;}
     .click-tr>.fa:before{ content: "\f062";}
     .click-tr.show-tr>.fa:before{ content: "\f063";}
     .table-fixed{ table-layout: fixed;}
@@ -154,6 +154,23 @@ $this->pageTitle=Yii::app()->name . ' - Comparison Form';
 
 </section>
 
+<!--詳情彈窗-->
+<div class="modal fade" tabindex="-1" role="dialog" id="detailDialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <p>加载中....</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <!--功能說明-->
 <?php $this->renderPartial('//comparison/rankingNote',array("model"=>$model)); ?>
@@ -225,8 +242,33 @@ $js="
         });
     });
 ";
+$ajaxUrl = Yii::app()->createUrl('comparison/ajaxDetail');
+$js.= "
+$('.td_detail').on('click',function(){
+    var tdOne = $(this).parent('tr').children('td').eq(0).text();
+    $('#detailDialog').find('.modal-title').text($(this).data('title')+' - '+tdOne);
+    $('#detailDialog').find('.modal-body').html('<p>加载中....</p>');
+    $('#detailDialog').modal('show');
+    $.ajax({
+        type: 'GET',
+        url: '{$ajaxUrl}',
+        data: {
+            'city':$(this).data('city'),
+            'type':$(this).data('type'),
+            'startDate':'{$model->start_date}',
+            'endDate':'{$model->end_date}'
+        },
+        dataType: 'json',
+        success: function(data) {
+            $('#detailDialog').find('.modal-body').html(data['html']);
+        },
+        error: function(data) { // if error occured
+            alert('Error occured.please try again');
+        }
+    });
+});
+";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
-
 
 $language = Yii::app()->language;
 $js = Script::genReadonlyField();

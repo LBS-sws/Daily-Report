@@ -145,7 +145,7 @@ class GetNameToId{
     }
 
     //获取管辖城市下的所有客户名称
-    public static function getCompanyList($city_allow=""){
+    public static function getCompanyList($city_allow="",$type="id"){
         $list=array();
         $whereSql = "a.id>0";
         if(!empty($city_allow)){
@@ -158,7 +158,7 @@ class GetNameToId{
         if($companyRows){
             foreach ($companyRows as $row){
                 $row["codeAndName"]=$row["code"].$row["name"];
-                $list[$row["id"]] = $row;
+                $list[$row[$type]] = $row;
             }
         }
         return $list;

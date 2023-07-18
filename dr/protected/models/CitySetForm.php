@@ -90,18 +90,21 @@ class CitySetForm extends CFormModel
 		return $list;
 	}
 
+	//根據大城市查詢小城市
 	public static function getCityAllowForCity($city){
-	    $list=array("'{$city}'");
+	    $list=array($city);
 		$rows = Yii::app()->db->createCommand()
-            ->select("code")->from("swo_city_set")
+            ->select("code,add_type")->from("swo_city_set")
             ->where("region_code=:city and show_type=1",array(":city"=>$city))
             ->queryAll();
 		if ($rows){
 		    foreach ($rows as $row){
-		        $list[] = "'".$row["code"]."'";
+		        $minCity = $row["code"];
+		        $minList = self::getCityAllowForCity($minCity);
+                $list = array_merge($list,$minList);
             }
 		}
-		return implode(",",$list);
+		return $list;
 	}
 
 	public static function getListForCityCode($city_code,$list){

@@ -163,5 +163,17 @@ return array(
     'total count:'=>'匯總數量：',
     'total amt:'=>'匯總金額：',
     'none data'=>'無數據',
+
+    'New(not single)'=>'新增服務(除一次性服務)',
+    'New(single) + New(INV)'=>'一次性服務+新增（產品）',
+    'Last Month Single + New(INV)'=>'上月一次性服務+新增產品',
+    'YTD Resume'=>'YTD恢復',
+    'YTD Pause'=>'YTD暫停',
+    'YTD Amend'=>'YTD更改',
+    ' (last year)'=>' (上一年)',
+    'INV code'=>'U系統產品編號',
+    'Customer Code'=>'U系統客戶編號',
+    'Customer Type'=>'U系統客戶類別',
+    'INV Amt'=>'U系統產品金額',
 );
 ?>
