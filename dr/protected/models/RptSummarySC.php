@@ -51,8 +51,8 @@ class RptSummarySC extends ReportData2 {
             $defMoreList["num_new_n"]+=key_exists($city,$serviceAddForNY)?$serviceAddForNY[$city]["num_new_n"]:0;
             $defMoreList["u_invoice_sum"]+=$defMoreList["num_new_n"];
             $defMoreList["u_invoice_sum"]+=$defMoreList["u_invoice_num"];
-            $defMoreList["num_pause"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_pause"]:0;
-            $defMoreList["num_stop"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_stop"]:0;
+            $defMoreList["num_pause"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_pause"]:0;
+            $defMoreList["num_stop"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop"]:0;
             $defMoreList["num_restore"]+=key_exists($city,$serviceForR)?$serviceForR[$city]:0;
             $defMoreList["num_update"]+=key_exists($city,$serviceForA)?$serviceForA[$city]:0;
             if(key_exists($city,$serviceDetailForAdd)){
@@ -64,7 +64,7 @@ class RptSummarySC extends ReportData2 {
             }
             $defMoreList["last_u_invoice_sum"]+=key_exists($city,$lastUInvMoney)?$lastUInvMoney[$city]["sum_money"]:0;
             $defMoreList["last_one_service"]+=key_exists($city,$lastServiceAddForNY)?$lastServiceAddForNY[$city]:0;
-            $defMoreList["last_month_sum"]+=$defMoreList["last_one_service"]+$defMoreList["last_u_invoice_sum"];
+            $defMoreList["last_month_sum"]+=-1*($defMoreList["last_one_service"]+$defMoreList["last_u_invoice_sum"]);
 
             RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }

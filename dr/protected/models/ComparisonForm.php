@@ -223,19 +223,19 @@ class ComparisonForm extends CFormModel
             }
             $defMoreList["new_sum_n_last"]+=$defMoreList["u_sum_last"];//一次性新增需要加上U系统产品金额
             //上月一次性服务+新增（产品）
-            $defMoreList["new_month_n_last"]+=key_exists($city,$lastMonthServiceAddForY)?$lastMonthServiceAddForY[$city]:0;
-            $defMoreList["new_month_n_last"]+=key_exists($city,$lastMonthUInvMoney)?$lastMonthUInvMoney[$city]:0;
-            $defMoreList["new_month_n"]+=key_exists($city,$monthServiceAddForY)?$monthServiceAddForY[$city]:0;
-            $defMoreList["new_month_n"]+=key_exists($city,$monthUInvMoney)?$monthUInvMoney[$city]:0;
+            $defMoreList["new_month_n_last"]+=key_exists($city,$lastMonthServiceAddForY)?-1*$lastMonthServiceAddForY[$city]:0;
+            $defMoreList["new_month_n_last"]+=key_exists($city,$lastMonthUInvMoney)?-1*$lastMonthUInvMoney[$city]:0;
+            $defMoreList["new_month_n"]+=key_exists($city,$monthServiceAddForY)?-1*$monthServiceAddForY[$city]:0;
+            $defMoreList["new_month_n"]+=key_exists($city,$monthUInvMoney)?-1*$monthUInvMoney[$city]:0;
             //暂停、停止
             if(key_exists($city,$serviceForST)){
-                $defMoreList["stop_sum"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_stop"]:0;
-                $defMoreList["pause_sum"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_pause"]:0;
+                $defMoreList["stop_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop"]:0;
+                $defMoreList["pause_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_pause"]:0;
                 $defMoreList["stopSumOnly"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_month"]:0;
             }
             if(key_exists($city,$lastServiceForST)){
-                $defMoreList["stop_sum_last"]+=key_exists($city,$lastServiceForST)?$lastServiceForST[$city]["num_stop"]:0;
-                $defMoreList["pause_sum_last"]+=key_exists($city,$lastServiceForST)?$lastServiceForST[$city]["num_pause"]:0;
+                $defMoreList["stop_sum_last"]+=key_exists($city,$lastServiceForST)?-1*$lastServiceForST[$city]["num_stop"]:0;
+                $defMoreList["pause_sum_last"]+=key_exists($city,$lastServiceForST)?-1*$lastServiceForST[$city]["num_pause"]:0;
             }
             //恢复
             $defMoreList["resume_sum_last"]+=key_exists($city,$lastServiceForR)?$lastServiceForR[$city]:0;
