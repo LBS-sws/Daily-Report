@@ -213,7 +213,7 @@ class ServiceForm extends CFormModel
 			),
             array('id','validateID'),
             array('id','validateAutoFinish'),
-           // array('status_dt','validateVisitDt','on'=>array('new')),
+            array('status_dt','validateVisitDt','on'=>array('new')),
 		);
 	}
 
