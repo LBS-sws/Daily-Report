@@ -253,7 +253,7 @@ class SummaryTable extends SummaryForm{
                 }
                 $row["sum_amount"]=round($row["invoice_amt"],2);
                 $sum+=$row["sum_amount"];
-                $html.="<tr data-id='{$row["id"]}'>";
+                $html.="<tr>";
                 $html.="<td>".$row["invoice_no"]."</td>";
                 $html.="<td>".$cityName."</td>";
                 $html.="<td>".General::toDate($row["invoice_dt"])."</td>";

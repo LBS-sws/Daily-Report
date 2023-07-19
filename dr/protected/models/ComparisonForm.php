@@ -224,9 +224,9 @@ class ComparisonForm extends CFormModel
             $defMoreList["new_sum_n_last"]+=$defMoreList["u_sum_last"];//一次性新增需要加上U系统产品金额
             //上月一次性服务+新增（产品）
             $defMoreList["new_month_n_last"]+=key_exists($city,$lastMonthServiceAddForY)?-1*$lastMonthServiceAddForY[$city]:0;
-            $defMoreList["new_month_n_last"]+=key_exists($city,$lastMonthUInvMoney)?-1*$lastMonthUInvMoney[$city]:0;
+            $defMoreList["new_month_n_last"]+=key_exists($city,$lastMonthUInvMoney)?-1*$lastMonthUInvMoney[$city]["sum_money"]:0;
             $defMoreList["new_month_n"]+=key_exists($city,$monthServiceAddForY)?-1*$monthServiceAddForY[$city]:0;
-            $defMoreList["new_month_n"]+=key_exists($city,$monthUInvMoney)?-1*$monthUInvMoney[$city]:0;
+            $defMoreList["new_month_n"]+=key_exists($city,$monthUInvMoney)?-1*$monthUInvMoney[$city]["sum_money"]:0;
             //暂停、停止
             if(key_exists($city,$serviceForST)){
                 $defMoreList["stop_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop"]:0;
