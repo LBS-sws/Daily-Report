@@ -101,7 +101,7 @@ class ComparisonTable extends ComparisonForm {
 
     //暂停服务（本年）
     private function ServicePause(){
-        $rows = RptSummarySC::getSRTRowsAll($this->city_allow,$this->start_date,$this->end_date,"S");
+        $rows = SummaryTable::getServiceSTForType($this->start_date,$this->end_date,$this->city_allow,"S");
         return SummaryTable::getTableForRows($rows,$this->city_allow);
     }
 
@@ -110,7 +110,7 @@ class ComparisonTable extends ComparisonForm {
         parent::computeDate();
         $lastStartDate = ($this->comparison_year-1)."/".$this->month_start_date;
         $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
-        $rows = RptSummarySC::getSRTRowsAll($this->city_allow,$lastStartDate,$lastEndDate,"S");
+        $rows = SummaryTable::getServiceSTForType($lastStartDate,$lastEndDate,$this->city_allow,"S");
         return SummaryTable::getTableForRows($rows,$this->city_allow);
     }
 
@@ -131,7 +131,7 @@ class ComparisonTable extends ComparisonForm {
 
     //终止服务（本年）
     private function ServiceStop(){
-        $rows = RptSummarySC::getSRTRowsAll($this->city_allow,$this->start_date,$this->end_date,"T");
+        $rows = SummaryTable::getServiceSTForType($this->start_date,$this->end_date,$this->city_allow,"T");
         return SummaryTable::getTableForRows($rows,$this->city_allow);
     }
 
@@ -140,7 +140,7 @@ class ComparisonTable extends ComparisonForm {
         parent::computeDate();
         $lastStartDate = ($this->comparison_year-1)."/".$this->month_start_date;
         $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
-        $rows = RptSummarySC::getSRTRowsAll($this->city_allow,$lastStartDate,$lastEndDate,"T");
+        $rows = SummaryTable::getServiceSTForType($lastStartDate,$lastEndDate,$this->city_allow,"T");
         return SummaryTable::getTableForRows($rows,$this->city_allow);
     }
 }

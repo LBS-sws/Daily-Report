@@ -120,7 +120,7 @@ class SummaryTable extends SummaryForm{
 
     //暂停服务
     private function ServiceSuspended(){
-        $rows = RptSummarySC::getSRTRowsAll($this->city_allow,$this->start_date,$this->end_date,"S");
+        $rows = self::getServiceSTForType($this->start_date,$this->end_date,$this->city_allow,"S");
         return self::getTableForRows($rows,$this->city_allow);
     }
 
@@ -132,7 +132,7 @@ class SummaryTable extends SummaryForm{
 
     //终止服务
     private function ServiceStop(){
-        $rows = RptSummarySC::getSRTRowsAll($this->city_allow,$this->start_date,$this->end_date,"T");
+        $rows = self::getServiceSTForType($this->start_date,$this->end_date,$this->city_allow,"T");
         return self::getTableForRows($rows,$this->city_allow);
     }
 
@@ -398,6 +398,49 @@ class SummaryTable extends SummaryForm{
             ->leftJoin("swo_nature g","a.nature_type=g.id")
             ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
         $queryIARows = $queryIARows?$queryIARows:array();
+
+        $queryIDRows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+            ->from("swo_serviceid a")
+            ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
+        $queryIDRows = $queryIDRows?$queryIDRows:array();
+        return array_merge($queryIARows,$queryIDRows);
+    }
+
+    //客户服务查询(暫停、終止)
+    public static function getServiceSTForType($startDate,$endDate,$city_allow,$type){
+        $whereSql = "a.status='{$type}' and a.status in ('S','T') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        $whereSql.= " and a.city in ({$city_allow})";
+        $whereSql .= " and not(f.rpt_cat='INV' and f.single=1)";
+        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+            f.description as cust_type_name";
+        $queryIARows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
+            ->from("swo_service a")
+            ->leftJoin("swo_service_contract_no n","a.id=n.service_id")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where($whereSql." and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
+        if($queryIARows){
+            foreach ($queryIARows as $key=>$row){
+                $month_date = date("Y/m",strtotime($row['status_dt']));
+                $nextRow= Yii::app()->db->createCommand()
+                    ->select("status")->from("swo_service_contract_no")
+                    ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["no_id"]}' and 
+                        status_dt>'{$row['status_dt']}' and 
+                        DATE_FORMAT(status_dt,'%Y/%m')='{$month_date}'")
+                    ->order("status_dt asc")
+                    ->queryRow();//查詢本月的後面一條數據
+                if($nextRow&&in_array($nextRow["status"],array("S","T"))){
+                    unset($queryIARows[$key]);
+                }
+            }
+        }else{
+            $queryIARows = array();
+        }
 
         $queryIDRows = Yii::app()->db->createCommand()
             ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
