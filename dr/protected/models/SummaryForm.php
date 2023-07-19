@@ -257,6 +257,12 @@ class SummaryForm extends CFormModel
                 )
             ),//新增客户（产品）
         );
+        $topList[]=array("name"=>Yii::t("summary","added last month"),"background"=>"#f7fd9d",
+            "colspan"=>array(
+                array("name"=>Yii::t("summary","one service")),//一次性服务
+                array("name"=>Yii::t("summary","New(INV)")),//新增（产品）
+            )
+        );//上月新增
         $colspan=array(
             array("name"=>Yii::t("summary","Start Gross")),//Start Gross
             array("name"=>Yii::t("summary","Start Net")),//Start Net
@@ -289,13 +295,6 @@ class SummaryForm extends CFormModel
                 "colspan"=>$colspan
             );//目标完成度 (minimum case)
         }
-
-        $topList[]=array("name"=>Yii::t("summary","added last month"),"background"=>"#f7fd9d",
-            "colspan"=>array(
-                array("name"=>Yii::t("summary","one service")),//一次性服务
-                array("name"=>Yii::t("summary","New(INV)")),//新增（产品）
-            )
-        );//上月新增
         return $topList;
     }
 
@@ -373,6 +372,8 @@ class SummaryForm extends CFormModel
             "city_name","u_actual_money","num_new","u_invoice_sum","last_month_sum","num_stop","num_restore","num_pause","num_update",
             "num_growth","num_long","num_short","one_service","num_cate","num_not_cate","u_num_cate","u_num_not_cate"
         );
+        $bodyKey[]="last_one_service";
+        $bodyKey[]="last_u_invoice_sum";
         if(SummaryForm::targetReadyUpside()){
             $bodyKey[]="start_one_gross";
             $bodyKey[]="start_one_net";
@@ -415,8 +416,6 @@ class SummaryForm extends CFormModel
                 $bodyKey[]="three_net_rate";
             }
         }
-        $bodyKey[]="last_one_service";
-        $bodyKey[]="last_u_invoice_sum";
         return $bodyKey;
     }
     //將城市数据寫入表格(澳门)
