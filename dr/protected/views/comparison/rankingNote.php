@@ -33,14 +33,15 @@
                 <p><?php echo Yii::t("summary","comparison_remark_1");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_2");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_3");?></p>
-                <p><?php echo Yii::t("summary","comparison_remark_4_{$model->search_type}");?></p>
-                <p><?php echo Yii::t("summary","comparison_remark_5_{$model->search_type}");?></p>
+                <p><?php echo Yii::t("summary","comparison_remark_4");?></p>
+                <p><?php echo Yii::t("summary","comparison_remark_5");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_6");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_7");?></p>
-                <p><?php echo Yii::t("summary","comparison_remark_8_{$model->search_type}");?></p>
+                <p><?php echo Yii::t("summary","comparison_remark_8");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_9_{$model->search_type}");?></p>
-                <p><?php echo Yii::t("summary","comparison_remark_10");?></p>
+                <p><?php echo Yii::t("summary","comparison_remark_10_{$model->search_type}");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_11");?></p>
+                <p><?php echo Yii::t("summary","comparison_remark_12");?></p>
             </div>
         </div>
     </div>
