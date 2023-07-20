@@ -130,11 +130,12 @@ class HistoryStopForm extends CFormModel
         $selectSql = "a.status_dt,a.status,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid
             ";
         $serviceRows = Yii::app()->db->createCommand()
-            ->select("{$selectSql},a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
+            ->select("{$selectSql},b.id as no_id,b.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
             ->from("swo_service a")
+            ->leftJoin("swo_service_contract_no b","a.id=b.service_id")
             ->leftJoin("swo_customer_type f","a.cust_type=f.id")
             ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->where("not(f.rpt_cat='INV' and f.single=1) and a.city in ({$city_allow}) and a.city not in ('ZY') and a.status='T' and ({$where})")
+            ->where("not(f.rpt_cat='INV' and f.single=1) and b.id is not null and a.city in ({$city_allow}) and a.city not in ('ZY') and a.status='T' and ({$where})")
             ->order("a.city")
             ->queryAll();
         //所有需要計算的客戶服務(ID客戶服務)
@@ -151,6 +152,20 @@ class HistoryStopForm extends CFormModel
         $rows = array_merge($serviceRows,$serviceRowsID);
         if($rows){
             foreach ($rows as $row){
+                if($row["sql_type_name"]=="A"){
+                    $month_date = date("Y/m",strtotime($row['status_dt']));
+                    $nextRow= Yii::app()->db->createCommand()
+                        ->select("status")->from("swo_service_contract_no")
+                        ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["no_id"]}' and 
+                        status_dt>'{$row['status_dt']}' and 
+                        DATE_FORMAT(status_dt,'%Y/%m')='{$month_date}'")
+                        ->order("status_dt asc")
+                        ->queryRow();//查詢本月的後面一條數據
+                    if($nextRow&&in_array($nextRow["status"],array("S","T"))){
+                        continue;//如果下一條數據是暫停或者終止，則不統計本條數據
+                    }
+                }
                 $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
                 $row["ctrt_period"] = is_numeric($row["ctrt_period"])?floatval($row["ctrt_period"]):0;
                 $row["b4_amt_paid"] = is_numeric($row["b4_amt_paid"])?floatval($row["b4_amt_paid"]):0;

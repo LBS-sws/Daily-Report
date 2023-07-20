@@ -40,7 +40,7 @@ return array(
     'not cate service'=>'非餐飲客戶',
     'all total'=>'總計',
     'YoY change'=>'YoY change',
-    'YTD New'=>'YTD新增',
+    'YTD New'=>'YTD新增(除一次性服务)',
     'YTD Stop'=>'YTD終止',
     'YTD Net'=>'YTD Net',
     'day num'=>'查詢天數',

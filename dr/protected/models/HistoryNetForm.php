@@ -94,150 +94,102 @@ class HistoryNetForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $citySetList = CitySetForm::getCitySetList($city_allow);
-        $serviceList = $this->getServiceData($citySetList,$city_allow);
+        $endDate = $this->end_date;
+        $lastEndDate = $this->last_end_date;
+        $weekStartDate = date("Y/m/d",$this->week_start);
+        $weekEndDate = date("Y/m/d",$this->week_end);
+        $lastWeekStartDate = date("Y/m/d",$this->last_week_start);
+        $lastWeekEndDate = date("Y/m/d",$this->last_week_end);
+
+        //服务新增(本年)
+        $serviceN = CountSearch::getServiceForTypeToMonth($endDate,$city_allow,"N");
+        //服务新增(上一年)
+        $lastServiceN = CountSearch::getServiceForTypeToMonth($lastEndDate,$city_allow,"N");
+        //服务恢復(本年)
+        $serviceR = CountSearch::getServiceForTypeToMonth($endDate,$city_allow,"R");
+        //服务恢復(上一年)
+        $lastServiceR = CountSearch::getServiceForTypeToMonth($lastEndDate,$city_allow,"R");
+        //服务更改(本年)
+        $serviceA = CountSearch::getServiceAToMonth($endDate,$city_allow);
+        //服务更改(上一年)
+        $lastServiceA = CountSearch::getServiceAToMonth($lastEndDate,$city_allow);
+        //服务暫停、終止(本年)
+        $serviceST = CountSearch::getServiceForSTToMonth($endDate,$city_allow);
+        //服务暫停、終止(上一年)
+        $lastServiceST = CountSearch::getServiceForSTToMonth($lastEndDate,$city_allow);
+        //服务新增（一次性)(本年)
+        $serviceAddForY = CountSearch::getServiceAddForYToMonth($endDate,$city_allow);
+        //服务新增（一次性)(上一年)
+        $lastServiceAddForY = CountSearch::getServiceAddForYToMonth($lastEndDate,$city_allow);
+        //获取U系统的產品数据(本年)
+        $uInvMoney = CountSearch::getUInvMoneyToMonth($endDate,$city_allow);
+        //获取U系统的產品数据(上一年)
+        $lastUInvMoney = CountSearch::getUInvMoneyToMonth($lastEndDate,$city_allow);
+        //获取U系统的服务单数据
+        $uServiceMoney = CountSearch::getUServiceMoneyToMonth($endDate,$city_allow);
+        //本週數據
+        $serviceWeek = CountSearch::getServiceForAll($weekStartDate,$weekEndDate);
+        //上週數據
+        $lastServiceWeek = CountSearch::getServiceForAll($lastWeekStartDate,$lastWeekEndDate);
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
-            $region = $cityRow["region_code"];
-            if(!key_exists($region,$data)){
-                $data[$region]=array(
-                    "region"=>$region,
-                    "region_name"=>$cityRow["region_name"],
-                    "list"=>array()
-                );
-            }
-            if(key_exists($city,$serviceList)){
-                $arr=$serviceList[$city];
-            }else{
-                $arr=$this->defMoreCity($city,$cityRow["city_name"]);
-            }
-            $arr["add_type"] = $cityRow["add_type"];
-            $data[$region]["list"][$city]=$arr;
+            $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
+            $defMoreList["add_type"] = $cityRow["add_type"];
+            ComparisonForm::setComparisonConfig($defMoreList,$this->search_year,$this->month_type,$city);
+
+            $this->addListForCity($defMoreList,$city,$serviceN);
+            $this->addListForCity($defMoreList,$city,$lastServiceN);
+            $this->addListForCity($defMoreList,$city,$serviceR);
+            $this->addListForCity($defMoreList,$city,$lastServiceR);
+            $this->addListForCity($defMoreList,$city,$serviceA);
+            $this->addListForCity($defMoreList,$city,$lastServiceA);
+            $this->addListForCity($defMoreList,$city,$serviceST);
+            $this->addListForCity($defMoreList,$city,$lastServiceST);
+            $this->addListForCity($defMoreList,$city,$serviceAddForY,1);
+            $this->addListForCity($defMoreList,$city,$lastServiceAddForY,1);
+            $this->addListForCity($defMoreList,$city,$uInvMoney,2);
+            $this->addListForCity($defMoreList,$city,$lastUInvMoney,2);
+            $this->addListForCity($defMoreList,$city,$uServiceMoney,3);
+
+            $defMoreList["now_week"]+=key_exists($city,$serviceWeek)?$serviceWeek[$city]:0;
+            $defMoreList["last_week"]+=key_exists($city,$lastServiceWeek)?$lastServiceWeek[$city]:0;
+
+            RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
 
-        $this->insertUData($this->start_date,$this->end_date,$data,$citySetList);
-        $this->insertUData($this->last_start_date,$this->last_end_date,$data,$citySetList);
-        $this->insertUActualMoney($this->start_date,$this->end_date,$data,$citySetList,$city_allow);
         $this->data = $data;
         $session = Yii::app()->session;
         $session['historyNet_c01'] = $this->getCriteria();
         return true;
     }
 
-    private function getServiceData($citySetList,$city_allow){
-        $data = array();
-        $suffix = Yii::app()->params['envSuffix'];
-
-        $where="(a.status_dt BETWEEN '{$this->start_date}' and '{$this->end_date}')";
-        $where.="or (a.status_dt BETWEEN '{$this->last_start_date}' and '{$this->last_end_date}')";
-
-        $selectSql = "a.status_dt,a.status,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid
-            ";
-        $serviceRows = Yii::app()->db->createCommand()
-            ->select("{$selectSql},a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
-            ->from("swo_service a")
-            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-            ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->where("not(f.rpt_cat='INV' and f.single=1) and a.city in ({$city_allow}) and a.city not in ('ZY') and a.status in ('N','T') and ({$where})")
-            ->order("a.city")
-            ->queryAll();
-        //所有需要計算的客戶服務(ID客戶服務)
-        $serviceRowsID = Yii::app()->db->createCommand()
-            ->select("{$selectSql},CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
-            ->from("swoper$suffix.swo_serviceid a")
-            ->leftJoin("swoper$suffix.swo_customer_type_id f","a.cust_type=f.id")
-            ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->where("not(f.rpt_cat='INV' and f.single=1) and a.city in ({$city_allow}) and a.city not in ('ZY') and a.status in ('N','T') and ({$where})")
-            ->order("a.city")
-            ->queryAll();
-        $serviceRows = $serviceRows?$serviceRows:array();
-        $serviceRowsID = $serviceRowsID?$serviceRowsID:array();
-        $rows = array_merge($serviceRows,$serviceRowsID);
-
-        if($rows){
-            foreach ($rows as $row){
-                $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
-                $row["ctrt_period"] = is_numeric($row["ctrt_period"])?floatval($row["ctrt_period"]):0;
-                $row["b4_amt_paid"] = is_numeric($row["b4_amt_paid"])?floatval($row["b4_amt_paid"]):0;
-                $this->insertDataForRow($row,$data,$citySetList);
-            }
-        }
-        return $data;
-    }
-    //获取U系统的服务单数据
-    private function insertUActualMoney($startDay,$endDay,&$data,$citySetList,$city_allow=""){
-        $list = array();
-        $citySql = "";
-        if(!empty($city_allow)){
-            $citySql = " and b.Text in ({$city_allow})";
-        }
-        $suffix = Yii::app()->params['envSuffix'];
-        $rows = Yii::app()->db->createCommand()
-            ->select("b.Text,date_format(a.JobDate,'%Y/%m') as JobDate,sum(
-                    if(a.TermCount=0,0,a.Fee/a.TermCount)
-					) as sum_amount")
-            ->from("service{$suffix}.joborder a")
-            ->leftJoin("service{$suffix}.officecity f","a.City = f.City")
-            ->leftJoin("service{$suffix}.enums b","f.Office = b.EnumID and b.EnumType=8")
-            ->where("a.Status=3 and a.JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
-            ->group("b.Text,date_format(a.JobDate,'%Y/%m')")
-            ->queryAll();
-        if($rows){
-            foreach ($rows as $row){
-                $city = SummaryForm::resetCity($row["Text"]);
-                $date = $row["JobDate"];
-                $money = empty($row["sum_amount"])?0:round($row["sum_amount"],2);
-
-                if(key_exists($city,$citySetList)) {
-                    $region = $citySetList[$city]["region_code"];
-                    $data[$region]["list"][$city]["u_{$date}"] += $money;
-
-                    if ($citySetList[$city]["add_type"] == 1) {//叠加(城市配置的叠加)
-                        $city = $citySetList[$city]["region_code"];
-                        $region = "";
-                        if(key_exists($city,$citySetList)){
-                            $region = $citySetList[$city]["region_code"];
+    private function addListForCity(&$data,$city,$list,$type=""){
+        if(key_exists($city,$list)){
+            foreach ($list[$city] as $key=>$value){
+                $dateStr = $key;
+                switch ($type){
+                    case 1://上月的一次性服務
+                        $dateStr.="/01";
+                        $dateStr = date("Y/m",strtotime($dateStr." + 1 months"));
+                        $value*=-1;
+                        break;
+                    case 2://產品服務及上月的產品服務
+                        //需要把本月的數據在下一個月減掉 且 本月也需要增加
+                        $nextStr = "{$dateStr}/01";
+                        $nextStr = date("Y/m",strtotime($nextStr." + 1 months"));
+                        if(key_exists($nextStr,$data)){
+                            $data[$nextStr]+=$value*-1;
                         }
-                        if(key_exists($region,$data)){
-                            $data[$region]["list"][$city]["u_{$date}"] += $money;
-                        }
-                    }
+                        //生意額需要加上U系統的產品數據
+                        $uDateStr="u_".$dateStr;
+                        $data[$uDateStr]+=$value;
+                        break;
+                    case 3://U系統的服務單
+                        $dateStr ="u_".$dateStr;
+                        break;
                 }
-            }
-        }
-        return $list;
-    }
-
-    private function insertUData($startDate,$endDate,&$data,$citySetList){
-        $year = intval($startDate);//服务的年份
-        $json = Invoice::getInvData($startDate,$endDate);
-        if($json["message"]==="Success"){
-            $jsonData = $json["data"];
-            foreach ($jsonData as $row){
-                $city = SummaryForm::resetCity($row["city"]);
-                $date = date("Y/m",strtotime($row["invoice_dt"]));
-                $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
-                if(key_exists($city,$citySetList)){
-                    $region = $citySetList[$city]["region_code"];
-                    $data[$region]["list"][$city][$date]+=$money;
-                    $data[$region]["list"][$city]["{$date}_u"]+=$money;
-                    if($year == $this->search_year){//生意额需要加上产品金额
-                        $data[$region]["list"][$city]["u_{$date}"]+=$money;
-                    }
-
-                    if($citySetList[$city]["add_type"]==1){//叠加(城市配置的叠加)
-                        $city = $citySetList[$city]["region_code"];
-                        $region = "";
-                        if(key_exists($city,$citySetList)){
-                            $region = $citySetList[$city]["region_code"];
-                        }
-                        if(key_exists($region,$data)){
-                            $data[$region]["list"][$city][$date]+=$money;
-                            $data[$region]["list"][$city]["{$date}_u"]+=$money;
-                            if($year == $this->search_year){//生意额需要加上产品金额
-                                $data[$region]["list"][$city]["u_{$date}"]+=$money;
-                            }
-                        }
-                    }
+                if(key_exists($dateStr,$data)){
+                    $data[$dateStr]+=$value;
                 }
             }
         }
@@ -256,10 +208,10 @@ class HistoryNetForm extends CFormModel
             $dateStrTwo = $this->last_year."/{$month}";//产品金额
             $dateStrThree = "u_".$this->search_year."/{$month}";//生意额
             $arr[$dateStrOne]=0;
-            $arr[$dateStrOne."_u"]=$arr[$dateStrOne];
+            $arr[$dateStrOne."_u"]=$arr[$dateStrOne];//U系統的產品金额
             $arr[$dateStrTwo]=0;
-            $arr[$dateStrTwo."_u"]=$arr[$dateStrTwo];
-            //U系统的生意额
+            $arr[$dateStrTwo."_u"]=$arr[$dateStrTwo];//U系統的產品金额
+            //U系统的服務生意额
             $arr[$dateStrThree]=0;
         }
         $arr["now_average"]=0;//本年平均
@@ -271,65 +223,7 @@ class HistoryNetForm extends CFormModel
         $arr["two_net"]=0;//滚动目标
         $arr["start_result"]="";//达成目标(年初)
         $arr["result"]="";//达成目标(滚动)
-        $rowStart = Yii::app()->db->createCommand()->select("*")->from("swo_comparison_set")
-            ->where("comparison_year=:year and month_type=1 and city=:city",
-                array(":year"=>$this->search_year,":city"=>$city)
-            )->queryRow();//查询目标金额
-        if($rowStart){//年初
-            $arr["start_two_net"]=empty($rowStart["two_net"])?0:floatval($rowStart["two_net"]);
-        }
-        $setRow = Yii::app()->db->createCommand()->select("*")->from("swo_comparison_set")
-            ->where("comparison_year=:year and month_type=:month_type and city=:city",
-                array(":year"=>$this->search_year,":month_type"=>$this->month_type,":city"=>$city)
-            )->queryRow();//查询目标金额
-        if($setRow){//滚动
-            $arr["two_net"]=empty($setRow["two_net"])?0:floatval($setRow["two_net"]);
-        }
         return $arr;
-    }
-
-    private function insertDataForRow($row,&$data,$citySetList){
-        $timer = strtotime($row["status_dt"]);
-        $dateStr = date("Y/m",$timer);
-        $city = empty($row["city"])?"none":$row["city"];
-        $citySet = CitySetForm::getListForCityCode($city,$citySetList);
-        if(!key_exists($city,$data)){//設置該城市的默認值
-            $arr = $this->defMoreCity($city,$citySet["city_name"]);
-            $data[$city]=$arr;
-        }
-        if($citySet["add_type"]==1){//叠加(城市配置的叠加)
-            if(!key_exists($citySet["region_code"],$data)){
-                $data[$citySet["region_code"]]=$this->defMoreCity($citySet["region_code"],$citySet["region_name"]);
-            }
-        }
-        if($row["paid_type"]=="M"){//月金额
-            $money = $row["amt_paid"]*$row["ctrt_period"];
-        }else{
-            $money = $row["amt_paid"];
-        }
-        switch ($row["status"]){
-            case "N"://新增
-                break;
-            case "T"://终止
-                $money*=-1;
-                break;
-        }
-        $data[$city][$dateStr] += $money;
-        if($citySet["add_type"]==1){//叠加(城市配置的叠加)
-            $data[$citySet["region_code"]][$dateStr] += $money;
-        }
-        if($timer>=$this->week_start&&$timer<=$this->week_end){//本周
-            $data[$city]["now_week"] += $money;
-            if($citySet["add_type"]==1){//叠加(城市配置的叠加)
-                $data[$citySet["region_code"]]["now_week"] += $money;
-            }
-        }
-        if($timer>=$this->last_week_start&&$timer<=$this->last_week_end){//上周
-            $data[$city]["last_week"] += $money;
-            if($citySet["add_type"]==1){//叠加(城市配置的叠加)
-                $data[$citySet["region_code"]]["last_week"] += $money;
-            }
-        }
     }
 
     protected function resetTdRow(&$list,$bool=false){

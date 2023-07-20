@@ -8,7 +8,6 @@ class CountSearch{
     private static $whereSQL=" and not(f.rpt_cat='INV' and f.single=1)";
     private static $IDBool=true;//是否需要ID服務的查詢
 
-
     //獲取暫停、終止的最後一條記錄(一条服务在一个月内只能存在一条暂停和终止)，特例：暫停→恢復→終止（三個都需要計算）
     public static function getServiceForST($start_dt,$end_dt,$city_allow){
         $list = array();
@@ -115,6 +114,51 @@ class CountSearch{
         if(self::$IDBool){
             $IDRows = Yii::app()->db->createCommand()
                 ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,a.city")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.city")->queryAll();//
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=0;
+            }
+            $list[$row["city"]]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
+
+    //客户服务的匯總（新增+恢復+更改-暫停-終止)
+    public static function getServiceForAll($startDate,$endDate,$city_allow=""){
+        $whereSql = "a.status in ('N','S','A','R','T') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL;
+        $list=array();
+        $sumAmtSql = "case a.paid_type when 'M' then a.amt_paid * a.ctrt_period else a.amt_paid end";
+        $b4_sumAmtSql = "case a.b4_paid_type when 'M' then a.b4_amt_paid * a.ctrt_period else a.b4_amt_paid end";
+        $rows = Yii::app()->db->createCommand()
+            ->select("
+            sum(
+                if(a.status in ('N','R'),($sumAmtSql),
+                    if(a.status='A',($sumAmtSql)-($b4_sumAmtSql),-1*($sumAmtSql))
+                )
+            ) as sum_amount,a.city")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.city")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(
+                        if(a.status in ('N','R'),(a.amt_paid*a.ctrt_period),
+                            if(a.status='A',(a.amt_paid*a.ctrt_period)-(a.b4_amt_paid*a.ctrt_period),-1*(a.amt_paid*a.ctrt_period))
+                        )
+                    ) as sum_amount,a.city")
                 ->from("swo_serviceid a")
                 ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
                 ->where($whereSql)->group("a.city")->queryAll();//
@@ -424,6 +468,294 @@ class CountSearch{
                 }else{
                     $list[$city]["u_num_not_cate"]+=$money;
                 }
+            }
+        }
+        return $list;
+    }
+
+    //获取U系统的服务单数据（月為鍵名)
+    public static function getUServiceMoneyToMonth($endDay,$city_allow=""){
+        $year = date("Y",strtotime($endDay));
+        $startDay =$year."/01/01";
+        $maxMonth = date("n",strtotime($endDay));
+        $monthList = array();
+        for ($i=1;$i<=$maxMonth;$i++){
+            $month = $i<10?"0".$i:$i;
+            $monthList["{$year}/{$month}"]=0;
+        }
+        $list = array();
+        $citySql = "";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $citySql = " and b.Text in ({$city_allow})";
+        }
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()
+            ->select("b.Text,sum(
+                    if(a.TermCount=0,0,a.Fee/a.TermCount)
+					) as sum_amount,DATE_FORMAT(a.JobDate,'%Y/%m') as month_dt")
+            ->from("service{$suffix}.joborder a")
+            ->leftJoin("service{$suffix}.officecity f","a.City = f.City")
+            ->leftJoin("service{$suffix}.enums b","f.Office = b.EnumID and b.EnumType=8")
+            ->where("a.Status=3 and a.JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
+            ->group("b.Text,DATE_FORMAT(a.JobDate,'%Y/%m')")
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $city = self::resetCity($row["Text"]);
+                $money = empty($row["sum_amount"])?0:round($row["sum_amount"],2);
+                if(!key_exists($city,$list)){
+                    $list[$city]=$monthList;
+                }
+                $list[$city][$row["month_dt"]]+=$money;
+            }
+        }
+        return $list;
+    }
+
+    //客户服务查询(更改)（月為鍵名)
+    public static function getServiceAToMonth($endDate,$city_allow=""){
+        $year = date("Y",strtotime($endDate));
+        $startDate =$year."/01/01";
+        $maxMonth = date("n",strtotime($endDate));
+        $monthList = array();
+        for ($i=1;$i<=$maxMonth;$i++){
+            $month = $i<10?"0".$i:$i;
+            $monthList["{$year}/{$month}"]=0;
+        }
+        $whereSql = "a.status='A' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,sum(case a.b4_paid_type
+							when 'M' then a.b4_amt_paid * a.ctrt_period
+							else a.b4_amt_paid
+						end
+					) as b4_sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,
+                sum(a.b4_amt_money) as b4_sum_amount,
+                a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=$monthList;
+            }
+            $list[$row["city"]][$row["month_dt"]]+=$row["sum_amount"]-$row["b4_sum_amount"];
+        }
+        return $list;
+    }
+
+    //客户服务查询(根據服務類型)（月為鍵名)
+    public static function getServiceForTypeToMonth($endDate,$city_allow="",$type="N"){
+        $year = date("Y",strtotime($endDate));
+        $startDate =$year."/01/01";
+        $maxMonth = date("n",strtotime($endDate));
+        $monthList = array();
+        for ($i=1;$i<=$maxMonth;$i++){
+            $month = $i<10?"0".$i:$i;
+            $monthList["{$year}/{$month}"]=0;
+        }
+        $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();//
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=$monthList;
+            }
+            $list[$row["city"]][$row["month_dt"]]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
+    //獲取暫停、終止（月為鍵名)
+    public static function getServiceForSTToMonth($end_dt,$city_allow){
+        $year = date("Y",strtotime($end_dt));
+        $start_dt =$year."/01/01";
+        $maxMonth = date("n",strtotime($end_dt));
+        $monthList = array();
+        for ($i=1;$i<=$maxMonth;$i++){
+            $month = $i<10?"0".$i:$i;
+            $monthList["{$year}/{$month}"]=0;
+        }
+        $list = array();
+        $sum_money = "case b.paid_type when 'M' then b.amt_paid * b.ctrt_period else b.amt_paid end";
+
+        $whereSql = "b.status in ('S','T') and b.status_dt BETWEEN '{$start_dt}' and '{$end_dt}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and b.city in ({$city_allow})";
+        }
+        $whereSql.=self::$whereSQL;
+        $rows= Yii::app()->db->createCommand()
+            ->select("a.id,b.status,b.status_dt,a.contract_no,a.service_id,
+            b.city,({$sum_money}) as sum_money,
+            DATE_FORMAT(b.status_dt,'%Y/%m') as month_date")
+            ->from("swo_service_contract_no a")
+            ->leftJoin("swo_service b","b.id=a.service_id")
+            ->leftJoin("swo_customer_type f","b.cust_type=f.id")
+            ->where($whereSql)
+            ->queryAll();
+        if($rows){//
+            foreach ($rows as $row){
+                $nextRow= Yii::app()->db->createCommand()
+                    ->select("status")->from("swo_service_contract_no")
+                    ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["id"]}' and 
+                        status_dt>'{$row['status_dt']}' and 
+                        DATE_FORMAT(status_dt,'%Y/%m')='{$row['month_date']}'")
+                    ->order("status_dt asc")
+                    ->queryRow();//查詢本月的後面一條數據
+                if($nextRow&&in_array($nextRow["status"],array("S","T"))){
+                    continue;//如果下一條數據是暫停或者終止，則不統計本條數據
+                }else{
+                    $city = $row["city"];
+                    if(!key_exists($city,$list)){
+                        $list[$city]=$monthList;
+                    }
+                    $money = empty($row["sum_money"])?0:round($row["sum_money"],2);
+                    $list[$city][$row['month_date']]+=$money*-1;
+                }
+            }
+        }
+
+        if(self::$IDBool){ //ID服務的暫停、終止
+            $rows = Yii::app()->db->createCommand()
+                ->select("sum(b.amt_paid*b.ctrt_period) as sum_amount,b.city,
+                DATE_FORMAT(b.status_dt,'%Y/%m') as month_date")
+                ->from("swo_serviceid b")
+                ->leftJoin("swo_customer_type_id f","b.cust_type=f.id")
+                ->where($whereSql)->group("b.city,DATE_FORMAT(b.status_dt,'%Y/%m')")->queryAll();//
+            if($rows){
+                foreach ($rows as $row){
+                    if(!key_exists($row["city"],$list)){
+                        $list[$row["city"]]=$monthList;
+                    }
+                    $money = empty($row["sum_amount"])?0:round($row["sum_amount"],2);
+                    $list[$row["city"]][$row["month_date"]]+= $money*-1;
+                }
+            }
+        }
+        return $list;
+    }
+
+    //服务新增（一次性)（月為鍵名)
+    public static function getServiceAddForYToMonth($endDay,$city_allow=""){
+        $year = date("Y",strtotime($endDay));
+        $maxMonth = date("n",strtotime($endDay));
+        $startDay =($year-1)."/12/01";
+        $monthList = array();
+        $monthList[($year-1)."/12"]=0;
+        for ($i=1;$i<=$maxMonth;$i++){
+            $month = $i<10?"0".$i:$i;
+            $monthList["{$year}/{$month}"]=0;
+        }
+        $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL;
+        $list = array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql." and a.paid_type=1 and a.ctrt_period<12")
+            ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            /* ID服務暫時全部為非一次性服務
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,a.city")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->leftJoin("swo_customer_type_id g","a.cust_type_name=g.id")
+                ->where($whereSql." and g.single=1")->group("a.city")->queryAll();
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+            */
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=$monthList;
+            }
+            $thisMonth = $row["month_dt"];
+            $list[$row["city"]][$thisMonth]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
+    //获取U系统的產品数据（月為鍵名)
+    public static function getUInvMoneyToMonth($endDay,$city_allow=""){
+        $city = "";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $city = $city_allow;
+        }
+        $year = date("Y",strtotime($endDay));
+        $maxMonth = date("n",strtotime($endDay));
+        $startDay =($year-1)."/12/01";
+        $json = Invoice::getInvData($startDay,$endDay,$city);
+        $monthList = array();
+        $monthList[($year-1)."/12"]=0;
+        for ($i=1;$i<=$maxMonth;$i++){
+            $month = $i<10?"0".$i:$i;
+            $monthList["{$year}/{$month}"]=0;
+        }
+        $list = array();
+        if($json["message"]==="Success"){
+            $jsonData = $json["data"];
+            foreach ($jsonData as $row){
+                $city = self::resetCity($row["city"]);
+                $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
+                $thisMonth = date("Y/m",strtotime($row["invoice_dt"]));
+                if(!key_exists($city,$list)){
+                    $list[$city]=$monthList;
+                }
+                $list[$city][$thisMonth]+=$money;
             }
         }
         return $list;
