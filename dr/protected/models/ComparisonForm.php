@@ -327,6 +327,7 @@ class ComparisonForm extends CFormModel
     }
 
     protected function resetTdRow(&$list,$bool=false){
+        $newSum = $list["new_sum"]+$list["new_sum_n"];//所有新增总金额
         $list["monthStopRate"] = $this->comparisonRate($list["stopSumOnly"],$list["u_actual_money"]);
         $list["net_sum"]=0;
         $list["net_sum"]+=$list["new_sum"]+$list["new_sum_n"]+$list["new_month_n"];
@@ -349,38 +350,38 @@ class ComparisonForm extends CFormModel
         if(SummaryForm::targetReadyBase()){
             $list["start_two_gross"] = $bool?$list["start_two_gross"]:ComparisonForm::resetNetOrGross($list["start_two_gross"],$this->day_num,$this->search_type);
             $list["start_two_net"] = $bool?$list["start_two_net"]:ComparisonForm::resetNetOrGross($list["start_two_net"],$this->day_num,$this->search_type);
-            $list["start_two_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["start_two_gross"]);
+            $list["start_two_gross_rate"] = $this->comparisonRate($newSum,$list["start_two_gross"]);
             $list["start_two_net_rate"] = $this->comparisonRate($list["net_sum"],$list["start_two_net"],"net");
             if(SummaryForm::grossAndNet()){
                 $list["two_gross"] = $bool?$list["two_gross"]:ComparisonForm::resetNetOrGross($list["two_gross"],$this->day_num,$this->search_type);
                 $list["two_net"] = $bool?$list["two_net"]:ComparisonForm::resetNetOrGross($list["two_net"],$this->day_num,$this->search_type);
-                $list["two_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["two_gross"]);
+                $list["two_gross_rate"] = $this->comparisonRate($newSum,$list["two_gross"]);
                 $list["two_net_rate"] = $this->comparisonRate($list["net_sum"],$list["two_net"],"net");
             }
         }
         if(SummaryForm::targetReadyUpside()){
             $list["start_one_gross"] = $bool?$list["start_one_gross"]:ComparisonForm::resetNetOrGross($list["start_one_gross"],$this->day_num,$this->search_type);
             $list["start_one_net"] = $bool?$list["start_one_net"]:ComparisonForm::resetNetOrGross($list["start_one_net"],$this->day_num,$this->search_type);
-            $list["start_one_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["start_one_gross"]);
+            $list["start_one_gross_rate"] = $this->comparisonRate($newSum,$list["start_one_gross"]);
             $list["start_one_net_rate"] = $this->comparisonRate($list["net_sum"],$list["start_one_net"],"net");
 
             if(SummaryForm::grossAndNet()){
                 $list["one_gross"] = $bool?$list["one_gross"]:ComparisonForm::resetNetOrGross($list["one_gross"],$this->day_num,$this->search_type);
                 $list["one_net"] = $bool?$list["one_net"]:ComparisonForm::resetNetOrGross($list["one_net"],$this->day_num,$this->search_type);
-                $list["one_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["one_gross"]);
+                $list["one_gross_rate"] = $this->comparisonRate($newSum,$list["one_gross"]);
                 $list["one_net_rate"] = $this->comparisonRate($list["net_sum"],$list["one_net"],"net");
             }
         }
         if(SummaryForm::targetReadyMinimum()){
             $list["start_three_gross"] = $bool?$list["start_three_gross"]:ComparisonForm::resetNetOrGross($list["start_three_gross"],$this->day_num,$this->search_type);
             $list["start_three_net"] = $bool?$list["start_three_net"]:ComparisonForm::resetNetOrGross($list["start_three_net"],$this->day_num,$this->search_type);
-            $list["start_three_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["start_three_gross"]);
+            $list["start_three_gross_rate"] = $this->comparisonRate($newSum,$list["start_three_gross"]);
             $list["start_three_net_rate"] = $this->comparisonRate($list["net_sum"],$list["start_three_net"],"net");
 
             if(SummaryForm::grossAndNet()){
                 $list["three_gross"] = $bool?$list["three_gross"]:ComparisonForm::resetNetOrGross($list["three_gross"],$this->day_num,$this->search_type);
                 $list["three_net"] = $bool?$list["three_net"]:ComparisonForm::resetNetOrGross($list["three_net"],$this->day_num,$this->search_type);
-                $list["three_gross_rate"] = $this->comparisonRate($list["new_sum"],$list["three_gross"]);
+                $list["three_gross_rate"] = $this->comparisonRate($newSum,$list["three_gross"]);
                 $list["three_net_rate"] = $this->comparisonRate($list["net_sum"],$list["three_net"],"net");
             }
         }
