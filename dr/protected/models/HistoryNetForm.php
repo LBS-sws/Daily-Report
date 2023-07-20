@@ -182,7 +182,9 @@ class HistoryNetForm extends CFormModel
                         }
                         //生意額需要加上U系統的產品數據
                         $uDateStr="u_".$dateStr;
-                        $data[$uDateStr]+=$value;
+                        if(key_exists($uDateStr,$data)){
+                            $data[$uDateStr]+=$value;
+                        }
                         break;
                     case 3://U系統的服務單
                         $dateStr ="u_".$dateStr;
