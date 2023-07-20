@@ -153,8 +153,8 @@ class ComparisonForm extends CFormModel
         $this->month_start_date = date("m/d",strtotime($this->start_date));
         $this->month_end_date = date("m/d",strtotime($this->end_date));
 
-        $this->last_month_start_date = date("Y/m/d",strtotime("{$this->start_date} - 1 months"));
-        $this->last_month_end_date = date("Y/m/d",strtotime("{$this->end_date} - 1 months"));
+        $this->last_month_start_date = CountSearch::computeLastMonth($this->start_date);
+        $this->last_month_end_date = CountSearch::computeLastMonth($this->end_date);
     }
 
     public function retrieveData() {

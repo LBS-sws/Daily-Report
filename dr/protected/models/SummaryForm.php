@@ -97,8 +97,8 @@ class SummaryForm extends CFormModel
                 break;
         }
         //上月的開始及結束時間
-        $this->last_month_start = date("Y/m/d",strtotime($this->start_date." - 1 month"));
-        $this->last_month_end = date("Y/m/d",strtotime($this->end_date." - 1 month"));
+        $this->last_month_start = CountSearch::computeLastMonth($this->start_date);
+        $this->last_month_end = CountSearch::computeLastMonth($this->end_date);
     }
 
     public function setCriteria($criteria)

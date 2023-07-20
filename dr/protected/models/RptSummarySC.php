@@ -12,8 +12,8 @@ class RptSummarySC extends ReportData2 {
         $this->criteria->end_dt = General::toDate($this->criteria->end_dt);
         $startDate = $this->criteria->start_dt;
         $endDate = $this->criteria->end_dt;
-        $lastStartDate = date("Y/m/d",strtotime("{$startDate} - 1 months"));
-        $lastEndDate = date("Y/m/d",strtotime("{$endDate} - 1 months"));
+        $lastStartDate = CountSearch::computeLastMonth($startDate);
+        $lastEndDate = CountSearch::computeLastMonth($endDate);
         $data = array();
         $city_allow="all";
         if(isset($this->criteria->city)&&!empty($this->criteria->city)){
@@ -82,6 +82,7 @@ class RptSummarySC extends ReportData2 {
         $city = $cityRow["code"];
         $defMoreList["city"]=$city;
         $defMoreList["city_name"]= $cityRow["city_name"];
+        $defMoreList["add_type"]= $cityRow["add_type"];
         $region = $cityRow["region_code"];
         if(!key_exists($region,$data)){
             $data[$region]=array(

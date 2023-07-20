@@ -746,12 +746,16 @@ class CountSearch{
             $monthList["{$year}/{$month}"]=0;
         }
         $list = array();
+        $count = 0;
         if($json["message"]==="Success"){
             $jsonData = $json["data"];
             foreach ($jsonData as $row){
                 $city = self::resetCity($row["city"]);
                 $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
                 $thisMonth = date("Y/m",strtotime($row["invoice_dt"]));
+                if($thisMonth=="2023/05"){
+                    $count++;
+                }
                 if(!key_exists($city,$list)){
                     $list[$city]=$monthList;
                 }
@@ -759,6 +763,30 @@ class CountSearch{
             }
         }
         return $list;
+    }
+
+    public static function computeLastMonth($date,$diffMonth=1){
+        $lastDate = date("Y/m/d",strtotime($date." - {$diffMonth} month"));
+        $maxDay = date("t",strtotime($date));
+        $thisDay = date("d",strtotime($date));
+        $lastDay = date("d",strtotime($lastDate));
+        if($maxDay==$thisDay){
+            if($lastDay<$thisDay){ //大月份转小月份
+                $lastDate = date("Y/m/01",strtotime($lastDate));
+                $lastDate = date("Y/m/d",strtotime($lastDate." - 1 day"));
+            }elseif($lastDay==$thisDay){ //小月份转大月份
+                $lastDate = date("Y/m/t",strtotime($lastDate));
+            }elseif($lastDay>$thisDay){ //本情况不可能发生
+                //$lastDate = date("Y/m/t",strtotime($lastDate));
+            }
+        }else{
+            if($thisDay!=$lastDay){
+                $lastDate = date("Y/m/01",strtotime($lastDate));
+                $lastDate = date("Y/m/d",strtotime($lastDate." - 1 day"));
+            }
+        }
+
+        return $lastDate;
     }
 
     //轉換U系統的城市（國際版專用）

@@ -50,8 +50,8 @@ class SummaryTable extends SummaryForm{
 
     //新增（产品）(上个月)
     private function ServiceINVLast(){
-        $monthStartDate = date("Y/m/d",strtotime($this->start_date." - 1 months"));
-        $monthEndDate = date("Y/m/d",strtotime($this->end_date." - 1 months"));
+        $monthStartDate = CountSearch::computeLastMonth($this->start_date);
+        $monthEndDate = CountSearch::computeLastMonth($this->end_date);
         $invRows = SummaryTable::getUInvList($monthStartDate,$monthEndDate,$this->city_allow);
         $invTable = SummaryTable::getTableForInv($invRows,$this->city_allow);
         return $invTable["html"];
@@ -59,8 +59,8 @@ class SummaryTable extends SummaryForm{
 
     //一次性服务+新增（产品）(上个月)
     private function ServiceINVMonthNew(){
-        $monthStartDate = date("Y/m/d",strtotime($this->start_date." - 1 months"));
-        $monthEndDate = date("Y/m/d",strtotime($this->end_date." - 1 months"));
+        $monthStartDate = CountSearch::computeLastMonth($this->start_date);
+        $monthEndDate = CountSearch::computeLastMonth($this->end_date);
         $invRows = SummaryTable::getUInvList($monthStartDate,$monthEndDate,$this->city_allow);
         $invTable = SummaryTable::getTableForInv($invRows,$this->city_allow);
         $rows = SummaryTable::getOneServiceRows($monthStartDate,$monthEndDate,$this->city_allow);
@@ -100,8 +100,8 @@ class SummaryTable extends SummaryForm{
     //一次性(上个月)
     private function ServiceOneLast(){
         //上月的開始及結束時間
-        $start_date = date("Y/m/d",strtotime($this->start_date." - 1 month"));
-        $end_date = date("Y/m/d",strtotime($this->end_date." - 1 month"));
+        $start_date = CountSearch::computeLastMonth($this->start_date);
+        $end_date = CountSearch::computeLastMonth($this->end_date);
         $rows = self::getOneServiceRows($start_date,$end_date,$this->city_allow);
         return self::getTableForRows($rows,$this->city_allow);
     }
@@ -222,14 +222,6 @@ class SummaryTable extends SummaryForm{
     }
 
     public static function getTableForInv($rows,$city_allow){
-/*        array (
-            'invoice_dt' => '2023-07-01',
-            'customer_code' => '11YJS0001-ZH',
-            'invoice_no' => 'ZHINV2307000002',
-            'customer_type' => '餐饮类',
-            'invoice_amt' => '450.00',
-            'city' => 'ZH',
-        );*/
         $html = "<table class='table table-bordered table-striped table-hover'>";
         $html.="<thead><tr>";
         $html.="<th width='100px'>".Yii::t('summary','INV code')."</th>";//产品编号
