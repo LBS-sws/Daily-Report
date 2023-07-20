@@ -173,6 +173,8 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<!--功能說明-->
+<?php $this->renderPartial('//comparison/rankingNote',array("model"=>$model)); ?>
 <?php
 $js="
     $('.click-th').click(function(){
