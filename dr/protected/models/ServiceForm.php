@@ -386,17 +386,43 @@ class ServiceForm extends CFormModel
         return $rows;
     }
     //哪些字段修改后需要记录
-    protected static function historyUpdateList(){
-        return array(
-            'company_id','nature_type',
-            'nature_type_two','cust_type','product_id','paid_type','amt_paid',
-            'b4_product_id','b4_paid_type','b4_amt_paid','amt_install','salesman_id',
-            'othersalesman_id','technician_id','sign_dt','ctrt_end_dt','ctrt_period','cont_info',
-            'first_dt','first_tech_id','status_dt','equip_install_dt','need_install','surplus',
-            'all_number','surplus_edit0','all_number_edit0','surplus_edit1','all_number_edit1','surplus_edit2',
-            'all_number_edit2','surplus_edit3','all_number_edit3','cust_type_name','pieces','prepay_month',
-            'prepay_start','contract_no','org_equip_qty','rtn_equip_qty',
+    protected static function historyUpdateList($status){
+        $list = array(
+            'status_dt','contract_no','company_id','nature_type','nature_type_two',
+            'cust_type','cust_type_name','product_id','paid_type','amt_paid'
         );
+        switch ($status){
+            case "N"://新增
+                $expr = array('equip_install_dt','first_tech_id','first_dt','surplus','cont_info');
+                $list=array_merge($list,$expr);
+                break;
+            case "C"://续约
+                $expr = array('equip_install_dt','first_tech_id','first_dt','cont_info');
+                $list=array_merge($list,$expr);
+                break;
+            case "A"://更改
+                $expr = array('first_dt','b4_service','b4_product_id','b4_paid_type','b4_amt_paid','surplus');
+                $list=array_merge($list,$expr);
+                break;
+            case "S"://暂停
+                $expr = array('surplus','org_equip_qty','rtn_equip_qty');
+                $list=array_merge($list,$expr);
+                break;
+            case "R"://恢复
+                break;
+            case "T"://终止
+                $expr = array('surplus','org_equip_qty','rtn_equip_qty','surplus_edit0','all_number_edit0','surplus_edit1','all_number_edit1','surplus_edit2',
+                    'all_number_edit2','surplus_edit3','all_number_edit3');
+                $list=array_merge($list,$expr);
+                break;
+        }
+        $expr = array(
+            'salesman_id','othersalesman_id','technician_id',
+            'sign_dt','ctrt_period','ctrt_end_dt','need_install','amt_install',
+            'all_number','pieces','prepay_month','prepay_start'
+        );
+        $list=array_merge($list,$expr);
+        return $list;
     }
 
     //哪些字段修改后需要记录
@@ -440,18 +466,40 @@ class ServiceForm extends CFormModel
         return $value;
     }
 
+    protected function delHistorySave(){
+        $model = new ServiceForm();
+        $model->retrieveData($this->id);
+        $keyArr = self::historyUpdateList($model->status);
+        $delText=array();
+        $delText[]="id：".$this->id;
+        $delText[]="服务状态：".General::getStatusDesc($model->status);
+        foreach ($keyArr as $key){
+            $delText[]=$this->getAttributeLabel($key)."：".self::getNameForValue($key,$model->$key);
+        }
+        $delText= implode("<br/>",$delText);
+        $systemLogModel = new SystemLogForm();
+        $systemLogModel->log_date=date("Y/m/d H:i:s");
+        $systemLogModel->log_user=Yii::app()->user->id;
+        $systemLogModel->log_type=get_class($this);
+        $systemLogModel->log_type_name="客户服务";
+        $systemLogModel->option_str="删除";
+        $systemLogModel->option_text=$delText;
+        $systemLogModel->insertSystemLog("D");
+    }
+
     //保存历史记录
     protected function historySave(&$connection){
         $uid = Yii::app()->user->id;
         $list=array("service_id"=>$this->id,"lcu"=>$uid,"service_type"=>1,"update_type"=>1,"update_html"=>array());
         switch ($this->getScenario()){
             case "delete":
-                $connection->createCommand()->delete("swo_service_history", "service_id=:id", array(":id" => $this->id));
+                //$connection->createCommand()->delete("swo_service_history", "service_id=:id", array(":id" => $this->id));
+                $this->delHistorySave();
                 break;
             case "edit":
                 $model = new ServiceForm();
                 $model->retrieveData($this->id);
-                $keyArr = self::historyUpdateList();
+                $keyArr = self::historyUpdateList($model->status);
                 foreach ($keyArr as $key){
                     if($model->$key!=$this->$key){
                         $list["update_html"][]="<span>".$this->getAttributeLabel($key)."：".self::getNameForValue($key,$model->$key)." 修改为 ".self::getNameForValue($key,$this->$key)."</span>";

@@ -16,7 +16,7 @@ class SystemLogForm extends CFormModel
 	public $show_bool=1;
 	public $leave_log=1;
 
-	public function insertSystemLog(){
+	public function insertSystemLog($str="S"){
 	    if(!empty($this->option_text)){
             $arr = array(
                 "log_date"=>$this->log_date,
@@ -32,7 +32,7 @@ class SystemLogForm extends CFormModel
             );
             Yii::app()->db->createCommand()->insert("swo_system_log",$arr);
             $this->id = Yii::app()->db->getLastInsertID();
-            $this->lenStr();
+            $this->lenStr($str);
             Yii::app()->db->createCommand()->update('swo_system_log', array(
                 'log_code'=>$this->log_code
             ), 'id=:id', array(':id'=>$this->id));
@@ -56,9 +56,9 @@ class SystemLogForm extends CFormModel
         $this->option_text = $optionText;
     }
 
-    private function lenStr(){
+    private function lenStr($str){
         $code = strval($this->id);
-        $this->log_code = "S";
+        $this->log_code = $str;
         for($i = 0;$i < 5-strlen($code);$i++){
             $this->log_code.="0";
         }
