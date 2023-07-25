@@ -159,5 +159,7 @@ return array(
     'Target Ready Upside'=>'年金額目標(upside)',
     'Target Ready Base'=>'年金額目標(base)',
     'Target Ready Minimum'=>'年金額目標(minimum)',
+    'History Pause'=>'地區歷史暫停客戶',
+    'History Resume'=>'地區歷史恢復客戶',
 );
 ?>

@@ -619,13 +619,14 @@ class SummaryTable extends SummaryForm{
             return self::getUInvTWListForType($startDay,$endDay,$city_allow,$type);
         }
         $list = array();
+        $Catering = self::$system===2?"Catering":"餐饮类";
         $json = Invoice::getInvData($startDay,$endDay,$city_allow);
         if($json["message"]==="Success"){
             foreach ($json["data"] as $row){
-                if($type==="cate"&&$row["customer_type"]==="餐饮类"){
+                if($type==="cate"&&$row["customer_type"]===$Catering){
                     $list[]=$row;
                 }
-                if ($type==="not"&&$row["customer_type"]!=="餐饮类"){
+                if ($type==="not"&&$row["customer_type"]!==$Catering){
                     $list[]=$row;
                 }
             }

@@ -1,6 +1,6 @@
 <?php
 
-class HistoryNetForm extends CFormModel
+class HistoryPauseForm extends CFormModel
 {
 	/* User Fields */
     public $search_date;//查詢日期
@@ -101,65 +101,32 @@ class HistoryNetForm extends CFormModel
         $lastWeekStartDate = date("Y/m/d",$this->last_week_start);
         $lastWeekEndDate = date("Y/m/d",$this->last_week_end);
 
-        //服务新增(本年)
-        $serviceN = CountSearch::getServiceForTypeToMonth($endDate,$city_allow,"N");
-        //服务新增(上一年)
-        $lastServiceN = CountSearch::getServiceForTypeToMonth($lastEndDate,$city_allow,"N");
-        //服务恢復(本年)
-        $serviceR = CountSearch::getServiceForTypeToMonth($endDate,$city_allow,"R");
-        //服务恢復(上一年)
-        $lastServiceR = CountSearch::getServiceForTypeToMonth($lastEndDate,$city_allow,"R");
-        //服务更改(本年)
-        $serviceA = CountSearch::getServiceAToMonth($endDate,$city_allow);
-        //服务更改(上一年)
-        $lastServiceA = CountSearch::getServiceAToMonth($lastEndDate,$city_allow);
-        //服务暫停、終止(本年)
-        $serviceST = CountSearch::getServiceForSTToMonth($endDate,$city_allow);
-        //服务暫停、終止(上一年)
-        $lastServiceST = CountSearch::getServiceForSTToMonth($lastEndDate,$city_allow);
-        //服务新增（一次性)(本年)
-        $serviceAddForY = CountSearch::getServiceAddForYToMonth($endDate,$city_allow);
-        //服务新增（一次性)(上一年)
-        $lastServiceAddForY = CountSearch::getServiceAddForYToMonth($lastEndDate,$city_allow);
-        //获取U系统的產品数据(本年)
-        $uInvMoney = CountSearch::getUInvMoneyToMonth($endDate,$city_allow);
-        //获取U系统的產品数据(上一年)
-        $lastUInvMoney = CountSearch::getUInvMoneyToMonth($lastEndDate,$city_allow);
-        //获取U系统的服务单数据
-        $uServiceMoney = CountSearch::getUServiceMoneyToMonth($endDate,$city_allow);
+        //服务暫停(本年)
+        $serviceS = CountSearch::getServiceForSTToMonth($endDate,$city_allow,"S");
+        //服务暫停(上一年)
+        $lastServiceS = CountSearch::getServiceForSTToMonth($lastEndDate,$city_allow,"S");
         //本週數據
-        $serviceWeek = CountSearch::getServiceForAll($weekStartDate,$weekEndDate,$city_allow);
+        $serviceWeek = CountSearch::getServiceForST($weekStartDate,$weekEndDate,$city_allow,"S");
         //上週數據
-        $lastServiceWeek = CountSearch::getServiceForAll($lastWeekStartDate,$lastWeekEndDate,$city_allow);
+        $lastServiceWeek = CountSearch::getServiceForST($lastWeekStartDate,$lastWeekEndDate,$city_allow,"S");
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
             $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
             $defMoreList["add_type"] = $cityRow["add_type"];
-            ComparisonForm::setComparisonConfig($defMoreList,$this->search_year,$this->month_type,$city);
+            //ComparisonForm::setComparisonConfig($defMoreList,$this->search_year,$this->month_type,$city);
 
-            $this->addListForCity($defMoreList,$city,$serviceN);
-            $this->addListForCity($defMoreList,$city,$lastServiceN);
-            $this->addListForCity($defMoreList,$city,$serviceR);
-            $this->addListForCity($defMoreList,$city,$lastServiceR);
-            $this->addListForCity($defMoreList,$city,$serviceA);
-            $this->addListForCity($defMoreList,$city,$lastServiceA);
-            $this->addListForCity($defMoreList,$city,$serviceST);
-            $this->addListForCity($defMoreList,$city,$lastServiceST);
-            $this->addListForCity($defMoreList,$city,$serviceAddForY,1);
-            $this->addListForCity($defMoreList,$city,$lastServiceAddForY,1);
-            $this->addListForCity($defMoreList,$city,$uInvMoney,2);
-            $this->addListForCity($defMoreList,$city,$lastUInvMoney,2);
-            $this->addListForCity($defMoreList,$city,$uServiceMoney,3);
+            $this->addListForCity($defMoreList,$city,$lastServiceS);
+            $this->addListForCity($defMoreList,$city,$serviceS);
 
-            $defMoreList["now_week"]+=key_exists($city,$serviceWeek)?$serviceWeek[$city]:0;
-            $defMoreList["last_week"]+=key_exists($city,$lastServiceWeek)?$lastServiceWeek[$city]:0;
+            $defMoreList["now_week"]+=key_exists($city,$serviceWeek)?$serviceWeek[$city]["num_pause"]:0;
+            $defMoreList["last_week"]+=key_exists($city,$lastServiceWeek)?$lastServiceWeek[$city]["num_pause"]:0;
 
             RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
 
         $this->data = $data;
         $session = Yii::app()->session;
-        $session['historyNet_c01'] = $this->getCriteria();
+        $session['historyPause_c01'] = $this->getCriteria();
         return true;
     }
 
@@ -167,29 +134,6 @@ class HistoryNetForm extends CFormModel
         if(key_exists($city,$list)){
             foreach ($list[$city] as $key=>$value){
                 $dateStr = $key;
-                switch ($type){
-                    case 1://上月的一次性服務
-                        $dateStr.="/01";
-                        $dateStr = date("Y/m",strtotime($dateStr." + 1 months"));
-                        $value*=-1;
-                        break;
-                    case 2://產品服務及上月的產品服務
-                        //需要把本月的數據在下一個月減掉 且 本月也需要增加
-                        $nextStr = "{$dateStr}/01";
-                        $nextStr = date("Y/m",strtotime($nextStr." + 1 months"));
-                        if(key_exists($nextStr,$data)){
-                            $data[$nextStr]+=$value*-1;
-                        }
-                        //生意額需要加上U系統的產品數據
-                        $uDateStr="u_".$dateStr;
-                        if(key_exists($uDateStr,$data)){
-                            $data[$uDateStr]+=$value;
-                        }
-                        break;
-                    case 3://U系統的服務單
-                        $dateStr ="u_".$dateStr;
-                        break;
-                }
                 if(key_exists($dateStr,$data)){
                     $data[$dateStr]+=$value;
                 }
@@ -206,25 +150,16 @@ class HistoryNetForm extends CFormModel
         );
         for($i=1;$i<=$this->search_month;$i++){
             $month = $i>=10?10:"0{$i}";
-            $dateStrOne = $this->search_year."/{$month}";//产品金额
-            $dateStrTwo = $this->last_year."/{$month}";//产品金额
-            $dateStrThree = "u_".$this->search_year."/{$month}";//生意额
+            $dateStrOne = $this->search_year."/{$month}";//暂停金额
+            $dateStrTwo = $this->last_year."/{$month}";//暂停金额
             $arr[$dateStrOne]=0;
-            $arr[$dateStrOne."_u"]=$arr[$dateStrOne];//U系統的產品金额
             $arr[$dateStrTwo]=0;
-            $arr[$dateStrTwo."_u"]=$arr[$dateStrTwo];//U系統的產品金额
-            //U系统的服務生意额
-            $arr[$dateStrThree]=0;
         }
         $arr["now_average"]=0;//本年平均
         $arr["last_average"]=0;//上一年平均
         $arr["now_week"]=0;//本周
         $arr["last_week"]=0;//上周
         $arr["growth"]="";//加速增长
-        $arr["start_two_net"]=0;//年初目标
-        $arr["two_net"]=0;//滚动目标
-        $arr["start_result"]="";//达成目标(年初)
-        $arr["result"]="";//达成目标(滚动)
         return $arr;
     }
 
@@ -235,37 +170,27 @@ class HistoryNetForm extends CFormModel
             $list["last_week"]=($list["last_week"]/$this->last_week_day)*$this->month_day;
             $list["last_week"]=HistoryAddForm::historyNumber($list["last_week"]);
         }
-        $list["start_two_net"]=HistoryAddForm::historyNumber($list["start_two_net"],$bool);
-        $list["two_net"]=HistoryAddForm::historyNumber($list["two_net"],$bool);
+        $list["growth"]=HistoryAddForm::comYes($list["now_week"],$list["last_week"]);
         $list["now_average"]=0;
         $list["last_average"]=0;
-        $list["u_average"]=0;
-        $list["growth"]=HistoryAddForm::comYes($list["now_week"],$list["last_week"]);
-        $list["start_result"]=HistoryAddForm::comYes($list["now_week"],$list["start_two_net"]);
-        $list["result"]=HistoryAddForm::comYes($list["now_week"],$list["two_net"]);
         for($i=1;$i<=$this->search_month;$i++){
             $month = $i>=10?10:"0{$i}";
             $nowStr = $this->search_year."/{$month}";
             $lastStr = $this->last_year."/{$month}";
-            $uStr = "u_".$this->search_year."/{$month}";
             $list[$nowStr] = key_exists($nowStr,$list)?$list[$nowStr]:0;
             $list[$lastStr] = key_exists($lastStr,$list)?$list[$lastStr]:0;
-            $list[$uStr] = key_exists($uStr,$list)?$list[$uStr]:0;
             $list[$nowStr] = HistoryAddForm::historyNumber($list[$nowStr],$bool);
             $list[$lastStr] = HistoryAddForm::historyNumber($list[$lastStr],$bool);
-            $list[$uStr] = HistoryAddForm::historyNumber($list[$uStr],$bool);
             $list["now_average"]+=$list[$nowStr];
             $list["last_average"]+=$list[$lastStr];
-            $list["u_average"]+=$list[$uStr];
         }
         $list["now_average"]=round($list["now_average"]/$this->search_month,2);
         $list["last_average"]=round($list["last_average"]/$this->search_month,2);
-        $list["u_average"]=round($list["u_average"]/$this->search_month,2);
     }
 
     //顯示提成表的表格內容
-    public function historyNetHtml(){
-        $html= '<table id="historyNet" class="table table-fixed table-condensed table-bordered table-hover">';
+    public function historyPauseHtml(){
+        $html= '<table id="historyPause" class="table table-fixed table-condensed table-bordered table-hover">';
         $html.=$this->tableTopHtml();
         $html.=$this->tableBodyHtml();
         $html.=$this->tableFooterHtml();
@@ -287,9 +212,6 @@ class HistoryNetForm extends CFormModel
             array("name"=>$this->search_year,"background"=>"#fcd5b4",
                 "colspan"=>$monthArr
             ),//本年
-            array("name"=>$this->search_year.Yii::t("summary","Actual monthly amount"),"background"=>"#FDE9D9",
-                "colspan"=>$monthArr
-            )//生意额
         );
 
         $topList[]=array("name"=>$this->search_month.Yii::t("summary"," month estimate"),"background"=>"#f2dcdb",
@@ -299,15 +221,6 @@ class HistoryNetForm extends CFormModel
                 array("name"=>Yii::t("summary","growth")),//加速增长
             )
         );//本月預估
-
-        $topList[]=array("name"=>Yii::t("summary","Target contrast"),"background"=>"#DCE6F1",
-            "colspan"=>array(
-                array("name"=>Yii::t("summary","Start Target")),//年初目标
-                array("name"=>Yii::t("summary","Start Target result")),//达成目标
-                array("name"=>Yii::t("summary","Roll Target")),//滚动目标
-                array("name"=>Yii::t("summary","Roll Target result")),//达成目标
-            )
-        );//目标对比
 
         return $topList;
     }
@@ -385,20 +298,14 @@ class HistoryNetForm extends CFormModel
             $month = $i>=10?10:"0{$i}";
             $bodyKey[]=$this->last_year."/{$month}";
             $dateTwoList[]=$this->search_year."/{$month}";
-            $dateThreeList[]="u_".$this->search_year."/{$month}";
         }
         $bodyKey[]="last_average";
         $dateTwoList[]="now_average";
-        $dateThreeList[]="u_average";
-        $bodyKey=array_merge($bodyKey,$dateTwoList,$dateThreeList);
+        $bodyKey=array_merge($bodyKey,$dateTwoList);
 
         $bodyKey[]="now_week";
         $bodyKey[]="last_week";
         $bodyKey[]="growth";
-        $bodyKey[]="start_two_net";
-        $bodyKey[]="start_result";
-        $bodyKey[]="two_net";
-        $bodyKey[]="result";
 
         return $bodyKey;
     }
@@ -448,11 +355,8 @@ class HistoryNetForm extends CFormModel
                             }
                             $tdClass = HistoryAddForm::getTextColorForKeyStr($text,$keyStr);
                             $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][]",$text);
-                            if(strpos($keyStr,'/')!==false&&strpos($keyStr,'u_')===false){//调试U系统同步数据
-                                $html.="<td class='{$tdClass}' data-u='{$cityList[$keyStr."_u"]}'><span>{$text}</span>{$inputHide}</td>";
-                            }else{
-                                $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
-                            }
+
+                            $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
                         }
                         $html.="</tr>";
                     }
@@ -499,7 +403,7 @@ class HistoryNetForm extends CFormModel
         $headList = $this->getTopArr();
         $excel = new DownSummary();
         $excel->colTwo=1;
-        $excel->SetHeaderTitle(Yii::t("app","History Net")."（{$this->search_date}）");
+        $excel->SetHeaderTitle(Yii::t("app","History Pause")."（{$this->search_date}）");
         $titleTwo = $this->start_date." ~ ".$this->end_date."\r\n";
         $titleTwo.="本周:".date("Y/m/d",$this->week_start)." ~ ".date("Y/m/d",$this->week_end)." ({$this->week_day})\r\n";
         $titleTwo.="上周:";
@@ -512,6 +416,6 @@ class HistoryNetForm extends CFormModel
         $excel->init();
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);
-        $excel->outExcel(Yii::t("app","History Net"));
+        $excel->outExcel(Yii::t("app","History Pause"));
     }
 }

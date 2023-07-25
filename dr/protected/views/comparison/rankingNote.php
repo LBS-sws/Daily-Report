@@ -30,10 +30,17 @@
     <div class="ranking-note-body">
         <div class="col-lg-12">
             <div class="row">
-                <p><?php echo Yii::t("summary","comparison_remark_1");?></p>
-                <p><?php echo Yii::t("summary","comparison_remark_2");?></p>
-                <p><?php echo Yii::t("summary","comparison_remark_3");?></p>
-                <p><?php echo Yii::t("summary","comparison_remark_4");?></p>
+                <?php if (CountSearch::getSystem()===1): ?>
+                    <p><?php echo Yii::t("summary","comparison_remark_tw_1");?></p>
+                    <p><?php echo Yii::t("summary","comparison_remark_tw_2");?></p>
+                    <p><?php echo Yii::t("summary","comparison_remark_tw_3");?></p>
+                    <p><?php echo Yii::t("summary","comparison_remark_tw_4");?></p>
+                <?php else:?>
+                    <p><?php echo Yii::t("summary","comparison_remark_1");?></p>
+                    <p><?php echo Yii::t("summary","comparison_remark_2");?></p>
+                    <p><?php echo Yii::t("summary","comparison_remark_3");?></p>
+                    <p><?php echo Yii::t("summary","comparison_remark_4");?></p>
+                <?php endif ?>
                 <p><?php echo Yii::t("summary","comparison_remark_5");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_6");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_7");?></p>

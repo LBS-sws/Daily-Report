@@ -8,12 +8,27 @@ class CountSearch{
     private static $whereSQL=" and not(f.rpt_cat='INV' and f.single=1)";
     private static $IDBool=true;//是否需要ID服務的查詢
 
+    private static $system=0;//0:大陸 1:台灣 2:國際
+
+    public static function getSystem(){
+        return self::$system;
+    }
+
     //獲取暫停、終止的最後一條記錄(一条服务在一个月内只能存在一条暂停和终止)，特例：暫停→恢復→終止（三個都需要計算）
-    public static function getServiceForST($start_dt,$end_dt,$city_allow){
+    public static function getServiceForST($start_dt,$end_dt,$city_allow,$type="all"){
         $list = array();
         $sum_money = "case b.paid_type when 'M' then b.amt_paid * b.ctrt_period else b.amt_paid end";
-
-        $whereSql = "b.status in ('S','T') and b.status_dt BETWEEN '{$start_dt}' and '{$end_dt}'";
+        switch ($type){
+            case "S"://暫停
+                $whereSql="b.status='S'";
+                break;
+            case "T"://終止
+                $whereSql="b.status='T'";
+                break;
+            default://暫停+終止
+                $whereSql="b.status in ('S','T')";
+        }
+        $whereSql.= " and b.status_dt BETWEEN '{$start_dt}' and '{$end_dt}'";
         if(!empty($city_allow)&&$city_allow!="all"){
             $whereSql.= " and b.city in ({$city_allow})";
         }
@@ -415,8 +430,12 @@ class CountSearch{
     public static function getUServiceMoney($startDay,$endDay,$city_allow=""){
         $list = array();
         $citySql = "";
+        $textSql = "b.Text";
+        if(self::$system==2){//國際版
+            $textSql = "IF(b.Text='KL' or b.Text='SL','MY',b.Text)";
+        }
         if(!empty($city_allow)&&$city_allow!="all"){
-            $citySql = " and b.Text in ({$city_allow})";
+            $citySql = " and {$textSql} in ({$city_allow})";
         }
         $suffix = Yii::app()->params['envSuffix'];
         $rows = Yii::app()->db->createCommand()
@@ -442,14 +461,57 @@ class CountSearch{
         return $list;
     }
 
+    //服务新增INV(餐飲、非餐飲)(台灣版專用)
+    public static function getServiceTWForAdd($startDay,$endDay,$city_allow=""){
+        $suffix = Yii::app()->params['envSuffix'];
+        $whereSql = "a.status='N' and f.rpt_cat='INV' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $list = array();
+        $sum_money = "case a.paid_type when 'M' then a.amt_paid * a.ctrt_period else a.amt_paid end";
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum($sum_money) as sum_amount,a.city,
+            sum(if(g.rpt_cat='A01',({$sum_money}),0)) as num_cate,
+            sum(if(g.rpt_cat!='A01',({$sum_money}),0)) as num_not_cate
+            ")
+            ->from("swoper{$suffix}.swo_service a")
+            ->leftJoin("swoper{$suffix}.swo_customer_type f","a.cust_type=f.id")
+            ->leftJoin("swoper{$suffix}.swo_nature g","a.nature_type=g.id")
+            ->where($whereSql)
+            ->group("a.city")->queryAll();
+        $rows = $rows?$rows:array();
+
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=array(
+                    "sum_money"=>0,
+                    "u_num_cate"=>0,//餐饮客户
+                    "u_num_not_cate"=>0//非餐饮客户
+                );
+            }
+            $list[$row["city"]]["sum_money"]+=$row["sum_amount"];
+            $list[$row["city"]]["u_num_cate"]+=$row["num_cate"];
+            $list[$row["city"]]["u_num_not_cate"]+=$row["num_not_cate"];
+        }
+        return $list;
+    }
+
     //获取U系统的產品数据
     public static function getUInvMoney($startDay,$endDay,$city_allow=""){
+        if(self::$system===1){//台灣版的產品為lbs的inv新增
+            return self::getServiceTWForAdd($startDay,$endDay,$city_allow);
+        }
         $city = "";
         if(!empty($city_allow)&&$city_allow!="all"){
             $city = $city_allow;
         }
+        if(self::$system===2&&!empty($city)&&strpos($city,"'MY'")!==false){//國際版
+            $city.=",'KL','SL'";
+        }
         $json = Invoice::getInvData($startDay,$endDay,$city);
         $list = array();
+        $Catering = self::$system===2?"Catering":"餐饮类";
         if($json["message"]==="Success"){
             $jsonData = $json["data"];
             foreach ($jsonData as $row){
@@ -463,7 +525,7 @@ class CountSearch{
                     );
                 }
                 $list[$city]["sum_money"]+=$money;
-                if($row["customer_type"]==="餐饮类"){
+                if($row["customer_type"]===$Catering){
                     $list[$city]["u_num_cate"]+=$money;
                 }else{
                     $list[$city]["u_num_not_cate"]+=$money;
@@ -485,8 +547,12 @@ class CountSearch{
         }
         $list = array();
         $citySql = "";
+        $textSql = "b.Text";
+        if(self::$system==2){//國際版
+            $textSql = "IF(b.Text='KL' or b.Text='SL','MY',b.Text)";
+        }
         if(!empty($city_allow)&&$city_allow!="all"){
-            $citySql = " and b.Text in ({$city_allow})";
+            $citySql = " and {$textSql} in ({$city_allow})";
         }
         $suffix = Yii::app()->params['envSuffix'];
         $rows = Yii::app()->db->createCommand()
@@ -609,7 +675,7 @@ class CountSearch{
     }
 
     //獲取暫停、終止（月為鍵名)
-    public static function getServiceForSTToMonth($end_dt,$city_allow){
+    public static function getServiceForSTToMonth($end_dt,$city_allow,$type="all"){
         $year = date("Y",strtotime($end_dt));
         $start_dt =$year."/01/01";
         $maxMonth = date("n",strtotime($end_dt));
@@ -620,8 +686,17 @@ class CountSearch{
         }
         $list = array();
         $sum_money = "case b.paid_type when 'M' then b.amt_paid * b.ctrt_period else b.amt_paid end";
-
-        $whereSql = "b.status in ('S','T') and b.status_dt BETWEEN '{$start_dt}' and '{$end_dt}'";
+        switch ($type){
+            case "S"://暫停
+                $whereSql="b.status='S'";
+                break;
+            case "T"://終止
+                $whereSql="b.status='T'";
+                break;
+            default://暫停+終止
+                $whereSql="b.status in ('S','T')";
+        }
+        $whereSql.= " and b.status_dt BETWEEN '{$start_dt}' and '{$end_dt}'";
         if(!empty($city_allow)&&$city_allow!="all"){
             $whereSql.= " and b.city in ({$city_allow})";
         }
@@ -729,11 +804,53 @@ class CountSearch{
         return $list;
     }
 
+    //服务新增INV產品数据(台灣版專用)
+    public static function getUInvTWMoneyToMonth($endDay,$city_allow=""){
+        $suffix = Yii::app()->params['envSuffix'];
+        $year = date("Y",strtotime($endDay));
+        $maxMonth = date("n",strtotime($endDay));
+        $startDay =($year-1)."/12/01";
+        $monthList = array();
+        $monthList[($year-1)."/12"]=0;
+        for ($i=1;$i<=$maxMonth;$i++){
+            $month = $i<10?"0".$i:$i;
+            $monthList["{$year}/{$month}"]=0;
+        }
+        $whereSql = "a.status='N' and f.rpt_cat='INV' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $list = array();
+        $sum_money = "case a.paid_type when 'M' then a.amt_paid * a.ctrt_period else a.amt_paid end";
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum({$sum_money}) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+            ->from("swoper{$suffix}.swo_service a")
+            ->leftJoin("swoper{$suffix}.swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)
+            ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+        $rows = $rows?$rows:array();
+
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=$monthList;
+            }
+            $thisMonth = $row["month_dt"];
+            $list[$row["city"]][$thisMonth]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
     //获取U系统的產品数据（月為鍵名)
     public static function getUInvMoneyToMonth($endDay,$city_allow=""){
+        if(self::$system===1){//台灣版的產品為lbs的inv新增
+            return self::getUInvTWMoneyToMonth($endDay,$city_allow);
+        }
         $city = "";
         if(!empty($city_allow)&&$city_allow!="all"){
             $city = $city_allow;
+        }
+        if(self::$system===2&&!empty($city)&&strpos($city,"'MY'")!==false){//國際版
+            $city.=",'KL','SL'";
         }
         $year = date("Y",strtotime($endDay));
         $maxMonth = date("n",strtotime($endDay));
@@ -791,11 +908,13 @@ class CountSearch{
 
     //轉換U系統的城市（國際版專用）
     public static function resetCity($city){
-        switch($city){
-            case "KL":
-                return "MY";
-            case "SL":
-                return "MY";
+        if(self::$system===2){
+            switch($city){
+                case "KL":
+                    return "MY";
+                case "SL":
+                    return "MY";
+            }
         }
         return $city;
     }

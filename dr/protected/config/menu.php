@@ -219,6 +219,14 @@ return array(
                 'access'=>'G08',
                 'url'=>'/historyStop/index',
             ),
+            'History Pause'=>array(
+                'access'=>'G15',
+                'url'=>'/historyPause/index',
+            ),
+            'History Resume'=>array(
+                'access'=>'G16',
+                'url'=>'/historyResume/index',
+            ),
             'History Net'=>array(
                 'access'=>'G09',
                 'url'=>'/historyNet/index',

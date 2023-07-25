@@ -127,6 +127,11 @@ return array(
     'add type'=>'是否疊加',
     'z index'=>'層級',
 
+    'comparison_remark_tw_1'=>'1、服務生意額：U系統已完成服務工作單金額 + LBS客戶服務中類別為產品買賣+INV客戶的金額',
+    'comparison_remark_tw_2'=>'2、新增服務(除壹次性服務)：LBS服務表單客戶類別不是產品買賣+INV客戶的記錄，且合約月數不等於1的新增合同年金額',
+    'comparison_remark_tw_3'=>'3、壹次性服務： LBS客戶服務記錄類別為“新增”，且合同月數等於壹的記錄',
+    'comparison_remark_tw_4'=>'4、新增（産品）：LBS客戶服務中客戶類別為產品買賣+INV客戶',
+
     'comparison_remark_1'=>'1、服務生意額：U系統已完成服務工作單金額 + 銷貨金額',
     'comparison_remark_2'=>'2、新增服務(除壹次性服務)：LBS服務表單金額不是壹次性的新增合同年金額 + ID客戶服務,根據新增日期統計的年金額',
     'comparison_remark_3'=>'3、壹次性服務： LBS新增服務合約少于12個月且金額爲壹次性的客戶',
