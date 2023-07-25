@@ -180,5 +180,6 @@ return array(
     'Customer Code'=>'U系統客戶編號',
     'Customer Type'=>'U系統客戶類別',
     'INV Amt'=>'U系統產品金額',
+    'all money'=>'合同总金额',
 );
 ?>

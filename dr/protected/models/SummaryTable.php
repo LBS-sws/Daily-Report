@@ -7,6 +7,11 @@
  * Time: 15:52
  */
 class SummaryTable extends SummaryForm{
+    private static $whereSQL=" and not(f.rpt_cat='INV' and f.single=1)";
+    private static $IDBool=true;//是否需要ID服務的查詢
+
+    private static $system=0;//0:大陸 1:台灣 2:國際
+
     public $city_allow;
 
     //顯示表格內的數據來源
@@ -152,7 +157,7 @@ class SummaryTable extends SummaryForm{
         $html.="<th width='80px'>".Yii::t('service','Customer Type')."</th>";//客户类别
         $html.="<th width='120px'>".Yii::t('service','Paid Amt')."</th>";//服务金额
         $html.="<th width='80px'>".Yii::t('customer','Contract Period')."</th>";//合同年限(月)
-        $html.="<th width='100px'>".Yii::t('service','all money')."</th>";//合同总金额
+        $html.="<th width='100px'>".Yii::t('summary','all money')."</th>";//合同总金额
         $html.="<th width='1px'></th>";
         $html.="</tr></thead>";
         if($rows){
@@ -353,7 +358,7 @@ class SummaryTable extends SummaryForm{
     public static function getServiceRowsForAdd($startDate,$endDate,$city_allow){
         $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         $whereSql.= " and a.city in ({$city_allow})";
-        $whereSql .= " and not(f.rpt_cat='INV' and f.single=1)";
+        $whereSql .= self::$whereSQL;
         $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
@@ -365,13 +370,17 @@ class SummaryTable extends SummaryForm{
             ->where($whereSql." and not (a.paid_type=1 and a.ctrt_period<12)")->order("a.city,a.status_dt desc")->queryAll();
         $queryIARows = $queryIARows?$queryIARows:array();
 
-        $queryIDRows = Yii::app()->db->createCommand()
-            ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
-            ->from("swo_serviceid a")
-            ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
-            ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
-        $queryIDRows = $queryIDRows?$queryIDRows:array();
+        if(self::$IDBool){
+            $queryIDRows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
+            $queryIDRows = $queryIDRows?$queryIDRows:array();
+        }else{
+            $queryIDRows=array();
+        }
         return array_merge($queryIARows,$queryIDRows);
     }
 
@@ -379,7 +388,7 @@ class SummaryTable extends SummaryForm{
     public static function getServiceRows($startDate,$endDate,$city_allow,$type){
         $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         $whereSql.= " and a.city in ({$city_allow})";
-        $whereSql .= " and not(f.rpt_cat='INV' and f.single=1)";
+        $whereSql .= self::$whereSQL;
         $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
@@ -391,13 +400,17 @@ class SummaryTable extends SummaryForm{
             ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
         $queryIARows = $queryIARows?$queryIARows:array();
 
-        $queryIDRows = Yii::app()->db->createCommand()
-            ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
-            ->from("swo_serviceid a")
-            ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
-            ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
-        $queryIDRows = $queryIDRows?$queryIDRows:array();
+        if(self::$IDBool){
+            $queryIDRows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
+            $queryIDRows = $queryIDRows?$queryIDRows:array();
+        }else{
+            $queryIDRows=array();
+        }
         return array_merge($queryIARows,$queryIDRows);
     }
 
@@ -405,7 +418,7 @@ class SummaryTable extends SummaryForm{
     public static function getServiceSTForType($startDate,$endDate,$city_allow,$type){
         $whereSql = "a.status='{$type}' and a.status in ('S','T') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         $whereSql.= " and a.city in ({$city_allow})";
-        $whereSql .= " and not(f.rpt_cat='INV' and f.single=1)";
+        $whereSql .= self::$whereSQL;
         $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
@@ -434,13 +447,17 @@ class SummaryTable extends SummaryForm{
             $queryIARows = array();
         }
 
-        $queryIDRows = Yii::app()->db->createCommand()
-            ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
-            ->from("swo_serviceid a")
-            ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
-            ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
-        $queryIDRows = $queryIDRows?$queryIDRows:array();
+        if(self::$IDBool){
+            $queryIDRows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
+            $queryIDRows = $queryIDRows?$queryIDRows:array();
+        }else{
+            $queryIDRows=array();
+        }
         return array_merge($queryIARows,$queryIDRows);
     }
 
@@ -450,7 +467,7 @@ class SummaryTable extends SummaryForm{
         if(!empty($city_allow)){
             $whereSql.= " and a.city in ({$city_allow})";
         }
-        $whereSql .= " and not(f.rpt_cat='INV' and f.single=1)";
+        $whereSql .= self::$whereSQL;
         $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $rows = Yii::app()->db->createCommand()
@@ -476,7 +493,7 @@ class SummaryTable extends SummaryForm{
             $whereSqlIA= " and a.ctrt_period<12 and a.paid_type!=1";
             $whereSqlID= " and a.ctrt_period<12";
         }
-        $whereSql .= " and not(f.rpt_cat='INV' and f.single=1)";
+        $whereSql .= self::$whereSQL;
         $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
@@ -488,13 +505,17 @@ class SummaryTable extends SummaryForm{
             ->where($whereSql.$whereSqlIA)->queryAll();
         $queryIARows = $queryIARows?$queryIARows:array();
 
-        $queryIDRows = Yii::app()->db->createCommand()
-            ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
-            ->from("swo_serviceid a")
-            ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
-            ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->where($whereSql.$whereSqlID)->order("a.status_dt desc")->queryAll();
-        $queryIDRows = $queryIDRows?$queryIDRows:array();
+        if(self::$IDBool){
+            $queryIDRows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql.$whereSqlID)->order("a.status_dt desc")->queryAll();
+            $queryIDRows = $queryIDRows?$queryIDRows:array();
+        }else{
+            $queryIDRows=array();
+        }
         return array_merge($queryIARows,$queryIDRows);
     }
 
@@ -510,7 +531,7 @@ class SummaryTable extends SummaryForm{
         }else{
             $whereSql.= " and (g.rpt_cat!='A01' or g.rpt_cat is null) ";
         }
-        $whereSql .= " and not(f.rpt_cat='INV' and f.single=1)";
+        $whereSql .= self::$whereSQL;
         $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
@@ -521,18 +542,45 @@ class SummaryTable extends SummaryForm{
             ->leftJoin("swo_nature g","a.nature_type=g.id")
             ->where($whereSql)->queryAll();
         $queryIARows = $queryIARows?$queryIARows:array();
-        $queryIDRows = Yii::app()->db->createCommand()
-            ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
-            ->from("swo_serviceid a")
-            ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
-            ->leftJoin("swo_nature g","a.nature_type=g.id")
-            ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
-        $queryIDRows = $queryIDRows?$queryIDRows:array();
+
+        if(self::$IDBool){
+            $queryIDRows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
+            $queryIDRows = $queryIDRows?$queryIDRows:array();
+        }else{
+            $queryIDRows=array();
+        }
         return array_merge($queryIARows,$queryIDRows);
+    }
+
+    //U系统的产品（台湾专用）
+    public static function getUInvTWList($startDay,$endDay,$city_allow=""){
+        //cate==A01
+        $whereSql = "a.status='N' and f.rpt_cat='INV' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
+        if(!empty($city_allow)){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+            f.description as cust_type_name";
+        $queryIARows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
+            ->from("swo_service a")
+            ->leftJoin("swo_service_contract_no n","a.id=n.service_id")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where($whereSql)->queryAll();
+        return $queryIARows?$queryIARows:array();
     }
 
     //U系统的产品
     public static function getUInvList($startDay,$endDay,$city_allow=""){
+        if(self::$system===1){//台灣版的產品為lbs的inv新增
+            return self::getUInvTWList($startDay,$endDay,$city_allow);
+        }
         $list = array();
         $json = Invoice::getInvData($startDay,$endDay,$city_allow);
         if($json["message"]==="Success"){
@@ -541,8 +589,35 @@ class SummaryTable extends SummaryForm{
         return $list;
     }
 
+    //U系统的产品(餐饮、非餐饮)（台湾专用）
+    public static function getUInvTWListForType($startDay,$endDay,$city_allow="",$type=""){
+        //cate==A01
+        $whereSql = "a.status='N' and f.rpt_cat='INV' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
+        if(!empty($city_allow)){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        if($type=="cate"){ //餐饮
+            $whereSql.= " and g.rpt_cat='A01' ";
+        }else{
+            $whereSql.= " and (g.rpt_cat!='A01' or g.rpt_cat is null) ";
+        }
+        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+            f.description as cust_type_name";
+        $queryIARows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
+            ->from("swo_service a")
+            ->leftJoin("swo_service_contract_no n","a.id=n.service_id")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where($whereSql)->queryAll();
+        return $queryIARows?$queryIARows:array();
+    }
+
     //U系统的产品
     public static function getUInvListForType($startDay,$endDay,$city_allow="",$type=""){
+        if(self::$system===1){//台灣版的產品為lbs的inv新增
+            return self::getUInvTWListForType($startDay,$endDay,$city_allow,$type);
+        }
         $list = array();
         $json = Invoice::getInvData($startDay,$endDay,$city_allow);
         if($json["message"]==="Success"){
