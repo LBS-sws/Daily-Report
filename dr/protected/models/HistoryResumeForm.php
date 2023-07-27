@@ -170,7 +170,7 @@ class HistoryResumeForm extends CFormModel
             $list["last_week"]=($list["last_week"]/$this->last_week_day)*$this->month_day;
             $list["last_week"]=HistoryAddForm::historyNumber($list["last_week"]);
         }
-        $list["growth"]=HistoryAddForm::comYes($list["now_week"],$list["last_week"]);
+        //$list["growth"]=HistoryAddForm::comYes($list["now_week"],$list["last_week"]);
         $list["now_average"]=0;
         $list["last_average"]=0;
         for($i=1;$i<=$this->search_month;$i++){
@@ -218,7 +218,7 @@ class HistoryResumeForm extends CFormModel
             "colspan"=>array(
                 array("name"=>Yii::t("summary","now week")),//本周
                 array("name"=>Yii::t("summary","last week")),//上周
-                array("name"=>Yii::t("summary","growth")),//加速增长
+                //array("name"=>Yii::t("summary","growth")),//加速增长
             )
         );//本月預估
 
@@ -305,7 +305,7 @@ class HistoryResumeForm extends CFormModel
 
         $bodyKey[]="now_week";
         $bodyKey[]="last_week";
-        $bodyKey[]="growth";
+        //$bodyKey[]="growth";
 
         return $bodyKey;
     }
