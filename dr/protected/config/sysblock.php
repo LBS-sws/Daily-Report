@@ -1,5 +1,11 @@
 <?php
 return array(
+    'hr.ZP03' => array(//人事系統，招聘彈窗提示
+        'validation'=>'isRecruitApply',
+        'system'=>'hr',
+        'function'=>'',
+        'message'=>Yii::t('block','Please update the regional recruitment plan if there is any change. If it has been updated, ignore this information.'),
+    ),
     'drs.H01' => array(//日报表系统-月报表总结提交
         'validation'=>'isMonthDispatch',
         'system'=>'drs',

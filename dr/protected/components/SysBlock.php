@@ -575,6 +575,25 @@ class SysBlock {
         return true;
     }
 
+    /**
+     * 提示招聘彈窗提醒
+     **/
+    public function isRecruitApply($key,&$value){
+        if($this->systemIsCN!=0||date("d")!=="03"){//進大陸執行,且每月的四號
+            return true;
+        }
+        $uid = Yii::app()->user->id;
+        $suffix = Yii::app()->params['envSuffix'];
+        $row = Yii::app()->db->createCommand()->select("a.username")
+            ->from("security$suffix.sec_user_access a")
+            ->where("a.username=:username and a.system_id='hr' and a.a_read_write like '%ZP03%'",
+                array(":username"=>$uid))->queryRow();
+        if($row){//需要彈窗提醒
+            return false;
+        }
+        return true;
+    }
+
     public function test() {
         return false;
     }
