@@ -579,7 +579,7 @@ class SysBlock {
      * 提示招聘彈窗提醒
      **/
     public function isRecruitApply($key,&$value){
-        if($this->systemIsCN!=0||date("d")!=="03"){//進大陸執行,且每月的四號
+        if($this->systemIsCN!=0||date("d")!=="04"){//進大陸執行,且每月的四號
             return true;
         }
         $uid = Yii::app()->user->id;
