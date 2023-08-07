@@ -58,9 +58,27 @@ class ReportForm extends CFormModel
 			),
 			array('email','validateEmail'),
 			array('emailcc','validateEmailList'),
+			array('end_dt','validateDateLong'),
 		);
 	}
 	
+	public function validateDateLong($attribute, $params){
+	    if(!empty($this->start_dt)&&!empty($this->end_dt)){
+	        $startTimer = strtotime($this->start_dt);
+	        $endTimer = strtotime($this->end_dt);
+	        if($endTimer<$startTimer){
+                $this->addError("end_dt","开始时间不能大于结束时间");
+                return false;
+            }
+            $diffTimer = $endTimer-$startTimer;
+            $diffTimer = $diffTimer/(24*60*60);
+            if($diffTimer>=31*6){//6个月
+                $this->addError("end_dt","查询时间段不能大于6个月，请分段查询");
+                return false;
+            }
+        }
+	}
+
 	public function validateEmail($attribute, $params){
 		if ($this->format=='EMAIL') {
 			$ev = new CEmailValidator();
