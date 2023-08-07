@@ -75,5 +75,6 @@ return array(
     'Resume'=>'恢复',
     'Amendment'=>'更改',
     'Terminate'=>'终止',
+    'U Service Detail'=>'U系统服务报表',
 );
 ?>

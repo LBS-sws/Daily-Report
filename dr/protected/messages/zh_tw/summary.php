@@ -186,5 +186,14 @@ return array(
     'Customer Type'=>'U系統客戶類別',
     'INV Amt'=>'U系統產品金額',
     'all money'=>'合同总金额',
+    'job date'=>'工作日期',
+    'Contract Code'=>'合約編號',
+    'U Customer Code'=>'客戶編號',
+    'Customer Name'=>'客戶公司',
+    'Technical'=>'技術員',
+    'city name'=>'城市',
+    'city'=>'市',
+    'district'=>'區',
+    'address'=>'地址',
 );
 ?>

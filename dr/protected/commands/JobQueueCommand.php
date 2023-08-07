@@ -426,6 +426,7 @@ EOF;
 			case 'RptSummarySC': $model = new RptSummarySC(); break;
 			case 'RptActiveService': $model = new RptActiveService(); break;
 			case 'RptUService': $model = new RptUService(); break;
+			case 'RptUServiceDetail': $model = new RptUServiceDetail(); break;
 			case 'RptCustomerKA': $model = new RptCustomerKA("N"); break;
 			case 'RptCustomerKAC': $model = new RptCustomerKA("C"); break;
 			case 'RptCustomerKAR': $model = new RptCustomerKA("R"); break;

@@ -81,9 +81,13 @@ return array(
 				'access'=>'B33',
 				'url'=>'/report/chain',
 			),
-			'U Service Amount'=>array( //服務金額匯總
-				'access'=>'B32',
+			'U Service Amount'=>array( //技术员生产力分析
+                'access'=>'B32',
 				'url'=>'/report/uService',
+			),
+			'U Service Detail'=>array( //U系统服务报表
+                'access'=>'B35',
+				'url'=>'/report/uServiceDetail',
 			),
 			'Summary Service Cases'=>array( //客戶服務匯總
 				'access'=>'B30',

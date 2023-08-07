@@ -55,6 +55,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('feedback'),'expression'=>array('ReportController','allowFeedback')),
 			array('allow','actions'=>array('summarySC','textCURL'),'expression'=>array('ReportController','allowSummarySC')),
 			array('allow','actions'=>array('uService'),'expression'=>array('ReportController','allowUService')),
+			array('allow','actions'=>array('uServiceDetail'),'expression'=>array('ReportController','allowUServiceDetail')),
 			array('allow','actions'=>array('customerKA'),'expression'=>array('ReportController','allowCustomerKA')),
 			array('allow','actions'=>array('chain'),'expression'=>array('ReportController','allowChain')),
 			array('allow','actions'=>array('activeService'),'expression'=>array('ReportController','allowActiveService')),
@@ -555,6 +556,23 @@ class ReportController extends Controller
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
 
+// Report: UServiceDetail
+	protected static function allowUServiceDetail() {
+		return Yii::app()->user->validFunction('B35');
+	}
+
+	public function actionUServiceDetail() {
+		$this->function_id = 'B35';
+		Yii::app()->session['active_func'] = $this->function_id;
+        $this->showUI('uServiceDetail','U Service Detail', 'start_dt,end_dt,city');
+		//$this->showUIFbList('uService', 'Summary Service Cases Report', 'start_dt,end_dt,format');
+	}
+
+    protected function genUServiceDetail($criteria) {
+        $this->addQueueItem('RptUServiceDetail', $criteria, 'A4');
+        Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+    }
+
 // Report: CustomerKA
 	protected static function allowCustomerKA() {
 		return Yii::app()->user->validFunction('B34');
@@ -735,6 +753,7 @@ class ReportController extends Controller
 				if ($model->id=='customerID') $this->genCustomerID($model);
 				if ($model->id=='summarySC') $this->genSummarySC($model);
 				if ($model->id=='uService') $this->genUService($model);
+				if ($model->id=='uServiceDetail') $this->genUServiceDetail($model);
 				if ($model->id=='customerKA') $this->genCustomerKA($model);
 				if ($model->id=='chain') $this->genChain($model);
 				if ($model->id=='activeService') $this->genActiveService($model);

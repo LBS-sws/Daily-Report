@@ -161,5 +161,6 @@ return array(
     'Target Ready Minimum'=>'年金額目標(minimum)',
     'History Pause'=>'地區歷史暫停客戶',
     'History Resume'=>'地區歷史恢復客戶',
+    'U Service Detail'=>'U系統服務報表',
 );
 ?>
