@@ -25,18 +25,18 @@ $this->pageTitle=Yii::app()->name . ' - Enquiry Form';
 <section class="content">
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
-		<?php 
+		<?php
 			if ($model->scenario!='new' && $model->scenario!='view') {
 				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Another'), array(
 					'submit'=>Yii::app()->createUrl('enquiry/new')));
 			}
 		?>
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('enquiry/index'))); 
+				'submit'=>Yii::app()->createUrl('enquiry/index')));
 		?>
 <?php if ($model->scenario!='view'): ?>
 			<?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
-				'submit'=>Yii::app()->createUrl('enquiry/save'))); 
+				'submit'=>Yii::app()->createUrl('enquiry/save')));
 			?>
 <?php endif ?>
 <?php if ($model->scenario=='edit'): ?>
@@ -60,8 +60,8 @@ $this->pageTitle=Yii::app()->name . ' - Enquiry Form';
 						<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 						</div>
-						<?php echo $form->textField($model, 'contact_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),)); 
+						<?php echo $form->textField($model, 'contact_dt',
+							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
 						?>
 					</div>
 				</div>
@@ -70,7 +70,7 @@ $this->pageTitle=Yii::app()->name . ' - Enquiry Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'customer',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo $form->textArea($model, 'customer', 
+					<?php echo $form->textArea($model, 'customer',
 						array('rows'=>2,'cols'=>60,'maxlength'=>255,'readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>
@@ -79,16 +79,16 @@ $this->pageTitle=Yii::app()->name . ' - Enquiry Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'nature_type',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php 
+					<?php
 						echo $form->dropDownList($model, 'nature_type', General::getNatureList(),array('disabled'=>($model->scenario=='view')));
 					?>
 				</div>
 			</div>
-			
+
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'type',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php 
+					<?php
 						echo $form->dropDownList($model, 'type', General::getCustTypeList(),array('disabled'=>($model->scenario=='view')));
 					?>
 				</div>
@@ -97,7 +97,7 @@ $this->pageTitle=Yii::app()->name . ' - Enquiry Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'contact',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo $form->textField($model, 'contact', 
+					<?php echo $form->textField($model, 'contact',
 						array('size'=>50,'maxlength'=>255,'readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>
@@ -106,7 +106,7 @@ $this->pageTitle=Yii::app()->name . ' - Enquiry Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'tel_no',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-5">
-					<?php echo $form->textField($model, 'tel_no', 
+					<?php echo $form->textField($model, 'tel_no',
 						array('size'=>50,'maxlength'=>100,'readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>
@@ -115,7 +115,7 @@ $this->pageTitle=Yii::app()->name . ' - Enquiry Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'address',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo $form->textArea($model, 'address', 
+					<?php echo $form->textArea($model, 'address',
 						array('rows'=>3,'cols'=>60,'maxlength'=>255,'readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>
@@ -124,26 +124,21 @@ $this->pageTitle=Yii::app()->name . ' - Enquiry Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'source',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php echo $form->dropDownList($model, 'source_code', 
-							array(1=>Yii::t('enquiry','Phone Call'),
-								2=>Yii::t('enquiry','Refer By Staff'),
-								3=>Yii::t('enquiry','400 Customer'),
-								4=>Yii::t('enquiry','Others'),
-							),
+					<?php echo $form->dropDownList($model, 'source_code', EnquiryForm::getSourceListForCode(),
 							array('disabled'=>($model->scenario=='view'))
 					); ?>
 				</div>
 				<div class="col-sm-4">
-					<?php echo $form->textField($model, 'source', 
+					<?php echo $form->textField($model, 'source',
 						array('size'=>30,'maxlength'=>100,'readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>
 			</div>
-			
+
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'follow_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo $form->textField($model, 'follow_staff', 
+					<?php echo $form->textField($model, 'follow_staff',
 						array('size'=>50,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
 						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('enquiry','Resp. Staff'),array('name'=>'btnRFollowStaff','id'=>'btnFollowStaff','disabled'=>($model->scenario=='view')))
 					)); ?>
@@ -157,8 +152,8 @@ $this->pageTitle=Yii::app()->name . ' - Enquiry Form';
 						<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 						</div>
-						<?php echo $form->textField($model, 'follow_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),)); 
+						<?php echo $form->textField($model, 'follow_dt',
+							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
 						?>
 					</div>
 				</div>
@@ -167,7 +162,7 @@ $this->pageTitle=Yii::app()->name . ' - Enquiry Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'follow_result',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo $form->textArea($model, 'follow_result', 
+					<?php echo $form->textArea($model, 'follow_result',
 						array('rows'=>3,'cols'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>
@@ -176,7 +171,7 @@ $this->pageTitle=Yii::app()->name . ' - Enquiry Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'remarks',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo $form->textArea($model, 'remarks', 
+					<?php echo $form->textArea($model, 'remarks',
 						array('rows'=>3,'cols'=>60,'maxlength'=>1000,'readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>
@@ -185,13 +180,16 @@ $this->pageTitle=Yii::app()->name . ' - Enquiry Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'record_by',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
-					<?php echo $form->textField($model, 'record_by', 
+					<?php echo $form->textField($model, 'record_by',
 						array('size'=>50,'maxlength'=>100,'readonly'=>($model->scenario=='view'),
 						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('enquiry','Record By'),array('name'=>'btnRecordBy','id'=>'btnRecordBy','disabled'=>($model->scenario=='view')))
 					)); ?>
 				</div>
 			</div>
-			
+        </div>
+    </div>
+
+</section>
 <?php $this->renderPartial('//site/removedialog'); ?>
 <?php $this->renderPartial('//site/lookup'); ?>
 

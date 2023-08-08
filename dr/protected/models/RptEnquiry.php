@@ -55,7 +55,7 @@ class RptEnquiry extends ReportData2 {
 				$temp['address'] = $row['address'];
 				$temp['customer'] = $row['customer'];
 				$temp['follow_dt'] = General::toDate($row['follow_dt']);
-				$temp['source'] = General::getSourceDesc($row['source_code']).
+				$temp['source'] = EnquiryForm::getSourceListForCode($row['source_code'],true).
 							(empty($row['source']) ? '' : '('.$row['source'].')');
 				$temp['remarks'] = $row['remarks'];
 				$this->data[] = $temp;

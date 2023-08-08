@@ -25,6 +25,10 @@ return array(
 'Refer By Staff'=>'同事反饋',
 '400 Customer'=>'400客戶',
 'Others'=>'其他',
+    'Red Book'=>'小紅書',
+    'Trill'=>'抖音',
+    'Baidu'=>'百度',
+    'Hong Kong Headquarters'=>'香港總部推薦',
 
 'Contact Date'=>'接聽電話日期',
 );

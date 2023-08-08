@@ -66,6 +66,28 @@ class EnquiryForm extends CFormModel
 		);
 	}
 
+	public static function getSourceListForCode($code="",$bool=false){
+	    $list = array(
+	        1=>Yii::t('enquiry','Phone Call'),//致电上门
+            2=>Yii::t('enquiry','Refer By Staff'),//同事反馈
+            3=>Yii::t('enquiry','400 Customer'),//400客户
+            5=>Yii::t('enquiry','Red Book'),//小红书
+            6=>Yii::t('enquiry','Trill'),//抖音
+            7=>Yii::t('enquiry','Baidu'),//百度
+            8=>Yii::t('enquiry','Hong Kong Headquarters'),//香港总部推荐
+            4=>Yii::t('enquiry','Others'),//其他
+        );
+	    if($bool){
+	        if(key_exists($code,$list)){
+	            return $list[$code];
+            }else{
+	            return $list[1];
+            }
+        }else{
+	        return $list;
+        }
+    }
+
 	public function retrieveData($index)
 	{
 		$city = Yii::app()->user->city_allow();
