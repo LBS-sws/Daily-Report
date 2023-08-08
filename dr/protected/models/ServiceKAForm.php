@@ -198,7 +198,7 @@ class ServiceKAForm extends ServiceForm
             case "edit":
                 $model = new ServiceKAForm();
                 $model->retrieveData($this->id);
-                $keyArr = self::historyUpdateList();
+                $keyArr = parent::historyUpdateList($this->getScenario());
                 foreach ($keyArr as $key){
                     if($model->$key!=$this->$key){
                         $list["update_html"][]="<span>".$this->getAttributeLabel($key)."：".self::getNameForValue($key,$model->$key)." 修改为 ".self::getNameForValue($key,$this->$key)."</span>";
