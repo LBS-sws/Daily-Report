@@ -161,9 +161,11 @@ class DownSummary{
                 }
                 //合计
                 $col = 0;
-                foreach ($regionList["count"] as $keyStr=>$text){
-                    $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
-                    $col++;
+                if(isset($regionList["count"])){
+                    foreach ($regionList["count"] as $keyStr=>$text){
+                        $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
+                        $col++;
+                    }
                 }
                 $thEndStr = $this->getColumn($this->th_num-1);
                 $this->objPHPExcel->getActiveSheet()
