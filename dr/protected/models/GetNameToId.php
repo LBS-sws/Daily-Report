@@ -144,6 +144,18 @@ class GetNameToId{
         return $id;
     }
 
+    //获取需安装名字
+    public static function getUserStatusForKey($id){
+        $list = array(
+            'A'=>Yii::t('misc','Active'),
+            'I'=>Yii::t('misc','Inactive')
+        );
+        if(key_exists($id,$list)){
+            return $list[$id];
+        }
+        return $id;
+    }
+
     //获取管辖城市下的所有客户名称
     public static function getCompanyList($city_allow="",$type="id"){
         $list=array();
