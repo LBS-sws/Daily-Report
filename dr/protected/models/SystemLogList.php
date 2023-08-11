@@ -4,6 +4,7 @@ class SystemLogList extends CListPageModel
 {
 
     public $id;
+    public $optionType;
     public $no_of_attm = array(
         'slog'=>0
     );
@@ -37,7 +38,7 @@ class SystemLogList extends CListPageModel
     public function rules()
     {
         return array(
-            array('id,attr, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, filter, dateRangeValue','safe',),
+            array('id,attr, optionType, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, filter, dateRangeValue','safe',),
             array('files, removeFileId, docMasterId','safe'),
         );
     }
@@ -50,14 +51,18 @@ class SystemLogList extends CListPageModel
                  docman$suffix.countdoc('SLOG',a.id) as doc_num
 				from swo_system_log a  
 				left join security{$suffix}.sec_city b on a.city=b.code  
-				where show_bool=1 and a.city in ($city_allow) 
+				where a.show_bool=1 and a.city in ($city_allow) 
 			";
 		$sql2 = "select count(a.id)
 				from swo_system_log a 
 				left join security{$suffix}.sec_city b on a.city=b.code  
-				where show_bool=1 and a.city in ($city_allow) 
+				where a.show_bool=1 and a.city in ($city_allow) 
 			";
 		$clause = "";
+		if(!empty($this->optionType)){
+            $svalue = str_replace("'","\'",$this->optionType);
+		    $clause.=" and a.log_type_name='{$svalue}'";
+        }
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
@@ -69,6 +74,9 @@ class SystemLogList extends CListPageModel
 					break;
 				case 'log_code':
 					$clause .= General::getSqlConditionClause('a.log_code',$svalue);
+					break;
+				case 'option_str':
+					$clause .= General::getSqlConditionClause('a.option_str',$svalue);
 					break;
 			}
 		}
@@ -119,4 +127,30 @@ class SystemLogList extends CListPageModel
 		return true;
 	}
 
+	public static function getOptionTypeList(){
+	    $list = array(""=>"-- 全部模块 --");
+        $rows = Yii::app()->db->createCommand()->select("log_type_name")->from("swo_system_log")
+            ->where("show_bool=1")->group("log_type_name")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $list[$row["log_type_name"]]=$row["log_type_name"];
+            }
+        }
+        return $list;
+    }
+
+    public function getCriteria() {
+        return array(
+            'searchField'=>$this->searchField,
+            'optionType'=>$this->optionType,
+            'searchValue'=>$this->searchValue,
+            'orderField'=>$this->orderField,
+            'orderType'=>$this->orderType,
+            'noOfItem'=>$this->noOfItem,
+            'pageNum'=>$this->pageNum,
+            'filter'=>$this->filter,
+            'city'=>$this->city,
+            'dateRangeValue'=>$this->dateRangeValue,
+        );
+    }
 }

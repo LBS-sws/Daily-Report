@@ -33,19 +33,25 @@ $this->pageTitle=Yii::app()->name . ' - SystemLog';
     <?php
     TbHtml::button('submit',array("class"=>"hide",'submit'=>"1"));
     ?>
-	<?php $this->widget('ext.layout.ListPageWidget', array(
-			'title'=>Yii::t('log','System Log List'),
-			'model'=>$model,
-				'viewhdr'=>'//systemLog/_listhdr',
-				'viewdtl'=>'//systemLog/_listdtl',
-				'gridsize'=>'24',
-				'height'=>'600',
-				'search'=>array(
-							'city',
-							'log_type_name',
-							'log_code',
-						),
-		));
+	<?php
+    $className = get_class($model);
+    $search_add_html= TbHtml::dropDownList($className.'[optionType]',$model->optionType,SystemLogList::getOptionTypeList(),
+        array("class"=>"form-control submitBtn"));
+    $this->widget('ext.layout.ListPageWidget', array(
+        'title'=>Yii::t('log','System Log List'),
+        'model'=>$model,
+        'viewhdr'=>'//systemLog/_listhdr',
+        'viewdtl'=>'//systemLog/_listdtl',
+        'gridsize'=>'24',
+        'height'=>'600',
+        'search_add_html'=>$search_add_html,
+        'search'=>array(
+            'city',
+            'log_type_name',
+            'log_code',
+            'option_str',
+        ),
+    ));
 	?>
 </section>
 <?php
@@ -71,6 +77,10 @@ $this->renderPartial('//site/fileupload',array(
 <?php
 Script::genFileUploadList($model,$form->id,'SLOG');
 $js = "
+$('.submitBtn').change(function(){
+    $('form:first').submit();
+});
+
 $('[data-toggle=\"tooltip\"]').tooltip({ html:true});
 $('.click-doc').click(function(){
     var code = $(this).data('code');
