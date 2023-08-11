@@ -238,7 +238,7 @@ class UserForm extends CFormModel
 														((strpos($dtl['a_read_only'],$key)!==false) ? 'RO' :
 														((strpos($dtl['a_control'],$key)!==false) ? 'CN' : 'NA'
 														));
-							isset($this->oriextrights[$sid]['XX01']) && $key=='XX01' && $this->oriextrights[$sid]['XX01'] = $this->rights[$idx][$key];
+							//isset($this->oriextrights[$sid]['XX01']) && $key=='XX01' && $this->oriextrights[$sid]['XX01'] = $this->rights[$idx][$key];
 						}
 					}
 				}
@@ -285,6 +285,7 @@ class UserForm extends CFormModel
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
+            $this->updateHistorySave();
 			$this->saveUser($connection);
 			$this->saveRights($connection);
 			foreach($this->systems as $id=>$value) {
@@ -303,6 +304,51 @@ class UserForm extends CFormModel
 			throw new CHttpException(404,'Cannot update.');
 		}
 	}
+    //哪些字段修改后需要记录
+    protected static function historyUpdateList(){
+        $list = array(
+            'city', 'email', 'status'
+        );
+        return $list;
+    }
+    //哪些字段修改后需要记录
+    protected static function getNameForValue($type,$value){
+        switch ($type){
+            case "city":
+                $value = General::getCityName($value);
+                break;
+            case "status":
+                $value = GetNameToId::getUserStatusForKey($value);
+                break;
+        }
+        return $value;
+    }
+
+    protected function updateHistorySave(){
+	    if($this->getScenario()=="edit"){
+            $model = new UserForm();
+            $model->retrieveData($this->username);
+            $keyArr = self::historyUpdateList();
+            $updateText=array();
+            $updateText[]="帐户名称：".$this->username;
+            foreach ($keyArr as $key){
+                if($model->$key!=$this->$key){
+                    $updateText[]=$this->getAttributeLabel($key)."：".self::getNameForValue($key,$model->$key)." 修改为 ".self::getNameForValue($key,$this->$key);
+                }
+            }
+            if(count($updateText)!=1){
+                $updateText= implode("<br/>",$updateText);
+                $systemLogModel = new SystemLogForm();
+                $systemLogModel->log_date=date("Y/m/d H:i:s");
+                $systemLogModel->log_user=Yii::app()->user->id;
+                $systemLogModel->log_type=get_class($this);
+                $systemLogModel->log_type_name="帐户";
+                $systemLogModel->option_str="修改";
+                $systemLogModel->option_text=$updateText;
+                $systemLogModel->insertSystemLog("U");
+            }
+        }
+    }
 
 	protected function saveUser(&$connection)
 	{
