@@ -93,7 +93,12 @@ EOF;
 		}
 		$multiflag = $multiselect ? 'true' : 'false';
 		$lookuptypeStmt = ($lookupType!=='*') ? "$('#lookuptype').val('$lookupType');" : '';
-		
+
+		if(key_exists("maxCount",$paramFields)){
+            $lookuptypeStmt.="$('#lstlookup').attr('maxCount','{$paramFields['maxCount']}');";
+        }else{
+            $lookuptypeStmt.="$('#lstlookup').removeAttr('maxCount');";
+        }
 		$str = <<<EOF
 $('#$btnName').on('click',function() {
 	var code = $("input[id*='$codeField']").attr("id");
@@ -104,8 +109,13 @@ $('#$btnName').on('click',function() {
 	$('#lookupvaluefield').val(value);
 	$('#lookupotherfield').val('$others');
 	$('#lookupparamfield').val('$params');
-	if ($multiflag) $('#lstlookup').attr('multiple','multiple');
-	if (!($multiflag)) $('#lookup-label').attr('style','display: none');
+	if ($multiflag){
+	    $('#lstlookup').attr('multiple','multiple');
+	    $('#lookup-label').attr('style','display: block');
+	}else{
+	    $('#lstlookup').removeAttr('multiple');
+	    $('#lookup-label').attr('style','display: none');
+	}
 //	$('#lookupdialog').dialog('option','title',title);
 	$('#lookupdialog').find('.modal-title').text(title);
 	$('#lookupdialog').modal('show');

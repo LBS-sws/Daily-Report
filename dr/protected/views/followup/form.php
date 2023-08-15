@@ -7,6 +7,9 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 )); ?>
+<style>
+    option:disabled{ background: #F1F1F1;cursor: not-allowed;}
+</style>
 
 <section class="content-header">
 	<h1>
@@ -149,12 +152,17 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'follow_staff',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-5">
-					<?php echo $form->textField($model, 'follow_staff', 
-						array('size'=>30,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Technician'),array('name'=>'btnStaffFollow','id'=>'btnStaffFollow','disabled'=>($model->scenario=='view')))
-					)); ?>
+				<div class="col-sm-8">
+                    <?php echo $form->textField($model, 'follow_staff',
+                        array('size'=>30,'rows'=>3,'readonly'=>($model->scenario=='view'),
+                            'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Technician'),array('name'=>'btnStaffFollow','id'=>'btnStaffFollow','disabled'=>($model->scenario=='view'))
+                            )
+                        )
+                    );
+                    ?>
 				</div>
+			</div>
+			<div class="form-group">
 				<?php echo $form->labelEx($model,'leader',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
 					<?php echo $form->dropDownList($model, 'leader', array(''=>Yii::t('misc','No'),'Y'=>Yii::t('misc','Yes')),
@@ -331,22 +339,38 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 
 <?php $this->renderPartial('//site/removedialog'); ?>
 <?php $this->renderPartial('//site/lookup'); ?>
-
+<input disabled>
 
 <?php
-$js = Script::genLookupSearch();
+$js = Script::genLookupSearchEx();
+$js.="
+$('#lstlookup').change(function(){
+    var maxCount = $(this).attr('maxCount');
+    if(maxCount>1){
+        if($(this).find('option:selected').length==maxCount){
+            $(this).find('option').not('option:selected').prop('disabled',true);
+        }else{
+            $(this).find('option').prop('disabled',false);
+        }
+    }
+});
+";
 Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButton('btnCompany', 'company', 'company_id', 'company_name');
+$js = Script::genLookupButtonEx('btnCompany', 'company', 'company_id', 'company_name');
 Yii::app()->clientScript->registerScript('lookupCompany',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButton('btnStaffResp', 'staff', '', 'resp_staff');
+$js = Script::genLookupButtonEx('btnStaffResp', 'staff', '', 'resp_staff');
 Yii::app()->clientScript->registerScript('lookupStaffREsp',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButton('btnStaffTech', 'staff', '', 'resp_tech');
+$js = Script::genLookupButtonEx('btnStaffTech', 'staff', '', 'resp_tech');
 Yii::app()->clientScript->registerScript('lookupStaffTech',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButton('btnStaffFollow', 'staff', '', 'follow_staff');
+$js = Script::genLookupButtonEx('btnStaffFollow', 'staff', '', 'follow_staff',
+    array(),
+    true,
+    array("maxCount"=>5)
+);
 Yii::app()->clientScript->registerScript('lookupStaffFollow',$js,CClientScript::POS_READY);
 
 $js = Script::genLookupButton('btnStaffFollowTech', 'staff', '', 'follow_tech');
