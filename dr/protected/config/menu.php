@@ -165,11 +165,10 @@ return array(
 				'access'=>'B09',
 				'url'=>'/report/staff',
 			),
-            /* 由于查询量过大，暂时不使用
 			'All Daily Reports'=>array(
 				'access'=>'B11',
 				'url'=>'/report/all',
-			),*/
+			),
 			'Renewal Reminder'=>array(
 				'access'=>'B13',
 				'url'=>'/report/renewal',
