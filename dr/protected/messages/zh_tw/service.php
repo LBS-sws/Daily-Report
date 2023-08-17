@@ -156,5 +156,6 @@ return array(
     'Operator Text'=>"操作內容",
     'Paid Amt Type'=>'服務金額類型',
     'tracking'=>'跟蹤因素詳情',
+    'Secondary field'=>'二級欄位',
 );
 ?>

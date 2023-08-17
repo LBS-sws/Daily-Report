@@ -158,5 +158,6 @@ return array(
     'Operator Text'=>"操作内容",
     'Paid Amt Type'=>'服务金额类型',
     'tracking'=>'跟踪因素详情',
+    'Secondary field'=>'二级栏位',
 );
 ?>
