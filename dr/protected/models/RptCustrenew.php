@@ -6,8 +6,10 @@ class RptCustrenew extends ReportData2 {
 			'status_dt'=>array('label'=>Yii::t('service','Renew Date'),'width'=>18,'align'=>'C'),
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
 			'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
+			'nature_two_name'=>array('label'=>Yii::t('service','Secondary field'),'width'=>12,'align'=>'L'),
 			'service'=>array('label'=>Yii::t('service','Service'),'width'=>40,'align'=>'L'),
-			'amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C'),
+            'prepay_month'=>array('label'=>Yii::t('service','Prepay Month'),'width'=>12,'align'=>'R'),
+            'amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C'),
 			'amt_year'=>array('label'=>Yii::t('service','Yearly'),'width'=>15,'align'=>'C'),
 			'amt_install'=>array('label'=>Yii::t('service','Installation Fee'),'width'=>15,'align'=>'C'),
 			'need_install'=>array('label'=>Yii::t('service','Installation'),'width'=>10,'align'=>'C'),
@@ -40,9 +42,10 @@ class RptCustrenew extends ReportData2 {
         $city_allow = City::model()->getDescendantList($city);
         $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
 		
-		$sql = "select a.*, b.description as nature, c.description as customer_type
+		$sql = "select a.*,f.name as nature_two_name, b.description as nature, c.description as customer_type
 					from swo_service a
 					left outer join swo_nature b on a.nature_type=b.id 
+					left outer join swo_nature_type f on a.nature_type_two=f.id 
 					left outer join swo_customer_type c on a.cust_type=c.id
 				where a.status='C' and a.city in ({$city_allow}) 
 		";
@@ -76,6 +79,8 @@ class RptCustrenew extends ReportData2 {
 				$temp['need_install'] = ($row['need_install']=='Y') ? Yii::t('misc','Yes') : Yii::t('misc','No');
 				$temp['salesman'] = $row['salesman'];
                 $temp['othersalesman'] = $row['othersalesman'];
+                $temp['nature_two_name'] = $row['nature_two_name'];
+                $temp['prepay_month'] = $row['prepay_month'];
 				$temp['sign_dt'] = General::toDate($row['sign_dt']);
 				$temp['ctrt_period'] = $row['ctrt_period'];
 				$temp['ctrt_end_dt'] = General::toDate($row['ctrt_end_dt']);
