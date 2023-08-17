@@ -156,6 +156,14 @@ class HistoryAddForm extends CFormModel
             ->where("not(f.rpt_cat='INV' and f.single=1) and a.city in ({$city_allow}) and a.city not in ('ZY') and a.status='N' and ({$where})")
             ->order("a.city")
             ->queryAll();
+        $serviceRowsKA = Yii::app()->db->createCommand()
+            ->select("{$selectSql},a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
+            ->from("swo_service_ka a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where("DATE_FORMAT(a.status_dt,'%Y')<'2024' and not(f.rpt_cat='INV' and f.single=1) and a.city in ({$city_allow}) and a.city not in ('ZY') and a.status='N' and ({$where})")
+            ->order("a.city")
+            ->queryAll();
         //所有需要計算的客戶服務(ID客戶服務)
         $serviceRowsID = Yii::app()->db->createCommand()
             ->select("{$selectSql},CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
@@ -167,7 +175,8 @@ class HistoryAddForm extends CFormModel
             ->queryAll();
         $serviceRows = $serviceRows?$serviceRows:array();
         $serviceRowsID = $serviceRowsID?$serviceRowsID:array();
-        $rows = array_merge($serviceRows,$serviceRowsID);
+        $serviceRowsKA = $serviceRowsKA?$serviceRowsKA:array();
+        $rows = array_merge($serviceRows,$serviceRowsID,$serviceRowsKA);
         if(!empty($rows)){
             foreach ($rows as $row){
                 $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;

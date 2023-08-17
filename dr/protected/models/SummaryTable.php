@@ -9,6 +9,7 @@
 class SummaryTable extends SummaryForm{
     private static $whereSQL=" and not(f.rpt_cat='INV' and f.single=1)";
     private static $IDBool=true;//是否需要ID服務的查詢
+    private static $KABool=true;//是否需要KA服務的查詢
 
     private static $system=0;//0:大陸 1:台灣 2:國際
 
@@ -172,10 +173,15 @@ class SummaryTable extends SummaryForm{
                     $cityName= General::getCityName($row["city"]);
                     $city = $row["city"];
                 }
-                if($row["sql_type_name"]=="D"){//ID服务
-                    $link = self::drawEditButton('A11', 'serviceID/edit', 'serviceID/view', array('index'=>$row['id']));
-                }else{
-                    $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
+                switch ($row["sql_type_name"]){
+                    case "D":
+                        $link = self::drawEditButton('A11', 'serviceID/edit', 'serviceID/view', array('index'=>$row['id']));
+                        break;
+                    case "KA":
+                        $link = self::drawEditButton('A13', 'serviceKA/edit', 'serviceKA/view', array('index'=>$row['id']));
+                        break;
+                    default:
+                        $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
                 }
                 $companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
                 $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
@@ -302,10 +308,15 @@ class SummaryTable extends SummaryForm{
                     $cityName= General::getCityName($row["city"]);
                     $city = $row["city"];
                 }
-                if($row["sql_type_name"]=="D"){//ID服务
-                    $link = self::drawEditButton('A11', 'serviceID/edit', 'serviceID/view', array('index'=>$row['id']));
-                }else{
-                    $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
+                switch ($row["sql_type_name"]){
+                    case "D":
+                        $link = self::drawEditButton('A11', 'serviceID/edit', 'serviceID/view', array('index'=>$row['id']));
+                        break;
+                    case "KA":
+                        $link = self::drawEditButton('A13', 'serviceKA/edit', 'serviceKA/view', array('index'=>$row['id']));
+                        break;
+                    default:
+                        $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
                 }
                 $companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
                 $row["b4_amt_paid"] = is_numeric($row["b4_amt_paid"])?floatval($row["b4_amt_paid"]):0;
@@ -381,6 +392,17 @@ class SummaryTable extends SummaryForm{
         }else{
             $queryIDRows=array();
         }
+        if(self::$KABool){
+            $queryKARows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and not (a.paid_type=1 and a.ctrt_period<12)")->order("a.city,a.status_dt desc")->queryAll();
+            $queryKARows = $queryKARows?$queryKARows:array();
+            $queryIARows = array_merge($queryIARows,$queryKARows);
+        }
         return array_merge($queryIARows,$queryIDRows);
     }
 
@@ -410,6 +432,17 @@ class SummaryTable extends SummaryForm{
             $queryIDRows = $queryIDRows?$queryIDRows:array();
         }else{
             $queryIDRows=array();
+        }
+        if(self::$KABool){
+            $queryKARows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")->order("a.city,a.status_dt desc")->queryAll();
+            $queryKARows = $queryKARows?$queryKARows:array();
+            $queryIARows = array_merge($queryIARows,$queryKARows);
         }
         return array_merge($queryIARows,$queryIDRows);
     }
@@ -458,6 +491,35 @@ class SummaryTable extends SummaryForm{
         }else{
             $queryIDRows=array();
         }
+        if(self::$KABool){
+            $queryKARows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
+            if($queryKARows){
+                foreach ($queryKARows as $key=>$row){
+                    $month_date = date("Y/m",strtotime($row['status_dt']));
+                    $nextRow= Yii::app()->db->createCommand()
+                        ->select("status")->from("swo_service_ka_no")
+                        ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["no_id"]}' and 
+                        status_dt>'{$row['status_dt']}' and 
+                        DATE_FORMAT(status_dt,'%Y/%m')='{$month_date}'")
+                        ->order("status_dt asc")
+                        ->queryRow();//查詢本月的後面一條數據
+                    if($nextRow&&in_array($nextRow["status"],array("S","T"))){
+                        unset($queryKARows[$key]);
+                    }
+                }
+            }else{
+                $queryKARows = array();
+            }
+            //$queryKARows = $queryKARows?$queryKARows:array();
+            $queryIARows = array_merge($queryIARows,$queryKARows);
+        }
         return array_merge($queryIARows,$queryIDRows);
     }
 
@@ -470,14 +532,27 @@ class SummaryTable extends SummaryForm{
         $whereSql .= self::$whereSQL;
         $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
-        $rows = Yii::app()->db->createCommand()
+        $queryIARows = Yii::app()->db->createCommand()
             ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
             ->from("swo_service a")
             ->leftJoin("swo_service_contract_no n","a.id=n.service_id")
             ->leftJoin("swo_customer_type f","a.cust_type=f.id")
             ->leftJoin("swo_nature g","a.nature_type=g.id")
             ->where($whereSql." and a.paid_type=1 and a.ctrt_period<12")->queryAll();
-        return $rows;
+        $queryIARows = $queryIARows?$queryIARows:array();
+        if(self::$KABool){
+            $queryKARows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and a.paid_type=1 and a.ctrt_period<12")
+                ->queryAll();
+            $queryKARows = $queryKARows?$queryKARows:array();
+            $queryIARows = array_merge($queryIARows,$queryKARows);
+        }
+        return $queryIARows;
     }
 
     //长约、短约查询
@@ -516,6 +591,18 @@ class SummaryTable extends SummaryForm{
         }else{
             $queryIDRows=array();
         }
+
+        if(self::$KABool){
+            $queryKARows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql.$whereSqlIA." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")->queryAll();
+            $queryKARows = $queryKARows?$queryKARows:array();
+            $queryIARows = array_merge($queryIARows,$queryKARows);
+        }
         return array_merge($queryIARows,$queryIDRows);
     }
 
@@ -553,6 +640,18 @@ class SummaryTable extends SummaryForm{
             $queryIDRows = $queryIDRows?$queryIDRows:array();
         }else{
             $queryIDRows=array();
+        }
+
+        if(self::$KABool){
+            $queryKARows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")->queryAll();
+            $queryKARows = $queryKARows?$queryKARows:array();
+            $queryIARows = array_merge($queryIARows,$queryKARows);
         }
         return array_merge($queryIARows,$queryIDRows);
     }

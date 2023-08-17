@@ -7,6 +7,7 @@ class CountSearch{
 
     private static $whereSQL=" and not(f.rpt_cat='INV' and f.single=1)";
     private static $IDBool=true;//是否需要ID服務的查詢
+    private static $KABool=true;//是否需要KA服務的查詢
 
     private static $system=0;//0:大陸 1:台灣 2:國際
 
@@ -104,6 +105,54 @@ class CountSearch{
                 }
             }
         }
+
+        if(self::$KABool){ //KA服務的暫停、終止
+            $KARows= Yii::app()->db->createCommand()
+                ->select("a.id,a.status,a.status_dt,a.contract_no,a.service_id,
+            b.city,({$sum_money}) as sum_money,
+            (case b.paid_type
+                    when 'M' then b.amt_paid
+                    else if(b.ctrt_period='' or b.ctrt_period is null,0,b.amt_paid/b.ctrt_period)
+                end
+            ) as num_month,
+            DATE_FORMAT(a.status_dt,'%Y/%m') as month_date")
+                ->from("swo_service_ka_no a")
+                ->leftJoin("swo_service_ka b","b.id=a.service_id")
+                ->leftJoin("swo_customer_type f","b.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->queryAll();
+            if($KARows){
+                foreach ($KARows as $row){
+                    $city = $row["city"];
+                    if(!key_exists($city,$list)){
+                        $list[$city]=array(
+                            "num_pause"=>0,//暫停金額（年金額）
+                            "num_stop"=>0,//停單金額（年金額）
+                            "num_month"=>0,//停單金額（月金額）
+                        );
+                    }
+                    $nextRow= Yii::app()->db->createCommand()
+                        ->select("status")->from("swo_service_ka_no")
+                        ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["id"]}' and 
+                        status_dt>'{$row['status_dt']}' and 
+                        DATE_FORMAT(status_dt,'%Y/%m')='{$row['month_date']}'")
+                        ->order("status_dt asc")
+                        ->queryRow();//查詢本月的後面一條數據
+                    if($nextRow&&in_array($nextRow["status"],array("S","T"))){
+                        continue;//如果下一條數據是暫停或者終止，則不統計本條數據
+                    }else{
+                        $money = round($row["sum_money"],2);
+                        if($row["status"]=="T"){
+                            $list[$city]["num_stop"]+=$money;
+                            $list[$city]["num_month"]+= empty($row["num_month"])?0:round($row["num_month"],2);
+                        }else{
+                            $list[$city]["num_pause"]+=$money;
+                        }
+                    }
+                }
+            }
+        }
         return $list;
     }
 
@@ -134,6 +183,21 @@ class CountSearch{
                 ->where($whereSql)->group("a.city")->queryAll();//
             $IDRows = $IDRows?$IDRows:array();
             $rows = array_merge($rows,$IDRows);
+        }
+
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->group("a.city")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
         }
         foreach ($rows as $row){
             if(!key_exists($row["city"],$list)){
@@ -180,6 +244,22 @@ class CountSearch{
             $IDRows = $IDRows?$IDRows:array();
             $rows = array_merge($rows,$IDRows);
         }
+
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("
+            sum(
+                if(a.status in ('N','R'),($sumAmtSql),
+                    if(a.status='A',($sumAmtSql)-($b4_sumAmtSql),-1*($sumAmtSql))
+                )
+            ) as sum_amount,a.city")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->group("a.city")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
         foreach ($rows as $row){
             if(!key_exists($row["city"],$list)){
                 $list[$row["city"]]=0;
@@ -220,6 +300,24 @@ class CountSearch{
                 ->where($whereSql)->group("a.city")->queryAll();
             $IDRows = $IDRows?$IDRows:array();
             $rows = array_merge($rows,$IDRows);
+        }
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,sum(case a.b4_paid_type
+							when 'M' then a.b4_amt_paid * a.ctrt_period
+							else a.b4_amt_paid
+						end
+					) as b4_sum_amount,a.city")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->group("a.city")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
         }
         foreach ($rows as $row){
             if(!key_exists($row["city"],$list)){
@@ -269,6 +367,23 @@ class CountSearch{
                 ->where($whereSql)->group("a.city")->queryAll();//ID服務暫時全部為非一次性服務
             $IDRows = $IDRows?$IDRows:array();
             $rows = array_merge($rows,$IDRows);
+        }
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum($sum_money) as sum_amount,a.city,
+            sum(if(a.ctrt_period>=12,({$sum_money}),0)) as num_long,
+            sum(if(a.ctrt_period<12 and a.paid_type!=1,({$sum_money}),0)) as num_short,
+            sum(if(a.ctrt_period<12 and a.paid_type=1,({$sum_money}),0)) as one_service,
+            sum(if(g.rpt_cat='A01',({$sum_money}),0)) as num_cate,
+            sum(if(g.rpt_cat!='A01',({$sum_money}),0)) as num_not_cate
+            ")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->group("a.city")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
         }
         foreach ($rows as $row){
             if(!key_exists($row["city"],$list)){
@@ -322,6 +437,19 @@ class CountSearch{
             $IDRows = $IDRows?$IDRows:array();
             $rows = array_merge($rows,$IDRows);
         }
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum({$sum_money}) as sum_amount,a.city,
+            sum(if(a.paid_type=1 and a.ctrt_period<12,({$sum_money}),0)) as num_new_n,
+            sum(if(a.paid_type=1 and a.ctrt_period<12,0,({$sum_money}))) as num_new
+            ")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->group("a.city")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
         foreach ($rows as $row){
             if(!key_exists($row["city"],$list)){
                 $list[$row["city"]]=array(
@@ -364,6 +492,19 @@ class CountSearch{
             $IDRows = $IDRows?$IDRows:array();
             $rows = array_merge($rows,$IDRows);
         }
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and not (a.paid_type=1 and a.ctrt_period<12)")->group("a.city")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
         foreach ($rows as $row){
             if(!key_exists($row["city"],$list)){
                 $list[$row["city"]]=0;
@@ -403,6 +544,19 @@ class CountSearch{
             $IDRows = $IDRows?$IDRows:array();
             $rows = array_merge($rows,$IDRows);
             */
+        }
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and a.paid_type=1 and a.ctrt_period<12")->group("a.city")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
         }
         foreach ($rows as $row){
             if(!key_exists($row["city"],$list)){
@@ -620,6 +774,24 @@ class CountSearch{
             $IDRows = $IDRows?$IDRows:array();
             $rows = array_merge($rows,$IDRows);
         }
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,sum(case a.b4_paid_type
+							when 'M' then a.b4_amt_paid * a.ctrt_period
+							else a.b4_amt_paid
+						end
+					) as b4_sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
         foreach ($rows as $row){
             if(!key_exists($row["city"],$list)){
                 $list[$row["city"]]=$monthList;
@@ -664,6 +836,20 @@ class CountSearch{
                 ->where($whereSql)->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();//
             $IDRows = $IDRows?$IDRows:array();
             $rows = array_merge($rows,$IDRows);
+        }
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
         }
         foreach ($rows as $row){
             if(!key_exists($row["city"],$list)){
@@ -732,6 +918,39 @@ class CountSearch{
                 }
             }
         }
+        if(self::$KABool){
+            $KARows= Yii::app()->db->createCommand()
+                ->select("a.id,b.status,b.status_dt,a.contract_no,a.service_id,
+            b.city,({$sum_money}) as sum_money,
+            DATE_FORMAT(b.status_dt,'%Y/%m') as month_date")
+                ->from("swo_service_ka_no a")
+                ->leftJoin("swo_service_ka b","b.id=a.service_id")
+                ->leftJoin("swo_customer_type f","b.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(b.status_dt,'%Y')<'2024'")
+                ->queryAll();
+            if($KARows){//
+                foreach ($rows as $row){
+                    $nextRow= Yii::app()->db->createCommand()
+                        ->select("status")->from("swo_service_ka_no")
+                        ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["id"]}' and 
+                        status_dt>'{$row['status_dt']}' and 
+                        DATE_FORMAT(status_dt,'%Y/%m')='{$row['month_date']}'")
+                        ->order("status_dt asc")
+                        ->queryRow();//查詢本月的後面一條數據
+                    if($nextRow&&in_array($nextRow["status"],array("S","T"))){
+                        continue;//如果下一條數據是暫停或者終止，則不統計本條數據
+                    }else{
+                        $city = $row["city"];
+                        if(!key_exists($city,$list)){
+                            $list[$city]=$monthList;
+                        }
+                        $money = empty($row["sum_money"])?0:round($row["sum_money"],2);
+                        $list[$city][$row['month_date']]+=$money*-1;
+                    }
+                }
+            }
+        }
 
         if(self::$IDBool){ //ID服務的暫停、終止
             $rows = Yii::app()->db->createCommand()
@@ -793,6 +1012,21 @@ class CountSearch{
             $IDRows = $IDRows?$IDRows:array();
             $rows = array_merge($rows,$IDRows);
             */
+        }
+
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and a.paid_type=1 and a.ctrt_period<12")
+                ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
         }
         foreach ($rows as $row){
             if(!key_exists($row["city"],$list)){
