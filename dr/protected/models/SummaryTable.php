@@ -149,8 +149,9 @@ class SummaryTable extends SummaryForm{
             $html.=$invTable["html"];
             $html.="<p>&nbsp;</p>";
         }
-        $html.= "<table class='table table-bordered table-striped table-hover'>";
+        $html.= "<table class='table table-bordered table-striped table-condensed table-hover'>";
         $html.="<thead><tr>";
+        $html.="<th width='90px'>".Yii::t('summary','menu name')."</th>";//菜單名稱
         $html.="<th width='90px'>".Yii::t('service','Contract No')."</th>";//合同编号
         $html.="<th width='90px'>".Yii::t('summary','City')."</th>";//城市
         $html.="<th width='90px'>".Yii::t('summary','search day')."</th>";//日期
@@ -175,12 +176,15 @@ class SummaryTable extends SummaryForm{
                 }
                 switch ($row["sql_type_name"]){
                     case "D":
+                        $menuStr = Yii::t("app","Customer Service ID");//菜單名稱
                         $link = self::drawEditButton('A11', 'serviceID/edit', 'serviceID/view', array('index'=>$row['id']));
                         break;
                     case "KA":
+                        $menuStr = Yii::t("app","Customer Service KA");//菜單名稱
                         $link = self::drawEditButton('A13', 'serviceKA/edit', 'serviceKA/view', array('index'=>$row['id']));
                         break;
                     default:
+                        $menuStr = Yii::t("app","Customer Service");//菜單名稱
                         $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
                 }
                 $companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
@@ -195,6 +199,7 @@ class SummaryTable extends SummaryForm{
                 $row["sum_amount"]=round($row["sum_amount"],2);
                 $sum+=$row["sum_amount"];
                 $html.="<tr data-id='{$row["id"]}'>";
+                $html.="<td>".$menuStr."</td>";
                 $html.="<td>".$row["contract_no"]."</td>";
                 $html.="<td>".$cityName."</td>";
                 $html.="<td>".General::toDate($row["status_dt"])."</td>";
@@ -283,8 +288,9 @@ class SummaryTable extends SummaryForm{
     public static function getTableForRowsTwo($rows,$city_allow){
         $companyList = GetNameToId::getCompanyList($city_allow);
 
-        $html = "<table class='table table-bordered table-striped table-hover'>";
+        $html = "<table class='table table-bordered table-striped table-condensed table-hover'>";
         $html.="<thead><tr>";
+        $html.="<th width='90px'>".Yii::t('summary','menu name')."</th>";//菜單名稱
         $html.="<th width='90px'>".Yii::t('service','Contract No')."</th>";//合同编号
         $html.="<th width='90px'>".Yii::t('summary','City')."</th>";//城市
         $html.="<th width='90px'>".Yii::t('summary','search day')."</th>";//日期
@@ -310,12 +316,15 @@ class SummaryTable extends SummaryForm{
                 }
                 switch ($row["sql_type_name"]){
                     case "D":
+                        $menuStr = Yii::t("app","Customer Service ID");//菜單名稱
                         $link = self::drawEditButton('A11', 'serviceID/edit', 'serviceID/view', array('index'=>$row['id']));
                         break;
                     case "KA":
+                        $menuStr = Yii::t("app","Customer Service KA");//菜單名稱
                         $link = self::drawEditButton('A13', 'serviceKA/edit', 'serviceKA/view', array('index'=>$row['id']));
                         break;
                     default:
+                        $menuStr = Yii::t("app","Customer Service");//菜單名稱
                         $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
                 }
                 $companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
@@ -338,6 +347,7 @@ class SummaryTable extends SummaryForm{
                 $row["sum_amount"]-=$row["b4_sum_amount"];
                 $sum+=$row["sum_amount"];
                 $html.="<tr data-id='{$row["id"]}'>";
+                $html.="<td>".$menuStr."</td>";
                 $html.="<td>".$row["contract_no"]."</td>";
                 $html.="<td>".$cityName."</td>";
                 $html.="<td>".General::toDate($row["status_dt"])."</td>";
