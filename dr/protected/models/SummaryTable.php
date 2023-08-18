@@ -213,17 +213,17 @@ class SummaryTable extends SummaryForm{
             }
             $html.="</tbody><tfoot>";
             $html.="<tr>";
-            $html.="<td colspan='2' class='text-right'>".Yii::t("summary","total count:")."</td>";
+            $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total count:")."</td>";
             $html.="<td colspan='2'>".$count."</td>";
             $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
             $html.="<td colspan='2'>".$sum."</td>";
             $html.="</tr>";
             if(!empty($invTable)){
-                $html.="<tr><td colspan='9'>&nbsp;</td></tr>";
+                $html.="<tr><td colspan='10'>&nbsp;</td></tr>";
                 $count+=$invTable["count"];
                 $sum+=$invTable["sum"];
                 $html.="<tr>";
-                $html.="<td colspan='2' class='text-right'>".Yii::t("summary","total count:")."</td>";
+                $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total count:")."</td>";
                 $html.="<td colspan='2'>".$count."</td>";
                 $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
                 $html.="<td colspan='2'>".$sum."</td>";
@@ -362,7 +362,7 @@ class SummaryTable extends SummaryForm{
             }
             $html.="</tbody><tfoot>";
             $html.="<tr>";
-            $html.="<td colspan='2' class='text-right'>".Yii::t("summary","total count:")."</td>";
+            $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total count:")."</td>";
             $html.="<td colspan='2'>".$count."</td>";
             $html.="<td colspan='4' class='text-right'>".Yii::t("summary","total amt:")."</td>";
             $html.="<td colspan='2'>".$sum."</td>";

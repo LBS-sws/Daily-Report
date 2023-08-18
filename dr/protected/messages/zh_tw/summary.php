@@ -195,5 +195,6 @@ return array(
     'city'=>'市',
     'district'=>'區',
     'address'=>'地址',
+    'menu name'=>'菜單名稱',
 );
 ?>
