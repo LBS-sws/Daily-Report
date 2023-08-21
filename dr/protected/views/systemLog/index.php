@@ -50,6 +50,7 @@ $this->pageTitle=Yii::app()->name . ' - SystemLog';
             'log_type_name',
             'log_code',
             'option_str',
+            'option_text',
         ),
     ));
 	?>

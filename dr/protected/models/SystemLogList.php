@@ -78,6 +78,9 @@ class SystemLogList extends CListPageModel
 				case 'option_str':
 					$clause .= General::getSqlConditionClause('a.option_str',$svalue);
 					break;
+				case 'option_text':
+					$clause .= General::getSqlConditionClause('a.option_text',$svalue);
+					break;
 			}
 		}
 		
