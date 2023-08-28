@@ -107,7 +107,7 @@ class TimerCommand extends CConsoleCommand {
             ->from("swo_service a")
             ->leftJoin("swo_nature b","a.nature_type=b.id")
             ->leftJoin("swo_customer_type c","a.cust_type=c.id")
-            ->where($sql)->queryAll();
+            ->where($sql." and c.rpt_cat!='INV'")->queryAll();
         if($rows){
             $description="<p>以下新增或续约客户已超过5天未上传合同到表单附件上，请尽快处理</p>";
             $arr = array();
