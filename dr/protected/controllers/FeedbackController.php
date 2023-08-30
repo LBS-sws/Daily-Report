@@ -28,7 +28,7 @@ class FeedbackController extends Controller
 				'expression'=>array('FeedbackController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','ajaxDetail'),
 				'expression'=>array('FeedbackController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -36,6 +36,17 @@ class FeedbackController extends Controller
 			),
 		);
 	}
+
+    //详情列表的異步請求
+    public function actionAjaxDetail(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $model = new FeedbackTable();
+            $html =$model->ajaxDetailForHtml();
+            echo CJSON::encode(array('status'=>1,'html'=>$html));//Yii 的方法将数组处理成json数据
+        }else{
+            $this->redirect(Yii::app()->createUrl('feedback/index'));
+        }
+    }
 
 	public function actionIndex($pageNum=0) 
 	{

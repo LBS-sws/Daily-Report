@@ -51,5 +51,13 @@ return array(
 	"City"=>'城市',
 	"Office Name"=>'办事处',
 	"local office"=>'本部',
+
+	"employee"=>'员工编号及名称',
+	"job/leave Reason"=>'入职/离职日期',
+	"type"=>'记录类别',
+	"job"=>'入职',
+	"Leave"=>'离职',
+	"fixation"=>'有固定期限',
+	"nofixed"=>'无固定期限',
 );
 ?>

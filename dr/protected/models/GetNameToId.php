@@ -132,6 +132,33 @@ class GetNameToId{
         return $id;
     }
 
+    //获取物流配送任务的类别
+    public static function getTaskTypeList(){
+        $list = array(
+            'NIL'=>Yii::t('code','Nil'),
+            'PAPER'=>Yii::t('code','Paper'),
+            'SOAP'=>Yii::t('code','Soap'),
+            'FLOOR'=>Yii::t('code','Floor Cleaner'),
+            'MAINT'=>Yii::t('code','Maintenance'),
+            'UNINS'=>Yii::t('code','Uninstallion'),
+            'RELOC'=>Yii::t('code','Relocation'),
+            'REPLA'=>Yii::t('code','Replacement'),
+            'PURIS'=>Yii::t('code','Puriscent'),
+            'PERFU'=>Yii::t('code','Perfume'),
+            'OTHER'=>Yii::t('code','Other'),
+        );
+        return $list;
+    }
+
+    //获取物流配送任务的类别
+    public static function getTaskTypeForKey($id){
+        $list = self::getTaskTypeList();
+        if(key_exists($id,$list)){
+            return $list[$id];
+        }
+        return $id;
+    }
+
     //获取需安装名字
     public static function getNeedInstallForId($id){
         $list = array(

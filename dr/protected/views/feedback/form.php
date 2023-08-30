@@ -117,12 +117,35 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
 				array('rows'=>5,'cols'=>80,'maxlength'=>5000,'readonly'=>($model->scenario=='view' || $model->$cat_field!='Y'))
 			);		
 		echo '</div>';
+		if(!in_array($fb_field,array("feedback_7"))){ //其它没有详情
+            echo '<div class="col-sm-2">';
+            echo TbHtml::link(Yii::t("feedback","click detail"),"javascript:void(0);",array("class"=>"link_detail","data-type"=>$fb_field,"data-title"=>$fldnames[$cat_field]));
+            echo '</div>';
+        }
 		echo '</div>';
 	}
 ?>
 		</div>
 	</div>
 </section>
+
+<!--詳情彈窗-->
+<div class="modal fade" tabindex="-1" role="dialog" id="detailDialog">
+    <div class="modal-dialog" role="document" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <p>加载中....</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <?php
 $js = "";
@@ -144,6 +167,33 @@ $('#".$cfield."').on('change',function() {
 ";
 }
 Yii::app()->clientScript->registerScript('feedbackReadonly',$js,CClientScript::POS_READY);
+
+$ajaxUrl = Yii::app()->createUrl('feedback/ajaxDetail');
+$js.= "
+$('.link_detail').on('click',function(){
+    var dateStr = $('#FeedbackForm_request_dt').val();
+    $('#detailDialog').find('.modal-title').text($(this).data('title')+' ('+dateStr+')');
+    $('#detailDialog').find('.modal-body').html('<p>加载中....</p>');
+    $('#detailDialog').modal('show');
+    $.ajax({
+        type: 'GET',
+        url: '{$ajaxUrl}',
+        data: {
+            'type':$(this).data('type'),
+            'city':'{$model->city}',
+            'request_dt':'{$model->request_dt}'
+        },
+        dataType: 'json',
+        success: function(data) {
+            $('#detailDialog').find('.modal-body').html(data['html']);
+        },
+        error: function(data) { // if error occured
+            alert('Error occured.please try again');
+        }
+    });
+});
+";
+Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);

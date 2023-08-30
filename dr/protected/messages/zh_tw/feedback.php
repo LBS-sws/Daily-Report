@@ -17,5 +17,6 @@ return array(
 'Cc'=>'電郵抄送',
 'Feedback Person'=>'回饋人',
 'Unable to open this record. Maybe you don\'t have corresponding access right.'=>'無法打開此記錄。也許你沒有相應的訪問權限。 ',
+    'click detail'=>"點擊查看詳情",
 );
 ?>
