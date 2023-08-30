@@ -94,7 +94,9 @@ class RptSummarySC extends ReportData2 {
         if(key_exists($city,$data[$region]["list"])){
             foreach ($defMoreList as $key=>$value){
                 if(in_array($key,$notAddList)){
-                    $data[$region]["list"][$city][$key]=$value;
+                    if(!isset($data[$region]["list"][$city][$key])){
+                        $data[$region]["list"][$city][$key]=$value;
+                    }
                 }elseif (is_numeric($value)){
                     $data[$region]["list"][$city][$key]+=$value;
                 }else{
