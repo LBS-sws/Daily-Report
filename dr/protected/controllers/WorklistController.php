@@ -32,6 +32,14 @@ class WorklistController extends Controller
         );
     }
 
+    public static function allowReadWrite() {
+        return Yii::app()->user->validRWFunction('WO01');
+    }
+
+    public static function allowReadOnly() {
+        return Yii::app()->user->validFunction('WO01');
+    }
+
     public function actionTest()
     {
         $session = Yii::app()->session;
