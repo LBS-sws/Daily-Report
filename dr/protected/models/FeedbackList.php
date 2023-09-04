@@ -2,15 +2,20 @@
 
 class FeedbackList extends CListPageModel
 {
-	public $cats = array(
-			'A1~'=>'Customer Service',
-			'A2~'=>'Complaint Cases',
-			'A3~'=>'Customer Enquiry',
-			'A4~'=>'Product Delivery',
-			'A5~'=>'QC Record',
-			'A6~'=>'Staff Info',
-			'A7~'=>'Others',
-		);
+    public $cats = array(
+        'A1~'=>'Customer Service',
+        'A2~'=>'Complaint Cases',
+        'A3~'=>'Customer Enquiry',
+        'A4~'=>'Product Delivery',
+        'A5~'=>'QC Record',
+        'A6~'=>'Staff Info',
+        'A7~'=>'Others',
+        'A8~'=>'Service New',//当月累计新增
+        'A9~'=>'Service Stop',//当月累计终止
+        'A10~'=>'Service Pause',//当月累计暂停
+        'A11~'=>'Service Net',//当月累计净增长
+        'A12~'=>'Sales Effect',//当月累计销售人效
+    );
 
 	public function attributeLabels()
 	{

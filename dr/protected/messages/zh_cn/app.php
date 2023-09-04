@@ -168,5 +168,11 @@ return array(
     'History Pause'=>'地区历史暂停客户',
     'History Resume'=>'地区历史恢复客户',
     'U Service Detail'=>'U系统服务报表',
+
+    'Service New'=>"当月累计新增",
+    'Service Stop'=>"当月累计终止",
+    'Service Pause'=>"当月累计暂停",
+    'Service Net'=>"当月累计净增长",
+    'Sales Effect'=>"当月累计销售人效",
 );
 ?>

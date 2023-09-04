@@ -271,8 +271,8 @@ class HistoryStopForm extends CFormModel
         $list["now_average"]=0;
         $list["last_average"]=0;
         $list["growth"]=HistoryAddForm::comYes($list["now_week"],$list["last_week"]);
-        $list["start_result"]=HistoryAddForm::comYes($list["now_week"],$list["start_two_gross"]);
-        $list["result"]=HistoryAddForm::comYes($list["now_week"],$list["two_gross"]);
+        $list["start_result"]=HistoryAddForm::comYes($list["now_week"],$list["start_two_gross"],true);
+        $list["result"]=HistoryAddForm::comYes($list["now_week"],$list["two_gross"],true);
         for($i=1;$i<=$this->search_month;$i++){
             $month = $i>=10?10:"0{$i}";
             $nowStr = $this->search_year."/{$month}";

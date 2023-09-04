@@ -296,10 +296,11 @@ class HistoryAddForm extends CFormModel
         }
     }
 
-    public static function comYes($startNum,$endNum){
+    public static function comYes($startNum,$endNum,$bool=false){
         $startNum = floatval($startNum);
         $endNum = floatval($endNum);
-        if(!empty($startNum)&&$startNum>=$endNum){
+        $bool = $bool||!empty($startNum);
+        if($bool&&$startNum>=$endNum){
             return Yii::t("summary","Yes");
         }else{
             return "";

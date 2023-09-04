@@ -162,5 +162,11 @@ return array(
     'History Pause'=>'地區歷史暫停客戶',
     'History Resume'=>'地區歷史恢復客戶',
     'U Service Detail'=>'U系統服務報表',
+
+    'Service New'=>"當月累計新增",
+    'Service Stop'=>"當月累計終止",
+    'Service Pause'=>"當月累計暫停",
+    'Service Net'=>"當月累計凈增長",
+    'Sales Effect'=>"當月累計銷售人效",
 );
 ?>

@@ -208,7 +208,6 @@ class CountSearch{
         return $list;
     }
 
-
     //客户服务的匯總（新增+恢復+更改-暫停-終止)
     public static function getServiceForAll($startDate,$endDate,$city_allow=""){
         $whereSql = "a.status in ('N','S','A','R','T') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
@@ -265,6 +264,86 @@ class CountSearch{
                 $list[$row["city"]]=0;
             }
             $list[$row["city"]]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
+    //客户服务各个状态的汇总
+    public static function getServiceCountForStatus($startDate,$endDate,$city_allow=""){
+        $whereSql = "a.status in ('N','S','A','R','T') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL;
+        $list=array();
+        $sumAmtSql = "case a.paid_type when 'M' then a.amt_paid * a.ctrt_period else a.amt_paid end";
+        $b4_sumAmtSql = "case a.b4_paid_type when 'M' then a.b4_amt_paid * a.ctrt_period else a.b4_amt_paid end";
+        $rows = Yii::app()->db->createCommand()
+            ->select("
+            sum(if(a.status='N',($sumAmtSql),0)) as add_sum,
+            sum(if(a.status='S',-1*($sumAmtSql),0)) as pause_sum,
+            sum(if(a.status='A',($sumAmtSql)-($b4_sumAmtSql),0)) as update_sum,
+            sum(if(a.status='R',($sumAmtSql),0)) as renew_sum,
+            sum(if(a.status='T',-1*($sumAmtSql),0)) as stop_sum,
+            a.city")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.city")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("
+                sum(if(a.status='N',(a.amt_paid*a.ctrt_period),0)) as add_sum,
+                sum(if(a.status='S',-1*(a.amt_paid*a.ctrt_period),0)) as pause_sum,
+                sum(if(a.status='A',(a.amt_paid*a.ctrt_period)-(a.b4_amt_paid*a.ctrt_period),0)) as update_sum,
+                sum(if(a.status='R',(a.amt_paid*a.ctrt_period),0)) as renew_sum,
+                sum(if(a.status='T',-1*(a.amt_paid*a.ctrt_period),0)) as stop_sum,
+                a.city")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.city")->queryAll();//
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("
+                sum(if(a.status='N',($sumAmtSql),0)) as add_sum,
+                sum(if(a.status='S',-1*($sumAmtSql),0)) as pause_sum,
+                sum(if(a.status='A',($sumAmtSql)-($b4_sumAmtSql),0)) as update_sum,
+                sum(if(a.status='R',($sumAmtSql),0)) as renew_sum,
+                sum(if(a.status='T',-1*($sumAmtSql),0)) as stop_sum,
+                a.city")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->group("a.city")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=array(
+                    "add_sum"=>0,
+                    "pause_sum"=>0,
+                    "update_sum"=>0,
+                    "renew_sum"=>0,
+                    "stop_sum"=>0,
+                    "net_sum"=>0,
+                );
+            }
+            $list[$row["city"]]["add_sum"]+=empty($row["add_sum"])?0:$row["add_sum"];
+            $list[$row["city"]]["pause_sum"]+=empty($row["pause_sum"])?0:$row["pause_sum"];
+            $list[$row["city"]]["update_sum"]+=empty($row["update_sum"])?0:$row["update_sum"];
+            $list[$row["city"]]["renew_sum"]+=empty($row["renew_sum"])?0:$row["renew_sum"];
+            $list[$row["city"]]["stop_sum"]+=empty($row["stop_sum"])?0:$row["stop_sum"];
+            $list[$row["city"]]["net_sum"] =$list[$row["city"]]["add_sum"];//净增长
+            $list[$row["city"]]["net_sum"]+=$list[$row["city"]]["pause_sum"];
+            $list[$row["city"]]["net_sum"]+=$list[$row["city"]]["update_sum"];
+            $list[$row["city"]]["net_sum"]+=$list[$row["city"]]["renew_sum"];
+            $list[$row["city"]]["net_sum"]+=$list[$row["city"]]["stop_sum"];
         }
         return $list;
     }

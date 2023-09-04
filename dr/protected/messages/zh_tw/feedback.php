@@ -18,5 +18,9 @@ return array(
 'Feedback Person'=>'回饋人',
 'Unable to open this record. Maybe you don\'t have corresponding access right.'=>'無法打開此記錄。也許你沒有相應的訪問權限。 ',
     'click detail'=>"點擊查看詳情",
+    'home'=>"首頁",
+    'manage'=>"管理數據分析",
+    'new service for new'=>"當天新增記錄",
+    'cannot be empty'=>"不能為空",
 );
 ?>

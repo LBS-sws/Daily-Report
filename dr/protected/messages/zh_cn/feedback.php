@@ -18,5 +18,9 @@ return array(
 	'Feedback Person'=>'回馈人',
 	'Unable to open this record. Maybe you don\'t have corresponding access right.'=>'无法打开此记录。也许你没有相应的访问权限。',
     'click detail'=>"点击查看详情",
+    'home'=>"首页",
+    'manage'=>"管理数据分析",
+    'new service for new'=>"当天新增记录",
+    'cannot be empty'=>"不能为空",
 );
 ?>

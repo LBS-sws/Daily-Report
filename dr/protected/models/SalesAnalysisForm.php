@@ -146,7 +146,7 @@ class SalesAnalysisForm extends CFormModel
     }
 
     //本年度的数据
-    protected function getNowYearData($city_allow){
+    public static function getNowYearData($start_date,$end_date,$city_allow){
         $suffix = Yii::app()->params['envSuffix'];
         $list = array();
         $amtSql = self::getVisitAmtToSQL();
@@ -158,7 +158,7 @@ class SalesAnalysisForm extends CFormModel
             ->from("sales{$suffix}.sal_visit_info a")
             ->leftJoin("sales{$suffix}.sal_visit b","a.visit_id=b.id")
             ->where("b.city in ({$city_allow}) and ({$dealSQL}) and a.field_id in ('{$amtSql}') and 
-            b.visit_dt BETWEEN '{$this->start_date}' and '{$this->end_date}'"
+            b.visit_dt BETWEEN '{$start_date}' and '{$end_date}'"
             )->group("b.username,DATE_FORMAT(b.visit_dt,'%Y/%m')")->queryAll();
         if($rows){
             foreach ($rows as $row){
@@ -312,14 +312,18 @@ class SalesAnalysisForm extends CFormModel
         return $city_allow;
     }
 
-    public function retrieveData() {
+    public function retrieveData($city="") {
         $data = array();
-        $city_allow = Yii::app()->user->city_allow();
-        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
+        if(empty($city)){
+            $city_allow = Yii::app()->user->city_allow();
+            $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
+        }else{
+            $city_allow = "'{$city}'";
+        }
         $lifelineList = LifelineForm::getLifeLineList($city_allow,$this->search_date);//生命线
         $staffRows = $this->getSalesForHr($city_allow,$this->search_date);//员工信息
         $lastData = $this->getLastYearData($city_allow);//前一年的平均值
-        $nowData = $this->getNowYearData($city_allow);//本年度的数据
+        $nowData = $this->getNowYearData($this->start_date,$this->end_date,$city_allow);//本年度的数据
         $cityList = self::getCityListAndRegion($city_allow);//城市信息
         $this->twoDate = $this->groupAreaForStaffAndData($staffRows,$cityList,$nowData);
         $this->threeDate = $this->groupCityForStaffAndData($staffRows,$cityList,$nowData,$lifelineList);

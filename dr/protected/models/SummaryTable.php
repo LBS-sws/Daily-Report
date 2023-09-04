@@ -142,7 +142,7 @@ class SummaryTable extends SummaryForm{
         return self::getTableForRows($rows,$this->city_allow);
     }
 
-    public static function getTableForRows($rows,$city_allow,$invTable=array()){
+    public static function getTableForRows($rows,$city_allow,$invTable=array(),$week_day=1,$month_day=0){
         $companyList = GetNameToId::getCompanyList($city_allow);
         $html="";
         if(!empty($invTable)){
@@ -227,6 +227,15 @@ class SummaryTable extends SummaryForm{
                 $html.="<td colspan='2'>".$count."</td>";
                 $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
                 $html.="<td colspan='2'>".$sum."</td>";
+                $html.="</tr>";
+            }
+            if(!empty($month_day)){
+                $html.="<tr>";
+                $monthAmt = $sum/$week_day*$month_day;
+                $monthAmt = round($monthAmt,2);
+                $sumTxt = "全月预估金额：({$sum}÷{$week_day}) × {$month_day} = {$monthAmt}";
+                $html.="<td colspan='9' class='text-right'>".$sumTxt."</td>";
+                $html.="<td>&nbsp;</td>";
                 $html.="</tr>";
             }
             $html.="</tfoot>";
@@ -460,6 +469,84 @@ class SummaryTable extends SummaryForm{
     //客户服务查询(暫停、終止)
     public static function getServiceSTForType($startDate,$endDate,$city_allow,$type){
         $whereSql = "a.status='{$type}' and a.status in ('S','T') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        $whereSql.= " and a.city in ({$city_allow})";
+        $whereSql .= self::$whereSQL;
+        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+            f.description as cust_type_name";
+        $queryIARows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
+            ->from("swo_service a")
+            ->leftJoin("swo_service_contract_no n","a.id=n.service_id")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where($whereSql." and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
+        if($queryIARows){
+            foreach ($queryIARows as $key=>$row){
+                $month_date = date("Y/m",strtotime($row['status_dt']));
+                $nextRow= Yii::app()->db->createCommand()
+                    ->select("status")->from("swo_service_contract_no")
+                    ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["no_id"]}' and 
+                        status_dt>'{$row['status_dt']}' and 
+                        DATE_FORMAT(status_dt,'%Y/%m')='{$month_date}'")
+                    ->order("status_dt asc")
+                    ->queryRow();//查詢本月的後面一條數據
+                if($nextRow&&in_array($nextRow["status"],array("S","T"))){
+                    unset($queryIARows[$key]);
+                }
+            }
+        }else{
+            $queryIARows = array();
+        }
+
+        if(self::$IDBool){
+            $queryIDRows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
+            $queryIDRows = $queryIDRows?$queryIDRows:array();
+        }else{
+            $queryIDRows=array();
+        }
+        if(self::$KABool){
+            $queryKARows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
+            if($queryKARows){
+                foreach ($queryKARows as $key=>$row){
+                    $month_date = date("Y/m",strtotime($row['status_dt']));
+                    $nextRow= Yii::app()->db->createCommand()
+                        ->select("status")->from("swo_service_ka_no")
+                        ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["no_id"]}' and 
+                        status_dt>'{$row['status_dt']}' and 
+                        DATE_FORMAT(status_dt,'%Y/%m')='{$month_date}'")
+                        ->order("status_dt asc")
+                        ->queryRow();//查詢本月的後面一條數據
+                    if($nextRow&&in_array($nextRow["status"],array("S","T"))){
+                        unset($queryKARows[$key]);
+                    }
+                }
+            }else{
+                $queryKARows = array();
+            }
+            //$queryKARows = $queryKARows?$queryKARows:array();
+            $queryIARows = array_merge($queryIARows,$queryKARows);
+        }
+        return array_merge($queryIARows,$queryIDRows);
+    }
+
+    //暂停超过2个月的服务
+    public static function getServicePauseForTwoMonth($date,$city_allow){
+        $startDate = date("Y/m/d",strtotime($date." - 4 months"));//由于数据量过大所以只查4个月内
+        $endDate = date("Y/m/d",strtotime($date." - 2 months"));
+        $whereSql = "a.status='S' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         $whereSql.= " and a.city in ({$city_allow})";
         $whereSql .= self::$whereSQL;
         $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,

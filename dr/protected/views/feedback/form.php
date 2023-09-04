@@ -9,6 +9,15 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 )); ?>
 
+<style>
+    .td_detail{ cursor: pointer;}
+    .click-tr>.fa:before{ content: "\f062";}
+    .click-tr.show-tr>.fa:before{ content: "\f063";}
+    .table-fixed{ table-layout: fixed;}
+    .table-fixed>thead>tr>th,.table-fixed>tfoot>tr>td,.table-fixed>tbody>tr>td{ text-align: center;vertical-align: middle;font-size: 12px;border-color: #333;}
+    .table-fixed>tfoot>tr>td,.table-fixed>tbody>tr>td{ text-align: right;}
+    .table-fixed>thead>tr>th.header-width{ height: 0px;padding: 0px;overflow: hidden;border-width: 0px;line-height: 0px;}
+</style>
 <section class="content-header">
 	<h1>
 		<strong><?php echo Yii::t('feedback','Feedback Form'); ?></strong>
@@ -100,37 +109,97 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
 					?>
 				</div>
 			</div>
+            <div>
+                <div class="col-sm-offset-1" style="padding: 20px 0px;">
+                    <ul class="nav nav-tabs" role="menu">
+                        <li role="menuitem" class="active">
+                            <?php
+                            echo TbHtml::link(Yii::t("feedback","home"),"#tab_1",array("data-toggle"=>"tab","tabindex"=>"-1"));
+                            ?>
+                        </li>
+                        <li role="menuitem">
+                            <?php
+                            echo TbHtml::link(Yii::t("feedback","manage"),"#tab_2",array("data-toggle"=>"tab","tabindex"=>"-1"));
+                            ?>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content">
+                    <div id="tab_1" class="tab-pane fade active in">
+                        <?php
+                        $cnt = 0;
+                        $fldnames = $model->attributeLabels();
+                        for($cnt=1;$cnt<=7;$cnt++){
+                            $cat_field = 'cat_'.$cnt;
+                            $fb_field = 'feedback_'.$cnt;
+                            echo '<div class="form-group">';
+                            echo '<div class="col-sm-2 text-right">';
+                            echo $form->checkBox($model,$cat_field, array('label'=>$fldnames[$cat_field],'value'=>'Y','uncheckValue'=>'N','disabled'=>($model->scenario=='view')));
+                            echo '</div>';
+                            echo '<div class="col-sm-7">';
+                            echo $form->textArea($model, $fb_field,
+                                array('rows'=>5,'cols'=>80,'maxlength'=>5000,'readonly'=>($model->scenario=='view' || $model->$cat_field!='Y'))
+                            );
+                            echo '</div>';
+                            if(!in_array($fb_field,array("feedback_7"))){ //其它没有详情
+                                echo '<div class="col-sm-2">';
+                                echo TbHtml::link(Yii::t("feedback","click detail"),"javascript:void(0);",array("class"=>"link_detail","data-type"=>$fb_field,"data-title"=>$fldnames[$cat_field]));
+                                echo '</div>';
+                            }
+                            echo '</div>';
+                        }
+                        ?>
+                    </div>
+                    <div id="tab_2" class="tab-pane fade">
+                        <?php
+                        for($cnt=8;$cnt<=12;$cnt++){
+                            $cat_field = 'cat_'.$cnt;
+                            $fb_field = 'feedback_'.$cnt;
+                            echo '<div class="form-group">';
+                            echo '<div class="col-sm-2 text-right">';
+                            echo $form->checkBox($model,$cat_field, array('label'=>$fldnames[$cat_field],'value'=>'Y','uncheckValue'=>'N','disabled'=>($model->scenario=='view')));
+                            echo '</div>';
+                            echo '<div class="col-sm-7">';
+                            echo $form->textArea($model, $fb_field,
+                                array('rows'=>5,'cols'=>80,'maxlength'=>5000,'readonly'=>($model->scenario=='view' || $model->$cat_field!='Y'))
+                            );
+                            echo '</div>';
+                            if(!in_array($fb_field,array("feedback_7"))){ //其它没有详情
+                                echo '<div class="col-sm-2">';
+                                echo TbHtml::link(Yii::t("feedback","click detail"),"javascript:void(0);",array("class"=>"link_detail","data-type"=>$fb_field,"data-title"=>$fldnames[$cat_field]));
+                                echo '</div>';
+                            }
+                            echo '</div>';
+                        }
+                        ?>
+                    </div>
 
-<?php
-	$cnt = 0;
-	$fldnames = $model->attributeLabels();
-	foreach ($model->cats as $cat=>$desc) {
-		$cnt++;
-		$cat_field = 'cat_'.$cnt;
-		$fb_field = 'feedback_'.$cnt;
-		echo '<div class="form-group">';
-		echo '<div class="col-sm-2 col-md-push-1">';
-		echo $form->checkBox($model,$cat_field, array('label'=>$fldnames[$cat_field],'value'=>'Y','uncheckValue'=>'N','disabled'=>($model->scenario=='view')));
-		echo '</div>';
-		echo '<div class="col-sm-7">';
-		echo $form->textArea($model, $fb_field, 
-				array('rows'=>5,'cols'=>80,'maxlength'=>5000,'readonly'=>($model->scenario=='view' || $model->$cat_field!='Y'))
-			);		
-		echo '</div>';
-		if(!in_array($fb_field,array("feedback_7"))){ //其它没有详情
-            echo '<div class="col-sm-2">';
-            echo TbHtml::link(Yii::t("feedback","click detail"),"javascript:void(0);",array("class"=>"link_detail","data-type"=>$fb_field,"data-title"=>$fldnames[$cat_field]));
-            echo '</div>';
-        }
-		echo '</div>';
-	}
-?>
+                </div>
+            </div>
 		</div>
 	</div>
 </section>
 
 <!--詳情彈窗-->
 <div class="modal fade" tabindex="-1" role="dialog" id="detailDialog">
+    <div class="modal-dialog" role="document" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <p>加载中....</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--詳情彈窗-->
+<div class="modal fade" tabindex="-1" role="dialog" id="tdDetailModel">
     <div class="modal-dialog" role="document" style="width: 80%;">
         <div class="modal-content">
             <div class="modal-header">
@@ -186,6 +255,29 @@ $('.link_detail').on('click',function(){
         dataType: 'json',
         success: function(data) {
             $('#detailDialog').find('.modal-body').html(data['html']);
+        },
+        error: function(data) { // if error occured
+            alert('Error occured.please try again');
+        }
+    });
+});
+
+$('#detailDialog').delegate('.td_detail','click',function(){
+    var dateStr = $('#FeedbackForm_request_dt').val();
+    $('#tdDetailModel').find('.modal-title').text($(this).data('title'));
+    $('#tdDetailModel').find('.modal-body').html('<p>加载中....</p>');
+    $('#tdDetailModel').modal('show');
+    $.ajax({
+        type: 'GET',
+        url: '{$ajaxUrl}',
+        data: {
+            'type':$(this).data('type'),
+            'city':'{$model->city}',
+            'request_dt':'{$model->request_dt}'
+        },
+        dataType: 'json',
+        success: function(data) {
+            $('#tdDetailModel').find('.modal-body').html(data['html']);
         },
         error: function(data) { // if error occured
             alert('Error occured.please try again');

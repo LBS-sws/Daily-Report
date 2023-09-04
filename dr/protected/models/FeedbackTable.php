@@ -8,6 +8,19 @@
  */
 class FeedbackTable extends FeedbackForm {
 
+    public $search_month;
+    public $start_dt;
+    public $end_dt;
+    public $city_allow;
+
+    public $month_day;
+    public $week_start;
+    public $week_end;
+    public $week_day;
+    public $last_week_start;
+    public $last_week_end;
+    public $last_week_day;
+
     private function clickList(){
         return array(
             "feedback_1"=>"serviceList",//客户服务
@@ -16,6 +29,20 @@ class FeedbackTable extends FeedbackForm {
             "feedback_4"=>"logisticList",//物流配送
             "feedback_5"=>"qcList",//品檢记录
             "feedback_6"=>"employeeList",//人事资料
+            'feedback_8'=>'serviceNew',//当月累计新增
+            'feedback_9'=>'serviceStop',//当月累计终止
+            'feedback_10'=>'servicePause',//当月累计暂停
+            'feedback_11'=>'serviceNet',//当月累计净增长
+            'feedback_12'=>'salesEffect',//当月累计销售人效
+
+            'new_now_week'=>'new_now_week',//当月累计新增(本周)
+            'new_last_week'=>'new_last_week',//当月累计新增(上周)
+            'stop_now_week'=>'stop_now_week',//当月累计终止(本周)
+            'stop_last_week'=>'stop_last_week',//当月累计终止(上周)
+            'pause_now_week'=>'pause_now_week',//当月累计暂停(本周)
+            'pause_last_week'=>'pause_last_week',//当月累计暂停(上周)
+            'net_now_week'=>'net_now_week',//当月累计净增长(本周)
+            'net_last_week'=>'net_last_week',//当月累计净增长(上周)
         );
     }
 
@@ -411,6 +438,474 @@ class FeedbackTable extends FeedbackForm {
         return $html;
     }
 
+    //当月累计新增
+    private function serviceNew(){
+        $html = "";
+        $this->setWeekDate();
+        $cityData = $this->setServiceNew();
+        $tdTitleNow=Yii::t('summary','now week')."：".date("Y/m/d",$this->week_start)." ~ ".date("Y/m/d",$this->week_end)." (".$this->week_day.")";
+        $tdTitleLast=Yii::t('summary','last week')."：".date("Y/m/d",$this->last_week_start)." ~ ".date("Y/m/d",$this->last_week_end)." (".$this->last_week_day.")";
+        if($this->last_week_end==strtotime("1999/01/01")){
+            $tdTitleLast = Yii::t('summary','last week')."：".Yii::t("summary","none");
+        }
+        $html.="<p>".$tdTitleNow."</p>";
+        $html.="<p>".$tdTitleLast."</p>";
+
+        $html.= "<table class='table table-bordered table-striped table-condensed table-hover'>";
+        $html.="<thead><tr>";
+        $html.="<th rowspan='2' style='background: #FCD5B4' width='20%' class='text-center'>".$this->start_dt." ~ ".$this->end_dt."</th>";//日期
+        $html.="<th colspan='3' style='background: #F2DCDB' width='50%' class='text-center'>".$this->search_month.Yii::t('summary',' month estimate')."</th>";//8月全月预估
+        $html.="<th colspan='2' style='background: #DCE6F1' width='30%' class='text-center'>".Yii::t('summary','Target contrast')."</th>";//目标对比
+        $html.="</tr>";
+        $html.="<tr>";
+        $html.="<th style='background: #F2DCDB'>".Yii::t('summary','now week')."</th>";//本周
+        $html.="<th style='background: #F2DCDB'>".Yii::t('summary','last week')."</th>";//上周
+        $html.="<th style='background: #F2DCDB'>".Yii::t('summary','stop growth')."</th>";//加速增长
+        $html.="<th style='background: #DCE6F1'>".Yii::t('summary','Start Target')."</th>";//年初目标
+        $html.="<th style='background: #DCE6F1'>".Yii::t('summary','Start Target result')."</th>";//达成目标
+        $html.="</tr>";
+        $html.="</thead>";
+        $html .= "<tbody>";
+        $html.="<tr>";
+        $html.="<td class='text-right'>".$cityData["service_amt"]."</td>";
+        $html.="<td class='text-right td_detail' data-title='{$tdTitleNow}' data-type='new_now_week'>".$cityData["now_week"]."</td>";
+        $html.="<td class='text-right td_detail' data-title='{$tdTitleLast}' data-type='new_last_week'>".$cityData["last_week"]."</td>";
+        $html.="<td class='text-right'>".$cityData["growth"]."</td>";
+        $html.="<td class='text-right'>".$cityData["start_two_gross"]."</td>";
+        $html.="<td class='text-right'>".$cityData["start_result"]."</td>";
+        $html.="</tr>";
+        $html .= "</tbody>";
+        $html.="</table>";
+        return $html;
+    }
+
+    //当月累计终止客户
+    private function serviceStop(){
+        $html = "";
+        $this->setWeekDate();
+        $cityData = $this->setServiceStop();
+        $tdTitleNow=Yii::t('summary','now week')."：".date("Y/m/d",$this->week_start)." ~ ".date("Y/m/d",$this->week_end)." (".$this->week_day.")";
+        $tdTitleLast=Yii::t('summary','last week')."：".date("Y/m/d",$this->last_week_start)." ~ ".date("Y/m/d",$this->last_week_end)." (".$this->last_week_day.")";
+        if($this->last_week_end==strtotime("1999/01/01")){
+            $tdTitleLast = Yii::t('summary','last week')."：".Yii::t("summary","none");
+        }
+        $html.="<p>".$tdTitleNow."</p>";
+        $html.="<p>".$tdTitleLast."</p>";
+
+        $html.= "<table class='table table-bordered table-striped table-condensed table-hover'>";
+        $html.="<thead><tr>";
+        $html.="<th rowspan='2' style='background: #FCD5B4' width='20%' class='text-center'>".$this->start_dt." ~ ".$this->end_dt."</th>";//日期
+        $html.="<th colspan='3' style='background: #F2DCDB' width='50%' class='text-center'>".$this->search_month.Yii::t('summary',' month estimate')."</th>";//8月全月预估
+        $html.="<th colspan='2' style='background: #DCE6F1' width='30%' class='text-center'>".Yii::t('summary','Target contrast')."</th>";//目标对比
+        $html.="</tr>";
+        $html.="<tr>";
+        $html.="<th style='background: #F2DCDB'>".Yii::t('summary','now week')."</th>";//本周
+        $html.="<th style='background: #F2DCDB'>".Yii::t('summary','last week')."</th>";//上周
+        $html.="<th style='background: #F2DCDB'>".Yii::t('summary','stop growth')."</th>";//加速增长
+        $html.="<th style='background: #DCE6F1'>".Yii::t('summary','Start Target')."</th>";//年初目标
+        $html.="<th style='background: #DCE6F1'>".Yii::t('summary','Start Target result')."</th>";//达成目标
+        $html.="</tr>";
+        $html.="</thead>";
+        $html .= "<tbody>";
+        $html.="<tr>";
+        $html.="<td class='text-right'>".$cityData["service_amt"]."</td>";
+        $html.="<td class='text-right td_detail' data-title='{$tdTitleNow}' data-type='stop_now_week'>".$cityData["now_week"]."</td>";
+        $html.="<td class='text-right td_detail' data-title='{$tdTitleLast}' data-type='stop_last_week'>".$cityData["last_week"]."</td>";
+        $html.="<td class='text-right'>".$cityData["growth"]."</td>";
+        $html.="<td class='text-right'>".$cityData["start_two_gross"]."</td>";
+        $html.="<td class='text-right'>".$cityData["start_result"]."</td>";
+        $html.="</tr>";
+        $html .= "</tbody>";
+        $html.="</table>";
+        return $html;
+    }
+
+    //当月累计暂停
+    private function servicePause(){
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow("'{$this->city}'");
+        $html = "";
+        $this->setWeekDate();
+        $cityData = $this->setServicePause();
+        $tdTitleNow=Yii::t('summary','now week')."：".date("Y/m/d",$this->week_start)." ~ ".date("Y/m/d",$this->week_end)." (".$this->week_day.")";
+        $tdTitleLast=Yii::t('summary','last week')."：".date("Y/m/d",$this->last_week_start)." ~ ".date("Y/m/d",$this->last_week_end)." (".$this->last_week_day.")";
+        if($this->last_week_end==strtotime("1999/01/01")){
+            $tdTitleLast = Yii::t('summary','last week')."：".Yii::t("summary","none");
+        }
+        $html.="<p>".$tdTitleNow."</p>";
+        $html.="<p>".$tdTitleLast."</p>";
+
+        $html.= "<table class='table table-bordered table-striped table-condensed table-hover'>";
+        $html.="<thead><tr>";
+        $html.="<th rowspan='2' style='background: #FCD5B4' width='20%' class='text-center'>".$this->start_dt." ~ ".$this->end_dt."</th>";//日期
+        $html.="<th colspan='2' style='background: #F2DCDB' width='50%' class='text-center'>".$this->search_month.Yii::t('summary',' month estimate')."</th>";//8月全月预估
+        $html.="</tr>";
+        $html.="<tr>";
+        $html.="<th style='background: #F2DCDB'>".Yii::t('summary','now week')."</th>";//本周
+        $html.="<th style='background: #F2DCDB'>".Yii::t('summary','last week')."</th>";//上周
+        $html.="</tr>";
+        $html.="</thead>";
+        $html .= "<tbody>";
+        $html.="<tr>";
+        $html.="<td class='text-right'>".$cityData["service_amt"]."</td>";
+        $html.="<td class='text-right td_detail' data-title='{$tdTitleNow}' data-type='pause_now_week'>".$cityData["now_week"]."</td>";
+        $html.="<td class='text-right td_detail' data-title='{$tdTitleLast}' data-type='pause_last_week'>".$cityData["last_week"]."</td>";
+        $html.="</tr>";
+        $html .= "</tbody>";
+        $html.="</table>";
+        $startDate = date("Y/m/d",strtotime($this->request_dt." - 4 months"));//由于数据量过大所以只查4个月内
+        $endDate = date("Y/m/d",strtotime($this->request_dt." - 2 months"));
+        //不需要查询暂停之后是否终止，因为要留查看暂停记录
+        $pauseRows = SummaryTable::getServiceRows($startDate,$endDate,$city_allow,'S');
+        if($pauseRows){
+            $html.="<p>以下客户的服务暂停已超过两个月：</p>";
+            $html.=SummaryTable::getTableForRows($pauseRows,$city_allow);
+        }
+        return $html;
+    }
+
+    //当月累计净增长
+    private function serviceNet(){
+        $html = "";
+        $this->setWeekDate();
+        $cityData = $this->setServiceNet();
+        $tdTitleNow=Yii::t('summary','now week')."：".date("Y/m/d",$this->week_start)." ~ ".date("Y/m/d",$this->week_end)." (".$this->week_day.")";
+        $tdTitleLast=Yii::t('summary','last week')."：".date("Y/m/d",$this->last_week_start)." ~ ".date("Y/m/d",$this->last_week_end)." (".$this->last_week_day.")";
+        if($this->last_week_end==strtotime("1999/01/01")){
+            $tdTitleLast = Yii::t('summary','last week')."：".Yii::t("summary","none");
+        }
+        $html.="<p>".$tdTitleNow."</p>";
+        $html.="<p>".$tdTitleLast."</p>";
+
+        $html.= "<table class='table table-bordered table-striped table-condensed table-hover'>";
+        $html.="<thead><tr>";
+        $html.="<th rowspan='2' style='background: #FCD5B4' width='20%' class='text-center'>".$this->start_dt." ~ ".$this->end_dt."</th>";//日期
+        $html.="<th style='background: #FCD5B4' width='20%' class='text-center'>".Yii::t("summary","Actual monthly amount")."</th>";//服务生意额
+        $html.="<th colspan='3' style='background: #F2DCDB' width='40%' class='text-center'>".$this->search_month.Yii::t('summary',' month estimate')."</th>";//8月全月预估
+        $html.="<th colspan='2' style='background: #DCE6F1' width='20%' class='text-center'>".Yii::t('summary','Target contrast')."</th>";//目标对比
+        $html.="</tr>";
+        $html.="<tr>";
+        $html.="<th style='background: #FCD5B4'>".$this->search_month.Yii::t("summary"," month")."</th>";//
+        $html.="<th style='background: #F2DCDB'>".Yii::t('summary','now week')."</th>";//本周
+        $html.="<th style='background: #F2DCDB'>".Yii::t('summary','last week')."</th>";//上周
+        $html.="<th style='background: #F2DCDB'>".Yii::t('summary','growth')."</th>";//加速增长
+        $html.="<th style='background: #DCE6F1'>".Yii::t('summary','Start Target')."</th>";//年初目标
+        $html.="<th style='background: #DCE6F1'>".Yii::t('summary','Start Target result')."</th>";//达成目标
+        $html.="</tr>";
+        $html.="</thead>";
+        $html .= "<tbody>";
+        $html.="<tr>";
+        $html.="<td class='text-right'>".$cityData["service_amt"]."</td>";
+        $html.="<td class='text-right'>".$cityData["u_actual_money"]."</td>";
+        $html.="<td class='text-right' data-title='{$tdTitleNow}' data-type='net_now_week'>".$cityData["now_week"]."</td>";
+        $html.="<td class='text-right' data-title='{$tdTitleLast}' data-type='net_last_week'>".$cityData["last_week"]."</td>";
+        $html.="<td class='text-right'>".$cityData["growth"]."</td>";
+        $html.="<td class='text-right'>".$cityData["start_two_gross"]."</td>";
+        $html.="<td class='text-right'>".$cityData["start_result"]."</td>";
+        $html.="</tr>";
+        $html .= "</tbody>";
+        $html.="</table>";
+        return $html;
+    }
+
+    //当月累计销售人效
+    private function salesEffect(){
+        $html = "<div class='table-responsive'>";
+        $model = new SalesAnalysisForm();
+        $model->search_date = $this->request_dt;
+        $model->validate();
+        $model->retrieveData($this->city);
+        $html.= $model->salesAnalysisHtml();
+        $html.="</div>";
+        return $html;
+    }
+
+    //当月累计新增(本周)
+    private function new_now_week(){
+        $html = "";
+        $this->setWeekDate();
+        $start_date = date("Y/m/d",$this->week_start);
+        $end_date = date("Y/m/d",$this->week_end);
+        $city = "'{$this->city}'";
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city);
+        $rows = SummaryTable::getServiceRowsForAdd($start_date,$end_date,$city_allow);
+        $html.=SummaryTable::getTableForRows($rows,$city_allow,array(),$this->week_day,$this->month_day);
+        return $html;
+    }
+
+    //当月累计新增(上周)
+    private function new_last_week(){
+        $html = "";
+        $this->setWeekDate();
+        $start_date = date("Y/m/d",$this->last_week_start);
+        $end_date = date("Y/m/d",$this->last_week_end);
+        $city = "'{$this->city}'";
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city);
+        $rows = SummaryTable::getServiceRowsForAdd($start_date,$end_date,$city_allow);
+        $html.=SummaryTable::getTableForRows($rows,$city_allow,array(),$this->last_week_day,$this->month_day);
+        return $html;
+    }
+
+    //当月累计终止(本周)
+    private function stop_now_week(){
+        $html = "";
+        $this->setWeekDate();
+        $start_date = date("Y/m/d",$this->week_start);
+        $end_date = date("Y/m/d",$this->week_end);
+        $city = "'{$this->city}'";
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city);
+        $rows = SummaryTable::getServiceRows($start_date,$end_date,$city_allow,"T");
+        $html.=SummaryTable::getTableForRows($rows,$city_allow,array(),$this->week_day,$this->month_day);
+        return $html;
+    }
+
+    //当月累计终止(上周)
+    private function stop_last_week(){
+        $html = "";
+        $this->setWeekDate();
+        $start_date = date("Y/m/d",$this->last_week_start);
+        $end_date = date("Y/m/d",$this->last_week_end);
+        $city = "'{$this->city}'";
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city);
+        $rows = SummaryTable::getServiceRows($start_date,$end_date,$city_allow,"T");
+        $html.=SummaryTable::getTableForRows($rows,$city_allow,array(),$this->last_week_day,$this->month_day);
+        return $html;
+    }
+
+    //当月累计暂停(本周)
+    private function pause_now_week(){
+        $html = "";
+        $this->setWeekDate();
+        $start_date = date("Y/m/d",$this->week_start);
+        $end_date = date("Y/m/d",$this->week_end);
+        $city = "'{$this->city}'";
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city);
+        $rows = SummaryTable::getServiceRows($start_date,$end_date,$city_allow,"S");
+        $html.=SummaryTable::getTableForRows($rows,$city_allow,array(),$this->week_day,$this->month_day);
+        return $html;
+    }
+
+    //当月累计暂停(上周)
+    private function pause_last_week(){
+        $html = "";
+        $this->setWeekDate();
+        $start_date = date("Y/m/d",$this->last_week_start);
+        $end_date = date("Y/m/d",$this->last_week_end);
+        $city = "'{$this->city}'";
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city);
+        $rows = SummaryTable::getServiceRows($start_date,$end_date,$city_allow,"S");
+        $html.=SummaryTable::getTableForRows($rows,$city_allow,array(),$this->last_week_day,$this->month_day);
+        return $html;
+    }
+
+    private function setServiceNew(){
+        $weekStartDate = date("Y/m/d",$this->week_start);
+        $weekEndDate = date("Y/m/d",$this->week_end);
+        $lastWeekStartDate = date("Y/m/d",$this->last_week_start);
+        $lastWeekEndDate = date("Y/m/d",$this->last_week_end);
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow("'{$this->city}'");
+        $citySetList = CitySetForm::getCitySetList($city_allow);
+        //服务新增(本年)
+        $serviceN = CountSearch::getServiceForType($this->start_dt,$this->end_dt,$city_allow,"N");
+        //获取U系统的產品数据(本年)
+        $uInvMoney = CountSearch::getUInvMoney($this->start_dt,$this->end_dt,$city_allow);
+        //本週數據
+        $serviceWeek = CountSearch::getServiceForType($weekStartDate,$weekEndDate,$city_allow,"N");
+        //上週數據
+        $lastServiceWeek = CountSearch::getServiceForType($lastWeekStartDate,$lastWeekEndDate,$city_allow,"N");
+        $diffArr = array(
+            "service_amt"=>0,//累计金额
+            "now_week"=>0,//本周
+            "last_week"=>0,//上周
+            "growth"=>0,//加速增长
+            "start_two_gross"=>$this->getYearStartMoney("two_gross"),//年初目标
+            "start_result"=>0,//达成目标(年初)
+        );
+        $data=array();
+        foreach ($citySetList as $cityRow) {
+            $city = $cityRow["code"];
+            $defMoreList=$diffArr;
+            $defMoreList["add_type"] = $cityRow["add_type"];
+
+            $defMoreList["service_amt"]+=key_exists($city,$serviceN)?$serviceN[$city]:0;
+            $defMoreList["service_amt"]+=key_exists($city,$uInvMoney)?$uInvMoney[$city]["sum_money"]:0;
+            $defMoreList["now_week"]+=key_exists($city,$serviceWeek)?$serviceWeek[$city]:0;
+            $defMoreList["last_week"]+=key_exists($city,$lastServiceWeek)?$lastServiceWeek[$city]:0;
+
+            self::resetData($data,$cityRow,$citySetList,$defMoreList);
+        }
+        $cityData = $data[$this->city];
+        self::computeDate($cityData);
+        return $cityData;
+    }
+
+    private function setServiceStop(){
+        $weekStartDate = date("Y/m/d",$this->week_start);
+        $weekEndDate = date("Y/m/d",$this->week_end);
+        $lastWeekStartDate = date("Y/m/d",$this->last_week_start);
+        $lastWeekEndDate = date("Y/m/d",$this->last_week_end);
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow("'{$this->city}'");
+        $citySetList = CitySetForm::getCitySetList($city_allow);
+        //终止服务、暂停服务
+        $serviceForT = CountSearch::getServiceForST($this->start_dt,$this->end_dt,$city_allow,"T");
+        //本週數據
+        $serviceWeek = CountSearch::getServiceForST($weekStartDate,$weekEndDate,$city_allow,"T");
+        //上週數據
+        $lastServiceWeek = CountSearch::getServiceForST($lastWeekStartDate,$lastWeekEndDate,$city_allow,"T");
+        $diffArr = array(
+            "service_amt"=>0,//累计金额
+            "now_week"=>0,//本周
+            "last_week"=>0,//上周
+            "growth"=>0,//加速增长
+            "start_two_gross"=>(-1)*$this->getYearStartMoney("two_gross"),//年初目标
+            "start_result"=>0,//达成目标(年初)
+        );
+        $data=array();
+        foreach ($citySetList as $cityRow) {
+            $city = $cityRow["code"];
+            $defMoreList=$diffArr;
+            $defMoreList["add_type"] = $cityRow["add_type"];
+
+            $defMoreList["service_amt"]+=key_exists($city,$serviceForT)?(-1)*$serviceForT[$city]["num_stop"]:0;
+            $defMoreList["now_week"]+=key_exists($city,$serviceWeek)?(-1)*$serviceWeek[$city]["num_stop"]:0;
+            $defMoreList["last_week"]+=key_exists($city,$lastServiceWeek)?(-1)*$lastServiceWeek[$city]["num_stop"]:0;
+
+            self::resetData($data,$cityRow,$citySetList,$defMoreList);
+        }
+        $cityData = $data[$this->city];
+        self::computeDate($cityData,true);
+        return $cityData;
+    }
+
+    private function setServicePause(){
+        $weekStartDate = date("Y/m/d",$this->week_start);
+        $weekEndDate = date("Y/m/d",$this->week_end);
+        $lastWeekStartDate = date("Y/m/d",$this->last_week_start);
+        $lastWeekEndDate = date("Y/m/d",$this->last_week_end);
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow("'{$this->city}'");
+        $citySetList = CitySetForm::getCitySetList($city_allow);
+        //终止服务、暂停服务
+        $serviceForT = CountSearch::getServiceForST($this->start_dt,$this->end_dt,$city_allow,"S");
+        //本週數據
+        $serviceWeek = CountSearch::getServiceForST($weekStartDate,$weekEndDate,$city_allow,"S");
+        //上週數據
+        $lastServiceWeek = CountSearch::getServiceForST($lastWeekStartDate,$lastWeekEndDate,$city_allow,"S");
+        $diffArr = array(
+            "service_amt"=>0,//累计金额
+            "now_week"=>0,//本周
+            "last_week"=>0,//上周
+            "growth"=>0,//加速增长
+            "start_two_gross"=>(-1)*$this->getYearStartMoney("two_gross"),//年初目标
+            "start_result"=>0,//达成目标(年初)
+        );
+        $data=array();
+        foreach ($citySetList as $cityRow) {
+            $city = $cityRow["code"];
+            $defMoreList=$diffArr;
+            $defMoreList["add_type"] = $cityRow["add_type"];
+
+            $defMoreList["service_amt"]+=key_exists($city,$serviceForT)?(-1)*$serviceForT[$city]["num_pause"]:0;
+            $defMoreList["now_week"]+=key_exists($city,$serviceWeek)?(-1)*$serviceWeek[$city]["num_pause"]:0;
+            $defMoreList["last_week"]+=key_exists($city,$lastServiceWeek)?(-1)*$lastServiceWeek[$city]["num_pause"]:0;
+
+            self::resetData($data,$cityRow,$citySetList,$defMoreList);
+        }
+        $cityData = $data[$this->city];
+        self::computeDate($cityData);
+        return $cityData;
+    }
+
+    private function setServiceNet(){
+        $weekStartDate = date("Y/m/d",$this->week_start);
+        $weekEndDate = date("Y/m/d",$this->week_end);
+        $lastWeekStartDate = date("Y/m/d",$this->last_week_start);
+        $lastWeekEndDate = date("Y/m/d",$this->last_week_end);
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow("'{$this->city}'");
+        $citySetList = CitySetForm::getCitySetList($city_allow);
+        $lastStartDate = CountSearch::computeLastMonth($this->start_dt);
+        $lastEndDate = CountSearch::computeLastMonth($this->end_dt);
+        //终止服务、暂停服务
+        $serviceForST = CountSearch::getServiceForST($this->start_dt,$this->end_dt,$city_allow);
+        //恢復服务
+        $serviceForR = CountSearch::getServiceForType($this->start_dt,$this->end_dt,$city_allow,"R");
+        //更改服务
+        $serviceForA = CountSearch::getServiceForA($this->start_dt,$this->end_dt,$city_allow);
+        //服务新增（非一次性 和 一次性)
+        $serviceAddForNY = CountSearch::getServiceAddForNY($this->start_dt,$this->end_dt,$city_allow);
+
+        //服务新增（一次性)(上月)
+        $lastServiceAddForNY = CountSearch::getServiceAddForY($lastStartDate,$lastEndDate,$city_allow);
+        //获取U系统的產品数据(上月)
+        $lastUInvMoney = CountSearch::getUInvMoney($lastStartDate,$lastEndDate,$city_allow);
+        //获取U系统的服务单数据
+        $uServiceMoney = CountSearch::getUServiceMoney($this->start_dt,$this->end_dt,$city_allow);
+        //获取U系统的產品数据
+        $uInvMoney = CountSearch::getUInvMoney($this->start_dt,$this->end_dt,$city_allow);
+        //本週數據
+        $serviceWeek = CountSearch::getServiceForAll($weekStartDate,$weekEndDate,$city_allow);
+        //上週數據
+        $lastServiceWeek = CountSearch::getServiceForAll($lastWeekStartDate,$lastWeekEndDate,$city_allow);
+        $diffArr = array(
+            "service_amt"=>0,//累计金额
+            "u_actual_money"=>0,//服务生意额
+            "now_week"=>0,//本周
+            "last_week"=>0,//上周
+            "growth"=>0,//加速增长
+            "start_two_gross"=>$this->getYearStartMoney("two_net"),//年初目标
+            "start_result"=>0,//达成目标(年初)
+        );
+        $data=array();
+        foreach ($citySetList as $cityRow) {
+            $city = $cityRow["code"];
+            $defMoreList=$diffArr;
+            $defMoreList["add_type"] = $cityRow["add_type"];
+            $defMoreList["u_actual_money"]+=key_exists($city,$uServiceMoney)?$uServiceMoney[$city]:0;
+            $defMoreList["u_actual_money"]+=key_exists($city,$uInvMoney)?$uInvMoney[$city]["sum_money"]:0;
+            if(key_exists($city,$serviceForST)){
+                $defMoreList["service_amt"]-=$serviceForST[$city]["num_pause"];//暂停
+                $defMoreList["service_amt"]-=$serviceForST[$city]["num_stop"];//终止
+            }//
+            $defMoreList["service_amt"]+=$defMoreList["u_actual_money"];//服务生意额
+            $defMoreList["service_amt"]+=key_exists($city,$serviceForR)?$serviceForR[$city]:0;//恢复
+            $defMoreList["service_amt"]+=key_exists($city,$serviceForA)?$serviceForA[$city]:0;//更改
+            $defMoreList["service_amt"]+=key_exists($city,$serviceAddForNY)?$serviceAddForNY[$city]["num_new"]:0;//本月新增服务（排除一次性）
+            $defMoreList["service_amt"]-=key_exists($city,$lastUInvMoney)?$lastUInvMoney[$city]["sum_money"]:0;//上月产品
+            $defMoreList["service_amt"]-=key_exists($city,$lastServiceAddForNY)?$lastServiceAddForNY[$city]:0;//上月一次性新增服务
+
+            $defMoreList["now_week"]+=key_exists($city,$serviceWeek)?$serviceWeek[$city]:0;
+            $defMoreList["last_week"]+=key_exists($city,$lastServiceWeek)?$lastServiceWeek[$city]:0;
+
+            self::resetData($data,$cityRow,$citySetList,$defMoreList);
+        }
+        $cityData = $data[$this->city];
+        self::computeDate($cityData);
+        return $cityData;
+    }
+
+    private function computeDate(&$list,$bool=false){
+        $list["now_week"]=($list["now_week"]/$this->week_day)*$this->month_day;
+        $list["now_week"]=HistoryAddForm::historyNumber($list["now_week"]);
+        $list["last_week"]=($list["last_week"]/$this->last_week_day)*$this->month_day;
+        $list["last_week"]=HistoryAddForm::historyNumber($list["last_week"]);
+        $list["growth"]=HistoryAddForm::comYes($list["now_week"],$list["last_week"]);
+        $list["start_result"]=HistoryAddForm::comYes($list["now_week"],$list["start_two_gross"],$bool);
+    }
+
+    private function setWeekDate(){
+        $this->city_allow = "'{$this->city}'";
+        $timer = strtotime($this->request_dt);
+        $this->month_day = date("t",$timer);
+        $this->start_dt = date("Y/m/01",$timer);
+        $this->end_dt = $this->request_dt;
+        $this->search_month = date("n",$timer);
+        $this->week_end = $timer;
+        $this->week_start = HistoryAddForm::getDateDiffForMonth($timer,6,$this->search_month,false);
+        $this->week_day = HistoryAddForm::getDateDiffForDay($this->week_start,$this->week_end);
+
+        $this->last_week_end = HistoryAddForm::getDateDiffForMonth($this->week_start,1,$this->search_month);
+        $this->last_week_start = HistoryAddForm::getDateDiffForMonth($this->last_week_end,6,$this->search_month,false);
+        $this->last_week_day = HistoryAddForm::getDateDiffForDay($this->last_week_start,$this->last_week_end);
+    }
+
     public static function drawEditButton($access, $writeurl, $readurl, $param) {
         $rw = Yii::app()->user->validRWFunction($access);
         $url = $rw ? $writeurl : $readurl;
@@ -418,5 +913,43 @@ class FeedbackTable extends FeedbackForm {
         $lnk=Yii::app()->createUrl($url,$param);
 
         return "<a href=\"$lnk\" target='_blank'><span class=\"$icon\"></span></a>";
+    }
+
+    //获取年初目标金额
+    private function getYearStartMoney($str="two_gross"){
+        $money = Yii::app()->db->createCommand()->select($str)->from("swo_comparison_set")
+            ->where("comparison_year=:year and month_type=1 and city=:city",
+                array(":year"=>date("Y",strtotime($this->start_dt)),":city"=>$this->city)
+            )->queryScalar();//查询目标金额
+        return $money?$money:0;
+    }
+
+    public static function resetData(&$data,$cityRow,$citySet,$defMoreList){
+        $notAddList=array("add_type","start_two_gross");
+        $city = $cityRow["code"];
+        $defMoreList["city"]=$city;
+        $defMoreList["city_name"]= $cityRow["city_name"];
+        $defMoreList["add_type"]= $cityRow["add_type"];
+        $region = $cityRow["region_code"];
+        if(key_exists($city,$data)){
+            foreach ($defMoreList as $key=>$value){
+                if(in_array($key,$notAddList)){
+                    if(!isset($data[$city][$key])){
+                        $data[$city][$key]=$value;
+                    }
+                }elseif (is_numeric($value)){
+                    $data[$city][$key]+=$value;
+                }else{
+                    $data[$city][$key]=$value;
+                }
+            }
+        }else{
+            $data[$city]=$defMoreList;
+        }
+
+        if($cityRow["add_type"]==1&&key_exists($region,$citySet)){//叠加(城市配置的叠加)
+            $regionTwo = $citySet[$region];
+            self::resetData($data,$regionTwo,$citySet,$defMoreList);
+        }
     }
 }
