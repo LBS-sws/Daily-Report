@@ -49,6 +49,7 @@
                 <p><?php echo Yii::t("summary","comparison_remark_10_{$model->search_type}");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_11");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_12");?></p>
+                <p><?php echo Yii::t("summary","comparison_remark_13_new");?></p>
             </div>
         </div>
     </div>
