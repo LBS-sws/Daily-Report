@@ -289,6 +289,7 @@ class FeedbackForm extends CFormModel
 
 		$to = City::model()->getAncestorInChargeList($this->city);
 		$this->to = implode("; ",General::getEmailByUserIdArray($to));
+		$this->to.= "; kittyzhou@lbsgroup.com.cn";//2023/09/08额外增加收件人
 //		$this->to = implode("; ",Yii::app()->params['bossEmail']);
 		
 		$sql = "select * from swo_mgr_feedback_rmk where feedback_id=".$index;
