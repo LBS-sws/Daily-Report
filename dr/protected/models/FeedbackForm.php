@@ -46,11 +46,12 @@ class FeedbackForm extends CFormModel
 		'A5~'=>'QC Record',
 		'A6~'=>'Staff Info',
 		'A7~'=>'Others',
-		'A8~'=>'Service New',//当月累计新增
+		/*'A8~'=>'Service New',//当月累计新增
 		'A9~'=>'Service Stop',//当月累计终止
 		'A10~'=>'Service Pause',//当月累计暂停
 		'A11~'=>'Service Net',//当月累计净增长
 		'A12~'=>'Sales Effect',//当月累计销售人效
+		*/
 	);
 
 	public function attributeLabels()
@@ -92,9 +93,11 @@ class FeedbackForm extends CFormModel
 			array($cat_list,'validateType'),
 			array($feedback_list,'validateRemarks'),
 			array("id",'validateCity'),
+            /*
 			array("cat_9",'validateMustSNN'),
 			array("cat_10",'validateMustP'),
 			array("cat_12",'validateMustSales'),
+            */
 		);
 	}
 
