@@ -168,5 +168,6 @@ return array(
     'Service Pause'=>"當月累計暫停",
     'Service Net'=>"當月累計凈增長",
     'Sales Effect'=>"當月累計銷售人效",
+    'Monthly performance'=>"月度業績",
 );
 ?>

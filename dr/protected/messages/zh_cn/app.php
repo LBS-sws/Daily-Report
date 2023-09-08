@@ -174,5 +174,6 @@ return array(
     'Service Pause'=>"当月累计暂停",
     'Service Net'=>"当月累计净增长",
     'Sales Effect'=>"当月累计销售人效",
+    'Monthly performance'=>"月度业绩",
 );
 ?>

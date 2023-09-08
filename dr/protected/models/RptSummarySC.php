@@ -73,7 +73,7 @@ class RptSummarySC extends ReportData2 {
         return true;
     }
 
-    public static function resetData(&$data,$cityRow,$citySet,$defMoreList){
+    public static function resetData(&$data,$cityRow,$citySet,$defMoreList,$bool=true){
         $notAddList=array("add_type");
         foreach (ComparisonForm::$con_list as $itemStr){
             $notAddList[]=$itemStr;
@@ -94,7 +94,7 @@ class RptSummarySC extends ReportData2 {
         if(key_exists($city,$data[$region]["list"])){
             foreach ($defMoreList as $key=>$value){
                 if(in_array($key,$notAddList)){
-                    if(!isset($data[$region]["list"][$city][$key])){
+                    if($bool){
                         $data[$region]["list"][$city][$key]=$value;
                     }
                 }elseif (is_numeric($value)){
@@ -109,7 +109,7 @@ class RptSummarySC extends ReportData2 {
 
         if($cityRow["add_type"]==1&&key_exists($region,$citySet)){//叠加(城市配置的叠加)
             $regionTwo = $citySet[$region];
-            self::resetData($data,$regionTwo,$citySet,$defMoreList);
+            self::resetData($data,$regionTwo,$citySet,$defMoreList,false);
         }
     }
 

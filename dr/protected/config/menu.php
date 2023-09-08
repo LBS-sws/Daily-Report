@@ -215,6 +215,10 @@ return array(
                 'access'=>'G05',
                 'url'=>'/comparison/index',
             ),
+            'Monthly performance'=>array( //月度业绩
+                'access'=>'G17',
+                'url'=>'/perMonth/index',
+            ),
             'History Add'=>array(
                 'access'=>'G07',
                 'url'=>'/historyAdd/index',

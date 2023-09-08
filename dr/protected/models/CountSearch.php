@@ -1008,7 +1008,7 @@ class CountSearch{
                 ->where($whereSql." and DATE_FORMAT(b.status_dt,'%Y')<'2024'")
                 ->queryAll();
             if($KARows){//
-                foreach ($rows as $row){
+                foreach ($KARows as $row){
                     $nextRow= Yii::app()->db->createCommand()
                         ->select("status")->from("swo_service_ka_no")
                         ->where("contract_no='{$row["contract_no"]}' and 

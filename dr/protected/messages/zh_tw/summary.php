@@ -197,5 +197,9 @@ return array(
     'district'=>'區',
     'address'=>'地址',
     'menu name'=>'菜單名稱',
+    'Per Month Add'=>'新增金額',
+    'Per Month Stop'=>'停止金額',
+    'Per Month Recover'=>'凈恢復金額',
+    'Per Month Net'=>'凈增金額',
 );
 ?>
