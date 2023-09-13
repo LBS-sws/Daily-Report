@@ -46,12 +46,11 @@ class FeedbackForm extends CFormModel
 		'A5~'=>'QC Record',
 		'A6~'=>'Staff Info',
 		'A7~'=>'Others',
-		/*'A8~'=>'Service New',//当月累计新增
+		'A8~'=>'Service New',//当月累计新增
 		'A9~'=>'Service Stop',//当月累计终止
 		'A10~'=>'Service Pause',//当月累计暂停
 		'A11~'=>'Service Net',//当月累计净增长
 		'A12~'=>'Sales Effect',//当月累计销售人效
-		*/
 	);
 
 	public function attributeLabels()
@@ -93,11 +92,9 @@ class FeedbackForm extends CFormModel
 			array($cat_list,'validateType'),
 			array($feedback_list,'validateRemarks'),
 			array("id",'validateCity'),
-            /*
 			array("cat_9",'validateMustSNN'),
 			array("cat_10",'validateMustP'),
 			array("cat_12",'validateMustSales'),
-            */
 		);
 	}
 
@@ -292,7 +289,9 @@ class FeedbackForm extends CFormModel
 
 		$to = City::model()->getAncestorInChargeList($this->city);
 		$this->to = implode("; ",General::getEmailByUserIdArray($to));
-		$this->to.= "; kittyzhou@lbsgroup.com.cn";//2023/09/08额外增加收件人
+		if($this->city!="CD"){
+            $this->to.= "; kittyzhou@lbsgroup.com.cn";//2023/09/08额外增加收件人
+        }
 //		$this->to = implode("; ",Yii::app()->params['bossEmail']);
 		
 		$sql = "select * from swo_mgr_feedback_rmk where feedback_id=".$index;
@@ -427,6 +426,9 @@ class FeedbackForm extends CFormModel
         $cityname = Yii::app()->db->createCommand($sqlcity)->queryAll();
 		$to = General::getEmailByUserIdArray($incharge);
 		$to = array_merge($to, Yii::app()->params['bossEmail']);
+		if($city!="CD"){//成都除外
+            $to[]= "kittyzhou@lbsgroup.com.cn";//2023/09/08额外增加收件人
+        }
 		$cc = empty($this->cc) ? array() : General::getEmailByUserIdArray($this->cc);
 		$cc[] = Yii::app()->user->email();
 		$subject = Yii::app()->user->city_name().': '.str_replace('{date}',$this->request_dt,Yii::t('feedback','Feedback about All Daily Reports (Date: {date})'));
