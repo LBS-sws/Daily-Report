@@ -117,19 +117,42 @@ $('#CustomerEnqList_city_list').on('select2:opening select2:closing', function( 
 EOF;
 Yii::app()->clientScript->registerScript('select2',$js,CClientScript::POS_READY);
 
+$ajaxUrl = Yii::app()->createUrl('customerenq/ajaxDetail');
 $js = <<<EOF
-function showdetail(id) {
-	var icon = $('#btn_'+id).attr('class');
-	if (icon.indexOf('plus') >= 0) {
-		$('.detail_'+id).show();
-		$('#btn_'+id).attr('class', 'fa fa-minus-square');
-	} else {
+
+$('.show-tr').on('click',function(){
+    var span = $(this).children("span").eq(0);
+    var id = $(this).children("span").eq(0).data('id');
+    var that = $(this).parents('tr:first');
+    console.log($(this).data('show')==1);
+    if(span.hasClass('fa-plus-square')){
+        if($(this).data('show')==1){
+		    $('.detail_'+id).show();
+        }else{
+            $(this).data('show',1);
+            $.ajax({
+                type: 'GET',
+                url: '{$ajaxUrl}',
+                data: {
+                    'id':id,
+                },
+                dataType: 'json',
+                success: function(data) {
+                    that.after(data['html']);
+                },
+                error: function(data) { // if error occured
+                    alert('Error occured.please try again');
+                }
+            });
+        }
+        span.removeClass('fa-plus-square').addClass('fa-minus-square');
+    }else{
 		$('.detail_'+id).hide();
-		$('#btn_'+id).attr('class', 'fa fa-plus-square');
-	}
-}
+        span.removeClass('fa-minus-square').addClass('fa-plus-square');
+    }
+});
 EOF;
-Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_HEAD);
+Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 
 $url = Yii::app()->createUrl('customerenq/index', array('pageNum'=>1));
 $js = <<<EOF
@@ -138,7 +161,7 @@ $('#btnSubmit').on('click', function() {
 	jQuery.yii.submitForm(this,'$url',{});
 });
 EOF;
-Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
+Yii::app()->clientScript->registerScript('btnClick',$js,CClientScript::POS_READY);
 
 //$js = Script::genTableRowClick();
 //Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
