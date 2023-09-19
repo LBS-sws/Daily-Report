@@ -127,18 +127,26 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
                 <div class="tab-content">
                     <div id="tab_1" class="tab-pane fade active in">
                         <?php
+                        $placeText = "The data in this column is not up to the standard. Please explain";
+                        $placeText = Yii::t("feedback",$placeText);
                         $cnt = 0;
                         $fldnames = $model->attributeLabels();
                         for($cnt=1;$cnt<=7;$cnt++){
                             $cat_field = 'cat_'.$cnt;
                             $fb_field = 'feedback_'.$cnt;
+                            $errorArray = $model->getErrors($cat_field);
+                            if(!empty($errorArray)){
+                                $placeholder = implode("/r/n",$errorArray);
+                            }else{
+                                $placeholder = "";
+                            }
                             echo '<div class="form-group">';
                             echo '<div class="col-sm-2 text-right">';
                             echo $form->checkBox($model,$cat_field, array('label'=>$fldnames[$cat_field],'value'=>'Y','uncheckValue'=>'N','disabled'=>($model->scenario=='view')));
                             echo '</div>';
                             echo '<div class="col-sm-7">';
                             echo $form->textArea($model, $fb_field,
-                                array('rows'=>5,'cols'=>80,'maxlength'=>5000,'readonly'=>($model->scenario=='view' || $model->$cat_field!='Y'))
+                                array('rows'=>5,'cols'=>80,'placeholder'=>$placeholder,'maxlength'=>5000,'readonly'=>($model->scenario=='view' || $model->$cat_field!='Y'))
                             );
                             echo '</div>';
                             if(!in_array($fb_field,array("feedback_7"))){ //其它没有详情
@@ -155,13 +163,19 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
                         for($cnt=8;$cnt<=12;$cnt++){
                             $cat_field = 'cat_'.$cnt;
                             $fb_field = 'feedback_'.$cnt;
+                            $errorArray = $model->getErrors($cat_field);
+                            if(!empty($errorArray)){
+                                $placeholder = implode("/r/n",$errorArray);
+                            }else{
+                                $placeholder = "";
+                            }
                             echo '<div class="form-group">';
                             echo '<div class="col-sm-2 text-right">';
                             echo $form->checkBox($model,$cat_field, array('label'=>$fldnames[$cat_field],'value'=>'Y','uncheckValue'=>'N','disabled'=>($model->scenario=='view')));
                             echo '</div>';
                             echo '<div class="col-sm-7">';
                             echo $form->textArea($model, $fb_field,
-                                array('rows'=>5,'cols'=>80,'maxlength'=>5000,'readonly'=>($model->scenario=='view' || $model->$cat_field!='Y'))
+                                array('rows'=>5,'cols'=>80,'placeholder'=>$placeholder,'maxlength'=>5000,'readonly'=>($model->scenario=='view' || $model->$cat_field!='Y'))
                             );
                             echo '</div>';
                             if(!in_array($fb_field,array("feedback_7"))){ //其它没有详情

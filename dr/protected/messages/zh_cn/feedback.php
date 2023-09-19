@@ -22,5 +22,6 @@ return array(
     'manage'=>"管理数据分析",
     'new service for new'=>"当天新增记录",
     'cannot be empty'=>"不能为空",
+    'The data in this column is not up to the standard. Please explain'=>"该栏数据未达标，请进行说明",
 );
 ?>

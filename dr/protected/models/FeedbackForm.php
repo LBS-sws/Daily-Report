@@ -208,17 +208,18 @@ class FeedbackForm extends CFormModel
         $cityData["stop_sum"] = round($cityData["stop_sum"],2);
         $cityData["net_sum"]=($cityData["net_sum"]/$week_day)*$month_day;
         $cityData["net_sum"] = round($cityData["net_sum"],2);
+
         if($this->cat_8=="N"&&HistoryAddForm::comYes($cityData["add_sum"],$two_gross)!==Yii::t("summary","Yes")){
             $message = "当月累计新增未达标，请填写原因";
-            $this->addError($attribute,$message);
+            $this->addError("cat_8",$message);
         }
         if($this->cat_9=="N"&&HistoryAddForm::comYes($cityData["stop_sum"],-1*$two_gross,true)!==Yii::t("summary","Yes")){
             $message = "当月累计终止未达标，请填写原因";
-            $this->addError($attribute,$message);
+            $this->addError("cat_9",$message);
         }
         if($this->cat_11=="N"&&HistoryAddForm::comYes($cityData["net_sum"],$two_net)!==Yii::t("summary","Yes")){
             $message = "当月累计净增长未达标，请填写原因";
-            $this->addError($attribute,$message);
+            $this->addError("cat_11",$message);
         }
     }
 
@@ -262,7 +263,7 @@ class FeedbackForm extends CFormModel
 		if ($this->$field=='Y' && empty($this->$attribute)) {
 			$label = $this->attributeLabels();
 			$message = $label[$field].' '.Yii::t('feedback','cannot be empty');
-			$this->addError($attribute,$message);
+			$this->addError($field,$message);
 		}
 	}
 
