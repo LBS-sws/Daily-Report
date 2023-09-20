@@ -169,5 +169,6 @@ return array(
     'Service Net'=>"當月累計凈增長",
     'Sales Effect'=>"當月累計銷售人效",
     'Monthly performance'=>"月度業績",
+    'Week Service U'=>"周服務生意額",
 );
 ?>

@@ -219,6 +219,10 @@ return array(
                 'access'=>'G17',
                 'url'=>'/perMonth/index',
             ),
+            'Week Service U'=>array( //周服务生意额
+                'access'=>'G18',
+                'url'=>'/weekServiceU/index',
+            ),
             'History Add'=>array(
                 'access'=>'G07',
                 'url'=>'/historyAdd/index',

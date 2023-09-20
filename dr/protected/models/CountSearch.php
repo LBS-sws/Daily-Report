@@ -1117,6 +1117,110 @@ class CountSearch{
         return $list;
     }
 
+
+    //获取U系统的服务单数据(周為鍵名)
+    public static function getUServiceMoneyForWeek($startDay,$endDay,$city_allow=""){
+        $list = array();
+        $citySql = "";
+        $textSql = "b.Text";
+        if(self::$system==2){//國際版
+            $textSql = "IF(b.Text='KL' or b.Text='SL','MY',b.Text)";
+        }
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $citySql = " and {$textSql} in ({$city_allow})";
+        }
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()
+            ->select("b.Text,a.JobDate,sum(
+                    if(a.TermCount=0,0,a.Fee/a.TermCount)
+					) as sum_amount")
+            ->from("service{$suffix}.joborder a")
+            ->leftJoin("service{$suffix}.officecity f","a.City = f.City")
+            ->leftJoin("service{$suffix}.enums b","f.Office = b.EnumID and b.EnumType=8")
+            ->where("a.Status=3 and a.JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
+            ->group("b.Text,a.JobDate")
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $city = self::resetCity($row["Text"]);
+                $money = empty($row["sum_amount"])?0:round($row["sum_amount"],2);
+                if(!key_exists($city,$list)){
+                    $list[$city]=array();
+                }
+                $dateKay = self::getWeekStart($row["JobDate"]);
+                if(!key_exists($dateKay,$list[$city])){
+                    $list[$city][$dateKay]=0;
+                }
+                $list[$city][$dateKay]+=$money;
+            }
+        }
+        return $list;
+    }
+
+    //服务新增INV(餐飲、非餐飲)(台灣版專用)(周為鍵名)
+    public static function getServiceTWForWeekAdd($startDay,$endDay,$city_allow=""){
+        $suffix = Yii::app()->params['envSuffix'];
+        $whereSql = "a.status='N' and f.rpt_cat='INV' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $list = array();
+        $sum_money = "case a.paid_type when 'M' then a.amt_paid * a.ctrt_period else a.amt_paid end";
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum($sum_money) as sum_amount,a.city,a.status_dt")
+            ->from("swoper{$suffix}.swo_service a")
+            ->leftJoin("swoper{$suffix}.swo_customer_type f","a.cust_type=f.id")
+            ->leftJoin("swoper{$suffix}.swo_nature g","a.nature_type=g.id")
+            ->where($whereSql)
+            ->group("a.city,a.status_dt")->queryAll();
+        $rows = $rows?$rows:array();
+
+        foreach ($rows as $row){
+            $city = $row["city"];
+            if(!key_exists($city,$list)){
+                $list[$city]=array();
+            }
+            $dateKay = self::getWeekStart($row["status_dt"]);
+            if(!key_exists($dateKay,$list[$city])){
+                $list[$city][$dateKay]=0;
+            }
+            $list[$city][$dateKay]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
+    //获取U系统的產品数据（周為鍵名)
+    public static function getUInvMoneyForWeek($startDay,$endDay,$city_allow=""){
+        if(self::$system===1){//台灣版的產品為lbs的inv新增
+            return self::getServiceTWForWeekAdd($startDay,$endDay,$city_allow);
+        }
+        $city = "";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $city = $city_allow;
+        }
+        if(self::$system===2&&!empty($city)&&strpos($city,"'MY'")!==false){//國際版
+            $city.=",'KL','SL'";
+        }
+        $json = Invoice::getInvData($startDay,$endDay,$city);
+        $list = array();
+        if($json["message"]==="Success"){
+            $jsonData = $json["data"];
+            foreach ($jsonData as $row){
+                $city = self::resetCity($row["city"]);
+                $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
+                if(!key_exists($city,$list)){
+                    $list[$city]=array();
+                }
+                $dateKay = self::getWeekStart($row["invoice_dt"]);
+                if(!key_exists($dateKay,$list[$city])){
+                    $list[$city][$dateKay]=0;
+                }
+                $list[$city][$dateKay]+=$money;
+            }
+        }
+        return $list;
+    }
+
     //服务新增INV產品数据(台灣版專用)
     public static function getUInvTWMoneyToMonth($endDay,$city_allow=""){
         $suffix = Yii::app()->params['envSuffix'];
@@ -1230,5 +1334,15 @@ class CountSearch{
             }
         }
         return $city;
+    }
+
+    //获取本周的起始天数（周六为起始天）
+    public static function getWeekStart($date){
+        $date = date("Y/m/d",strtotime($date));
+        //获取当前周的第几天 周日是 0 周一到周六是 1 - 6
+        $w = date("w",strtotime($date));
+        //一周：周六至周五
+        $weekStart = date("Y/m/d",strtotime($date." - ".($w==6?0:$w+1)." day"));
+        return $weekStart;
     }
 }

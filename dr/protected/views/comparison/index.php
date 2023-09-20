@@ -118,8 +118,8 @@ $js="
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDatePicker(array(
-    'ComparisonForm_start_date',
-    'ComparisonForm_end_date'
+    'ComparisonForm_search_start_date',
+    'ComparisonForm_search_end_date'
 ));
 Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 $js = Script::genReadonlyField();

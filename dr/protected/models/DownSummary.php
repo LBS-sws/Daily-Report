@@ -36,7 +36,6 @@ class DownSummary{
     }
 
     public function setSummaryHeader($headerArr,$bool=false){
-        $this->setSummaryWidth();
         if(!empty($headerArr)){
             for ($i=0;$i<$this->colTwo;$i++){
                 $startStr = $this->getColumn($i);
@@ -93,10 +92,10 @@ class DownSummary{
 
             $this->current_row+=2;
         }
+        $this->setSummaryWidth();
     }
 
     public function setUServiceHeader($headerArr){
-        $this->setSummaryWidth();
         if(!empty($headerArr)){
             $endStr = $this->getColumn(count($headerArr)-1);
             $this->objPHPExcel->getActiveSheet()->getStyle("A{$this->current_row}:{$endStr}".($this->current_row))->applyFromArray(
@@ -131,10 +130,11 @@ class DownSummary{
             }
             $this->current_row++;
         }
+        $this->setSummaryWidth();
     }
 
     private function setSummaryWidth(){
-        for ($col=0;$col<18;$col++){
+        for ($col=0;$col<$this->th_num;$col++){
             $width = 13;
             $this->objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($col)->setWidth($width);
         }
