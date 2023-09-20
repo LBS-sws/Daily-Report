@@ -127,10 +127,10 @@ class PerMonthAdd extends PerMonth
 
         $topList[]=array("name"=>Yii::t("summary","Target contrast"),"background"=>"#DCE6F1",
             "colspan"=>array(
-                array("name"=>Yii::t("summary","Start Target").Yii::t("summary","(base case)")),//年初目标(base)
-                array("name"=>Yii::t("summary","Start Target result").Yii::t("summary","(base case)")),//达成目标(base)
-                array("name"=>Yii::t("summary","Start Target").Yii::t("summary","(upside case)")),//年初目标(upside)
-                array("name"=>Yii::t("summary","Start Target result").Yii::t("summary","(upside case)")),//达成目标(upside)
+                array("name"=>Yii::t("summary","Start Target").Yii::t("summary","(base)")),//年初目标(base)
+                array("name"=>Yii::t("summary","Start Target result").Yii::t("summary","(base)")),//达成目标(base)
+                array("name"=>Yii::t("summary","Start Target").Yii::t("summary","(upside)")),//年初目标(upside)
+                array("name"=>Yii::t("summary","Start Target result").Yii::t("summary","(upside)")),//达成目标(upside)
             )
         );//目标对比
 

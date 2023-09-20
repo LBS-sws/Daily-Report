@@ -27,14 +27,14 @@ class PerMonthRecover extends PerMonth
         $lastServiceS = CountSearch::getServiceForST($lastYearStart,$lastYearEnd,$city_allow,"S");
         //更改服务(上一年)
         $lastServiceA = CountSearch::getServiceForA($lastYearStart,$lastYearEnd,$city_allow);
-
+/* 2023-09-20说不需要预估了
         //恢复服务(上週)
         $serviceRWeek = CountSearch::getServiceForType($lastWeekStartDate,$lastWeekEndDate,$city_allow,"R");
         //暂停服务(上週)
         $serviceSWeek = CountSearch::getServiceForST($lastWeekStartDate,$lastWeekEndDate,$city_allow,"S");
         //更改服务(上週)
         $serviceAWeek = CountSearch::getServiceForA($lastWeekStartDate,$lastWeekEndDate,$city_allow);
-
+*/
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
             $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
@@ -48,11 +48,11 @@ class PerMonthRecover extends PerMonth
             $defMoreList["last_average"]+=key_exists($city,$lastServiceR)?$lastServiceR[$city]:0;
             $defMoreList["last_average"]+=key_exists($city,$lastServiceS)?-1*$lastServiceS[$city]["num_pause"]:0;
             $defMoreList["last_average"]+=key_exists($city,$lastServiceA)?$lastServiceA[$city]:0;
-
+            /* 2023-09-20说不需要预估了
             $defMoreList["last_week"]+=key_exists($city,$serviceRWeek)?$serviceRWeek[$city]:0;
             $defMoreList["last_week"]+=key_exists($city,$serviceSWeek)?-1*$serviceSWeek[$city]["num_pause"]:0;
             $defMoreList["last_week"]+=key_exists($city,$serviceAWeek)?$serviceAWeek[$city]:0;
-
+            */
             RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
         $this->data = $data;
@@ -84,8 +84,10 @@ class PerMonthRecover extends PerMonth
 
     protected function resetTdRow(&$list,$bool=false,$count=1){
         if(!$bool){
+            /*2023-09-20说不需要预估了
             $list["last_week"]=($list["last_week"]/$this->last_week_day)*$this->month_day;
             $list["last_week"]=parent::perMonthNumber($list["last_week"]);
+            */
         }
         if(!$bool){
             $list["last_average"]=round($list["last_average"]/12,2);
@@ -100,13 +102,14 @@ class PerMonthRecover extends PerMonth
             $list[$nowStr] = parent::perMonthNumber($list[$nowStr]);
             $lastNum = $list[$nowStr];
         }
+        $list["last_average"] = parent::perMonthNumber($list["last_average"]);
+        /*2023-09-20说不需要预估了
         $list["now_week"]=($lastNum/$this->week_day)*$this->month_day;
         $list["now_week"] = parent::perMonthNumber($list["now_week"]);
-        $list["last_average"] = parent::perMonthNumber($list["last_average"]);
         $list["growth"]=HistoryAddForm::comYes($list["now_week"],$list["last_week"]);
         $list["start_two_result"]=HistoryAddForm::comYes($list["now_week"],$list["start_two_gross"]);
         $list["start_one_result"]=HistoryAddForm::comYes($list["now_week"],$list["start_one_gross"]);
-
+        */
     }
 
     protected function getTopArr(){
@@ -127,7 +130,7 @@ class PerMonthRecover extends PerMonth
                 "colspan"=>$monthArr
             ),//本年
         );
-
+/*
         $topList[]=array("name"=>$this->search_month.Yii::t("summary"," month estimate"),"background"=>"#f2dcdb",
             "colspan"=>array(
                 array("name"=>Yii::t("summary","now week")),//本周
@@ -138,13 +141,13 @@ class PerMonthRecover extends PerMonth
 
         $topList[]=array("name"=>Yii::t("summary","Target contrast"),"background"=>"#DCE6F1",
             "colspan"=>array(
-                array("name"=>Yii::t("summary","Start Target").Yii::t("summary","(base case)")),//年初目标(base)
-                array("name"=>Yii::t("summary","Start Target result").Yii::t("summary","(base case)")),//达成目标(base)
-                array("name"=>Yii::t("summary","Start Target").Yii::t("summary","(upside case)")),//年初目标(upside)
-                array("name"=>Yii::t("summary","Start Target result").Yii::t("summary","(upside case)")),//达成目标(upside)
+                array("name"=>Yii::t("summary","Start Target").Yii::t("summary","(base)")),//年初目标(base)
+                array("name"=>Yii::t("summary","Start Target result").Yii::t("summary","(base)")),//达成目标(base)
+                array("name"=>Yii::t("summary","Start Target").Yii::t("summary","(upside)")),//年初目标(upside)
+                array("name"=>Yii::t("summary","Start Target result").Yii::t("summary","(upside)")),//达成目标(upside)
             )
         );//目标对比
-
+*/
         return $topList;
     }
 
@@ -158,7 +161,7 @@ class PerMonthRecover extends PerMonth
             $month = $i>=10?10:"0{$i}";
             $bodyKey[]=$this->search_year."/{$month}";
         }
-
+/*
         $bodyKey[]="now_week";
         $bodyKey[]="last_week";
         $bodyKey[]="growth";
@@ -166,7 +169,7 @@ class PerMonthRecover extends PerMonth
         $bodyKey[]="start_one_result";//(Upside)
         $bodyKey[]="start_two_gross";//(Base)
         $bodyKey[]="start_two_result";//(Base)
-
+*/
         return $bodyKey;
     }
 

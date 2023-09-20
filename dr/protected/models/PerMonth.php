@@ -72,7 +72,7 @@ class PerMonth extends CFormModel
             $this->week_day = HistoryAddForm::getDateDiffForDay($this->week_start,$this->week_end);
 
             $this->last_week_end = HistoryAddForm::getDateDiffForMonth($weekStart,1,$this->search_month);
-            $this->last_week_start = HistoryAddForm::getDateDiffForMonth($this->last_week_end,6,$this->search_month,false);
+            $this->last_week_start = strtotime("1999/01/01")==$this->last_week_end?$this->last_week_end:$this->week_start;
             $this->last_week_day = HistoryAddForm::getDateDiffForDay($this->last_week_start,$this->last_week_end);
         }
     }
