@@ -129,6 +129,7 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
                         <?php
                         $placeText = "The data in this column is not up to the standard. Please explain";
                         $placeText = Yii::t("feedback",$placeText);
+                        $model->validateLoad();
                         $cnt = 0;
                         $fldnames = $model->attributeLabels();
                         for($cnt=1;$cnt<=7;$cnt++){
@@ -136,13 +137,14 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
                             $fb_field = 'feedback_'.$cnt;
                             $errorArray = $model->getErrors($cat_field);
                             if(!empty($errorArray)){
-                                $placeholder = implode("/r/n",$errorArray);
+                                echo '<div class="form-group has-error">';
+                                $placeholder = implode("\n",$errorArray);
                             }else{
+                                echo '<div class="form-group">';
                                 $placeholder = "";
                             }
-                            echo '<div class="form-group">';
                             echo '<div class="col-sm-2 text-right">';
-                            echo $form->checkBox($model,$cat_field, array('label'=>$fldnames[$cat_field],'value'=>'Y','uncheckValue'=>'N','disabled'=>($model->scenario=='view')));
+                            echo $form->checkBox($model,$cat_field, array('class'=>'focus-box','label'=>$fldnames[$cat_field],'value'=>'Y','uncheckValue'=>'N','disabled'=>($model->scenario=='view')));
                             echo '</div>';
                             echo '<div class="col-sm-7">';
                             echo $form->textArea($model, $fb_field,
@@ -165,13 +167,14 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
                             $fb_field = 'feedback_'.$cnt;
                             $errorArray = $model->getErrors($cat_field);
                             if(!empty($errorArray)){
-                                $placeholder = implode("/r/n",$errorArray);
+                                echo '<div class="form-group has-error">';
+                                $placeholder = implode("\n",$errorArray);
                             }else{
+                                echo '<div class="form-group">';
                                 $placeholder = "";
                             }
-                            echo '<div class="form-group">';
                             echo '<div class="col-sm-2 text-right">';
-                            echo $form->checkBox($model,$cat_field, array('label'=>$fldnames[$cat_field],'value'=>'Y','uncheckValue'=>'N','disabled'=>($model->scenario=='view')));
+                            echo $form->checkBox($model,$cat_field, array('class'=>'focus-box','label'=>$fldnames[$cat_field],'value'=>'Y','uncheckValue'=>'N','disabled'=>($model->scenario=='view')));
                             echo '</div>';
                             echo '<div class="col-sm-7">';
                             echo $form->textArea($model, $fb_field,
@@ -253,6 +256,10 @@ Yii::app()->clientScript->registerScript('feedbackReadonly',$js,CClientScript::P
 
 $ajaxUrl = Yii::app()->createUrl('feedback/ajaxDetail');
 $js.= "
+$('.focus-box').on('focus',function(){
+    $(this).parents('.form-group:first').removeClass('has-error');
+});
+
 $('.link_detail').on('click',function(){
     var dateStr = $('#FeedbackForm_request_dt').val();
     $('#detailDialog').find('.modal-title').text($(this).data('title')+' ('+dateStr+')');

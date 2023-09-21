@@ -13,29 +13,29 @@ class FeedbackForm extends CFormModel
 	public $cc;
 	public $rpt_id;
 
-	public $cat_1;
+	public $cat_1="N";
 	public $feedback_1;
-	public $cat_2;
+	public $cat_2="N";
 	public $feedback_2;
-	public $cat_3;
+	public $cat_3="N";
 	public $feedback_3;
-	public $cat_4;
+	public $cat_4="N";
 	public $feedback_4;
-	public $cat_5;
+	public $cat_5="N";
 	public $feedback_5;
-	public $cat_6;
+	public $cat_6="N";
 	public $feedback_6;
-	public $cat_7;
+	public $cat_7="N";
 	public $feedback_7;
-	public $cat_8;
+	public $cat_8="N";
 	public $feedback_8;
-	public $cat_9;
+	public $cat_9="N";
 	public $feedback_9;
-	public $cat_10;
+	public $cat_10="N";
 	public $feedback_10;
-	public $cat_11;
+	public $cat_11="N";
 	public $feedback_11;
-	public $cat_12;
+	public $cat_12="N";
 	public $feedback_12;
 
 	public $cats = array(
@@ -88,8 +88,8 @@ class FeedbackForm extends CFormModel
 		}
 		
 		return array(
-			array('id, city, request_dt, feedback_dt, status, status_desc, to, cc, rpt_id','safe'),
-			array($cat_list,'validateType'),
+			array('id, city, request_dt, feedback_dt, status, status_desc, to, cc, rpt_id,'.$cat_list,'safe'),
+			array("cat_1",'validateType'),
 			array($feedback_list,'validateRemarks'),
 			array("id",'validateCity'),
 			array("cat_9",'validateMustSNN'),
@@ -97,6 +97,16 @@ class FeedbackForm extends CFormModel
 			array("cat_12",'validateMustSales'),
 		);
 	}
+
+	//进入表单自动验证
+    public function validateLoad(){
+	    if(!$this->hasErrors()){
+            $this->validateCity("id","");
+            $this->validateMustSNN("cat_9","");
+            $this->validateMustP("cat_10","");
+            $this->validateMustSales("cat_12","");
+        }
+    }
 
 	//验证哪些内容必须填写(累计销售人效)
 	public function validateMustSales($attribute, $params){
@@ -254,7 +264,7 @@ class FeedbackForm extends CFormModel
 		}
 		if (!$flag) {
 			$message = Yii::t('feedback','No feedback type is selected');
-			$this->addError($attribute,$message);
+			$this->addError("id",$message);
 		}
 	}
 
