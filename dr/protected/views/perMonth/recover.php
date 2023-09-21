@@ -51,27 +51,27 @@ $this->pageTitle=Yii::app()->name . ' - PerMonthRecover Form';
         <div id="yw0" class="tabbable">
             <div class="box-info" >
                 <div class="box-body" >
-                    <div class="col-lg-12">
+                    <div class="col-lg-5">
                         <div class="form-group">
                             <?php echo TbHtml::hiddenField("month_type",$model->month_type);?>
-                            <?php echo $form->labelEx($model,'search_date',array('class'=>"col-sm-2 control-label")); ?>
-                            <div class="col-sm-2">
+                            <?php echo $form->labelEx($model,'search_date',array('class'=>"col-sm-5 control-label")); ?>
+                            <div class="col-sm-7">
                                 <?php echo $form->textField($model, 'search_date',
                                     array('readonly'=>true,'prepend'=>"<span class='fa fa-calendar'></span>")
                                 ); ?>
                             </div>
                         </div>
                         <div class="form-group">
-                            <?php echo $form->labelEx($model,'week_start',array('class'=>"col-sm-2 control-label")); ?>
-                            <div class="col-sm-10">
+                            <?php echo $form->labelEx($model,'week_start',array('class'=>"col-sm-5 control-label")); ?>
+                            <div class="col-sm-7">
                                 <p class="form-control-static">
                                     <?php echo date("Y/m/d",$model->week_start)." ~ ".date("Y/m/d",$model->week_end)." (".$model->week_day.")";?>
                                 </p>
                             </div>
                         </div>
                         <div class="form-group">
-                            <?php echo $form->labelEx($model,'last_week_start',array('class'=>"col-sm-2 control-label")); ?>
-                            <div class="col-sm-10">
+                            <?php echo $form->labelEx($model,'last_week_start',array('class'=>"col-sm-5 control-label")); ?>
+                            <div class="col-sm-7">
                                 <p class="form-control-static">
                                     <?php
                                     if($model->last_week_end!=strtotime("1999/01/01")){
@@ -83,6 +83,14 @@ $this->pageTitle=Yii::app()->name . ' - PerMonthRecover Form';
                                 </p>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="col-lg-7">
+                        <p><b><?php echo Yii::t("summary","perMonth_remark_0");?></b></p>
+                        <p><?php echo Yii::t("summary","perMonth_remark_1");?></p>
+                        <p><?php echo Yii::t("summary","perMonth_remark_2");?></p>
+                        <p><?php echo Yii::t("summary","perMonth_remark_3");?></p>
+                        <p><?php echo Yii::t("summary","perMonth_remark_4");?></p>
                     </div>
 
                     <div class="col-lg-12">

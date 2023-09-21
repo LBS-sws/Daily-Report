@@ -151,10 +151,10 @@ class PerMonthAdd extends PerMonth
         $bodyKey[]="now_week";
         $bodyKey[]="last_week";
         $bodyKey[]="growth";
-        $bodyKey[]="start_one_gross";//(Upside)
-        $bodyKey[]="start_one_result";//(Upside)
         $bodyKey[]="start_two_gross";//(Base)
         $bodyKey[]="start_two_result";//(Base)
+        $bodyKey[]="start_one_gross";//(Upside)
+        $bodyKey[]="start_one_result";//(Upside)
 
         return $bodyKey;
     }

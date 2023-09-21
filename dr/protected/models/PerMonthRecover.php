@@ -42,7 +42,7 @@ class PerMonthRecover extends PerMonth
             ComparisonForm::setComparisonConfig($defMoreList,$this->search_year,$this->month_type,$city);
 
             $this->addListForCity($defMoreList,$city,$serviceR);
-            $this->addListForCity($defMoreList,$city,$serviceS,4);
+            $this->addListForCity($defMoreList,$city,$serviceS);
             $this->addListForCity($defMoreList,$city,$serviceA);
 
             $defMoreList["last_average"]+=key_exists($city,$lastServiceR)?$lastServiceR[$city]:0;

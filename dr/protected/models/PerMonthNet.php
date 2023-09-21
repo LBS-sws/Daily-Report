@@ -217,10 +217,10 @@ class PerMonthNet extends PerMonth
         $bodyKey[]="now_week";
         $bodyKey[]="last_week";
         $bodyKey[]="growth";
-        $bodyKey[]="start_one_net";//(Upside)
-        $bodyKey[]="start_one_result";//(Upside)
         $bodyKey[]="start_two_net";//(Base)
         $bodyKey[]="start_two_result";//(Base)
+        $bodyKey[]="start_one_net";//(Upside)
+        $bodyKey[]="start_one_result";//(Upside)
 
         return $bodyKey;
     }

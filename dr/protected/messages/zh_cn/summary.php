@@ -201,5 +201,11 @@ return array(
     'Per Month Stop'=>'停止金额',
     'Per Month Recover'=>'净恢复金额',
     'Per Month Net'=>'净增金额',
+
+    'perMonth_remark_0'=>'计算逻辑：',
+    'perMonth_remark_1'=>'1、新增金额 =  新增(除一次性服务） +   一次性服务+新增（产品）',
+    'perMonth_remark_2'=>'2、停止金额 =  终止服务  +  上月一次性服务+新增产品',
+    'perMonth_remark_3'=>'3、净恢复金额 =  恢复服务   +  暂停服务  +  更改服务',
+    'perMonth_remark_4'=>'4、净增金额 = 新增金额  –  停止金额  +  净恢复金额',
 );
 ?>
