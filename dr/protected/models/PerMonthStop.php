@@ -187,6 +187,10 @@ class PerMonthStop extends PerMonth
 
     //下載
     public function downExcel($excelData){
+        if(!is_array($excelData)){
+            $excelData = json_decode($excelData,true);
+            $excelData = key_exists("excel",$excelData)?$excelData["excel"]:array();
+        }
         $this->validateDate("","");
         $headList = $this->getTopArr();
         $excel = new DownSummary();

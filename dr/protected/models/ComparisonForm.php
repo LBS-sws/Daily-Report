@@ -25,6 +25,7 @@ class ComparisonForm extends CFormModel
 
 	public $th_sum=2;//所有th的个数
 
+    public $downJsonText='';
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -611,12 +612,15 @@ class ComparisonForm extends CFormModel
     public function tableBodyHtml(){
         $html="";
         if(!empty($this->data)){
+            $this->downJsonText=array();
             $html.="<tbody>";
             $moData = key_exists("MO",$this->data)?$this->data["MO"]:array();
             unset($this->data["MO"]);//澳门需要单独处理
             $html.=$this->showServiceHtml($this->data);
             $html.=$this->showServiceHtmlForMO($moData);
             $html.="</tbody>";
+            $this->downJsonText=json_encode($this->downJsonText);
+            $html.=TbHtml::hiddenField("excel",$this->downJsonText);
         }
         return $html;
     }
@@ -690,8 +694,9 @@ class ComparisonForm extends CFormModel
                     $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                     $exprData = self::tdClick($tdClass,$keyStr,$cityList["city"]);//点击后弹窗详细内容
                     $text = ComparisonForm::showNum($text);
-                    $inputHide = TbHtml::hiddenField("excel[MO][{$keyStr}]",$text);
-                    $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span>{$inputHide}</td>";
+                    //$inputHide = TbHtml::hiddenField("excel[MO][{$keyStr}]",$text);
+                    $this->downJsonText["excel"]['MO'][$keyStr]=$text;
+                    $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span></td>";
                 }
                 $html.="</tr>";
             }
@@ -771,13 +776,14 @@ class ComparisonForm extends CFormModel
                             ComparisonForm::setTextColorForKeyStr($tdClass,$keyStr,$cityList);
                             $exprData = self::tdClick($tdClass,$keyStr,$cityList["city"]);//点击后弹窗详细内容
                             $text = ComparisonForm::showNum($text);
-                            $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
+                            //$inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
+                            $this->downJsonText["excel"][$regionList['region']]['list'][$cityList['city']][$keyStr]=$text;
                             if($keyStr=="new_sum"){//调试U系统同步数据
-                                $html.="<td class='{$tdClass}' {$exprData} data-u='{$cityList['u_sum']}'><span>{$text}</span>{$inputHide}</td>";
+                                $html.="<td class='{$tdClass}' {$exprData} data-u='{$cityList['u_sum']}'><span>{$text}</span></td>";
                             }elseif($keyStr=="new_sum_last"){//调试U系统同步数据
-                                $html.="<td class='{$tdClass}' {$exprData} data-u='{$cityList['u_sum_last']}'><span>{$text}</span>{$inputHide}</td>";
+                                $html.="<td class='{$tdClass}' {$exprData} data-u='{$cityList['u_sum_last']}'><span>{$text}</span></td>";
                             }else{
-                                $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span>{$inputHide}</td>";
+                                $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span></td>";
                             }
                         }
                         $html.="</tr>";
@@ -806,8 +812,9 @@ class ComparisonForm extends CFormModel
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
             $text = ComparisonForm::showNum($text);
-            $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][{$keyStr}]",$text);
-            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span>{$inputHide}</td>";
+            //$inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][{$keyStr}]",$text);
+            $this->downJsonText["excel"][$data['region']]['count'][$keyStr]=$text;
+            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span></td>";
         }
         $html.="</tr>";
         return $html;
@@ -822,6 +829,10 @@ class ComparisonForm extends CFormModel
 
     //下載
     public function downExcel($excelData){
+        if(!is_array($excelData)){
+            $excelData = json_decode($excelData,true);
+            $excelData = key_exists("excel",$excelData)?$excelData["excel"]:array();
+        }
         $this->validateDate("","");
         $this->comparison_year = date("Y",strtotime($this->start_date));
         $this->month_start_date = date("m/d",strtotime($this->start_date));

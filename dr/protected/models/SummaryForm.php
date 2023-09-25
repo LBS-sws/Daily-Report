@@ -22,6 +22,7 @@ class SummaryForm extends CFormModel
 
 	public $th_sum=2;//所有th的个数
 
+    public $downJsonText='';
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -356,12 +357,15 @@ class SummaryForm extends CFormModel
     public function tableBodyHtml(){
         $html="";
         if(!empty($this->data)){
+            $this->downJsonText=array();
             $html.="<tbody>";
             $moData = key_exists("MO",$this->data)?$this->data["MO"]:array();
             unset($this->data["MO"]);//澳门需要单独处理
             $html.=$this->showServiceHtml($this->data);
             $html.=$this->showServiceHtmlForMO($moData);
             $html.="</tbody>";
+            $this->downJsonText=json_encode($this->downJsonText);
+            $html.=TbHtml::hiddenField("excel",$this->downJsonText);
         }
         return $html;
     }
@@ -429,11 +433,12 @@ class SummaryForm extends CFormModel
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                     $text = ComparisonForm::showNum($text);
-                    $inputHide = TbHtml::hiddenField("excel[MO][{$keyStr}]",$text);
+                    //$inputHide = TbHtml::hiddenField("excel[MO][{$keyStr}]",$text);
+                    $this->downJsonText["excel"]['MO'][$keyStr]=$text;
                     $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                     $exprData = self::tdClick($tdClass,$keyStr,$cityList["city"]);//点击后弹窗详细内容
                     ComparisonForm::setTextColorForKeyStr($tdClass,$keyStr,$cityList);
-                    $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span>{$inputHide}</td>";
+                    $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span></td>";
                 }
                 $html.="</tr>";
             }
@@ -468,8 +473,9 @@ class SummaryForm extends CFormModel
                             ComparisonForm::setTextColorForKeyStr($tdClass,$keyStr,$cityList);
                             $exprData = self::tdClick($tdClass,$keyStr,$cityList["city"]);//点击后弹窗详细内容
                             $text = ComparisonForm::showNum($text);
-                            $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
-                            $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span>{$inputHide}</td>";
+                            //$inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
+                            $this->downJsonText["excel"][$regionList['region']]['list'][$cityList['city']][$keyStr]=$text;
+                            $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span></td>";
                         }
                         $html.="</tr>";
                     }
@@ -497,8 +503,9 @@ class SummaryForm extends CFormModel
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
             $text = ComparisonForm::showNum($text);
-            $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][{$keyStr}]",$text);
-            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span>{$inputHide}</td>";
+            //$inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][{$keyStr}]",$text);
+            $this->downJsonText["excel"][$data['region']]['count'][$keyStr]=$text;
+            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span></td>";
         }
         $html.="</tr>";
         return $html;
@@ -533,6 +540,10 @@ class SummaryForm extends CFormModel
 
     //下載
     public function downExcel($excelData){
+        if(!is_array($excelData)){
+            $excelData = json_decode($excelData,true);
+            $excelData = key_exists("excel",$excelData)?$excelData["excel"]:array();
+        }
         $this->validateDate("","");
         $headList = $this->getTopArr();
         $excel = new DownSummary();

@@ -75,7 +75,6 @@ $this->pageTitle=Yii::app()->name . ' - WeekServiceU Form';
                             <!-- Table -->
                             <div class="table-responsive">
                                 <?php echo $model->weekServiceUHtml();?>
-                                <?php echo TbHtml::hiddenField("excel",$model->downJsonText);?>
                             </div>
                         </div>
                     </div>
