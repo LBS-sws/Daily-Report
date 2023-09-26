@@ -227,6 +227,7 @@ class WeekServiceUForm extends CFormModel
             $html.=$this->showServiceHtmlForMO($moData);
             $html.="</tbody>";
             $this->downJsonText=json_encode($this->downJsonText);
+            $html.=TbHtml::hiddenField("excel",$this->downJsonText);
         }
         return $html;
     }

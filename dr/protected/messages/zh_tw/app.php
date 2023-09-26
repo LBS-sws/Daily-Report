@@ -170,5 +170,6 @@ return array(
     'Sales Effect'=>"當月累計銷售人效",
     'Monthly performance'=>"月度業績",
     'Week Service U'=>"周服務生意額",
+    'Contract comparison report'=>"合約對比報表",
 );
 ?>

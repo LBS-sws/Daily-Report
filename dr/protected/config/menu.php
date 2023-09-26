@@ -73,6 +73,10 @@ return array(
 		'access'=>'B',
 		'icon'=>'fa-file-text-o',
 		'items'=>array(
+			'Contract comparison report'=>array( //合约对比报表
+				'access'=>'B36',
+				'url'=>'/report/contractCom',
+			),
 			'KA customer report'=>array( //ke客户报表
 				'access'=>'B34',
 				'url'=>'/report/customerKA',

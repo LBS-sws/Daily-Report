@@ -59,6 +59,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('customerKA'),'expression'=>array('ReportController','allowCustomerKA')),
 			array('allow','actions'=>array('chain'),'expression'=>array('ReportController','allowChain')),
 			array('allow','actions'=>array('activeService'),'expression'=>array('ReportController','allowActiveService')),
+			array('allow','actions'=>array('contractCom'),'expression'=>array('ReportController','allowContractCom')),
 			array('allow',
 				'actions'=>array('generate'),
 				'expression'=>array('ReportController','allowReadOnly'),
@@ -538,6 +539,29 @@ class ReportController extends Controller
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
 
+// Report: ContractCom
+    protected static function allowContractCom() {
+        return Yii::app()->user->validFunction('B36');
+    }
+
+    public function actionContractCom() {
+        $this->function_id = "B36";
+        Yii::app()->session['active_func'] = $this->function_id;
+        $model = new ReportConForm();
+        if (isset($_POST['ReportConForm'])) {
+            $model->attributes = $_POST['ReportConForm'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            }
+            else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('contract',array('model'=>$model));
+    }
+
 // Report: UService
 	protected static function allowUService() {
 		return Yii::app()->user->validFunction('B32');
@@ -752,6 +776,7 @@ class ReportController extends Controller
 				if ($model->id=='feedback') $this->genFeedback($model);
 				if ($model->id=='customerID') $this->genCustomerID($model);
 				if ($model->id=='summarySC') $this->genSummarySC($model);
+				if ($model->id=='contractCom') $this->genContractCom($model);
 				if ($model->id=='uService') $this->genUService($model);
 				if ($model->id=='uServiceDetail') $this->genUServiceDetail($model);
 				if ($model->id=='customerKA') $this->genCustomerKA($model);

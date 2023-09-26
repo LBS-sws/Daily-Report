@@ -207,5 +207,9 @@ return array(
     'perMonth_remark_2'=>'2、停止金额 =  终止服务  +  上月一次性服务+新增产品',
     'perMonth_remark_3'=>'3、净恢复金额 =  恢复服务   +  暂停服务  +  更改服务',
     'perMonth_remark_4'=>'4、净增金额 = 新增金额  –  停止金额  +  净恢复金额',
+
+    'contract number'=>'合约数量',
+    'contract money'=>'合约总金额',
+    'contract service'=>'每月服务次数',
 );
 ?>

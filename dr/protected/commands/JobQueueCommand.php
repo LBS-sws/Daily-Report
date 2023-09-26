@@ -434,6 +434,7 @@ EOF;
 			case 'RptCustomerKAT': $model = new RptCustomerKA("T"); break;
 			case 'RptCustomerKAS': $model = new RptCustomerKA("S"); break;
 			case 'RptChain': $model = new RptChain(); break;
+			case 'RptContractCom': $model = new RptContractCom(); break;
 		}
 		return $model;
 	}

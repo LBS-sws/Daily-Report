@@ -207,5 +207,9 @@ return array(
     'perMonth_remark_2'=>'2、停止金額 =  終止服務  +  上月一次性服務+新增產品',
     'perMonth_remark_3'=>'3、凈恢復金額 =  恢復服務   +  暫停服務  +  更改服務',
     'perMonth_remark_4'=>'4、凈增金額 = 新增金額  –  停止金額  +  凈恢復金額',
+
+    'contract number'=>'合約數量',
+    'contract money'=>'合約總金額',
+    'contract service'=>'每月服務次數',
 );
 ?>
