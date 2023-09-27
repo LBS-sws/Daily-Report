@@ -211,5 +211,9 @@ return array(
     'contract number'=>'合約數量',
     'contract money'=>'合約總金額',
     'contract service'=>'每月服務次數',
+
+    'monthly Actual amount'=>'每月服務生意額',
+    'monthly stop amount'=>'每月終止客戶',
+    'lost order rate'=>'每月丟單率',
 );
 ?>

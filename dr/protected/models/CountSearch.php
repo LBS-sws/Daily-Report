@@ -769,9 +769,12 @@ class CountSearch{
     }
 
     //获取U系统的服务单数据（月為鍵名)
-    public static function getUServiceMoneyToMonth($endDay,$city_allow=""){
+    public static function getUServiceMoneyToMonth($endDay,$city_allow="",$lastBool=false){
         $year = date("Y",strtotime($endDay));
         $startDay =$year."/01/01";
+        if($lastBool){//多查询一个月
+            $startDay =($year-1)."/12/01";
+        }
         $maxMonth = date("n",strtotime($endDay));
         $monthList = array();
         for ($i=1;$i<=$maxMonth;$i++){
