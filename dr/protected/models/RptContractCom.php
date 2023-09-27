@@ -49,44 +49,29 @@ class RptContractCom extends ReportData2{
         $lastEndDt = $this->last_year."/".$this->end_month."/31";
         $sum_money = "case b.paid_type when 'M' then b.amt_paid * b.ctrt_period else b.amt_paid end";
         $lastRows = Yii::app()->db->createCommand()
-            ->select("a.contract_no,b.status,b.status_dt,b.service,($sum_money) as sum_money")
+            ->select("max(a.status_dt) as max_dt,a.contract_no")
             ->from("swo_service_contract_no a")
             ->leftJoin("swo_service b","a.service_id = b.id")
             ->leftJoin("swo_customer_type g","b.cust_type = g.id")
-            ->where("b.status='N' and b.company_id='{$company_id}' and b.status_dt BETWEEN '{$lastStartDt}' AND '{$lastEndDt}' and b.paid_type in ('M','Y') and g.rpt_cat in ('IA','IB')")
-            ->order('b.status_dt asc')
+            ->where("b.status in ('N','A') and b.company_id='{$company_id}' and b.status_dt BETWEEN '{$lastStartDt}' AND '{$lastEndDt}' and b.paid_type in ('M','Y') and g.rpt_cat in ('IA','IB')")
+            ->group('a.contract_no')
             ->queryAll();
-        $updateId=array(0);
+        $data=array();
         if($lastRows){
             foreach ($lastRows as $key=>$row){
                 $updateRow = Yii::app()->db->createCommand()
-                    ->select("a.id,a.contract_no,b.status_dt,b.service,($sum_money) as sum_money")
+                    ->select("a.contract_no,b.status,b.status_dt,b.service,($sum_money) as sum_money")
                     ->from("swo_service_contract_no a")
                     ->leftJoin("swo_service b","a.service_id = b.id")
-                    ->where("b.status='A' and a.contract_no='{$row["contract_no"]}' and b.status_dt>='{{$row["status_dt"]}}' and b.status_dt BETWEEN '{$lastStartDt}' AND '{$lastEndDt}' and b.paid_type in ('M','Y')")
-                    ->order("b.status_dt desc")
-                    ->queryAll();
+                    ->where("a.contract_no='{$row["contract_no"]}' and a.status_dt='{$row["max_dt"]}'")
+                    ->order("b.id desc")
+                    ->queryRow();
                 if($updateRow){
-                    $updateId[]=$updateRow["id"];
-                    $lastRows[$key]["sum_money"] = $updateRow["sum_money"];
+                    $data[]=$updateRow;
                 }
             }
-        }else{
-            $lastRows=array();
         }
-        $updateId = implode(",",$updateId);
-        $updateRows = Yii::app()->db->createCommand()
-            ->select("a.contract_no,b.status,b.status_dt,b.service,($sum_money) as sum_money")
-            ->from("swo_service_contract_no a")
-            ->leftJoin("swo_service b","a.service_id = b.id")
-            ->leftJoin("swo_customer_type g","b.cust_type = g.id")
-            ->where("b.status='A' and a.id not in ({$updateId}) and b.company_id='{$company_id}' and b.status_dt BETWEEN '{$lastStartDt}' AND '{$lastEndDt}' and b.paid_type in ('M','Y') and g.rpt_cat in ('IA','IB')")
-            ->order('b.status_dt asc')
-            ->queryAll();
-        if($updateRows){
-            $lastRows = array_merge($lastRows,$updateRows);
-        }
-        return $lastRows;
+        return $data;
     }
 
 	private function getServiceNCount($start_dt,$end_dt){
@@ -105,16 +90,30 @@ class RptContractCom extends ReportData2{
 
 	private function getServiceARows($start_dt,$end_dt){
         $sum_money = "case b.paid_type when 'M' then b.amt_paid * b.ctrt_period else b.amt_paid end";
-        $b4_sum_money = "case b.b4_paid_type when 'M' then b.b4_amt_paid * b.ctrt_period else b.b4_amt_paid end";
         $rows = Yii::app()->db->createCommand()
-            ->select("a.contract_no,b.company_id,b.status_dt,b.city,b.service,({$sum_money}) as sum_money,({$b4_sum_money}) as b4_sum_money")
+            ->select("max(a.status_dt) as max_dt,a.contract_no")
             ->from("swo_service_contract_no a")
             ->leftJoin("swo_service b","a.service_id = b.id")
             ->leftJoin("swo_customer_type g","b.cust_type = g.id")
             ->where("b.status='A' and b.status_dt BETWEEN '{$start_dt}' AND '{$end_dt}' and b.paid_type in ('M','Y') and g.rpt_cat in ('IA','IB')")
-            ->order("b.city")
+            ->group('a.contract_no')
             ->queryAll();
-        return $rows?$rows:array();
+        $data=array();
+        if($rows){
+            foreach ($rows as $row){
+                $maxRow = Yii::app()->db->createCommand()
+                    ->select("a.contract_no,b.company_id,b.status_dt,b.city,b.service,({$sum_money}) as sum_money")
+                    ->from("swo_service_contract_no a")
+                    ->leftJoin("swo_service b","a.service_id = b.id")
+                    ->where("b.status='A' and a.contract_no='{$row["contract_no"]}' and a.status_dt='{$row["max_dt"]}'")
+                    ->order("b.id desc")
+                    ->queryRow();
+                if($maxRow){
+                    $data[]=$maxRow;
+                }
+            }
+        }
+        return $data;
     }
 	
 	public function retrieveData() {
@@ -127,6 +126,7 @@ class RptContractCom extends ReportData2{
         $this->end_month = date("m",strtotime($end_dt));
         $lastStartDt = $this->last_year."/".$this->start_month."/01";
         $lastEndDt = $this->last_year."/".$this->end_month."/31";
+        $sum_money = "case b.paid_type when 'M' then b.amt_paid * b.ctrt_period else b.amt_paid end";
         $data=array();
         //本年新增
         $serviceNowAdd = $this->getServiceNCount($start_dt,$end_dt);
@@ -157,17 +157,17 @@ class RptContractCom extends ReportData2{
                     $nowCityName = General::getCityName($row["city"]);
                     $data[$company_id] = $this->getTempData($company_id,$nowCityName);
                 }
-                $lastRow = Yii::app()->db->createCommand()->select("b.id,b.status_dt")
+                $lastRow = Yii::app()->db->createCommand()
+                    ->select("b.id,b.status_dt,($sum_money) as sum_money")
                     ->from("swo_service_contract_no a")
                     ->leftJoin("swo_service b","a.service_id = b.id")
-                    ->where("b.status='N' and b.status_dt<=:dt and a.contract_no=:no",
-                        array(":no"=>$row["contract_no"],":dt"=>$row["status_dt"])
-                    )->order("b.status_dt desc")->queryRow();
-                $serviceDt = date("Y/m/d",strtotime($lastRow["status_dt"]));
-                $bool = $serviceDt>=$lastStartDt&&$serviceDt<=$lastEndDt;
-                $bool = $bool||($serviceDt>=$start_dt&&$serviceDt<=$end_dt);
-                if($bool){ //如果更改前的新增在本年或者上一年内，则不需要增加合约次数
-                    $data[$company_id]["now_year_money"]+=$row["sum_money"]-$row["b4_sum_money"];
+                    ->where("a.contract_no=:no and (
+                    (b.status in ('N','A') and b.status_dt BETWEEN '{$lastStartDt}' AND '{$lastEndDt}') or 
+                    (b.status in ('N') and b.status_dt BETWEEN '{$start_dt}' AND '{$end_dt}')
+                    )",array(":no"=>$row["contract_no"]))
+                    ->order("b.status_dt desc")->queryRow();
+                if($lastRow){ //如果更改前的新增在本年或者上一年内，则不需要增加合约次数
+                    $data[$company_id]["now_year_money"]+=$row["sum_money"]-$lastRow["sum_money"];
                 }else{
                     $data[$company_id]["now_year_num"]++;
                     $data[$company_id]["now_year_money"]+=$row["sum_money"];
@@ -219,7 +219,7 @@ class RptContractCom extends ReportData2{
                 }else{
                     $now_year_num++;
                     $now_year_money+=$service["sum_money"];
-                    $now_year_service=empty($now_year_service)?"":",";
+                    $now_year_service.=empty($now_year_service)?"":",";
                     $now_year_service.=$service["service"];
                 }
             }
