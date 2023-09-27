@@ -49,13 +49,44 @@ class RptContractCom extends ReportData2{
         $lastEndDt = $this->last_year."/".$this->end_month."/31";
         $sum_money = "case b.paid_type when 'M' then b.amt_paid * b.ctrt_period else b.amt_paid end";
         $lastRows = Yii::app()->db->createCommand()
-            ->select("a.contract_no,b.status_dt,b.service,($sum_money) as sum_money")
+            ->select("a.contract_no,b.status,b.status_dt,b.service,($sum_money) as sum_money")
             ->from("swo_service_contract_no a")
             ->leftJoin("swo_service b","a.service_id = b.id")
             ->leftJoin("swo_customer_type g","b.cust_type = g.id")
             ->where("b.status='N' and b.company_id='{$company_id}' and b.status_dt BETWEEN '{$lastStartDt}' AND '{$lastEndDt}' and b.paid_type in ('M','Y') and g.rpt_cat in ('IA','IB')")
+            ->order('b.status_dt asc')
             ->queryAll();
-        return $lastRows?$lastRows:array();
+        $updateId=array(0);
+        if($lastRows){
+            foreach ($lastRows as $key=>$row){
+                $updateRow = Yii::app()->db->createCommand()
+                    ->select("a.id,a.contract_no,b.status_dt,b.service,($sum_money) as sum_money")
+                    ->from("swo_service_contract_no a")
+                    ->leftJoin("swo_service b","a.service_id = b.id")
+                    ->where("b.status='A' and a.contract_no='{$row["contract_no"]}' and b.status_dt>='{{$row["status_dt"]}}' and b.status_dt BETWEEN '{$lastStartDt}' AND '{$lastEndDt}' and b.paid_type in ('M','Y')")
+                    ->order("b.status_dt desc")
+                    ->queryAll();
+                if($updateRow){
+                    $updateId[]=$updateRow["id"];
+                    $lastRows[$key]["sum_money"] = $updateRow["sum_money"];
+                }
+            }
+        }else{
+            $lastRows=array();
+        }
+        $updateId = implode(",",$updateId);
+        $updateRows = Yii::app()->db->createCommand()
+            ->select("a.contract_no,b.status,b.status_dt,b.service,($sum_money) as sum_money")
+            ->from("swo_service_contract_no a")
+            ->leftJoin("swo_service b","a.service_id = b.id")
+            ->leftJoin("swo_customer_type g","b.cust_type = g.id")
+            ->where("b.status='A' and a.id not in ({$updateId}) and b.company_id='{$company_id}' and b.status_dt BETWEEN '{$lastStartDt}' AND '{$lastEndDt}' and b.paid_type in ('M','Y') and g.rpt_cat in ('IA','IB')")
+            ->order('b.status_dt asc')
+            ->queryAll();
+        if($updateRows){
+            $lastRows = array_merge($lastRows,$updateRows);
+        }
+        return $lastRows;
     }
 
 	private function getServiceNCount($start_dt,$end_dt){
@@ -176,20 +207,20 @@ class RptContractCom extends ReportData2{
                 $stopRow = Yii::app()->db->createCommand()->select("b.id,b.status")
                     ->from("swo_service_contract_no a")
                     ->leftJoin("swo_service b","a.service_id = b.id")
-                    ->where("b.status_dt>=:dt and b.status_dt<='{$end_dt}' and a.contract_no=:no",
+                    ->where("b.status='T' and b.status_dt>=:dt and b.status_dt<='{$end_dt}' and a.contract_no=:no",
                         array(":no"=>$service["contract_no"],":dt"=>$service["status_dt"])
-                    )->order("b.status_dt desc")->queryRow();
+                    )->queryRow();
                 $last_year_num++;
                 $last_year_money+=$service["sum_money"];
                 $last_year_service=empty($last_year_service)?"":",";
                 $last_year_service.=$service["service"];
-                if($stopRow&&$stopRow["status"]!="T"){ //如果最后一条不是终止
+                if($stopRow){ //如果服务被终止过则不计算
+                    continue;
+                }else{
                     $now_year_num++;
                     $now_year_money+=$service["sum_money"];
                     $now_year_service=empty($now_year_service)?"":",";
                     $now_year_service.=$service["service"];
-                }else{
-                    continue;
                 }
             }
         }
