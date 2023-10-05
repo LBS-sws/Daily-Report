@@ -5,7 +5,7 @@ class RankMonthList extends CListPageModel
     public $year;
     public $month;
 
-    private $notCity=array('KS','TY','HK','TN','ZS1','TC','MY','CN','TP','ZY','HXHB','MO','HD','JMS','HN','XM','CS','H-N','HD1','RW','RN','WL','HB','HX','HN2','HN1');
+    private $notCity=array('KA','KS','TY','HK','TN','ZS1','TC','MY','CN','TP','ZY','HXHB','MO','HD','JMS','HN','XM','CS','H-N','HD1','RW','RN','WL','HB','HX','HN2','HN1');
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -43,12 +43,12 @@ class RankMonthList extends CListPageModel
 		$sql1 = "select a.year_no,a.month_no,a.f73,b.name 
 				from swo_monthly_hdr a 
 				LEFT JOIN security{$suffix}.sec_city b ON a.city=b.code
-				where a.year_no={$this->year} AND a.month_no={$this->month} AND a.city not in ('{$notCity}') 
+				where a.year_no={$this->year} AND a.month_no={$this->month} AND b.name is not NULL AND a.city not in ('{$notCity}') 
 			";
 		$sql2 = "select count(a.id)
 				from swo_monthly_hdr a 
 				LEFT JOIN security{$suffix}.sec_city b ON a.city=b.code
-				where a.year_no={$this->year} AND a.month_no={$this->month} AND a.city not in ('{$notCity}') 
+				where a.year_no={$this->year} AND a.month_no={$this->month} AND b.name is not NULL AND a.city not in ('{$notCity}') 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
