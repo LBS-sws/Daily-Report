@@ -772,11 +772,13 @@ class CountSearch{
     public static function getUServiceMoneyToMonth($endDay,$city_allow="",$lastBool=false){
         $year = date("Y",strtotime($endDay));
         $startDay =$year."/01/01";
-        if($lastBool){//多查询一个月
-            $startDay =($year-1)."/12/01";
-        }
         $maxMonth = date("n",strtotime($endDay));
         $monthList = array();
+        if($lastBool){//多查询一个月
+            $lastYear = ($year-1)."/12";
+            $monthList[$lastYear]=0;
+            $startDay =$lastYear."/01";
+        }
         for ($i=1;$i<=$maxMonth;$i++){
             $month = $i<10?"0".$i:$i;
             $monthList["{$year}/{$month}"]=0;
