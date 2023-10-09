@@ -259,6 +259,10 @@ return array(
                 'access'=>'G12',
                 'url'=>'/salesAnalysis/index',
             ),
+            'Sales Month Count'=>array( //每月销售人数统计
+                'access'=>'G20',
+                'url'=>'/salesMonthCount/index',
+            ),
             'Average office'=>array(//月预计平均人效
                 'access'=>'G13',
                 'url'=>'/salesAverage/index',
