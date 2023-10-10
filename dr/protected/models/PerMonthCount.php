@@ -1,6 +1,6 @@
 <?php
 
-class LostOrderForm extends CFormModel
+class PerMonthCount extends CFormModel
 {
     /* User Fields */
     public $search_date;//查詢日期
@@ -8,22 +8,16 @@ class LostOrderForm extends CFormModel
     public $search_month;//查詢月份
 
     public $month_day;//本月的天數
-    public $last_year;
-    public $last_start_date;
-    public $last_end_date;
+    public $day_num=0;//查詢天數
+    public $day_rate;//时间流失
+
+    public $month_type;
     public $start_date;
     public $end_date;
-    public $week_start;
-    public $week_end;
-    public $week_day;
-    public $last_week_start;
-    public $last_week_end;
-    public $last_week_day;
-    public $month_type;
 
     public $data=array();
 
-    public $th_sum=1;//所有th的个数
+    public $th_sum=0;//所有th的个数
     public $downJsonText='';
 
     /**
@@ -35,8 +29,7 @@ class LostOrderForm extends CFormModel
     {
         return array(
             'search_date'=>Yii::t('summary','search date'),
-            'week_start'=>Yii::t('summary','now week'),
-            'last_week_start'=>Yii::t('summary','last week'),
+            'day_num'=>Yii::t('summary','day num'),
         );
     }
 
@@ -59,22 +52,15 @@ class LostOrderForm extends CFormModel
             $this->search_month = date("n",$timer);
             $i = ceil($this->search_month/3);//向上取整
             $this->month_type = 3*$i-2;
-            $this->start_date = $this->search_year."/01/01";
+
+            $this->start_date = date("Y/m/01",$timer);
             $this->end_date = date("Y/m/d",$timer);
             $this->month_day = date("t",$timer);
-            $this->last_year = $this->search_year-1;
-            $this->last_start_date = $this->last_year."/01/01";
-            $this->last_end_date = date("Y/m/t",strtotime($this->last_year."/{$this->search_month}/01"));
 
-            $this->week_end = $timer;
-            $weekStart = HistoryAddForm::getDateDiffForMonth($timer,6,$this->search_month,false);
-            //2023-09-07修改本周的逻辑：本月1号至查询日期为本周
-            $this->week_start = strtotime("{$this->search_year}/{$this->search_month}/01");
-            $this->week_day = HistoryAddForm::getDateDiffForDay($this->week_start,$this->week_end);
+            ComparisonForm::setDayNum($this->start_date,$this->end_date,$this->day_num);
 
-            $this->last_week_end = HistoryAddForm::getDateDiffForMonth($weekStart,1,$this->search_month);
-            $this->last_week_start = strtotime("1999/01/01")==$this->last_week_end?$this->last_week_end:$this->week_start;
-            $this->last_week_day = HistoryAddForm::getDateDiffForDay($this->last_week_start,$this->last_week_end);
+            $this->day_rate = ($this->day_num/$this->month_day)*100;
+            $this->day_rate = round($this->day_rate)."%";
         }
     }
 
@@ -97,22 +83,23 @@ class LostOrderForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $citySetList = CitySetForm::getCitySetList($city_allow);
+        $startDate = $this->start_date;
         $endDate = $this->end_date;
-        $yearMonth = date("Y/m",strtotime($endDate));
         $monthStartDate = date("Y/m/01",strtotime($this->end_date));//本月的第一天
         $lastMonthStart = CountSearch::computeLastMonth($monthStartDate);//查询时间的上月（减法使用）
         $lastMonthEnd = CountSearch::computeLastMonth($endDate);//查询时间的上月（减法使用）
-        //停止金额 = 合同同比分析里的 “ 终止服务 ” +  “ 上月一次性服务+新增产品 ”
 
-        //获取U系统的服务数据
-        $uServiceMoney = CountSearch::getUServiceMoneyToMonth($endDate,$city_allow,true);
+        //服务新增
+        $serviceN = CountSearch::getServiceForType($startDate,$endDate,$city_allow,"N");
+        //获取U系统的產品数据
+        $uInvMoney = CountSearch::getUInvMoney($startDate,$endDate,$city_allow);
+        //终止服务（num_stop）、暂停服务（num_pause）
+        $serviceST = CountSearch::getServiceForST($startDate,$endDate,$city_allow);
+        //恢复服务(上一年)
+        $serviceR = CountSearch::getServiceForType($startDate,$endDate,$city_allow,"R");
+        //更改服务(上一年)
+        $serviceA = CountSearch::getServiceForA($startDate,$endDate,$city_allow);
 
-        //终止服务(本年)
-        $serviceT = CountSearch::getServiceForSTToMonth($endDate,$city_allow,"T");
-        //一次性服务(本年)
-        $monthServiceAddForY = CountSearch::getServiceAddForYToMonth($endDate,$city_allow);
-        //产品(本年)
-        $uInvMoney = CountSearch::getUInvMoneyToMonth($endDate,$city_allow);
         //新增产品（本年上月）
         $subServiceInv = CountSearch::getUInvMoney($lastMonthStart,$lastMonthEnd,$city_allow);
         //一次性服务（本年上月）
@@ -124,12 +111,17 @@ class LostOrderForm extends CFormModel
             $defMoreList["add_type"] = $cityRow["add_type"];
             ComparisonForm::setComparisonConfig($defMoreList,$this->search_year,$this->month_type,$city);
 
-            $this->addListForCity($defMoreList,$city,$serviceT);
-            $this->addListForCity($defMoreList,$city,$monthServiceAddForY,1,$yearMonth);
-            $this->addListForCity($defMoreList,$city,$uInvMoney,2,$yearMonth);
-            $this->addListForCity($defMoreList,$city,$uServiceMoney,3,$yearMonth);
-            $defMoreList[$yearMonth]+=key_exists($city,$subServiceInv)?-1*$subServiceInv[$city]["sum_money"]:0;
-            $defMoreList[$yearMonth]+=key_exists($city,$subServiceY)?-1*$subServiceY[$city]:0;
+            $defMoreList["num_add"]+=key_exists($city,$serviceN)?$serviceN[$city]:0;
+            $defMoreList["num_add"]+=key_exists($city,$uInvMoney)?$uInvMoney[$city]["sum_money"]:0;
+
+            $defMoreList["num_stop"]+=key_exists($city,$serviceST)?-1*$serviceST[$city]["num_stop"]:0;
+            $defMoreList["num_stop"]+=key_exists($city,$subServiceInv)?-1*$subServiceInv[$city]["sum_money"]:0;
+            $defMoreList["num_stop"]+=key_exists($city,$subServiceY)?-1*$subServiceY[$city]:0;
+
+            $defMoreList["num_recover"]+=key_exists($city,$serviceST)?-1*$serviceST[$city]["num_pause"]:0;
+            $defMoreList["num_recover"]+=key_exists($city,$serviceR)?$serviceR[$city]:0;
+            $defMoreList["num_recover"]+=key_exists($city,$serviceA)?$serviceA[$city]:0;
+
 
             RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
@@ -137,98 +129,40 @@ class LostOrderForm extends CFormModel
         return true;
     }
 
-    protected function addListForCity(&$data,$city,$list,$type="",$endDate="1900/01"){
-        if(key_exists($city,$list)){
-            foreach ($list[$city] as $key=>$value){
-                $dateStr = $key;
-                switch ($type){
-                    case 1://上月的一次性服務
-                        $dateStr.="/01";
-                        $dateStr = date("Y/m",strtotime($dateStr." + 1 months"));
-                        //查询的月份不需要减少，需要特别处理
-                        if($dateStr!=$endDate){
-                            $value*=-1;
-                        }else{
-                            $value=0;
-                        }
-                        break;
-                    case 2://產品服務及上月的產品服務
-                        //生意額需要加上U系統的產品數據
-                        $uDateStr="u_".$dateStr;
-                        if(key_exists($uDateStr,$data)){
-                            $data[$uDateStr]+=$value;
-                        }
-                        $dateStr.="/01";
-                        $dateStr = date("Y/m",strtotime($dateStr." + 1 months"));
-                        //查询的月份不需要减少，需要特别处理
-                        if($dateStr!=$endDate){
-                            $value*=-1;
-                        }else{
-                            $value=0;
-                        }
-                        break;
-                    case 3://U系統的服務單
-                        $dateStr ="u_".$dateStr;
-                        break;
-                    case 4://终止、暂停
-                        $value*=-1;
-                        break;
-                }
-                if(key_exists($dateStr,$data)){
-                    $data[$dateStr]+=$value;
-                }
-            }
-        }
-    }
-
     //設置該城市的默認值
     protected function defMoreCity($city,$city_name){
         $arr=array(
             "city"=>$city,
             "city_name"=>$city_name,
-            "u_sum"=>0,//U系统金额
-            "u_{$this->last_year}/12"=>0,//服务生意额上一年12月
+            "num_add"=>0,//新增
+            "num_stop"=>0,//停止
+            "num_recover"=>0,//净恢复
+            "num_net"=>0,//净增长
+            "start_two_gross"=>0,//年初滚动新生意
+            "start_two_net"=>0,//年初滚动净增长
+            "start_two_gross_rate"=>0,//年初滚动新生意目标
+            "start_two_net_rate"=>0,//年初滚动净增长目标
+            "day_rate"=>$this->day_rate,//时间流失
         );
-        for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
-            $dateStrOne = $this->search_year."/{$month}";//产品金额
-            $arr[$dateStrOne]=0;
-            $arr['rate_'.$dateStrOne]=0;
-            if($i!=$this->search_month){
-                $arr['u_'.$dateStrOne]=0;
-            }
-        }
         return $arr;
     }
 
     protected function resetTdRow(&$list,$bool=false,$count=1){
-        if(!$bool){
-            for($i=1;$i<=$this->search_month;$i++){ //停单金额需要除以12
-                $month = $i>=10?10:"0{$i}";
-                $dateStrOne = $this->search_year."/{$month}";//停单金额
-                $list[$dateStrOne]/=12;
-                $list[$dateStrOne]=round($list[$dateStrOne]);
-            }
+        /* 不需要计算天数
+        $list["start_two_gross"] = $bool?$list["start_two_gross"]:ComparisonForm::resetNetOrGross($list["start_two_gross"],$this->day_num);
+        $list["start_two_net"] = $bool?$list["start_two_net"]:ComparisonForm::resetNetOrGross($list["start_two_net"],$this->day_num);
+        */
+        if($bool){
+            $list["day_rate"]=$this->day_rate;
         }
-        for($i=1;$i<=$this->search_month;$i++){ //计算停单比率
-            $month = $i>=10?10:"0{$i}";
-            $dateStrOne = $this->search_year."/{$month}";//停单金额
-            if($i==1){
-                $dateStrTwo = $this->last_year."/12";//服务金额
-            }else{
-                $uMonth = $i-1;
-                $uMonth = $uMonth>=10?10:"0{$uMonth}";
-                $dateStrTwo = $this->search_year."/{$uMonth}";//服务金额
-            }
-            $list["rate_".$dateStrOne]=empty($list["u_".$dateStrTwo])?0:$list[$dateStrOne]/$list["u_".$dateStrTwo];
-            $list["rate_".$dateStrOne]=round($list["rate_".$dateStrOne],3);
-            $list["rate_".$dateStrOne]=empty($list["rate_".$dateStrOne])?0:($list["rate_".$dateStrOne]*100)."%";
-        }
+        $list["num_net"]=$list["num_add"]+$list["num_stop"]+$list["num_recover"];
+        $list["start_two_gross_rate"] = ComparisonForm::comparisonRate($list["num_add"],$list["start_two_gross"]);
+        $list["start_two_net_rate"] = ComparisonForm::comparisonRate($list["num_net"],$list["start_two_net"]);
     }
 
     //顯示提成表的表格內容
-    public function lostOrderHtml(){
-        $html= '<table id="lostOrder" class="table table-fixed table-condensed table-bordered table-hover">';
+    public function perMonthCountHtml(){
+        $html= '<table id="perMonthCount" class="table table-fixed table-condensed table-bordered table-hover">';
         $html.=$this->tableTopHtml();
         $html.=$this->tableBodyHtml();
         $html.=$this->tableFooterHtml();
@@ -237,25 +171,30 @@ class LostOrderForm extends CFormModel
     }
 
     protected function getTopArr(){
-        $monthArr = array();
-        $uMonth = array(array("name"=>"12".Yii::t("summary","Month")));
-        for($i=1;$i<=$this->search_month;$i++){
-            if($i!=$this->search_month){
-                $uMonth[]=array("name"=>$i.Yii::t("summary","Month"));
-            }
-            $monthArr[]=array("name"=>$i.Yii::t("summary","Month"));
-        }
+        $dayName = $this->start_date." ~ ".$this->end_date;
         $topList=array(
             array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
-            array("name"=>Yii::t("summary","monthly Actual amount"),"background"=>"#f7fd9d",
-                "colspan"=>$uMonth
-            ),//每月服务生意额
-            array("name"=>Yii::t("summary","monthly stop amount"),"background"=>"#fcd5b4",
-                "colspan"=>$monthArr
-            ),//每月终止客户
-            array("name"=>Yii::t("summary","lost order rate"),"background"=>"#f2dcdb",
-                "colspan"=>$monthArr
-            ),//每月丢单率
+            array("name"=>$dayName,"background"=>"#f7fd9d",
+                "colspan"=>array(
+                    array("name"=>Yii::t("summary","num add"),"background"=>"#f7fd9d"),
+                    array("name"=>Yii::t("summary","num stop"),"background"=>"#f7fd9d"),
+                    array("name"=>Yii::t("summary","num recover"),"background"=>"#f7fd9d"),
+                    array("name"=>Yii::t("summary","num net"),"background"=>"#f7fd9d"),
+                )
+            ),//时间
+            array("name"=>Yii::t("summary","monthly target"),"background"=>"#fcd5b4",
+                "colspan"=>array(
+                    array("name"=>Yii::t("summary","num add"),"background"=>"#fcd5b4"),
+                    array("name"=>Yii::t("summary","num net"),"background"=>"#fcd5b4"),
+                )
+            ),//每月目标
+            array("name"=>Yii::t("summary","monthly rate"),"background"=>"#f2dcdb",
+                "colspan"=>array(
+                    array("name"=>Yii::t("summary","num add"),"background"=>"#f2dcdb"),
+                    array("name"=>Yii::t("summary","num net"),"background"=>"#f2dcdb"),
+                )
+            ),//目标达成
+            array("name"=>Yii::t("summary","Per Month Count"),"rowspan"=>2),//时间流失
         );
 
         return $topList;
@@ -308,7 +247,7 @@ class LostOrderForm extends CFormModel
     protected function tableHeaderWidth(){
         $html="<tr>";
         for($i=0;$i<$this->th_sum;$i++){
-            $width=75;
+            $width=85;
             if($i==0){
                 $width=90;
             }
@@ -317,7 +256,7 @@ class LostOrderForm extends CFormModel
         return $html."</tr>";
     }
 
-    public static function lostOrderNumber($number){
+    public static function perMonthCountNumber($number){
         return round($number,2);
     }
 
@@ -341,21 +280,16 @@ class LostOrderForm extends CFormModel
     protected function getDataAllKeyStr(){
         $bodyKey = array(
             "city_name",
-            "u_{$this->last_year}/12"
+            "num_add",
+            "num_stop",
+            "num_recover",
+            "num_net",
+            "start_two_gross",
+            "start_two_net",
+            "start_two_gross_rate",
+            "start_two_net_rate",
+            "day_rate"
         );
-        $nowArr = array();
-        $rateArr = array();
-        for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
-            if($i!=$this->search_month){
-                $bodyKey[]="u_".$this->search_year."/{$month}";
-            }
-            $nowArr[]=$this->search_year."/{$month}";
-            $rateArr[]="rate_".$this->search_year."/{$month}";
-        }
-        $bodyKey = array_merge($bodyKey,$nowArr);
-        $bodyKey = array_merge($bodyKey,$rateArr);
-
         return $bodyKey;
     }
     //將城市数据寫入表格(澳门)
@@ -477,11 +411,11 @@ class LostOrderForm extends CFormModel
         $headList = $this->getTopArr();
         $excel = new DownSummary();
         $excel->colTwo=1;
-        $excel->SetHeaderTitle(Yii::t("app","Lost orders rate")."（{$this->search_date}）");
+        $excel->SetHeaderTitle(Yii::t("summary","Per Month Count")."（{$this->search_date}）");
 
         $excel->init();
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);
-        $excel->outExcel(Yii::t("app","Lost orders rate"));
+        $excel->outExcel(Yii::t("summary","Per Month Count"));
     }
 }

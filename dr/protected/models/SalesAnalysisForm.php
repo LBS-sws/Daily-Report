@@ -410,6 +410,7 @@ class SalesAnalysisForm extends CFormModel
 
     //顯示提成表的表格內容（表頭）
     protected function tableTopHtml(){
+        $this->th_sum = 0;
         $topList = self::getTopArr();
         $trOne="";
         $trTwo="";

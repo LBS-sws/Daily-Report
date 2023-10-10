@@ -226,35 +226,41 @@ class HistoryResumeForm extends CFormModel
     }
 
     //顯示提成表的表格內容（表頭）
-    private function tableTopHtml(){
-        $topList = $this->getTopArr();
+    protected function tableTopHtml(){
+        $this->th_sum = 0;
+        $topList = self::getTopArr();
         $trOne="";
         $trTwo="";
         $html="<thead>";
         foreach ($topList as $list){
             $clickName=$list["name"];
             $colList=key_exists("colspan",$list)?$list['colspan']:array();
-            $trOne.="<th";
+            $style = "";
+            $colNum=0;
+            if(key_exists("background",$list)){
+                $style.="background:{$list["background"]};";
+            }
+            if(key_exists("color",$list)){
+                $style.="color:{$list["color"]};";
+            }
+            if(!empty($colList)){
+                foreach ($colList as $col){
+                    $colNum++;
+                    $trTwo.="<th style='{$style}'><span>".$col["name"]."</span></th>";
+                    $this->th_sum++;
+                }
+            }else{
+                $this->th_sum++;
+            }
+            $colNum = empty($colNum)?1:$colNum;
+            $trOne.="<th style='{$style}' colspan='{$colNum}'";
             if(key_exists("rowspan",$list)){
                 $trOne.=" rowspan='{$list["rowspan"]}'";
-            }
-            if(key_exists("colspan",$list)){
-                $colNum=count($colList);
-                $trOne.=" colspan='{$colNum}' class='click-th'";
-            }
-            if(key_exists("background",$list)){
-                $trOne.=" style='background:{$list["background"]}'";
             }
             if(key_exists("startKey",$list)){
                 $trOne.=" data-key='{$list['startKey']}'";
             }
             $trOne.=" ><span>".$clickName."</span></th>";
-            if(!empty($colList)){
-                foreach ($colList as $col){
-                    $this->th_sum++;
-                    $trTwo.="<th><span>".$col["name"]."</span></th>";
-                }
-            }
         }
         $html.=$this->tableHeaderWidth();//設置表格的單元格寬度
         $html.="<tr>{$trOne}</tr><tr>{$trTwo}</tr>";
