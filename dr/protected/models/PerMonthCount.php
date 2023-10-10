@@ -126,6 +126,8 @@ class PerMonthCount extends CFormModel
             RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
         $this->data = $data;
+        $session = Yii::app()->session;
+        $session['perMonth_c01'] = $this->getCriteria();
         return true;
     }
 
