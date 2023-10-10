@@ -215,5 +215,13 @@ return array(
     'monthly Actual amount'=>'每月服务生意额',
     'monthly stop amount'=>'每月终止客户',
     'lost order rate'=>'每月丢单率',
+    ' Year'=>'年',
+    'Per Month Count'=>'时间流失',
+    'monthly target'=>'每月目标',
+    'monthly rate'=>'目标达成',
+    'num add'=>'新增',
+    'num stop'=>'流失',
+    'num recover'=>'净恢复',
+    'num net'=>'净增',
 );
 ?>

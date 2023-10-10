@@ -1,9 +1,9 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - PerMonthNet Form';
+$this->pageTitle=Yii::app()->name . ' - PerMonthCount Form';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'perMonthNet-form',
+'id'=>'perMonthCount-form',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
@@ -22,7 +22,7 @@ $this->pageTitle=Yii::app()->name . ' - PerMonthNet Form';
 
 <section class="content-header">
 	<h1>
-        <strong><?php echo Yii::t('app','Monthly performance'); ?></strong>
+        <strong><?php echo Yii::t('app','Lost orders rate'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -42,7 +42,7 @@ $this->pageTitle=Yii::app()->name . ' - PerMonthNet Form';
 	</div>
             <div class="btn-group pull-right" role="group">
                 <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('dialog','Download'), array(
-                    'submit'=>Yii::app()->createUrl('perMonth/downExcel',array('type'=>'net'))));
+                    'submit'=>Yii::app()->createUrl('perMonth/downExcel',array('type'=>'count'))));
                 ?>
             </div>
 	</div></div>
@@ -62,35 +62,13 @@ $this->pageTitle=Yii::app()->name . ' - PerMonthNet Form';
                             </div>
                         </div>
                         <div class="form-group">
-                            <?php echo $form->labelEx($model,'week_start',array('class'=>"col-sm-5 control-label")); ?>
+                            <?php echo $form->labelEx($model,'day_num',array('class'=>"col-sm-5 control-label")); ?>
                             <div class="col-sm-7">
                                 <p class="form-control-static">
-                                    <?php echo date("Y/m/d",$model->week_start)." ~ ".date("Y/m/d",$model->week_end)." (".$model->week_day.")";?>
+                                    <?php echo $model->start_date." ~ ".$model->end_date."&nbsp; (".$model->day_num."天)";?>
                                 </p>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <?php echo $form->labelEx($model,'last_week_start',array('class'=>"col-sm-5 control-label")); ?>
-                            <div class="col-sm-7">
-                                <p class="form-control-static">
-                                    <?php
-                                    if($model->last_week_end!=strtotime("1999/01/01")){
-                                        echo date("Y/m/d",$model->last_week_start)." ~ ".date("Y/m/d",$model->last_week_end)." (".$model->last_week_day.")";
-                                    }else{
-                                        echo Yii::t("summary","none");
-                                    }
-                                    ?>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-7">
-                        <p><b><?php echo Yii::t("summary","perMonth_remark_0");?></b></p>
-                        <p><?php echo Yii::t("summary","perMonth_remark_1");?></p>
-                        <p><?php echo Yii::t("summary","perMonth_remark_2");?></p>
-                        <p><?php echo Yii::t("summary","perMonth_remark_3");?></p>
-                        <p><?php echo Yii::t("summary","perMonth_remark_4");?></p>
                     </div>
 
                     <div class="col-lg-12">
@@ -111,12 +89,12 @@ $this->pageTitle=Yii::app()->name . ' - PerMonthNet Form';
                                     echo TbHtml::link(Yii::t("summary","Per Month Recover"),Yii::app()->createUrl('perMonth/recover'));
                                     ?>
                                 </li>
-                                <li class="active">
+                                <li>
                                     <?php
                                     echo TbHtml::link(Yii::t("summary","Per Month Net"),Yii::app()->createUrl('perMonth/net'));
                                     ?>
                                 </li>
-                                <li>
+                                <li class="active">
                                     <?php
                                     echo TbHtml::link(Yii::t("summary","Per Month Count"),Yii::app()->createUrl('perMonth/count'));
                                     ?>
@@ -124,19 +102,20 @@ $this->pageTitle=Yii::app()->name . ' - PerMonthNet Form';
                             </ul>
                         </div>
                     </div>
+
                     <div class="col-lg-12" style="padding-top: 15px;">
                         <div class="row panel panel-default" style="border-color: #333">
                             <!-- Default panel contents -->
                             <div class="panel-heading">
                                 <h3 style="margin-top:10px;">
-                                    <?php echo Yii::t('summary','Per Month Net'); ?>
+                                    <?php echo Yii::t('summary','Per Month Count'); ?>
                                     <small>(<?php echo $model->start_date." ~ ".$model->end_date;?>)</small>
                                 </h3>
                             </div>
 
                             <!-- Table -->
                             <div class="table-responsive">
-                                <?php echo $model->perMonthHtml();?>
+                                <?php echo $model->perMonthCountHtml();?>
                             </div>
                         </div>
                     </div>
@@ -152,9 +131,6 @@ $this->pageTitle=Yii::app()->name . ' - PerMonthNet Form';
 
 <?php
 $js="
-$('#perMonthMenu a').click(function(){
-    Loading.show();
-});
     $('.click-th').click(function(){
         var contNum = 1;
         var startNum=contNum;
@@ -167,14 +143,14 @@ $('#perMonthMenu a').click(function(){
         if($(this).hasClass('active')){
             $(this).children('span').text($(this).data('text'));
             $(this).removeClass('active');
-            $('#perMonth>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
+            $('#perMonthCount>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = $(this).data('width')+'px';
                 $(this).width(width);
             });
-            $('#perMonth>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#perMonthCount>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
                 $(this).children('span').text($(this).data('text'));
             });
-            $('#perMonth>tbody>tr').each(function(){
+            $('#perMonthCount>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
                     $(this).children('span').text($(this).data('text'));
                 });
@@ -183,15 +159,15 @@ $('#perMonthMenu a').click(function(){
             $(this).data('text',$(this).text());
             $(this).children('span').text('.');
             $(this).addClass('active');
-            $('#perMonth>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
+            $('#perMonthCount>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = '15px';
                 $(this).width(width);
             });
-            $('#perMonth>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#perMonthCount>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
                 $(this).data('text',$(this).text());
                 $(this).children('span').text('');
             });
-            $('#perMonth>tbody>tr').each(function(){
+            $('#perMonthCount>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
                     $(this).data('text',$(this).text());
                     $(this).children('span').text('');

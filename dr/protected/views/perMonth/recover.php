@@ -116,6 +116,11 @@ $this->pageTitle=Yii::app()->name . ' - PerMonthRecover Form';
                                     echo TbHtml::link(Yii::t("summary","Per Month Net"),Yii::app()->createUrl('perMonth/net'));
                                     ?>
                                 </li>
+                                <li>
+                                    <?php
+                                    echo TbHtml::link(Yii::t("summary","Per Month Count"),Yii::app()->createUrl('perMonth/count'));
+                                    ?>
+                                </li>
                             </ul>
                         </div>
                     </div>

@@ -172,5 +172,6 @@ return array(
     'Week Service U'=>"周服務生意額",
     'Contract comparison report'=>"合約對比報表",
     'Lost orders rate'=>"每月丟單率",
+    'Sales Month Count'=>'每月銷售人數統計',
 );
 ?>

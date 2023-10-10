@@ -178,5 +178,6 @@ return array(
     'Week Service U'=>"周服务生意额",
     'Contract comparison report'=>"合约对比报表",
     'Lost orders rate'=>"每月丢单率",
+    'Sales Month Count'=>'每月销售人数统计',
 );
 ?>

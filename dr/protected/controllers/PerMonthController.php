@@ -28,7 +28,7 @@ class PerMonthController extends Controller
 				'expression'=>array('PerMonthController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','add','stop','recover','net','downExcel'),
+				'actions'=>array('index','add','stop','recover','net','count','downExcel'),
 				'expression'=>array('PerMonthController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -43,6 +43,7 @@ class PerMonthController extends Controller
             "net"=>"PerMonthNet",
             "stop"=>"PerMonthStop",
             "recover"=>"PerMonthRecover",
+            "count"=>"PerMonthCount",
         );
         if(key_exists($type,$list)){
             $className = $list[$type];
@@ -156,6 +157,27 @@ class PerMonthController extends Controller
         if ($model->validate()) {
             $model->retrieveData();
             $this->render('net',array('model'=>$model));
+        } else {
+            $message = CHtml::errorSummary($model);
+            Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            $this->render('index',array('model'=>$model));
+        }
+	}
+
+	public function actionCount()
+	{//时间流失
+        set_time_limit(0);
+        $model = new PerMonthCount('view');
+        $session = Yii::app()->session;
+        if (isset($session['perMonth_c01']) && !empty($session['perMonth_c01'])) {
+            $criteria = $session['perMonth_c01'];
+            $model->setCriteria($criteria);
+        }else{
+            $model->search_date = date("Y/m/d");
+        }
+        if ($model->validate()) {
+            $model->retrieveData();
+            $this->render('count',array('model'=>$model));
         } else {
             $message = CHtml::errorSummary($model);
             Dialog::message(Yii::t('dialog','Validation Message'), $message);
