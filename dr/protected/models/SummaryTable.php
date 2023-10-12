@@ -156,7 +156,8 @@ class SummaryTable extends SummaryForm{
         $html.="<th width='90px'>".Yii::t('summary','City')."</th>";//城市
         $html.="<th width='90px'>".Yii::t('summary','search day')."</th>";//日期
         $html.="<th>".Yii::t('service','Customer')."</th>";//客户编号及名称
-        $html.="<th width='80px'>".Yii::t('service','Customer Type')."</th>";//客户类别
+        $html.="<th width='100px'>".Yii::t('service','Resp. Sales')."</th>";//客户编号及名称
+        $html.="<th>".Yii::t('service','Customer Type')."</th>";//客户类别
         $html.="<th width='120px'>".Yii::t('service','Paid Amt')."</th>";//服务金额
         $html.="<th width='80px'>".Yii::t('customer','Contract Period')."</th>";//合同年限(月)
         $html.="<th width='100px'>".Yii::t('summary','all money')."</th>";//合同总金额
@@ -204,16 +205,17 @@ class SummaryTable extends SummaryForm{
                 $html.="<td>".$cityName."</td>";
                 $html.="<td>".General::toDate($row["status_dt"])."</td>";
                 $html.="<td>".$companyName."</td>";
+                $html.="<td>".$row["salesman"]."</td>";
                 $html.="<td>".$row["cust_type_name"]."</td>";
-                $html.="<td class='text-right'>".$row["amt_paid"]."(".GetNameToId::getPaidTypeForId($row["paid_type"]).") "."</td>";
+                $html.="<td>".$row["amt_paid"]."(".GetNameToId::getPaidTypeForId($row["paid_type"]).") "."</td>";
                 $html.="<td>".$row["ctrt_period"]."</td>";
-                $html.="<td class='text-right'>".$row["sum_amount"]."</td>";
+                $html.="<td>".$row["sum_amount"]."</td>";
                 $html.="<td>{$link}</td>";
                 $html.="</tr>";
             }
             $html.="</tbody><tfoot>";
             $html.="<tr>";
-            $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total count:")."</td>";
+            $html.="<td colspan='4' class='text-right'>".Yii::t("summary","total count:")."</td>";
             $html.="<td colspan='2'>".$count."</td>";
             $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
             $html.="<td colspan='2'>".$sum."</td>";
@@ -223,7 +225,7 @@ class SummaryTable extends SummaryForm{
                 $count+=$invTable["count"];
                 $sum+=$invTable["sum"];
                 $html.="<tr>";
-                $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total count:")."</td>";
+                $html.="<td colspan='4' class='text-right'>".Yii::t("summary","total count:")."</td>";
                 $html.="<td colspan='2'>".$count."</td>";
                 $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
                 $html.="<td colspan='2'>".$sum."</td>";
@@ -234,13 +236,13 @@ class SummaryTable extends SummaryForm{
                 $monthAmt = $sum/$week_day*$month_day;
                 $monthAmt = round($monthAmt,2);
                 $sumTxt = "全月预估金额：({$sum}÷{$week_day}) × {$month_day} = {$monthAmt}";
-                $html.="<td colspan='9' class='text-right'>".$sumTxt."</td>";
+                $html.="<td colspan='10' class='text-right'>".$sumTxt."</td>";
                 $html.="<td>&nbsp;</td>";
                 $html.="</tr>";
             }
             $html.="</tfoot>";
         }else{
-            $html.="<tbody><tr><td colspan='9'>".Yii::t("summary","none data")."</td></tr></tbody>";
+            $html.="<tbody><tr><td colspan='10'>".Yii::t("summary","none data")."</td></tr></tbody>";
         }
         $html.="</table>";
         return $html;
@@ -276,7 +278,7 @@ class SummaryTable extends SummaryForm{
                 $html.="<td>".General::toDate($row["invoice_dt"])."</td>";
                 $html.="<td>".$row["customer_code"]."</td>";
                 $html.="<td>".$row["customer_type"]."</td>";
-                $html.="<td class='text-right'>".$row["sum_amount"]."</td>";
+                $html.="<td>".$row["sum_amount"]."</td>";
                 $html.="</tr>";
             }
             $html.="</tbody><tfoot>";
@@ -304,6 +306,7 @@ class SummaryTable extends SummaryForm{
         $html.="<th width='90px'>".Yii::t('summary','City')."</th>";//城市
         $html.="<th width='90px'>".Yii::t('summary','search day')."</th>";//日期
         $html.="<th>".Yii::t('service','Customer')."</th>";//客户编号及名称
+        $html.="<th width='100px'>".Yii::t('service','Resp. Sales')."</th>";//业务员
         $html.="<th width='80px'>".Yii::t('service','Customer Type')."</th>";//客户类别
         $html.="<th width='80px'>".Yii::t('customer','Contract Period')."</th>";//合同年限(月)
         $html.="<th width='100px'>".Yii::t('service','Paid Amt').Yii::t('summary','(Before)')."</th>";//服务金额(更改前)
@@ -361,24 +364,25 @@ class SummaryTable extends SummaryForm{
                 $html.="<td>".$cityName."</td>";
                 $html.="<td>".General::toDate($row["status_dt"])."</td>";
                 $html.="<td>".$companyName."</td>";
+                $html.="<td>".$row["salesman"]."</td>";
                 $html.="<td>".$row["cust_type_name"]."</td>";
                 $html.="<td>".$row["ctrt_period"]."</td>";
-                $html.="<td class='text-right'>".$row["b4_amt_paid"]."(".GetNameToId::getPaidTypeForId($row["b4_paid_type"]).") "."</td>";
-                $html.="<td class='text-right'>".$row["amt_paid"]."(".GetNameToId::getPaidTypeForId($row["paid_type"]).") "."</td>";
-                $html.="<td class='text-right'>".$row["sum_amount"]."</td>";
+                $html.="<td>".$row["b4_amt_paid"]."(".GetNameToId::getPaidTypeForId($row["b4_paid_type"]).") "."</td>";
+                $html.="<td>".$row["amt_paid"]."(".GetNameToId::getPaidTypeForId($row["paid_type"]).") "."</td>";
+                $html.="<td>".$row["sum_amount"]."</td>";
                 $html.="<td>{$link}</td>";
                 $html.="</tr>";
             }
             $html.="</tbody><tfoot>";
             $html.="<tr>";
-            $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total count:")."</td>";
+            $html.="<td colspan='4' class='text-right'>".Yii::t("summary","total count:")."</td>";
             $html.="<td colspan='2'>".$count."</td>";
             $html.="<td colspan='4' class='text-right'>".Yii::t("summary","total amt:")."</td>";
             $html.="<td colspan='2'>".$sum."</td>";
             $html.="</tr>";
             $html.="</tfoot>";
         }else{
-            $html.="<tbody><tr><td colspan='10'>".Yii::t("summary","none data")."</td></tr></tbody>";
+            $html.="<tbody><tr><td colspan='11'>".Yii::t("summary","none data")."</td></tr></tbody>";
         }
         $html.="</table>";
         return $html;
@@ -389,7 +393,7 @@ class SummaryTable extends SummaryForm{
         $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         $whereSql.= " and a.city in ({$city_allow})";
         $whereSql .= self::$whereSQL;
-        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
             ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
@@ -430,7 +434,7 @@ class SummaryTable extends SummaryForm{
         $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         $whereSql.= " and a.city in ({$city_allow})";
         $whereSql .= self::$whereSQL;
-        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
             ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
@@ -471,7 +475,7 @@ class SummaryTable extends SummaryForm{
         $whereSql = "a.status='{$type}' and a.status in ('S','T') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         $whereSql.= " and a.city in ({$city_allow})";
         $whereSql .= self::$whereSQL;
-        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
             ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
@@ -549,7 +553,7 @@ class SummaryTable extends SummaryForm{
         $whereSql = "a.status='S' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         $whereSql.= " and a.city in ({$city_allow})";
         $whereSql .= self::$whereSQL;
-        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
             ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
@@ -627,7 +631,7 @@ class SummaryTable extends SummaryForm{
             $whereSql.= " and a.city in ({$city_allow})";
         }
         $whereSql .= self::$whereSQL;
-        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
             ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
@@ -666,7 +670,7 @@ class SummaryTable extends SummaryForm{
             $whereSqlID= " and a.ctrt_period<12";
         }
         $whereSql .= self::$whereSQL;
-        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
             ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
@@ -716,7 +720,7 @@ class SummaryTable extends SummaryForm{
             $whereSql.= " and (g.rpt_cat!='A01' or g.rpt_cat is null) ";
         }
         $whereSql .= self::$whereSQL;
-        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
             ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
@@ -760,7 +764,7 @@ class SummaryTable extends SummaryForm{
         if(!empty($city_allow)){
             $whereSql.= " and a.city in ({$city_allow})";
         }
-        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
             ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
@@ -797,7 +801,7 @@ class SummaryTable extends SummaryForm{
         }else{
             $whereSql.= " and (g.rpt_cat!='A01' or g.rpt_cat is null) ";
         }
-        $selectSql = "a.id,a.status,a.status_dt,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
             ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
