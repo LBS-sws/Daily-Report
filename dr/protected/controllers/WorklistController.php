@@ -387,18 +387,7 @@ class WorklistController extends Controller
         }
         $objWriter->save('php://output');
     }
-
-
-    public static function allowReadWrite()
-    {
-        return Yii::app()->user->validRWFunction('SR01');
-    }
-
-    public static function allowReadOnly()
-    {
-        return Yii::app()->user->validFunction('SR01');
-    }
-
+    
     protected function json($data = [], $msg = "ok", $code = 1)
     {
         //设置格式
