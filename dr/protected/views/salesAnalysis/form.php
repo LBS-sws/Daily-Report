@@ -140,7 +140,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 <?php
 $js="
     $('.click-th').click(function(){
-        var contNum = 2;
+        var contNum = 4;
         var startNum=contNum;
         var endNum = $(this).attr('colspan');
         $(this).prevAll('.click-th').each(function(){

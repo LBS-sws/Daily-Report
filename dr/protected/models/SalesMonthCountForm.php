@@ -216,6 +216,9 @@ class SalesMonthCountForm extends CFormModel
             }
             $colNum = empty($colNum)?1:$colNum;
             $trOne.="<th style='{$style}' colspan='{$colNum}'";
+            if($colNum>1){
+                $trOne.=" class='click-th'";
+            }
             if(key_exists("rowspan",$list)){
                 $trOne.=" rowspan='{$list["rowspan"]}'";
             }
