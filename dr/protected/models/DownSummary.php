@@ -274,6 +274,57 @@ class DownSummary{
         }
     }
 
+    public function setCapacityData($data){
+        if(!empty($data)){
+            $endStr = $this->getColumn($this->th_num-1);
+            foreach ($data as $region){
+                $startRow = $this->current_row;
+                foreach ($region as $keyStr=>$list){
+                    $col = 0;
+                    foreach ($list as $item){
+                        $this->objPHPExcel->getActiveSheet()
+                            ->setCellValueByColumnAndRow($col, $this->current_row, $item);
+                        $col++;
+                    }
+                    if($keyStr=='arrKey'){//标题
+                        $this->objPHPExcel->getActiveSheet()
+                            ->getStyle("A{$this->current_row}:{$endStr}{$this->current_row}")
+                            ->applyFromArray(
+                                array(
+                                    'font'=>array(
+                                        'bold'=>true,
+                                        'color'=>array('rgb'=>'FFFFFF')
+                                    ),
+                                    'fill'=>array(
+                                        'type'=>PHPExcel_Style_Fill::FILL_SOLID,
+                                        'startcolor'=>array(
+                                            'rgb'=>"000000",
+                                        ),
+                                    ),
+                                )
+                            );
+                    }
+                    $this->current_row++;
+                }
+                if($startRow!=$this->current_row){
+                    $endRow = $this->current_row-1;
+                    $this->objPHPExcel->getActiveSheet()
+                        ->getStyle("A{$startRow}:{$endStr}{$endRow}")
+                        ->applyFromArray(
+                            array(
+                                'borders' => array(
+                                    'allborders'=>array(
+                                        'style'=>PHPExcel_Style_Border::BORDER_THIN,
+                                    ),
+                                ),
+                            )
+                        );
+                }
+                $this->current_row++;
+            }
+        }
+    }
+
     public function setSalesAreaData($data,$headArr){
         if(!empty($data)){
             foreach ($data as $region=>$regionList){

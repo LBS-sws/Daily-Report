@@ -223,5 +223,11 @@ return array(
     'num stop'=>'流失',
     'num recover'=>'凈恢復',
     'num net'=>'凈增',
+
+    'Capacity Region Count'=>'區域產能',
+    'Capacity Area Count'=>'地區產能',
+    ' Month Capacity'=>'月產能',
+    'month forecast'=>'整月預估',
+    'MTD'=>'MTD',
 );
 ?>

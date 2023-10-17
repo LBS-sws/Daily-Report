@@ -231,6 +231,10 @@ return array(
                 'access'=>'G19',
                 'url'=>'/lostOrder/index',
             ),
+            'Capacity Count'=>array( //产能统计
+                'access'=>'G21',
+                'url'=>'/capacityCount/index',
+            ),
             'History Add'=>array(
                 'access'=>'G07',
                 'url'=>'/historyAdd/index',

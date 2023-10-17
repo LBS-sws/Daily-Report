@@ -944,6 +944,68 @@ class CountSearch{
         return $list;
     }
 
+    //客户服务查询(根據服務類型)（月為鍵名)
+    public static function getServiceForTypeToMonthEx($startDate,$endDate,$city_allow="",$type="N"){
+        $monthList = array();
+        $i=0;
+        do{
+            $nowDate = date("Y/m",strtotime($startDate." + {$i} months"));
+            if($nowDate."/01">$endDate){
+                $i=-1;
+            }else{
+                $monthList[$nowDate]=0;
+            }
+            $i++;
+        }while($i>0);
+        $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();//
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=$monthList;
+            }
+            $list[$row["city"]][$row["month_dt"]]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
     //獲取暫停、終止（月為鍵名)
     public static function getServiceForSTToMonth($end_dt,$city_allow,$type="all"){
         $year = date("Y",strtotime($end_dt));
@@ -1262,6 +1324,44 @@ class CountSearch{
         return $list;
     }
 
+    //服务新增INV產品数据(台灣版專用)
+    public static function getUInvTWMoneyToMonthEx($startDay,$endDay,$city_allow=""){
+        $suffix = Yii::app()->params['envSuffix'];
+        $monthList = array();
+        $i=0;
+        do{
+            $nowDate = date("Y/m",strtotime($startDay." + {$i} months"));
+            if($nowDate."/01">$endDay){
+                $i=-1;
+            }else{
+                $monthList[$nowDate]=0;
+            }
+            $i++;
+        }while($i>0);
+        $whereSql = "a.status='N' and f.rpt_cat='INV' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $list = array();
+        $sum_money = "case a.paid_type when 'M' then a.amt_paid * a.ctrt_period else a.amt_paid end";
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum({$sum_money}) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+            ->from("swoper{$suffix}.swo_service a")
+            ->leftJoin("swoper{$suffix}.swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)
+            ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+        $rows = $rows?$rows:array();
+
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=$monthList;
+            }
+            $thisMonth = $row["month_dt"];
+            $list[$row["city"]][$thisMonth]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
     //获取U系统的產品数据（月為鍵名)
     public static function getUInvMoneyToMonth($endDay,$city_allow=""){
         if(self::$system===1){//台灣版的產品為lbs的inv新增
@@ -1284,6 +1384,50 @@ class CountSearch{
             $month = $i<10?"0".$i:$i;
             $monthList["{$year}/{$month}"]=0;
         }
+        $list = array();
+        $count = 0;
+        if($json["message"]==="Success"){
+            $jsonData = $json["data"];
+            foreach ($jsonData as $row){
+                $city = self::resetCity($row["city"]);
+                $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
+                $thisMonth = date("Y/m",strtotime($row["invoice_dt"]));
+                if($thisMonth=="2023/05"){
+                    $count++;
+                }
+                if(!key_exists($city,$list)){
+                    $list[$city]=$monthList;
+                }
+                $list[$city][$thisMonth]+=$money;
+            }
+        }
+        return $list;
+    }
+
+    //获取U系统的產品数据（月為鍵名)
+    public static function getUInvMoneyToMonthEx($startDay,$endDay,$city_allow=""){
+        if(self::$system===1){//台灣版的產品為lbs的inv新增
+            return self::getUInvTWMoneyToMonthEx($startDay,$endDay,$city_allow);
+        }
+        $city = "";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $city = $city_allow;
+        }
+        if(self::$system===2&&!empty($city)&&strpos($city,"'MY'")!==false){//國際版
+            $city.=",'KL','SL'";
+        }
+        $json = Invoice::getInvData($startDay,$endDay,$city);
+        $monthList = array();
+        $i=0;
+        do{
+            $nowDate = date("Y/m",strtotime($startDay." + {$i} months"));
+            if($nowDate."/01">$endDay){
+                $i=-1;
+            }else{
+                $monthList[$nowDate]=0;
+            }
+            $i++;
+        }while($i>0);
         $list = array();
         $count = 0;
         if($json["message"]==="Success"){

@@ -179,5 +179,6 @@ return array(
     'Contract comparison report'=>"合约对比报表",
     'Lost orders rate'=>"每月丢单率",
     'Sales Month Count'=>'每月销售人数统计',
+    'Capacity Count'=>'产能统计',
 );
 ?>

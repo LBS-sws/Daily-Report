@@ -173,5 +173,6 @@ return array(
     'Contract comparison report'=>"合約對比報表",
     'Lost orders rate'=>"每月丟單率",
     'Sales Month Count'=>'每月銷售人數統計',
+    'Capacity Count'=>'產能統計',
 );
 ?>
