@@ -1,9 +1,9 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - WeekServiceU Form';
+$this->pageTitle=Yii::app()->name . ' - MonthServiceU Form';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'WeekServiceU-form',
+'id'=>'MonthServiceU-form',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
@@ -22,7 +22,7 @@ $this->pageTitle=Yii::app()->name . ' - WeekServiceU Form';
 
 <section class="content-header">
 	<h1>
-        <strong><?php echo Yii::t('app','Week Service U'); ?></strong>
+        <strong><?php echo Yii::t('app','Month Service U'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -37,12 +37,12 @@ $this->pageTitle=Yii::app()->name . ' - WeekServiceU Form';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('weekServiceU/index')));
+				'submit'=>Yii::app()->createUrl('monthServiceU/index')));
 		?>
 	</div>
             <div class="btn-group pull-right" role="group">
                 <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('dialog','Download'), array(
-                    'submit'=>Yii::app()->createUrl('weekServiceU/downExcel')));
+                    'submit'=>Yii::app()->createUrl('monthServiceU/downExcel')));
                 ?>
             </div>
 	</div></div>
@@ -67,14 +67,14 @@ $this->pageTitle=Yii::app()->name . ' - WeekServiceU Form';
                             <!-- Default panel contents -->
                             <div class="panel-heading">
                                 <h3 style="margin-top:10px;">
-                                    <?php echo Yii::t('app','Week Service U'); ?>
+                                    <?php echo Yii::t('app','Month Service U'); ?>
                                     <small>(<?php echo $model->start_date." ~ ".$model->end_date;?>)</small>
                                 </h3>
                             </div>
 
                             <!-- Table -->
                             <div class="table-responsive">
-                                <?php echo $model->weekServiceUHtml();?>
+                                <?php echo $model->monthServiceUHtml();?>
                             </div>
                         </div>
                     </div>
@@ -102,14 +102,14 @@ $js="
         if($(this).hasClass('active')){
             $(this).children('span').text($(this).data('text'));
             $(this).removeClass('active');
-            $('#weekServiceU>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
+            $('#monthServiceU>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = $(this).data('width')+'px';
                 $(this).width(width);
             });
-            $('#weekServiceU>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#monthServiceU>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
                 $(this).children('span').text($(this).data('text'));
             });
-            $('#weekServiceU>tbody>tr').each(function(){
+            $('#monthServiceU>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
                     $(this).children('span').text($(this).data('text'));
                 });
@@ -118,15 +118,15 @@ $js="
             $(this).data('text',$(this).text());
             $(this).children('span').text('.');
             $(this).addClass('active');
-            $('#weekServiceU>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
+            $('#monthServiceU>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = '15px';
                 $(this).width(width);
             });
-            $('#weekServiceU>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#monthServiceU>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
                 $(this).data('text',$(this).text());
                 $(this).children('span').text('');
             });
-            $('#weekServiceU>tbody>tr').each(function(){
+            $('#monthServiceU>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
                     $(this).data('text',$(this).text());
                     $(this).children('span').text('');

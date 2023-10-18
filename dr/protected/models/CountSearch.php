@@ -816,6 +816,52 @@ class CountSearch{
         return $list;
     }
 
+    //获取U系统的服务单数据（月為鍵名)
+    public static function getUServiceMoneyToMonthEx($startDay,$endDay,$city_allow=""){
+        $monthList = array();
+        $i=0;
+        do{
+            $nowDate = date("Y/m",strtotime($startDay." + {$i} months"));
+            if($nowDate."/01">$endDay){
+                $i=-1;
+            }else{
+                $monthList[$nowDate]=0;
+            }
+            $i++;
+        }while($i>0);
+        $list = array();
+        $citySql = "";
+        $textSql = "b.Text";
+        if(self::$system==2){//國際版
+            $textSql = "IF(b.Text='KL' or b.Text='SL','MY',b.Text)";
+        }
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $citySql = " and {$textSql} in ({$city_allow})";
+        }
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()
+            ->select("b.Text,sum(
+                    if(a.TermCount=0,0,a.Fee/a.TermCount)
+					) as sum_amount,DATE_FORMAT(a.JobDate,'%Y/%m') as month_dt")
+            ->from("service{$suffix}.joborder a")
+            ->leftJoin("service{$suffix}.officecity f","a.City = f.City")
+            ->leftJoin("service{$suffix}.enums b","f.Office = b.EnumID and b.EnumType=8")
+            ->where("a.Status=3 and a.JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
+            ->group("b.Text,DATE_FORMAT(a.JobDate,'%Y/%m')")
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $city = self::resetCity($row["Text"]);
+                $money = empty($row["sum_amount"])?0:round($row["sum_amount"],2);
+                if(!key_exists($city,$list)){
+                    $list[$city]=$monthList;
+                }
+                $list[$city][$row["month_dt"]]+=$money;
+            }
+        }
+        return $list;
+    }
+
     //客户服务查询(更改)（月為鍵名)
     public static function getServiceAToMonth($endDate,$city_allow=""){
         $year = date("Y",strtotime($endDate));
@@ -1493,5 +1539,31 @@ class CountSearch{
         //一周：周六至周五
         $weekStart = date("Y/m/d",strtotime($date." - ".($w==6?0:$w+1)." day"));
         return $weekStart;
+    }
+
+    public static function salemanForHr($city_allow,$startDate="",$endDate=""){
+        $suffix = Yii::app()->params['envSuffix'];
+        $startDate = empty($startDate)?date("Y/m/01"):date("Y/m/d",strtotime($startDate));
+        $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("a.name,a.code,a.city,d.user_id,a.staff_status")
+            ->from("security{$suffix}.sec_user_access f")
+            ->leftJoin("hr{$suffix}.hr_binding d","d.user_id=f.username")
+            ->leftJoin("hr{$suffix}.hr_employee a","d.employee_id=a.id")
+            ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and (
+                (a.staff_status = 0 and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}')
+                or
+                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/%d')>='{$startDate}' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}')
+             ) AND a.city in ({$city_allow})"
+            )->order("a.city desc,a.position asc,a.entry_time asc,a.id desc")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $name_label = $row["name"]."({$row["code"]})";
+                $name_label.= empty($row["staff_status"])?"":"（已离职）";
+                $list[] = array("name"=>$row["name"],"code"=>$row["code"],"city"=>$row["city"],"user_id"=>$row["user_id"],"name_label"=>$name_label);
+            }
+        }
+        return $list;
     }
 }

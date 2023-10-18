@@ -227,6 +227,10 @@ return array(
                 'access'=>'G18',
                 'url'=>'/weekServiceU/index',
             ),
+            'Month Service U'=>array( //月服务生意额
+                'access'=>'G22',
+                'url'=>'/monthServiceU/index',
+            ),
             'Lost orders rate'=>array( //每月丢单率
                 'access'=>'G19',
                 'url'=>'/lostOrder/index',

@@ -229,5 +229,8 @@ return array(
     ' Month Capacity'=>'月产能',
     'month forecast'=>'整月预估',
     'MTD'=>'MTD',
+    'YoY growth'=>'YoY growth',
+    ' month E(A)'=>'月E(A)',
+    ' month E(B)'=>'月E(B)',
 );
 ?>
