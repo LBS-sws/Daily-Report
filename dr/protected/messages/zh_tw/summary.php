@@ -232,5 +232,9 @@ return array(
     'YoY growth'=>'YoY growth',
     ' month E(A)'=>'月E(A)',
     ' month E(B)'=>'月E(B)',
+
+    'Sales productivity num'=>'銷售人數',
+    'Sales productivity amt'=>'簽單金額',
+    'Sales productivity rate'=>'銷售月均生產率',
 );
 ?>

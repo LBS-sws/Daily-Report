@@ -56,9 +56,13 @@ class DownSummary{
                 }
                 if(key_exists("background",$list)){
                     $background = $list["background"];
-                    $background = end(explode("#",$background));
+                    $background = explode("#",$background);
+                    $background = end($background);
+                    $color = key_exists("color",$list)?$list["color"]:"#000000";
+                    $color = explode("#",$color);
+                    $color = end($color);
                     $endRow = $bool?$this->current_row+1:$this->current_row;
-                    $this->setHeaderStyleTwo("{$startStr}{$this->current_row}:{$endStr}{$endRow}",$background);
+                    $this->setHeaderStyleTwo("{$startStr}{$this->current_row}:{$endStr}{$endRow}",$background,$color);
                 }
                 if(isset($list["colspan"])){
                     foreach ($list["colspan"] as $item){
@@ -122,8 +126,12 @@ class DownSummary{
 
                 if(key_exists("background",$list)){
                     $background = $list["background"];
-                    $background = end(explode("#",$background));
-                    $this->setHeaderStyleTwo("{$startStr}{$this->current_row}",$background);
+                    $background = explode("#",$background);
+                    $background = end($background);
+                    $color = key_exists("color",$list)?$list["color"]:"#000000";
+                    $color = explode("#",$color);
+                    $color = end($color);
+                    $this->setHeaderStyleTwo("{$startStr}{$this->current_row}",$background,$color);
                 }
                 $colOne++;
                 $this->th_num++;
@@ -357,6 +365,65 @@ class DownSummary{
         }
     }
 
+    public function setSalesProdData($data,$keyList){
+        if(key_exists("MO",$data)){//是否有澳門地區的數據
+            $moData=$data["MO"];
+            unset($data["MO"]);
+        }else{
+            $moData = array();
+        }
+        if(!empty($data)){
+            foreach ($data as $region=>$regionList){
+                if(isset($regionList["list"])&&!empty($regionList["list"])){
+                    foreach ($regionList["list"] as $city=>$cityList){
+                        $col = 0;
+                        foreach ($keyList as $keyStr){
+                            $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"";
+                            $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
+                            $col++;
+                        }
+                        $this->current_row++;
+                    }
+                }
+                //合计
+                $col = 0;
+                if(isset($regionList["count"])){
+                    foreach ($keyList as $keyStr){
+                        $text = key_exists($keyStr,$regionList["count"])?$regionList["count"][$keyStr]:"";
+                        $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
+                        $col++;
+                    }
+                }
+                $thEndStr = $this->getColumn($this->th_num-1);
+                $this->objPHPExcel->getActiveSheet()
+                    ->getStyle("A{$this->current_row}:{$thEndStr}{$this->current_row}")
+                    ->applyFromArray(
+                        array(
+                            'font'=>array(
+                                'bold'=>true,
+                            ),
+                            'borders' => array(
+                                'top' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                                )
+                            )
+                        )
+                    );
+                $this->current_row++;
+                $this->current_row++;
+            }
+        }
+
+        if(!empty($moData)){
+            $col = 0;
+            foreach ($keyList as $keyStr){
+                $text = key_exists($keyStr,$moData)?$moData[$keyStr]:"";
+                $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
+                $col++;
+            }
+        }
+    }
+
     private function setCellValueForSummary($col,$row,$text,$keyStr=""){
         $this->objPHPExcel->getActiveSheet()
             ->setCellValueByColumnAndRow($col, $row, $text);
@@ -438,10 +505,13 @@ class DownSummary{
         echo $output;
     }
 
-    protected function setHeaderStyleTwo($cells,$color="AFECFF") {
+    protected function setHeaderStyleTwo($cells,$bg="AFECFF",$color="000000") {
         $styleArray = array(
             'font'=>array(
                 'bold'=>true,
+                'color'=>array(
+                    'argb'=>$color,
+                ),
             ),
             'alignment'=>array(
                 'horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
@@ -455,7 +525,7 @@ class DownSummary{
             'fill'=>array(
                 'type'=>PHPExcel_Style_Fill::FILL_SOLID,
                 'startcolor'=>array(
-                    'argb'=>$color,
+                    'argb'=>$bg,
                 ),
             ),
         );

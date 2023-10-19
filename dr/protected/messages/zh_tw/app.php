@@ -175,5 +175,6 @@ return array(
     'Lost orders rate'=>"每月丟單率",
     'Sales Month Count'=>'每月銷售人數統計',
     'Capacity Count'=>'產能統計',
+    'Sales productivity'=>'銷售月均生產率',
 );
 ?>

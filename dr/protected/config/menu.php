@@ -271,6 +271,10 @@ return array(
                 'access'=>'G20',
                 'url'=>'/salesMonthCount/index',
             ),
+            'Sales productivity'=>array(//销售月均生产率
+                'access'=>'G23',
+                'url'=>'/salesProd/index',
+            ),
             'Average office'=>array(//月预计平均人效
                 'access'=>'G13',
                 'url'=>'/salesAverage/index',
