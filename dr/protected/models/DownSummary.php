@@ -292,25 +292,27 @@ class DownSummary{
                     foreach ($list as $item){
                         $this->objPHPExcel->getActiveSheet()
                             ->setCellValueByColumnAndRow($col, $this->current_row, $item);
-                        $col++;
-                    }
-                    if($keyStr=='arrKey'){//标题
-                        $this->objPHPExcel->getActiveSheet()
-                            ->getStyle("A{$this->current_row}:{$endStr}{$this->current_row}")
-                            ->applyFromArray(
-                                array(
-                                    'font'=>array(
-                                        'bold'=>true,
-                                        'color'=>array('rgb'=>'FFFFFF')
-                                    ),
-                                    'fill'=>array(
-                                        'type'=>PHPExcel_Style_Fill::FILL_SOLID,
-                                        'startcolor'=>array(
-                                            'rgb'=>"000000",
+                        if($keyStr=='arrKey'){//标题
+                            $background = $col<=12?"000000":"334e9b";
+                            $nowStr = $this->getColumn($col);
+                            $this->objPHPExcel->getActiveSheet()
+                                ->getStyle($nowStr.$this->current_row)
+                                ->applyFromArray(
+                                    array(
+                                        'font'=>array(
+                                            'bold'=>true,
+                                            'color'=>array('rgb'=>'FFFFFF')
                                         ),
-                                    ),
-                                )
-                            );
+                                        'fill'=>array(
+                                            'type'=>PHPExcel_Style_Fill::FILL_SOLID,
+                                            'startcolor'=>array(
+                                                'rgb'=>$background,
+                                            ),
+                                        ),
+                                    )
+                                );
+                        }
+                        $col++;
                     }
                     $this->current_row++;
                 }

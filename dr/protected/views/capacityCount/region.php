@@ -19,6 +19,7 @@ $this->pageTitle=Yii::app()->name . ' - CapacityRegion Form';
     .table-fixed>tfoot>tr>td,.table-fixed>tbody>tr>td{ text-align: right;}
     .table-fixed>thead>tr>th.header-width{ height: 0px;padding: 0px;overflow: hidden;border-width: 0px;line-height: 0px;}
     td.td-title{ background: #000;color: #fff;font-weight: bold;}
+    td.td-title_now{ background: #334e9b;color: #fff;font-weight: bold;}
 </style>
 
 <section class="content-header">

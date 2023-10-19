@@ -473,7 +473,7 @@ class MonthServiceUForm extends CFormModel
         $this->validateDate("","");
         $headList = $this->getTopArr();
         $excel = new DownSummary();
-        $excel->colTwo=0;
+        $excel->colTwo=1;
         $excel->SetHeaderTitle(Yii::t("app","Month Service U")."（{$this->search_date}）");
         $titleTwo = $this->start_date." ~ ".$this->end_date."\r\n";
         $excel->SetHeaderString($titleTwo);

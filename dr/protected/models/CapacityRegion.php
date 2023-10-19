@@ -280,10 +280,19 @@ class CapacityRegion extends CFormModel
     protected function printTableTr($region,$data,$keyStr,$bool=false){
         $data = $data[$keyStr];
         $html="<tr class='tr-end'>";
+        $i=0;
         foreach ($data as $text){
-            $tdClass = $bool?"td-title":"";
+            $tdClass="";
+            if($bool){
+                if($i>12){
+                    $tdClass = "td-title_now";
+                }else{
+                    $tdClass = "td-title";
+                }
+            }
             $this->downJsonText["excel"][$region][$keyStr][]=$text;
             $html.="<td class='{$tdClass}'><span>{$text}</span></td>";
+            $i++;
         }
         $html.="</tr>";
         return $html;
@@ -306,7 +315,9 @@ class CapacityRegion extends CFormModel
         $excel = new DownSummary();
         $excel->colTwo=1;
         $excel->th_num = $this->th_sum;
-        $excel->SetHeaderTitle(Yii::t("summary","Capacity Region Count")."（{$this->search_date}）");
+        $excel->SetHeaderTitle(Yii::t("summary","Capacity Region Count"));
+        $titleTwo = $this->start_date." ~ ".$this->end_date."\r\n";
+        $excel->SetHeaderString($titleTwo);
 
         $excel->init();
         $excel->setCapacityData($excelData);
