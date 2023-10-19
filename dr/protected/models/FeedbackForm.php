@@ -301,7 +301,7 @@ class FeedbackForm extends CFormModel
 		$to = City::model()->getAncestorInChargeList($this->city);
 		$this->to = implode("; ",General::getEmailByUserIdArray($to));
 		if($this->city!="CD"){
-            $this->to.= "; kittyzhou@lbsgroup.com.cn";//2023/09/08额外增加收件人
+            //$this->to.= "; kittyzhou@lbsgroup.com.cn";//2023/09/08额外增加收件人
         }
 //		$this->to = implode("; ",Yii::app()->params['bossEmail']);
 		
@@ -438,7 +438,7 @@ class FeedbackForm extends CFormModel
 		$to = General::getEmailByUserIdArray($incharge);
 		$to = array_merge($to, Yii::app()->params['bossEmail']);
 		if($city!="CD"){//成都除外
-            $to[]= "kittyzhou@lbsgroup.com.cn";//2023/09/08额外增加收件人
+            //$to[]= "kittyzhou@lbsgroup.com.cn";//2023/09/08额外增加收件人
         }
 		$cc = empty($this->cc) ? array() : General::getEmailByUserIdArray($this->cc);
 		$cc[] = Yii::app()->user->email();
