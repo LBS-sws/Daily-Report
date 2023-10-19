@@ -236,5 +236,9 @@ return array(
     'Sales productivity num'=>'销售人数',
     'Sales productivity amt'=>'签单金额',
     'Sales productivity rate'=>'销售月均生产率',
+    'Capacity FTE'=>'销售FTE演变',
+    'all city'=>'所有城市',
+    'MoM retention rate'=>'MoM retention rate',
+    'old now sales'=>'老销售',
 );
 ?>

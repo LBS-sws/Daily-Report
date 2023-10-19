@@ -88,6 +88,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 
                     $contentEnd='</div></div></div>';
                     $tabs =array();
+                    //在职销售人员产能
                     $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity Staff"),$contentHead);
                     $contentTable.=$model->salesAnalysisHtml();
                     $contentTable.=$contentEnd;
@@ -97,7 +98,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                         'content'=>$contentTable,
                         'active'=>true,
                     );
-                    //地区统计表
+                    //在职销售产能统计
                     $areaModel = new SalesAnalysisAreaForm();
                     $areaModel->search_date = $model->search_date;
                     $areaModel->setAttrAll($model);
@@ -111,7 +112,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                         'content'=>$contentTable,
                         'active'=>false,
                     );
-                    //地区统计表
+                    //在职销售达标统计
                     $cityModel = new SalesAnalysisCityForm();
                     $cityModel->search_date = $model->search_date;
                     $cityModel->setAttrAll($model);
@@ -125,7 +126,20 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                         'content'=>$contentTable,
                         'active'=>false,
                     );
-                    //城市统计表
+                    //在职销售达标统计
+                    $cityModel = new SalesAnalysisFTEForm();
+                    $cityModel->search_date = $model->search_date;
+                    $cityModel->setAttrAll($model);
+                    $cityModel->data = $model->fourDate;
+                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity FTE"),$contentHead);
+                    $contentTable.=$cityModel->salesAnalysisHtml();
+                    $contentTable.=$contentEnd;
+                    $contentTable.=TbHtml::hiddenField("excel[four]",$cityModel->downJsonText);
+                    $tabs[] = array(
+                        'label'=>Yii::t("summary","Capacity FTE"),
+                        'content'=>$contentTable,
+                        'active'=>false,
+                    );
                     echo TbHtml::tabbableTabs($tabs);
                     ?>
                 </div>
