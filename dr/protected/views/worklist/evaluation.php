@@ -89,7 +89,6 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
                 switch_value: true,
                 click_staff:'',
                 link: '',
-                value: '',
                 pickerOptions: {
                     shortcuts: [{
                         text: '最近一周',
@@ -257,7 +256,6 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
 
                 this.link = './../worklist/evaluationExport?start_date=' + start_date +
                     '&end_date=' + end_date +
-                    '&service_type=' + this.value +
                     '&city=' + this.city +
                     '&is_mark=' + this.is_mark+
                     '&staff_id=' + this.checkUser;

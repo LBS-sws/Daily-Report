@@ -502,7 +502,7 @@ class WorklistController extends Controller
                     //宽度
                     $objectPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
                     $objectPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
-                    $objectPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(30);
+                    $objectPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(40);
                     $objectPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
                     $objectPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(30);
                     $objectPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(30);

@@ -450,15 +450,34 @@ WHERE
      */
     public function getEvaluationExport($data)
     {
+        /* 城市区域筛选 */
+        $build_sql1 = "SELECT e.Text as area_code
+            FROM
+                service{$this->suffix}.officecity AS o
+                LEFT JOIN service{$this->suffix}.enums AS e ON e.EnumID = o.Office
+                LEFT JOIN security{$this->suffix}.sec_city AS b ON e.Text = b.CODE 
+            WHERE
+                e.EnumType = 8 AND
+                o.City = {$data['city']}";
+        $build_ret1 = Yii::app()->db->createCommand($build_sql1)->queryAll();
+
+        $build_sql2 = "SELECT GROUP_CONCAT(City) as citys
+            FROM
+                service{$this->suffix}.officecity AS o
+                LEFT JOIN service{$this->suffix}.enums AS e ON e.EnumID = o.Office
+                LEFT JOIN security{$this->suffix}.sec_city AS b ON e.Text = b.CODE 
+            WHERE
+                e.EnumType = 8 AND
+                e.Text IN('{$build_ret1[0]['area_code']}') ";
+        $data['citys_code'] = Yii::app()->db->createCommand($build_sql2)->queryAll();
+
         //查出服务单
         $table = "service{$this->suffix}.joborder";
-        $rangDate = 'FinishDate';
         $stype = 'ServiceType';
         $orderList = $this->getOrderData('order', $table, $stype, $data);
 
         //跟进单
         $table = "service{$this->suffix}.followuporder";
-        $rangDate = 'jobDate';
         $stype = 'SType';
         $followList = $this->getOrderData('follow', $table, $stype, $data);
 
@@ -500,9 +519,11 @@ WHERE
                 FROM
                     {$table} a
                     LEFT JOIN service{$this->suffix}.service b ON b.ServiceType = a.{$stype}
+                    JOIN service{$this->suffix}.enums c ON c.EnumID = a.City
                 WHERE
                     JobDate BETWEEN '{$start_date}' AND '{$end_date}'  AND
-                    a.Staff01 = {$data['staff_id']}
+                    a.Staff01 = {$data['staff_id']} AND
+                    a.City IN({$data['citys_code'][0]['citys']})
                 ORDER BY  a.JobDate DESC";
 
                 $order_type = 1;
@@ -516,9 +537,11 @@ WHERE
                 FROM
                     {$table} a
                     LEFT JOIN service{$this->suffix}.service b ON b.ServiceType = a.{$stype}
+                    JOIN service{$this->suffix}.enums c ON c.EnumID = a.City
                 WHERE
                     JobDate BETWEEN '{$start_date}' AND '{$end_date}'  AND
-                    a.Staff01 = {$data['staff_id']}
+                    a.Staff01 = {$data['staff_id']} AND
+                    a.City IN({$data['citys_code'][0]['citys']})
                 ORDER BY  a.JobDate DESC";
 
                 $order_type = 2;

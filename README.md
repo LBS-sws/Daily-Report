@@ -207,8 +207,15 @@ $follow = [
 ];
 
 ```
-我要你把代码中的两个数组合并为一个数组，
-要求：
-1. 新数组的"data"，内部以"job_date"的先后顺序排列
-2. 新数组的"count"["row_count"] 是两个数组的"count"["row_count"]之和
-3. 保证代码简洁、高效
+
+## 代码推送
+1. 关注公众号：: sandbox account of wxid_rmkl6t3lf6kt22(最好让公司开发人员推送)
+2. 将你的代码推送到github中，记住commitid
+3. 编写记录 
+```txt
+LBS系統更新
+#id:your_project_name 
+#ver:  大陆测试版/大陆正式版
+#commit:your_commitid
+```
+![img_1.png](readme_img.png)
