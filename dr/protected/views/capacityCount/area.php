@@ -85,6 +85,12 @@ $this->pageTitle=Yii::app()->name . ' - CapacityArea Form';
                         </div>
                     </div>
 
+                    <div class="col-lg-7">
+                        <p><?php echo Yii::t("summary","capacity_area_1");?></p>
+                        <p><?php echo Yii::t("summary","capacity_area_2");?></p>
+                        <p><?php echo Yii::t("summary","capacity_area_3");?></p>
+                        <p><?php echo Yii::t("summary","capacity_area_4");?></p>
+                    </div>
                     <div class="col-lg-12">
                         <div class="row">
                             <ul class="nav nav-tabs" id="capacityMenu">
