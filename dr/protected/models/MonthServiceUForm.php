@@ -211,7 +211,8 @@ class MonthServiceUForm extends CFormModel
     protected function computeRate($lastStr,$nowStr){
         if(!empty($lastStr)){
             $rate = round($nowStr/$lastStr,3);
-            $rate = ($rate-1)*100;
+            $rate = bcsub($rate,1,3);//由于浮点数减法有问题，所以使用bcsub
+            $rate = $rate*100;
             $rate.="%";
         }else{
             $rate = "";
