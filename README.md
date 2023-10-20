@@ -28,7 +28,7 @@ www  WEB部署目录（或者子目录）
 │  │    ├─....
 │  │    ├─main.php         项目配置文件（含数据库配置）
 │  │    ├─system.php       子系统配置文件
-│  │    └─console.php      项目配置文件（含数据库配置，修改无效）
+│  │    └─console.php      项目配置文件（定时器(没有登录)使用【php project_path/yii_console.php JobQueue】，例系统发送邮件，报表，定时更新数据库状态）
 │  │  
 │  └─...
 │
@@ -163,4 +163,8 @@ LBS系統更新
 #ver:  大陆测试版/大陆正式版
 #commit:your_commitid
 ```
+> 注：
+> 1. 推送commit中不要含有readme.md等文件
+> 2. commit 信息中不要有表情，不要有奇奇怪怪的字符，会通不过
+
 ![img_1.png](readme_img.png)
