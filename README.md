@@ -136,7 +136,14 @@ return array(
 apache
 ```apache
 #.htaccess
+RewriteEngine on
 
+# if a directory or a file exists, use it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# otherwise forward it to index.php
+RewriteRule . index.php
 ```
 
 nginx
@@ -145,68 +152,6 @@ nginx
 
 ```
 
-```php
-$order = [
-    "data"=>[
-        [
-            "customer_name"=> "PPG廣州分公司",
-            "staff_name"=> "王建平",
-            "service_type"=> "租機服务",
-            "start_time"=> "12:45:00",
-            "end_time"=> "13:16:00",
-            "job_date"=> "2020-01-15",
-            "FirstJob"=> "0",
-            "job_time"=> "00:31:00",
-            "flag"=> "1",
-            "status"=> "异常单"
-        ],[
-            "customer_name"=> "大喜屋",
-            "staff_name"=> "王建平",
-            "service_type"=> "滅蟲",
-            "start_time"=> "13:56:00",
-            "end_time"=> "14:22:00",
-            "job_date"=> "2019-11-28",
-            "FirstJob"=> "0",
-            "job_time"=> "00:26:00",
-            "flag"=> "1",
-            "status"=> "异常单"
-        ],
-    ],
-    "count"=> [
-        "row_count"=> "2"
-    ]
-];
-
-$follow = [
-    "data"=>[
-        [
-            "customer_name"=> "COCO-万科金色领域 (NHCOC017-FS)",
-            "staff_name"=> "王建平",
-            "service_type"=> "鼠臭跟进",
-            "start_time"=> "12:40:00",
-            "end_time"=> "13:06:00",
-            "job_date"=> "2020-04-27",
-            "job_time"=> "00:26:00",
-            "flag"=> "1",
-            "status"=> "异常单"
-        ],[
-            "customer_name"=> "原味园（黄岐店） (NHYWY001-FS)",
-            "staff_name"=> "王建平",
-            "service_type"=> "鼠臭跟进",
-            "start_time"=> "16:10:00",
-            "end_time"=> "16:30:00",
-            "job_date"=> "2020-04-25",
-            "job_time"=> "00:20:00",
-            "flag"=> "1",
-            "status"= "异常单"
-        ],
-    ],
-    "count"=> [
-        "row_count"=> "2"
-    ]
-];
-
-```
 
 ## 代码推送
 1. 关注公众号：: sandbox account of wxid_rmkl6t3lf6kt22(最好让公司开发人员推送)
