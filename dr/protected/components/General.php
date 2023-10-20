@@ -656,5 +656,4 @@ class General {
         }
     }
 }
-
 ?>

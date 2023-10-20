@@ -431,4 +431,3 @@ return array(
 		),
 	),
 );
-

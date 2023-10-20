@@ -268,4 +268,3 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
 
 
 </script>
-
