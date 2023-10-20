@@ -184,4 +184,5 @@ return array(
     'Capacity Count'=>'产能统计',
     'Sales productivity'=>'销售月均生产率',
 );
+
 ?>
