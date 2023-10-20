@@ -42,7 +42,7 @@ return array(
     'YoY change'=>'YoY change',
     'YTD New'=>'YTD新增(除一次性服务)',
     'YTD Stop'=>'YTD終止',
-    'YTD Net'=>'YTD Net',
+    'YTD Net'=>'YTD 淨增長',
     'day num'=>'查詢天數',
     'day'=>'天',
     'Actual monthly amount'=>'服務生意額',
@@ -207,5 +207,49 @@ return array(
     'perMonth_remark_2'=>'2、停止金額 =  終止服務  +  上月一次性服務+新增產品',
     'perMonth_remark_3'=>'3、凈恢復金額 =  恢復服務   +  暫停服務  +  更改服務',
     'perMonth_remark_4'=>'4、凈增金額 = 新增金額  –  停止金額  +  凈恢復金額',
+
+    'contract number'=>'合約數量',
+    'contract money'=>'合約總金額',
+    'contract service'=>'每月服務次數',
+
+    'monthly Actual amount'=>'每月服務生意額',
+    'monthly stop amount'=>'每月終止客戶',
+    'lost order rate'=>'每月丟單率',
+    ' Year'=>'年',
+    'Per Month Count'=>'時間流失',
+    'monthly target'=>'每月目標',
+    'monthly rate'=>'目標達成',
+    'num add'=>'新增',
+    'num stop'=>'流失',
+    'num recover'=>'凈恢復',
+    'num net'=>'凈增',
+
+    'Capacity Region Count'=>'區域產能',
+    'Capacity Area Count'=>'地區產能',
+    ' Month Capacity'=>'月產能',
+    'month forecast'=>'整月預估',
+    'MTD'=>'MTD',
+    'YoY growth'=>'YoY growth',
+    ' month E(A)'=>'月E(A)',
+    ' month E(B)'=>'月E(B)',
+
+    'Sales productivity num'=>'銷售人數',
+    'Sales productivity amt'=>'簽單金額',
+    'Sales productivity rate'=>'銷售月均生產率',
+    'Capacity FTE'=>'銷售FTE演變',
+    'all city'=>'所有城市',
+    'MoM retention rate'=>'MoM retention rate',
+    'old now sales'=>'老銷售',
+
+    'capacity_area_1'=>'1、MTD = 當月新增金額 / 銷售人數',
+    'capacity_area_2'=>'2、整月預估 = 本周金額 / 上月銷售人數',
+    'capacity_area_3'=>'3、銷售人數取數邏輯，如果不是當月最後一天，則用上月人數',
+    'capacity_area_4'=>'例：10月30日，productivity = 10月1-30新增金額 / 9月人數，到了10月31日productivity = 10月1-31新增金額 / 10月人數，1-9月的productivity = 當月新增金額 / 當月銷售人數',
+
+    'monthServiceU_1'=>'月E(A) = 當月服務生意額 / 當月1號到提交日的天數  * 當月總天數',
+    'monthServiceU_2'=>'月E(B) = 上月服務生意額 +（當月合約凈銷售額 + 一次性凈盈虧）/ 提交天數 * 當月總天數',
+    'monthServiceU_3'=>'當月合約凈銷售額 =（ 新增服務(除一次性服務 ) - 終止服務 + 恢復服務 - 暫停服務 +/- 更改服務 ）/ 12',
+    'monthServiceU_4'=>'一次性凈盈虧 = 當月"一次性服務+新增（產品）" 與 "上月一次性服務+新增產品" 的和',
+
 );
 ?>
