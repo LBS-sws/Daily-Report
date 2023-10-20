@@ -60,11 +60,12 @@ $this->pageTitle = Yii::app()->name . ' - Riskrank';
 
 <?php $this->endWidget(); ?>
 
-<script src="./../../../js/vue.js"></script>
-<script src="./../../../js/element.js"></script>
+<script src="./../../dr-prod/js/vue.js"></script>
+<script src="./../../dr-prod/js/element.js"></script>
+
 
 <!-- 引入样式 -->
-<link rel="stylesheet" href="./../../../css/element-ui.css">
+<link rel="stylesheet" href="./../../dr-prod/css/element-ui.css">
 <!-- 引入组件库 -->
 
 <script>
