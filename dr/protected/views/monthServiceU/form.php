@@ -64,10 +64,10 @@ $this->pageTitle=Yii::app()->name . ' - MonthServiceU Form';
 
                     <div class="col-lg-7">
                         <div class="row">
-                            <p><?php echo Yii::t("summary","monthServiceU_1");?></p>
-                            <p><?php echo Yii::t("summary","monthServiceU_2");?></p>
-                            <p><?php echo Yii::t("summary","monthServiceU_3");?></p>
-                            <p><?php echo Yii::t("summary","monthServiceU_4");?></p>
+                            <p>1、<?php echo $model->search_month.Yii::t("summary","monthServiceU_1");?></p>
+                            <p>2、<?php echo $model->search_month.Yii::t("summary","monthServiceU_2");?></p>
+                            <p>3、<?php echo Yii::t("summary","monthServiceU_3");?></p>
+                            <p>4、<?php echo Yii::t("summary","monthServiceU_4");?></p>
                         </div>
                     </div>
 

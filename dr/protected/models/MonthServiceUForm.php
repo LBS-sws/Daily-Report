@@ -178,16 +178,19 @@ class MonthServiceUForm extends CFormModel
         $list[$this->end_key."_EA"] = round($list[$this->end_key."_EA"],2);
 
         if(!$bool){
-            //EB = (新增+更改+终止+暂停+恢复)/12 + ((本月一次性+产品)+(上月一次性+产品))
             $list[$this->end_key."_EB"] = $list[$this->last_end_key];
-            $list[$this->end_key."_EB"]+=$list["service_add"];
-            $list[$this->end_key."_EB"]+=$list["service_update"];
-            $list[$this->end_key."_EB"]+=$list["service_stop"];
-            $list[$this->end_key."_EB"]+=$list["service_pause"];
-            $list[$this->end_key."_EB"]+=$list["service_recover"];
-            $list[$this->end_key."_EB"]/=12;
-            $list[$this->end_key."_EB"]+=$list["add_u_now"];
-            $list[$this->end_key."_EB"]+=$list["add_u_last"];
+            //EB = (新增+更改+终止+暂停+恢复)/12 + ((本月一次性+产品)+(上月一次性+产品))
+            $eb=$list["service_add"];
+            $eb+=$list["service_update"];
+            $eb+=$list["service_stop"];
+            $eb+=$list["service_pause"];
+            $eb+=$list["service_recover"];
+            $eb/=12;
+            $eb+=$list["add_u_now"];
+            $eb+=$list["add_u_last"];
+            //EB = (EB/day_num) * month_num
+            $eb = $eb/$this->day_num * $this->month_num;
+            $list[$this->end_key."_EB"]+= $eb;
             $list[$this->end_key."_EB"] = round($list[$this->end_key."_EB"],2);
         }
         for ($i=1;$i<$this->search_month;$i++){
@@ -211,7 +214,7 @@ class MonthServiceUForm extends CFormModel
     protected function computeRate($lastStr,$nowStr){
         if(!empty($lastStr)){
             $rate = round($nowStr/$lastStr,3);
-            $rate = bcsub($rate,1,3);//由于浮点数减法有问题，所以使用bcsub
+            $rate = round($rate-1,3);//由于浮点数减法有问题，所以继续省略
             $rate = $rate*100;
             $rate.="%";
         }else{
