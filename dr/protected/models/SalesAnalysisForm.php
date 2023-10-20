@@ -16,6 +16,7 @@ class SalesAnalysisForm extends CFormModel
     public $data=array();
     public $twoDate=array();
     public $threeDate=array();
+    public $fourDate=array();
 
 	public $th_sum=0;//所有th的个数
 
@@ -101,7 +102,7 @@ class SalesAnalysisForm extends CFormModel
         $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
         $list=array('staff'=>array(),'user'=>array());
         $rows = Yii::app()->db->createCommand()
-            ->select("a.id,a.code,a.name,a.city,d.user_id,a.entry_time,a.office_id,g.name as office_name,
+            ->select("a.id,a.code,a.name,a.city,d.user_id,a.entry_time,a.staff_status,a.leave_time,a.office_id,g.name as office_name,
             dept.name as dept_name,
             CONCAT('') as city_name,CONCAT('') as region,CONCAT('') as region_name")
             ->from("security{$suffix}.sec_user_access f")
@@ -116,6 +117,58 @@ class SalesAnalysisForm extends CFormModel
              ) AND a.city in ({$city_allow})"
             )->order("a.city desc,a.office_id asc,a.id asc")->queryAll();
         return $rows;
+    }
+
+    protected function groupFTEForStaffAndData($staffRows){
+        if($this->search_year==2023){
+            $startMonth = 3;
+        }else{
+            $startMonth = 1;
+        }
+        $data=array();
+        //老销售
+        $data["list"][0]=array();
+        $data["list"][0]["title"]=Yii::t("summary","old now sales");
+        for($j=$startMonth;$j<=$this->search_month;$j++){
+            $key = $j<10?"0".$j:$j;
+            $key = $this->search_year."/".$key;
+            $data["list"][0][$key]=0;//人数
+            $data["list"][0]["rate_".$key]=0;//对比
+        }
+        //新入职销售
+        for($i=$startMonth;$i<=$this->search_month;$i++){
+            $data["list"][$i]=array();
+            $data["list"][$i]["title"]=$i.Yii::t("summary"," month now sales");
+            for($j=$startMonth;$j<=$this->search_month;$j++){
+                $key = $j<10?"0".$j:$j;
+                $key = $this->search_year."/".$key;
+                $data["list"][$i][$key]=0;//人数
+                $data["list"][$i]["rate_".$key]=0;//对比
+            }
+        }
+
+        //计算销售人数
+        if($staffRows){
+            foreach ($staffRows as $staffRow){
+                $leave_timer = $staffRow["staff_status"]==-1?date("Y/m",strtotime($staffRow["leave_time"])):"2222/22";
+                $entry_timer = date("Y/m",strtotime($staffRow["entry_time"]));
+
+                for($i=$startMonth;$i<=$this->search_month;$i++){
+                    $key = $i<10?"0".$i:$i;
+                    $key = $this->search_year."/".$key;
+                    if($leave_timer<$key||$entry_timer>$key){//已離職 或者 未入职
+                        break;//跳出循環
+                    }
+                    if($entry_timer<$this->search_year."/0{$startMonth}"){
+                        $month = 0;//老员工
+                    }else{
+                        $month = date("n",strtotime($staffRow["entry_time"]));//某月新入职员工
+                    }
+                    $data["list"][$month][$key]++;
+                }
+            }
+        }
+        return $data;
     }
 
     //前一年的平均值
@@ -327,6 +380,7 @@ class SalesAnalysisForm extends CFormModel
         $cityList = self::getCityListAndRegion($city_allow);//城市信息
         $this->twoDate = $this->groupAreaForStaffAndData($staffRows,$cityList,$nowData);
         $this->threeDate = $this->groupCityForStaffAndData($staffRows,$cityList,$nowData,$lifelineList);
+        $this->fourDate = $this->groupFTEForStaffAndData($staffRows);
         if($staffRows){
             foreach ($staffRows as $staffRow){
                 $username = $staffRow["user_id"];
@@ -437,6 +491,9 @@ class SalesAnalysisForm extends CFormModel
             }
             $colNum = empty($colNum)?1:$colNum;
             $trOne.="<th style='{$style}' colspan='{$colNum}'";
+            if($colNum>1){
+                $trOne.=" class='click-th'";
+            }
             if(key_exists("rowspan",$list)){
                 $trOne.=" rowspan='{$list["rowspan"]}'";
             }
@@ -598,6 +655,8 @@ class SalesAnalysisForm extends CFormModel
         $twoModel->setAttrAll($this);
         $threeModel = new SalesAnalysisCityForm();
         $threeModel->setAttrAll($this);
+        $fourModel = new SalesAnalysisFTEForm();
+        $fourModel->setAttrAll($this);
         $excel = new DownSummary();
         $excel->colTwo=4;
         $excel->SetHeaderTitle(Yii::t("summary","Capacity Staff")."（{$this->search_date}）");
@@ -625,6 +684,15 @@ class SalesAnalysisForm extends CFormModel
         $excel->setUServiceHeader($threeModel->getTopArr());
         $data = key_exists("three",$excelData)?json_decode($excelData["three"],true):array();
         $excel->setUServiceData($data);
+        //第四页
+        $sheetName = Yii::t("summary","Capacity FTE");
+        $excel->colTwo=1;
+        $excel->addSheet($sheetName);
+        $excel->SetHeaderTitle($sheetName."（{$this->search_date}）");
+        $excel->outHeader(3);
+        $excel->setSummaryHeader($fourModel->getTopArr());
+        $data = key_exists("four",$excelData)?json_decode($excelData["four"],true):array();
+        $excel->setSummaryData($data);
         $excel->outExcel(Yii::t("app","Sales Analysis"));
     }
 
@@ -644,6 +712,11 @@ class SalesAnalysisForm extends CFormModel
                 "url"=>Yii::app()->createUrl('salesAnalysis/city'),
                 "label"=>Yii::t("summary","Capacity City"),
                 "active"=>$active==3
+            ),
+            4=>array(
+                "url"=>Yii::app()->createUrl('salesAnalysis/fte'),
+                "label"=>Yii::t("summary","Capacity FTE"),
+                "active"=>$active==4
             ),
         );
     }

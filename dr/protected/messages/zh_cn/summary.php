@@ -223,5 +223,22 @@ return array(
     'num stop'=>'流失',
     'num recover'=>'净恢复',
     'num net'=>'净增',
+
+    'Capacity Region Count'=>'区域产能',
+    'Capacity Area Count'=>'地区产能',
+    ' Month Capacity'=>'月产能',
+    'month forecast'=>'整月预估',
+    'MTD'=>'MTD',
+    'YoY growth'=>'YoY growth',
+    ' month E(A)'=>'月E(A)',
+    ' month E(B)'=>'月E(B)',
+
+    'Sales productivity num'=>'销售人数',
+    'Sales productivity amt'=>'签单金额',
+    'Sales productivity rate'=>'销售月均生产率',
+    'Capacity FTE'=>'销售FTE演变',
+    'all city'=>'所有城市',
+    'MoM retention rate'=>'MoM retention rate',
+    'old now sales'=>'老销售',
 );
 ?>

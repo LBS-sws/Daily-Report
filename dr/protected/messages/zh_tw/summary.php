@@ -223,5 +223,22 @@ return array(
     'num stop'=>'流失',
     'num recover'=>'凈恢復',
     'num net'=>'凈增',
+
+    'Capacity Region Count'=>'區域產能',
+    'Capacity Area Count'=>'地區產能',
+    ' Month Capacity'=>'月產能',
+    'month forecast'=>'整月預估',
+    'MTD'=>'MTD',
+    'YoY growth'=>'YoY growth',
+    ' month E(A)'=>'月E(A)',
+    ' month E(B)'=>'月E(B)',
+
+    'Sales productivity num'=>'銷售人數',
+    'Sales productivity amt'=>'簽單金額',
+    'Sales productivity rate'=>'銷售月均生產率',
+    'Capacity FTE'=>'銷售FTE演變',
+    'all city'=>'所有城市',
+    'MoM retention rate'=>'MoM retention rate',
+    'old now sales'=>'老銷售',
 );
 ?>

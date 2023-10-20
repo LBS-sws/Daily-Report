@@ -816,6 +816,52 @@ class CountSearch{
         return $list;
     }
 
+    //获取U系统的服务单数据（月為鍵名)
+    public static function getUServiceMoneyToMonthEx($startDay,$endDay,$city_allow=""){
+        $monthList = array();
+        $i=0;
+        do{
+            $nowDate = date("Y/m",strtotime($startDay." + {$i} months"));
+            if($nowDate."/01">$endDay){
+                $i=-1;
+            }else{
+                $monthList[$nowDate]=0;
+            }
+            $i++;
+        }while($i>0);
+        $list = array();
+        $citySql = "";
+        $textSql = "b.Text";
+        if(self::$system==2){//國際版
+            $textSql = "IF(b.Text='KL' or b.Text='SL','MY',b.Text)";
+        }
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $citySql = " and {$textSql} in ({$city_allow})";
+        }
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()
+            ->select("b.Text,sum(
+                    if(a.TermCount=0,0,a.Fee/a.TermCount)
+					) as sum_amount,DATE_FORMAT(a.JobDate,'%Y/%m') as month_dt")
+            ->from("service{$suffix}.joborder a")
+            ->leftJoin("service{$suffix}.officecity f","a.City = f.City")
+            ->leftJoin("service{$suffix}.enums b","f.Office = b.EnumID and b.EnumType=8")
+            ->where("a.Status=3 and a.JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
+            ->group("b.Text,DATE_FORMAT(a.JobDate,'%Y/%m')")
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $city = self::resetCity($row["Text"]);
+                $money = empty($row["sum_amount"])?0:round($row["sum_amount"],2);
+                if(!key_exists($city,$list)){
+                    $list[$city]=$monthList;
+                }
+                $list[$city][$row["month_dt"]]+=$money;
+            }
+        }
+        return $list;
+    }
+
     //客户服务查询(更改)（月為鍵名)
     public static function getServiceAToMonth($endDate,$city_allow=""){
         $year = date("Y",strtotime($endDate));
@@ -895,6 +941,68 @@ class CountSearch{
             $month = $i<10?"0".$i:$i;
             $monthList["{$year}/{$month}"]=0;
         }
+        $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();//
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=$monthList;
+            }
+            $list[$row["city"]][$row["month_dt"]]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
+    //客户服务查询(根據服務類型)（月為鍵名)
+    public static function getServiceForTypeToMonthEx($startDate,$endDate,$city_allow="",$type="N"){
+        $monthList = array();
+        $i=0;
+        do{
+            $nowDate = date("Y/m",strtotime($startDate." + {$i} months"));
+            if($nowDate."/01">$endDate){
+                $i=-1;
+            }else{
+                $monthList[$nowDate]=0;
+            }
+            $i++;
+        }while($i>0);
         $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         if(!empty($city_allow)&&$city_allow!="all"){
             $whereSql.= " and a.city in ({$city_allow})";
@@ -1262,6 +1370,44 @@ class CountSearch{
         return $list;
     }
 
+    //服务新增INV產品数据(台灣版專用)
+    public static function getUInvTWMoneyToMonthEx($startDay,$endDay,$city_allow=""){
+        $suffix = Yii::app()->params['envSuffix'];
+        $monthList = array();
+        $i=0;
+        do{
+            $nowDate = date("Y/m",strtotime($startDay." + {$i} months"));
+            if($nowDate."/01">$endDay){
+                $i=-1;
+            }else{
+                $monthList[$nowDate]=0;
+            }
+            $i++;
+        }while($i>0);
+        $whereSql = "a.status='N' and f.rpt_cat='INV' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $list = array();
+        $sum_money = "case a.paid_type when 'M' then a.amt_paid * a.ctrt_period else a.amt_paid end";
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum({$sum_money}) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+            ->from("swoper{$suffix}.swo_service a")
+            ->leftJoin("swoper{$suffix}.swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)
+            ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+        $rows = $rows?$rows:array();
+
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=$monthList;
+            }
+            $thisMonth = $row["month_dt"];
+            $list[$row["city"]][$thisMonth]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
     //获取U系统的產品数据（月為鍵名)
     public static function getUInvMoneyToMonth($endDay,$city_allow=""){
         if(self::$system===1){//台灣版的產品為lbs的inv新增
@@ -1284,6 +1430,50 @@ class CountSearch{
             $month = $i<10?"0".$i:$i;
             $monthList["{$year}/{$month}"]=0;
         }
+        $list = array();
+        $count = 0;
+        if($json["message"]==="Success"){
+            $jsonData = $json["data"];
+            foreach ($jsonData as $row){
+                $city = self::resetCity($row["city"]);
+                $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
+                $thisMonth = date("Y/m",strtotime($row["invoice_dt"]));
+                if($thisMonth=="2023/05"){
+                    $count++;
+                }
+                if(!key_exists($city,$list)){
+                    $list[$city]=$monthList;
+                }
+                $list[$city][$thisMonth]+=$money;
+            }
+        }
+        return $list;
+    }
+
+    //获取U系统的產品数据（月為鍵名)
+    public static function getUInvMoneyToMonthEx($startDay,$endDay,$city_allow=""){
+        if(self::$system===1){//台灣版的產品為lbs的inv新增
+            return self::getUInvTWMoneyToMonthEx($startDay,$endDay,$city_allow);
+        }
+        $city = "";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $city = $city_allow;
+        }
+        if(self::$system===2&&!empty($city)&&strpos($city,"'MY'")!==false){//國際版
+            $city.=",'KL','SL'";
+        }
+        $json = Invoice::getInvData($startDay,$endDay,$city);
+        $monthList = array();
+        $i=0;
+        do{
+            $nowDate = date("Y/m",strtotime($startDay." + {$i} months"));
+            if($nowDate."/01">$endDay){
+                $i=-1;
+            }else{
+                $monthList[$nowDate]=0;
+            }
+            $i++;
+        }while($i>0);
         $list = array();
         $count = 0;
         if($json["message"]==="Success"){
@@ -1349,5 +1539,31 @@ class CountSearch{
         //一周：周六至周五
         $weekStart = date("Y/m/d",strtotime($date." - ".($w==6?0:$w+1)." day"));
         return $weekStart;
+    }
+
+    public static function salemanForHr($city_allow,$startDate="",$endDate=""){
+        $suffix = Yii::app()->params['envSuffix'];
+        $startDate = empty($startDate)?date("Y/m/01"):date("Y/m/d",strtotime($startDate));
+        $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("a.name,a.code,a.city,d.user_id,a.staff_status")
+            ->from("security{$suffix}.sec_user_access f")
+            ->leftJoin("hr{$suffix}.hr_binding d","d.user_id=f.username")
+            ->leftJoin("hr{$suffix}.hr_employee a","d.employee_id=a.id")
+            ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and (
+                (a.staff_status = 0 and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}')
+                or
+                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/%d')>='{$startDate}' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}')
+             ) AND a.city in ({$city_allow})"
+            )->order("a.city desc,a.position asc,a.entry_time asc,a.id desc")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $name_label = $row["name"]."({$row["code"]})";
+                $name_label.= empty($row["staff_status"])?"":"（已离职）";
+                $list[] = array("name"=>$row["name"],"code"=>$row["code"],"city"=>$row["city"],"user_id"=>$row["user_id"],"name_label"=>$name_label);
+            }
+        }
+        return $list;
     }
 }

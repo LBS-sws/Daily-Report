@@ -227,9 +227,17 @@ return array(
                 'access'=>'G18',
                 'url'=>'/weekServiceU/index',
             ),
+            'Month Service U'=>array( //月服务生意额
+                'access'=>'G22',
+                'url'=>'/monthServiceU/index',
+            ),
             'Lost orders rate'=>array( //每月丢单率
                 'access'=>'G19',
                 'url'=>'/lostOrder/index',
+            ),
+            'Capacity Count'=>array( //产能统计
+                'access'=>'G21',
+                'url'=>'/capacityCount/index',
             ),
             'History Add'=>array(
                 'access'=>'G07',
@@ -262,6 +270,10 @@ return array(
             'Sales Month Count'=>array( //每月销售人数统计
                 'access'=>'G20',
                 'url'=>'/salesMonthCount/index',
+            ),
+            'Sales productivity'=>array(//销售月均生产率
+                'access'=>'G23',
+                'url'=>'/salesProd/index',
             ),
             'Average office'=>array(//月预计平均人效
                 'access'=>'G13',

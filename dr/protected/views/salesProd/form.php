@@ -1,9 +1,9 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
+$this->pageTitle=Yii::app()->name . ' - SalesProd Form';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'SalesAnalysis-form',
+'id'=>'SalesProd-form',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
@@ -23,7 +23,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 
 <section class="content-header">
 	<h1>
-        <strong><?php echo Yii::t('app','Sales Analysis'); ?></strong>
+        <strong><?php echo Yii::t('app','Sales productivity'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -38,12 +38,12 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('salesAnalysis/index')));
+				'submit'=>Yii::app()->createUrl('salesProd/index')));
 		?>
 	</div>
             <div class="btn-group pull-right" role="group">
                 <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('dialog','Download'), array(
-                    'submit'=>Yii::app()->createUrl('salesAnalysis/downExcel')));
+                    'submit'=>Yii::app()->createUrl('salesProd/downExcel')));
                 ?>
             </div>
 	</div></div>
@@ -54,33 +54,33 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
                 <div class="box-body" >
                     <div class="col-lg-6" style="padding-bottom: 15px;">
                         <div class="form-group">
-                            <?php echo $form->labelEx($model,'search_date',array('class'=>"col-sm-4 control-label")); ?>
+                            <?php echo $form->labelEx($model,'start_date',array('class'=>"col-sm-4 control-label")); ?>
                             <div class="col-sm-5">
-                                <?php echo $form->textField($model, 'search_date',
+                                <?php echo $form->textField($model, 'start_date',
+                                    array('readonly'=>true,'prepend'=>"<span class='fa fa-calendar'></span>")
+                                ); ?>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <?php echo $form->labelEx($model,'end_date',array('class'=>"col-sm-4 control-label")); ?>
+                            <div class="col-sm-5">
+                                <?php echo $form->textField($model, 'end_date',
                                     array('readonly'=>true,'prepend'=>"<span class='fa fa-calendar'></span>")
                                 ); ?>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6" style="padding-bottom: 15px;">
-                        <div class="form-group">
-                            <?php
-                            echo TbHtml::label("页内搜索",'',array('class'=>"col-sm-4 control-label"));
-                            ?>
-                            <div class="col-sm-5">
-                                <?php
-                                echo  TbHtml::dropDownList("searchEx",'',array(""=>"-- 全部 --"),array('id'=>'searchEx'));
-                                ?>
-                            </div>
-                        </div>
+                    <div class="col-lg-12">
+                        <p>&nbsp;</p>
                     </div>
 
                     <?php
+                    $model->downJsonText = array();
                     $contentHead='<div class="col-lg-12" style="padding-top: 15px;">
                         <div class="row panel panel-default" style="border-color: #333">
                             <!-- Default panel contents -->
                             <div class="panel-heading">
-                                <h3 style="margin-top:10px;">{:head:}<small>('.date("Y/m/01/",strtotime($model->end_date)) ." ~ ".$model->end_date.')</small>
+                                <h3 style="margin-top:10px;">{:head:}<small>('.$model->start_date ." ~ ".$model->end_date.')</small>
                                 </h3>
                             </div>
                             <!-- Table -->
@@ -88,59 +88,38 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 
                     $contentEnd='</div></div></div>';
                     $tabs =array();
-                    //在职销售人员产能
-                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity Staff"),$contentHead);
-                    $contentTable.=$model->salesAnalysisHtml();
+                    $contentTable = str_replace("{:head:}",Yii::t("summary","Sales productivity num"),$contentHead);
+                    $contentTable.=$model->salesProdHtml("num");
                     $contentTable.=$contentEnd;
-                    $contentTable.=TbHtml::hiddenField("excel[one]",$model->downJsonText);
                     $tabs[] = array(
-                        'label'=>Yii::t("summary","Capacity Staff"),
+                        'label'=>Yii::t("summary","Sales productivity num"),
                         'content'=>$contentTable,
                         'active'=>true,
                     );
-                    //在职销售产能统计
-                    $areaModel = new SalesAnalysisAreaForm();
-                    $areaModel->search_date = $model->search_date;
-                    $areaModel->setAttrAll($model);
-                    $areaModel->data = $model->twoDate;
-                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity Area"),$contentHead);
-                    $contentTable.=$areaModel->salesAnalysisHtml();
+                    //地区统计表
+                    $contentTable = str_replace("{:head:}",Yii::t("summary","Sales productivity amt"),$contentHead);
+                    $contentTable.=$model->salesProdHtml("amt");
                     $contentTable.=$contentEnd;
-                    $contentTable.=TbHtml::hiddenField("excel[two]",$areaModel->downJsonText);
+                    //$contentTable.=TbHtml::hiddenField("excel[two]",$areaModel->downJsonText);
                     $tabs[] = array(
-                        'label'=>Yii::t("summary","Capacity Area"),
+                        'label'=>Yii::t("summary","Sales productivity amt"),
                         'content'=>$contentTable,
                         'active'=>false,
                     );
-                    //在职销售达标统计
-                    $cityModel = new SalesAnalysisCityForm();
-                    $cityModel->search_date = $model->search_date;
-                    $cityModel->setAttrAll($model);
-                    $cityModel->data = $model->threeDate;
-                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity City"),$contentHead);
-                    $contentTable.=$cityModel->salesAnalysisHtml();
+                    //地区统计表
+                    $contentTable = str_replace("{:head:}",Yii::t("summary","Sales productivity rate"),$contentHead);
+                    $contentTable.=$model->salesProdHtml("rate");
                     $contentTable.=$contentEnd;
-                    $contentTable.=TbHtml::hiddenField("excel[three]",$cityModel->downJsonText);
+                    //$contentTable.=TbHtml::hiddenField("excel[three]",$cityModel->downJsonText);
                     $tabs[] = array(
-                        'label'=>Yii::t("summary","Capacity City"),
+                        'label'=>Yii::t("summary","Sales productivity rate"),
                         'content'=>$contentTable,
                         'active'=>false,
                     );
-                    //在职销售达标统计
-                    $cityModel = new SalesAnalysisFTEForm();
-                    $cityModel->search_date = $model->search_date;
-                    $cityModel->setAttrAll($model);
-                    $cityModel->data = $model->fourDate;
-                    $contentTable = str_replace("{:head:}",Yii::t("summary","Capacity FTE"),$contentHead);
-                    $contentTable.=$cityModel->salesAnalysisHtml();
-                    $contentTable.=$contentEnd;
-                    $contentTable.=TbHtml::hiddenField("excel[four]",$cityModel->downJsonText);
-                    $tabs[] = array(
-                        'label'=>Yii::t("summary","Capacity FTE"),
-                        'content'=>$contentTable,
-                        'active'=>false,
-                    );
+                    //城市统计表
                     echo TbHtml::tabbableTabs($tabs);
+                    $downJsonText=json_encode($model->downJsonText);
+                    echo TbHtml::hiddenField("excel",$downJsonText);
                     ?>
                 </div>
             </div>
@@ -165,14 +144,14 @@ $js="
         if($(this).hasClass('active')){
             $(this).children('span').text($(this).data('text'));
             $(this).removeClass('active');
-            $('#salesAnalysis>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
+            $('#salesProd>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = $(this).data('width')+'px';
                 $(this).width(width);
             });
-            $('#salesAnalysis>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#salesProd>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
                 $(this).children('span').text($(this).data('text'));
             });
-            $('#salesAnalysis>tbody>tr').each(function(){
+            $('#salesProd>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
                     $(this).children('span').text($(this).data('text'));
                 });
@@ -181,15 +160,15 @@ $js="
             $(this).data('text',$(this).text());
             $(this).children('span').text('.');
             $(this).addClass('active');
-            $('#salesAnalysis>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
+            $('#salesProd>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = '15px';
                 $(this).width(width);
             });
-            $('#salesAnalysis>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#salesProd>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
                 $(this).data('text',$(this).text());
                 $(this).children('span').text('');
             });
-            $('#salesAnalysis>tbody>tr').each(function(){
+            $('#salesProd>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
                     $(this).data('text',$(this).text());
                     $(this).children('span').text('');
@@ -219,7 +198,7 @@ $js="
     });
     
     var arr={};
-    $('#salesAnalysis').find('tbody>tr').not('.tr-end').each(function(){
+    $('#salesProd').find('tbody>tr').not('.tr-end').each(function(){
         var dept_name = $(this).children('td').eq(1).text();
         dept_name = dept_name.trim();
         if(dept_name!=''){
@@ -233,10 +212,10 @@ $js="
     $('#searchEx').change(function(){
         var searchText = $(this).val();
         if(searchText==''){
-            $('#salesAnalysis').find('tbody>tr').show();
-            $('#salesAnalysis').find('.searchTr').remove();
+            $('#salesProd').find('tbody>tr').show();
+            $('#salesProd').find('.searchTr').remove();
         }else{
-            $('#salesAnalysis .click-tr').each(function(){
+            $('#salesProd .click-tr').each(function(){
                 var trClick=$(this);
                 var list=[];
                 trClick.prevAll('tr').each(function(){

@@ -156,7 +156,8 @@ $('#perMonthMenu a').click(function(){
     Loading.show();
 });
     $('.click-th').click(function(){
-        var contNum = 1;
+        var contNum = 2;
+        var twoNum = 1;
         var startNum=contNum;
         var endNum = $(this).attr('colspan');
         $(this).prevAll('.click-th').each(function(){
@@ -171,7 +172,7 @@ $('#perMonthMenu a').click(function(){
                 var width = $(this).data('width')+'px';
                 $(this).width(width);
             });
-            $('#perMonth>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#perMonth>thead>tr').eq(2).children().slice(startNum-contNum+twoNum,endNum-contNum+twoNum).each(function(){
                 $(this).children('span').text($(this).data('text'));
             });
             $('#perMonth>tbody>tr').each(function(){
@@ -187,7 +188,7 @@ $('#perMonthMenu a').click(function(){
                 var width = '15px';
                 $(this).width(width);
             });
-            $('#perMonth>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#perMonth>thead>tr').eq(2).children().slice(startNum-contNum+twoNum,endNum-contNum+twoNum).each(function(){
                 $(this).data('text',$(this).text());
                 $(this).children('span').text('');
             });

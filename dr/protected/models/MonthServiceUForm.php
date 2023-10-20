@@ -1,17 +1,21 @@
 <?php
 
-class WeekServiceUForm extends CFormModel
+class MonthServiceUForm extends CFormModel
 {
 	/* User Fields */
     public $start_date;
     public $end_date;
     public $search_date;//查询日期
     public $search_year;//查询年份
+    public $search_month;//查询月份
+    public $day_num;//本月查询天数
+    public $month_num;//本月总天数
+    public $end_key;//
+    public $last_end_key;//
 
     public $data=array();
 
 	public $th_sum=0;//所有th的个数
-	public $week_list=array();//
 
     public $downJsonText='';
 	/**
@@ -42,27 +46,14 @@ class WeekServiceUForm extends CFormModel
         if(!empty($this->search_date)){
             $timer = strtotime($this->search_date);
             $this->search_year = date("Y",$timer);
-            $this->start_date = $this->search_year."/01/01";
+            $this->start_date = ($this->search_year-1)."/01/01";
             $this->end_date = date("Y/m/d",$timer);
+            $this->search_month = date("n",$timer);
+            $this->day_num = date("j",$timer);
+            $this->month_num = date("t",$timer);
 
-            $weekStart = CountSearch::getWeekStart($this->start_date);
-            $weekEnd = date("Y/m/d",strtotime($weekStart." + 6 day"));
-            $this->week_list=array();
-            $this->setWeekList($this->week_list,$weekStart,$weekEnd,$this->end_date);
-            $this->start_date = $weekStart;//起始日期修改为第一周的第一天
-            $this->end_date = end($this->week_list)["weekEnd"];//结束日期修改为最后一周的最后一天
-        }
-    }
-
-    public function setWeekList(&$weekList,$weekStart,$weekEnd,$endDate){
-        if($endDate>=$weekStart){
-            $minName = date("m/d",strtotime($weekStart));
-            $minName.= " ~ ";
-            $minName.= date("m/d",strtotime($weekEnd));
-            $weekList[]=array("weekStart"=>$weekStart,"weekEnd"=>$weekEnd,"minName"=>$minName);
-            $weekStart = date("Y/m/d",strtotime($weekStart." + 7 day"));
-            $weekEnd = date("Y/m/d",strtotime($weekEnd." + 7 day"));
-            $this->setWeekList($weekList,$weekStart,$weekEnd,$endDate);
+            $this->end_key = date("Y/m",$timer);
+            $this->last_end_key = date("Y/m",strtotime($this->search_date." - 1 months"));
         }
     }
 
@@ -85,26 +76,58 @@ class WeekServiceUForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $citySetList = CitySetForm::getCitySetList($city_allow);
+        $monthStart = date("Y/m/01",strtotime($this->end_date));
+        $monthEnd = $this->end_date;
+        $lastStartDate = CountSearch::computeLastMonth($monthStart);//上月开始时间
+        $lastEndDate = CountSearch::computeLastMonth($monthEnd);//上月结束时间
+        //服务新增（非一次性 和 一次性)
+        $serviceAddForNY = CountSearch::getServiceAddForNY($monthStart,$monthEnd,$city_allow);
+        //终止服务、暂停服务
+        $serviceForST = CountSearch::getServiceForST($monthStart,$monthEnd,$city_allow);
+        //恢復服务
+        $serviceForR = CountSearch::getServiceForType($monthStart,$monthEnd,$city_allow,"R");
+        //更改服务
+        $serviceForA = CountSearch::getServiceForA($monthStart,$monthEnd,$city_allow);
+
+        //本月产品
+        $uInvMoney = CountSearch::getUInvMoney($monthStart,$monthEnd,$city_allow);
+        //服务新增（一次性)(上月)
+        $lastServiceAddForNY = CountSearch::getServiceAddForY($lastStartDate,$lastEndDate,$city_allow);
+        //获取U系统的產品数据(上月)
+        $lastUInvMoney = CountSearch::getUInvMoney($lastStartDate,$lastEndDate,$city_allow);
 
         //获取U系统的產品数据
-        $uInvMoneyWeek = CountSearch::getUInvMoneyForWeek($this->start_date,$this->end_date,$city_allow);
-
+        $uInvMoneyMonth = CountSearch::getUInvMoneyToMonthEx($this->start_date,$this->end_date,$city_allow);
         //获取U系统的服务数据
-        $uServiceMoneyWeek = CountSearch::getUServiceMoneyForWeek($this->start_date,$this->end_date,$city_allow);
+        $uServiceMoneyMonth = CountSearch::getUServiceMoneyToMonthEx($this->start_date,$this->end_date,$city_allow);
+
+        $tempList=$this->defMoreCity();
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
-            $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
+            $defMoreList=$tempList;
+            $defMoreList["city"]=$city;
+            $defMoreList["city_name"]=$cityRow["city_name"];
             $defMoreList["add_type"] = $cityRow["add_type"];
+            $defMoreList["service_add"]=key_exists($city,$serviceAddForNY)?$serviceAddForNY[$city]["num_new"]:0;
+            $defMoreList["service_update"]=key_exists($city,$serviceForA)?$serviceForA[$city]:0;
+            $defMoreList["service_stop"]=key_exists($city,$serviceForST)?(-1)*$serviceForST[$city]["num_stop"]:0;
+            $defMoreList["service_pause"]=key_exists($city,$serviceForST)?(-1)*$serviceForST[$city]["num_pause"]:0;
+            $defMoreList["service_recover"]=key_exists($city,$serviceForR)?$serviceForR[$city]:0;
 
-            $this->addListForCity($defMoreList,$city,$uInvMoneyWeek);
-            $this->addListForCity($defMoreList,$city,$uServiceMoneyWeek);
+            $defMoreList["add_u_now"]=key_exists($city,$serviceAddForNY)?$serviceAddForNY[$city]["num_new_n"]:0;
+            $defMoreList["add_u_now"]=key_exists($city,$uInvMoney)?$uInvMoney[$city]["sum_money"]:0;
+            $defMoreList["add_u_last"]=key_exists($city,$lastServiceAddForNY)?(-1)*$lastServiceAddForNY[$city]:0;
+            $defMoreList["add_u_last"]=key_exists($city,$lastUInvMoney)?(-1)*$lastUInvMoney[$city]["sum_money"]:0;
+
+            $this->addListForCity($defMoreList,$city,$uInvMoneyMonth);
+            $this->addListForCity($defMoreList,$city,$uServiceMoneyMonth);
 
             RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
 
         $this->data = $data;
         $session = Yii::app()->session;
-        $session['weekServiceU_c01'] = $this->getCriteria();
+        $session['monthServiceU_c01'] = $this->getCriteria();
         return true;
     }
 
@@ -119,31 +142,86 @@ class WeekServiceUForm extends CFormModel
         }
     }
 
-    private function defMoreCity($city,$city_name){
+    private function defMoreCity(){
         $arr = array(
-            "city"=>$city,
-            "city_name"=>$city_name,
+            "city"=>"",
+            "city_name"=>"",
+            "service_add"=>0,//服务新增（不包含一次性）
+            "service_update"=>0,//服务更改
+            "service_stop"=>0,//服务终止
+            "service_pause"=>0,//服务暂停
+            "service_recover"=>0,//服务恢复
+            "add_u_now"=>0,//本月一次性+产品
+            "add_u_last"=>0,//上月一次性+产品
         );
-        foreach ($this->week_list as $row){
-            $arr[$row["weekStart"]]=0;
+        for ($i=0;$i<=24;$i++){
+            $dateStr = date("Y/m",strtotime($this->start_date." + {$i} months"));
+            if ($dateStr<=$this->end_key){
+                $arr[$dateStr]=0;
+            }else{
+                break;
+            }
         }
+        $arr[$this->end_key."_EA"]=0;
+        $arr[$this->end_key."_EB"]=0;
+        for ($i=1;$i<$this->search_month;$i++){
+            $arr["rate_".$i]=0;
+        }
+        $arr["rate_".$this->search_month."_EA"]=0;
+        $arr["rate_".$this->search_month."_EB"]=0;
 
         return $arr;
     }
 
     protected function resetTdRow(&$list,$bool=false,$count=1){
-        /*
+        $list[$this->end_key."_EA"]=$list[$this->end_key]/$this->day_num*$this->month_num;
+        $list[$this->end_key."_EA"] = round($list[$this->end_key."_EA"],2);
+
         if(!$bool){
-            $list["last_average"]=round($list["last_average"]/12,2);
-        }else{
-            $list["last_average"]=empty($count)?0:round($list["last_average"]/$count,2);
+            //EB = (新增+更改+终止+暂停+恢复)/12 + ((本月一次性+产品)+(上月一次性+产品))
+            $list[$this->end_key."_EB"] = $list[$this->last_end_key];
+            $list[$this->end_key."_EB"]+=$list["service_add"];
+            $list[$this->end_key."_EB"]+=$list["service_update"];
+            $list[$this->end_key."_EB"]+=$list["service_stop"];
+            $list[$this->end_key."_EB"]+=$list["service_pause"];
+            $list[$this->end_key."_EB"]+=$list["service_recover"];
+            $list[$this->end_key."_EB"]/=12;
+            $list[$this->end_key."_EB"]+=$list["add_u_now"];
+            $list[$this->end_key."_EB"]+=$list["add_u_last"];
+            $list[$this->end_key."_EB"] = round($list[$this->end_key."_EB"],2);
         }
-        */
+        for ($i=1;$i<$this->search_month;$i++){
+            $key = $i<10?"0{$i}":$i;
+            $lastStr = ($this->search_year-1)."/".$key;
+            $nowStr = $this->search_year."/".$key;
+            $list["rate_".$i]=$this->computeRate($list[$lastStr],$list[$nowStr]);
+        }
+        $key = $i<10?"0{$i}":$i;
+        $lastStr = ($this->search_year-1)."/".$key;
+        $nowStr = $this->end_key."_EA";
+        $list["rate_".$this->search_month."_EA"]=$this->computeRate($list[$lastStr],$list[$nowStr]);
+        $i--;
+        $i=$i==0?1:$i;
+        $key = $i<10?"0{$i}":$i;
+        $lastStr = ($this->search_year-1)."/".$key;
+        $nowStr = $this->end_key."_EB";
+        $list["rate_".$this->search_month."_EB"]=$this->computeRate($list[$lastStr],$list[$nowStr]);
+    }
+
+    protected function computeRate($lastStr,$nowStr){
+        if(!empty($lastStr)){
+            $rate = round($nowStr/$lastStr,3);
+            $rate = ($rate-1)*100;
+            $rate.="%";
+        }else{
+            $rate = "";
+        }
+        return $rate;
     }
 
     //顯示提成表的表格內容
-    public function weekServiceUHtml(){
-        $html= '<table id="weekServiceU" class="table table-fixed table-condensed table-bordered table-hover">';
+    public function monthServiceUHtml(){
+        $html= '<table id="monthServiceU" class="table table-fixed table-condensed table-bordered table-hover">';
         $html.=$this->tableTopHtml();
         $html.=$this->tableBodyHtml();
         $html.=$this->tableFooterHtml();
@@ -152,14 +230,39 @@ class WeekServiceUForm extends CFormModel
     }
 
     private function getTopArr(){
-        $color = "#f7fd9d";
-        $topList=array(
-            //城市
-            array("name"=>Yii::t("summary","City"),"background"=>$color),
-        );
-        foreach ($this->week_list as $row){
-            $topList[]=array("name"=>$row["minName"],"background"=>$color);
+        $monthLast = array();//上一年的列表
+        $monthNow = array();//本年列表
+        $rate = array();//对比列表
+        for ($i=1;$i<=12;$i++){
+            $monthLast[]=array("name"=>$i.Yii::t("summary"," month"));
+            if($i<=$this->search_month){
+                $monthNow[]=array("name"=>$i.Yii::t("summary"," month"));
+            }
+            if($i<$this->search_month){
+                $rate[]=array("name"=>$i.Yii::t("summary"," month"));
+            }
         }
+        $rate[]=array("name"=>$this->search_month.Yii::t("summary"," month E(A)"));
+        $rate[]=array("name"=>$this->search_month.Yii::t("summary"," month E(B)"));
+
+        $topList=array(
+            array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
+            array("name"=>($this->search_year-1).Yii::t("summary"," Year"),"background"=>"#f7fd9d",
+                "colspan"=>$monthLast
+            ),//上一年
+            array("name"=>$this->search_year.Yii::t("summary"," Year"),"background"=>"#fcd5b4",
+                "colspan"=>$monthNow
+            ),//本年
+            array("name"=>$this->search_month.Yii::t("summary"," month estimate"),"background"=>"#f2dcdb",
+                "colspan"=>array(
+                    array("name"=>$this->search_month.Yii::t("summary"," month E(A)")),
+                    array("name"=>$this->search_month.Yii::t("summary"," month E(B)")),
+                )
+            ),//本月预估
+            array("name"=>Yii::t("summary","YoY growth"),"background"=>"#f7fd9d",
+                "colspan"=>$rate
+            ),//YoY growth
+        );
 
         return $topList;
     }
@@ -241,9 +344,21 @@ class WeekServiceUForm extends CFormModel
         $bodyKey = array(
             "city_name",
         );
-        foreach ($this->week_list as $row){
-            $bodyKey[]=$row["weekStart"];
+        for ($i=0;$i<=24;$i++){
+            $dateStr = date("Y/m",strtotime($this->start_date." + {$i} months"));
+            if ($dateStr<=$this->end_key){
+                $bodyKey[]=$dateStr;
+            }else{
+                break;
+            }
         }
+        $bodyKey[]=$this->end_key."_EA";
+        $bodyKey[]=$this->end_key."_EB";
+        for ($i=1;$i<$this->search_month;$i++){
+            $bodyKey[]="rate_".$i;
+        }
+        $bodyKey[]="rate_".$this->search_month."_EA";
+        $bodyKey[]="rate_".$this->search_month."_EB";
 
         return $bodyKey;
     }
@@ -264,7 +379,7 @@ class WeekServiceUForm extends CFormModel
                 $html="<tr>";
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
-                    $tdClass = HistoryAddForm::getTextColorForKeyStr($text,$keyStr);
+                    $tdClass = "";
                     //$inputHide = TbHtml::hiddenField("excel[MO][]",$text);
                     $this->downJsonText["excel"]['MO'][$keyStr]=$text;
                     $html.="<td class='{$tdClass}'><span>{$text}</span></td>";
@@ -303,7 +418,7 @@ class WeekServiceUForm extends CFormModel
                             if($cityList["add_type"]!=1) { //疊加的城市不需要重複統計
                                 $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             }
-                            $tdClass = HistoryAddForm::getTextColorForKeyStr($text,$keyStr);
+                            $tdClass = "";
                             //$inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][]",$text);
 
                             $this->downJsonText["excel"][$regionList['region']]['list'][$cityList['city']][$keyStr]=$text;
@@ -333,7 +448,7 @@ class WeekServiceUForm extends CFormModel
         $html="<tr class='tr-end click-tr'>";
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
-            $tdClass = HistoryAddForm::getTextColorForKeyStr($text,$keyStr);
+            $tdClass = "";
             //$inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][]",$text);
             $this->downJsonText["excel"][$data['region']]['count'][$keyStr]=$text;
             $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span></td>";
@@ -358,13 +473,13 @@ class WeekServiceUForm extends CFormModel
         $this->validateDate("","");
         $headList = $this->getTopArr();
         $excel = new DownSummary();
-        $excel->colTwo=0;
-        $excel->SetHeaderTitle(Yii::t("app","Week Service U")."（{$this->search_date}）");
+        $excel->colTwo=1;
+        $excel->SetHeaderTitle(Yii::t("app","Month Service U")."（{$this->search_date}）");
         $titleTwo = $this->start_date." ~ ".$this->end_date."\r\n";
         $excel->SetHeaderString($titleTwo);
         $excel->init();
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);
-        $excel->outExcel(Yii::t("app","Week Service U"));
+        $excel->outExcel(Yii::t("app","Month Service U"));
     }
 }

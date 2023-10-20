@@ -22,7 +22,7 @@ $this->pageTitle=Yii::app()->name . ' - WeekServiceU Form';
 
 <section class="content-header">
 	<h1>
-        <strong><?php echo Yii::t('app','Average office'); ?></strong>
+        <strong><?php echo Yii::t('app','Week Service U'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
