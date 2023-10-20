@@ -135,8 +135,9 @@ return array(
     'City Ranking list'=>'地方老总排行榜',
     'Months Ranking list'=>'总经理综合表现排行榜',
 
-	'WorkOrder' => '工作单统计',
+	'WorkOrder' => '工作单管理',
 	'LBS WorkOrder'=>'工作单报表',
+	'Evaluation Statistics'=>'点评统计',
 	'Summary Service Cases'=>'生意额数据汇总表',
 	'Active Contract'=>'生效中合约报表',
 	'Summary'=>'合同分析查询',

@@ -442,6 +442,103 @@ WHERE
         $a = explode(',', $this->fields);
         return empty($this->fields) || in_array($name, $a);
     }
+
+    /**
+     * 获取点评统计报表数据
+     * @param $data
+     * @return array
+     */
+    public function getEvaluationExport($data)
+    {
+        //查出服务单
+        $table = "service{$this->suffix}.joborder";
+        $rangDate = 'FinishDate';
+        $stype = 'ServiceType';
+        $orderList = $this->getOrderData('order', $table, $stype, $data);
+
+        //跟进单
+        $table = "service{$this->suffix}.followuporder";
+        $rangDate = 'jobDate';
+        $stype = 'SType';
+        $followList = $this->getOrderData('follow', $table, $stype, $data);
+
+        //数据合并
+        $combinedArray = [
+            "data" => array_merge($orderList["data"], $followList["data"]),
+            "count" => [
+                "row_count" => (int)$orderList["count"]["row_count"] + (int)$followList["count"]["row_count"]
+            ]
+        ];
+
+        // 按"job_date"排序合并后的数组
+        usort($combinedArray["data"], function($a, $b){
+            // 比较函数，用于按"job_date"排序
+            return strtotime($a["job_date"]) - strtotime($b["job_date"]);
+        });
+
+        return $combinedArray;
+    }
+
+
+    /**
+     * 获取订单数据
+     * @return array
+     */
+    public function getOrderData($type, $table, $stype, $data){
+        $start_date = date('Y-m-d', strtotime($data['start_date']));
+        $end_date = date('Y-m-d', strtotime($data['end_date']));
+        $order_type = 1;
+
+        switch ($type){
+            case 'order': //服务单
+                $sql = "SELECT SQL_CALC_FOUND_ROWS
+                    a.JobID,
+                    a.CustomerName AS customer_name,
+                    b.ServiceName AS service_type,
+                    a.JobDate AS job_date,
+                    a.FirstJob
+                FROM
+                    {$table} a
+                    LEFT JOIN service{$this->suffix}.service b ON b.ServiceType = a.{$stype}
+                WHERE
+                    JobDate BETWEEN '{$start_date}' AND '{$end_date}'  AND
+                    a.Staff01 = {$data['staff_id']}
+                ORDER BY  a.JobDate DESC";
+
+                $order_type = 1;
+                break;
+            case 'follow': //跟进单
+                $sql = "SELECT SQL_CALC_FOUND_ROWS
+                    a.FollowUpID as JobID,
+                    a.CustomerName AS customer_name,
+                    b.ServiceName AS service_type,
+                    a.JobDate AS job_date
+                FROM
+                    {$table} a
+                    LEFT JOIN service{$this->suffix}.service b ON b.ServiceType = a.{$stype}
+                WHERE
+                    JobDate BETWEEN '{$start_date}' AND '{$end_date}'  AND
+                    a.Staff01 = {$data['staff_id']}
+                ORDER BY  a.JobDate DESC";
+
+                $order_type = 2;
+                break;
+        }
+
+        $ret['data'] = Yii::app()->db->createCommand($sql)->queryAll();//执行查询
+        $ret['count'] = Yii::app()->db->createCommand("SELECT FOUND_ROWS() as row_count;")->queryRow();// 计算总条数
+
+        //获取点评问题
+        foreach ($ret['data'] as &$val){
+            //获取问题sql
+            $Evaluation_sql = "SELECT question FROM service{$this->suffix}.lbs_evaluates WHERE order_id = {$val['JobID']} AND order_type = {$order_type}";
+
+            $question = Yii::app()->db->createCommand($Evaluation_sql)->queryRow();
+            $val['question'] = ($question['question'] ? json_decode($question['question'], true) : null);
+        }
+
+        return $ret;
+    }
 }
 
 ?>

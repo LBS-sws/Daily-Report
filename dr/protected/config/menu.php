@@ -288,7 +288,11 @@ return array(
             'LBS WorkOrder'=>array(
                 'access'=>'WO01',
                 'url'=>'/worklist/index',
-            )
+            ),
+            'Evaluation Statistics'=>array(
+                'access'=>'WO02',
+                'url'=>'/worklist/evaluation',
+            ),
         ),
     ),
     'City Ranking list'=>array(

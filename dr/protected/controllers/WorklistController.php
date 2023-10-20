@@ -19,11 +19,11 @@ class WorklistController extends Controller
     {
         return array(
             array('allow',
-                'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export', 'test'),
+                'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export', 'test', 'evaluation', 'evaluationExport'),
                 'expression' => array('WorklistController', 'allowReadWrite'),
             ),
             array('allow',
-                'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export', 'test'),
+                'actions' => array('staff', 'index', 'new', 'edit', 'delete', 'save', 'area', 'jobList', 'StaffInfo', 'export', 'test', 'evaluation', 'evaluationExport'),
                 'expression' => array('WorklistController', 'allowReadOnly'),
             ),
 //            array('deny',  // deny all users
@@ -38,6 +38,22 @@ class WorklistController extends Controller
 
     public static function allowReadOnly() {
         return Yii::app()->user->validFunction('WO01');
+    }
+
+    protected function json($data = [], $msg = "ok", $code = 1)
+    {
+        //设置格式
+        header('Content-type: application/json');
+
+        //输出json格式的内容
+        exit(json_encode([
+            "code" => $code,
+            "msg" => $msg,
+            "data" => $data,
+            "request_id" => uniqid()
+        ]));
+        //结束
+//        return Yii::app()->end();exit();
     }
 
     public function actionTest()
@@ -387,20 +403,157 @@ class WorklistController extends Controller
         }
         $objWriter->save('php://output');
     }
-    
-    protected function json($data = [], $msg = "ok", $code = 1)
-    {
-        //设置格式
-        header('Content-type: application/json');
 
-        //输出json格式的内容
-        exit(json_encode([
-            "code" => $code,
-            "msg" => $msg,
-            "data" => $data,
-            "request_id" => uniqid()
-        ]));
-        //结束
-//        return Yii::app()->end();exit();
+    /**
+     * 点评统计
+     * @return void
+     */
+    public function actionEvaluation(){
+        $this->function_id = 'WO02';
+        Yii::app()->session['active_func'] = $this->function_id;
+
+        $this->render('evaluation');
+    }
+
+    /**
+     * 点评统计导出
+     * @return void
+     */
+    public function actionEvaluationExport(){
+        if (empty($_GET)) {
+            $this->json([], '参数错误', 0);
+        }
+        
+        try {
+            //引入phpexcel
+            $phpExcelPath = Yii::getPathOfAlias('ext.phpexcel');
+            include_once($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
+            $objectPHPExcel = new PHPExcel();
+            $objectPHPExcel->setActiveSheetIndex(0);
+
+            //读取参数
+            $data['start_date'] = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d H:h:s', '-1 day');
+            $data['end_date'] = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d H:h:s');
+            $data['staff_id'] = isset($_GET['staff_id']) ? $_GET['staff_id'] : '';
+            $data['city'] = isset($_GET['city']) ? $_GET['city'] : '';
+            $data['is_mark'] = isset($_GET['is_mark']) ? $_GET['is_mark'] : '';
+
+            if (isset($data['staff_id']) && empty($data['staff_id'])) {
+                $this->json([], 'staff data error', 0);
+            }
+
+            /* 查询 */
+            $model = new WorkOrder();
+            $page_size = 50000;
+            $result = $model->getEvaluationExport($data);
+
+            /* 判断数据 */
+            if (isset($result['count']['row_count']) && $result['count']['row_count'] >= $page_size) {
+                $this->json([], '筛选的时间段过大', 0);
+            }
+            if ($result['count']['row_count'] <= 0) {
+                $this->json([], '无数据', 0);
+            }
+
+            //技术员
+            $suffix = Yii::app()->params['envSuffix'];
+            $staffData = Yii::app()->db->createCommand("SELECT StaffName FROM service{$suffix}.staff WHERE StaffID = {$data['staff_id']}")->queryRow();// 计算总条数
+
+            /* 导出为excel */
+            $current_page = 0;
+            $n = 0;
+            $data['start_date'] = date('Y-m-d', strtotime($data['start_date']));
+            $data['end_date'] = date('Y-m-d', strtotime($data['end_date']));
+            foreach ($result['data'] as $k =>  $item) {
+                // 设置表头
+                if ($n % $page_size === 0) {
+                    $current_page = $current_page + 1;
+
+                    //技术员
+                    $objectPHPExcel->getActiveSheet()->setCellValue('A1', '技术员名称：');
+                    $objectPHPExcel->getActiveSheet()->setCellValue('C1', $staffData['StaffName']);
+                    $objectPHPExcel->getActiveSheet()->setCellValue('A2', '工作日期：');
+                    $objectPHPExcel->getActiveSheet()->setCellValue('C2', $data['start_date'].'至'.$data['end_date']);
+
+                    //设置表头
+                    $objectPHPExcel->getActiveSheet()->setCellValue('A4', '工作日期');
+                    $objectPHPExcel->getActiveSheet()->setCellValue('B4', '工作单类型');
+                    $objectPHPExcel->getActiveSheet()->setCellValue('C4', '客户名称');
+                    $objectPHPExcel->getActiveSheet()->setCellValue('D4', '服务类型');
+                    $objectPHPExcel->getActiveSheet()->setCellValue('E4', '反馈一：史伟莎技术人员着装是否整齐');
+                    $objectPHPExcel->getActiveSheet()->setCellValue('F4', '反馈二：服务前史伟莎技术人员是否主动了解门店');
+                    $objectPHPExcel->getActiveSheet()->setCellValue('G4', '反馈三：服务完成后史伟莎技术人员是否汇报本次服务情况');
+
+                    //设置居中
+                    $objectPHPExcel->getActiveSheet()->getStyle('A4:D4')
+                        ->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                    $objectPHPExcel->getActiveSheet()->getStyle('B:G')
+                        ->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                    //垂直居中
+                    $objectPHPExcel->getActiveSheet()->getstyle('A4:G4')
+                        ->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                    //自动换行
+                    $objectPHPExcel->getActiveSheet()->getStyle('A4:G4')
+                        ->getAlignment()->setWrapText(TRUE);
+
+                    //加粗 设置行高
+                    $objectPHPExcel->getActiveSheet()->getRowDimension(4)->setRowHeight(34);
+                    $objectPHPExcel->setActiveSheetIndex(0)->getStyle("A4:G4")->getFont()->setBold(true);
+                    //宽度
+                    $objectPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
+                    $objectPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+                    $objectPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(30);
+                    $objectPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+                    $objectPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(30);
+                    $objectPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(30);
+                    $objectPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(30);
+                }
+
+                //明细的输出
+                $objectPHPExcel->getActiveSheet()->setCellValue('A' . ($n + 5), $item['job_date']);
+                $objectPHPExcel->getActiveSheet()->setCellValue('B' . ($n + 5), isset($item['FirstJob'])? ($item['FirstJob']?'首次服务':'常规服务') : '跟进服务' );
+                $objectPHPExcel->getActiveSheet()->setCellValue('C' . ($n + 5), $item['customer_name']);
+                $objectPHPExcel->getActiveSheet()->setCellValue('D' . ($n + 5), $item['service_type']);
+                $objectPHPExcel->getActiveSheet()->setCellValue('E' . ($n + 5), $item['question']?($item['question'][0]['answer']?'是':'否') : '');
+                $objectPHPExcel->getActiveSheet()->setCellValue('F' . ($n + 5), $item['question']?($item['question'][1]['answer']?'是':'否') : '');
+                $objectPHPExcel->getActiveSheet()->setCellValue('G' . ($n + 5), $item['question']?($item['question'][2]['answer']?'是':'否') : '');
+                if ($item['question'] && $item['question'][0]['answer'] == 0) {
+                    $objectPHPExcel->getActiveSheet()->getStyle('E' . ($k + 5) . ':E' . ($k + 5) . '')
+                        ->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_RED);
+                }
+                if ($item['question'] && $item['question'][1]['answer'] == 0) {
+                    $objectPHPExcel->getActiveSheet()->getStyle('F' . ($k + 5) . ':F' . ($k + 5) . '')
+                        ->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_RED);
+                }
+                if ($item['question'] && $item['question'][2]['answer'] == 0) {
+                    $objectPHPExcel->getActiveSheet()->getStyle('G' . ($k + 5) . ':G' . ($k + 5) . '')
+                        ->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_RED);
+                }
+
+                $n++;
+            }
+
+            //设置分页显示
+//            $objectPHPExcel->getActiveSheet()->setBreak( 'I55' , PHPExcel_Worksheet::BREAK_ROW );
+//            $objectPHPExcel->getActiveSheet()->setBreak( 'I10' , PHPExcel_Worksheet::BREAK_COLUMN );
+//            $objectPHPExcel->getActiveSheet()->getPageSetup()->setHorizontalCentered(true);
+//            $objectPHPExcel->ge?tActiveSheet()->getPageSetup()->setVerticalCentered(false);
+
+
+            @ob_end_clean();
+            @ob_start();
+            header('Content-Type: application/vnd.ms-excel');
+//            判断PHP版本 以兼容下载
+            if (phpversion() >= 7) {
+                header('Content-Disposition: attachment;filename="' . '【' . $staffData['StaffName'] . '】' . $data['start_date'] . '--' . $data['end_date'] . '.xlsx"');
+                $objWriter = PHPExcel_IOFactory::createWriter($objectPHPExcel, 'Excel2007');
+            } else {
+                header('Content-Disposition: attachment;filename="' . '【' . $staffData['StaffName'] . '】' . $data['start_date'] . '--' . $data['end_date'] . '.xls"');
+                $objWriter = PHPExcel_IOFactory::createWriter($objectPHPExcel, 'Excel5');
+            }
+        } catch (Exception $exception) {
+            $this->json([], $exception->getMessage(), 0);
+        }
+        $objWriter->save('php://output');
     }
 }
