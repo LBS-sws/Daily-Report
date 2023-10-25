@@ -96,10 +96,11 @@ class SalesAnalysisForm extends CFormModel
         return CitySetForm::getCitySetList($city_allow);
     }
 
-    public static function getSalesForHr($city_allow,$endDate=""){
+    public static function getSalesForHr($city_allow,$endDate="",$startDate=""){
         $endDate = empty($endDate)?date("Y/m/d"):$endDate;
         $suffix = Yii::app()->params['envSuffix'];
         $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
+        $startDate = empty($startDate)?$endDate:$startDate;
         $list=array('staff'=>array(),'user'=>array());
         $rows = Yii::app()->db->createCommand()
             ->select("a.id,a.code,a.name,a.city,d.user_id,a.entry_time,a.staff_status,a.leave_time,a.office_id,g.name as office_name,
@@ -110,7 +111,7 @@ class SalesAnalysisForm extends CFormModel
             ->leftJoin("hr{$suffix}.hr_employee a","d.employee_id=a.id")
             ->leftJoin("hr{$suffix}.hr_office g","a.office_id=g.id")
             ->leftJoin("hr{$suffix}.hr_dept dept","a.position=dept.id")
-            ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}' and (
+            ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and date_format(a.entry_time,'%Y/%m/%d')<='{$startDate}' and (
                 (a.staff_status = 0)
                 or
                 (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/31')>='{$endDate}')
@@ -119,7 +120,7 @@ class SalesAnalysisForm extends CFormModel
         return $rows;
     }
 
-    protected function groupFTEForStaffAndData($staffRows){
+    protected function groupFTEForStaffAndData($city_allow){
         if($this->search_year==2023){
             $startMonth = 3;
         }else{
@@ -148,6 +149,11 @@ class SalesAnalysisForm extends CFormModel
         }
 
         //计算销售人数
+        $key = $startMonth;
+        $key = $key<10?"0".$key:$key;
+        $endDate = $this->search_year."/".$key."/01";
+        $startDate = $this->search_date;
+        $staffRows = self::getSalesForHr($city_allow,$endDate,$startDate);
         if($staffRows){
             foreach ($staffRows as $staffRow){
                 $leave_timer = $staffRow["staff_status"]==-1?date("Y/m",strtotime($staffRow["leave_time"])):"2222/22";
@@ -157,7 +163,7 @@ class SalesAnalysisForm extends CFormModel
                     $key = $i<10?"0".$i:$i;
                     $key = $this->search_year."/".$key;
                     if($leave_timer<$key||$entry_timer>$key){//已離職 或者 未入职
-                        break;//跳出循環
+                        continue;//跳出循環
                     }
                     if($entry_timer<$this->search_year."/0{$startMonth}"){
                         $month = 0;//老员工
@@ -380,7 +386,7 @@ class SalesAnalysisForm extends CFormModel
         $cityList = self::getCityListAndRegion($city_allow);//城市信息
         $this->twoDate = $this->groupAreaForStaffAndData($staffRows,$cityList,$nowData);
         $this->threeDate = $this->groupCityForStaffAndData($staffRows,$cityList,$nowData,$lifelineList);
-        $this->fourDate = $this->groupFTEForStaffAndData($staffRows);
+        $this->fourDate = $this->groupFTEForStaffAndData($city_allow);
         if($staffRows){
             foreach ($staffRows as $staffRow){
                 $username = $staffRow["user_id"];
