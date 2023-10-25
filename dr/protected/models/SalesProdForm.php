@@ -133,7 +133,12 @@ class SalesProdForm extends CFormModel
         $amtSql = implode("','",$amtSql);
         $selectSql = "";
         foreach ($this->td_list as $key=>$item){
-            $selectSql.=",sum(if(dept.name='$item',a.field_value,0)) as amt_{$key}";
+            if(!empty($item)){
+                $deptStr="dept.name='{$item}'";
+            }else{
+                $deptStr="(dept.name is null or dept.name='')";
+            }
+            $selectSql.=",sum(if({$deptStr},a.field_value,0)) as amt_{$key}";
         }
         $rows = Yii::app()->db->createCommand()
             ->select("b.city,sum(a.field_value) as amt_total{$selectSql}")
