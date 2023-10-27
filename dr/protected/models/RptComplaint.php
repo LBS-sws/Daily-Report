@@ -15,7 +15,7 @@ class RptComplaint extends ReportData2 {
 			'sch_dt'=>array('label'=>Yii::t('followup','Schedule Date'),'width'=>18,'align'=>'C'),
 			'follow_staff'=>array('label'=>Yii::t('followup','Follow-up Tech.'),'width'=>15,'align'=>'L'),
 			'leader'=>array('label'=>Yii::t('followup','Leader or above'),'width'=>8,'align'=>'C'),
-			'follow_tech'=>array('label'=>Yii::t('followup','Follow-up Tech.'),'width'=>15,'align'=>'L'),
+			'follow_tech'=>array('label'=>Yii::t('followup','Previous Follow-up Tech.'),'width'=>15,'align'=>'L'),
 			'fin_dt'=>array('label'=>Yii::t('followup','Finish Date'),'width'=>18,'align'=>'C'),
 			'follow_action'=>array('label'=>Yii::t('followup','Follow-up Action'),'width'=>15,'align'=>'L'),
 			'mgr_talk'=>array('label'=>Yii::t('followup','Update with Tech.'),'width'=>8,'align'=>'C'),
