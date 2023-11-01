@@ -280,7 +280,7 @@ class PerMonth extends CFormModel
         );
         $dateTwoList = array();
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $bodyKey[]=$this->last_year."/{$month}";
             $dateTwoList[]=$this->search_year."/{$month}";
             $dateThreeList[]="u_".$this->search_year."/{$month}";

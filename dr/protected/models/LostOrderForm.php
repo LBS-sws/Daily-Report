@@ -190,7 +190,7 @@ class LostOrderForm extends CFormModel
             "u_{$this->last_year}/12"=>0,//服务生意额上一年12月
         );
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $dateStrOne = $this->search_year."/{$month}";//产品金额
             $arr[$dateStrOne]=0;
             $arr['rate_'.$dateStrOne]=0;
@@ -204,20 +204,20 @@ class LostOrderForm extends CFormModel
     protected function resetTdRow(&$list,$bool=false,$count=1){
         if(!$bool){
             for($i=1;$i<=$this->search_month;$i++){ //停单金额需要除以12
-                $month = $i>=10?10:"0{$i}";
+                $month = $i>=10?$i:"0{$i}";
                 $dateStrOne = $this->search_year."/{$month}";//停单金额
                 $list[$dateStrOne]/=12;
                 $list[$dateStrOne]=round($list[$dateStrOne]);
             }
         }
         for($i=1;$i<=$this->search_month;$i++){ //计算停单比率
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $dateStrOne = $this->search_year."/{$month}";//停单金额
             if($i==1){
                 $dateStrTwo = $this->last_year."/12";//服务金额
             }else{
                 $uMonth = $i-1;
-                $uMonth = $uMonth>=10?10:"0{$uMonth}";
+                $uMonth = $uMonth>=10?$i:"0{$uMonth}";
                 $dateStrTwo = $this->search_year."/{$uMonth}";//服务金额
             }
             $list["rate_".$dateStrOne]=empty($list["u_".$dateStrTwo])?0:$list[$dateStrOne]/$list["u_".$dateStrTwo];
@@ -349,7 +349,7 @@ class LostOrderForm extends CFormModel
         $nowArr = array();
         $rateArr = array();
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             if($i!=$this->search_month){
                 $bodyKey[]="u_".$this->search_year."/{$month}";
             }

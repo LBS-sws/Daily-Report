@@ -149,7 +149,7 @@ class HistoryResumeForm extends CFormModel
             "u_sum"=>0,//U系统金额
         );
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $dateStrOne = $this->search_year."/{$month}";//暂停金额
             $dateStrTwo = $this->last_year."/{$month}";//暂停金额
             $arr[$dateStrOne]=0;
@@ -174,7 +174,7 @@ class HistoryResumeForm extends CFormModel
         $list["now_average"]=0;
         $list["last_average"]=0;
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $nowStr = $this->search_year."/{$month}";
             $lastStr = $this->last_year."/{$month}";
             $list[$nowStr] = key_exists($nowStr,$list)?$list[$nowStr]:0;
@@ -304,7 +304,7 @@ class HistoryResumeForm extends CFormModel
         );
         $dateTwoList = array();
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $bodyKey[]=$this->last_year."/{$month}";
             $dateTwoList[]=$this->search_year."/{$month}";
         }
