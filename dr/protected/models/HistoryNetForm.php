@@ -205,7 +205,7 @@ class HistoryNetForm extends CFormModel
             "u_sum"=>0,//U系统金额
         );
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $dateStrOne = $this->search_year."/{$month}";//产品金额
             $dateStrTwo = $this->last_year."/{$month}";//产品金额
             $dateStrThree = "u_".$this->search_year."/{$month}";//生意额
@@ -244,7 +244,7 @@ class HistoryNetForm extends CFormModel
         $list["start_result"]=HistoryAddForm::comYes($list["now_week"],$list["start_two_net"]);
         $list["result"]=HistoryAddForm::comYes($list["now_week"],$list["two_net"]);
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $nowStr = $this->search_year."/{$month}";
             $lastStr = $this->last_year."/{$month}";
             $uStr = "u_".$this->search_year."/{$month}";
@@ -391,7 +391,7 @@ class HistoryNetForm extends CFormModel
         );
         $dateTwoList = array();
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $bodyKey[]=$this->last_year."/{$month}";
             $dateTwoList[]=$this->search_year."/{$month}";
             $dateThreeList[]="u_".$this->search_year."/{$month}";

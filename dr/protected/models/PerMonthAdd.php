@@ -56,7 +56,7 @@ class PerMonthAdd extends PerMonth
             "u_sum"=>0,//U系统金额
         );
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $dateStrOne = $this->search_year."/{$month}";//产品金额
             $arr[$dateStrOne]=0;
         }
@@ -83,7 +83,7 @@ class PerMonthAdd extends PerMonth
         }
         $lastNum = 0;
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $nowStr = $this->search_year."/{$month}";
             $list[$nowStr] = key_exists($nowStr,$list)?$list[$nowStr]:0;
             $list[$nowStr] = parent::perMonthNumber($list[$nowStr]);
@@ -144,7 +144,7 @@ class PerMonthAdd extends PerMonth
             "last_average"
         );
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $bodyKey[]=$this->search_year."/{$month}";
         }
 

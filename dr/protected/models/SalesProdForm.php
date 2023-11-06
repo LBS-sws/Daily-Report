@@ -98,7 +98,12 @@ class SalesProdForm extends CFormModel
         $endDate = $this->end_date;
         $selectSql = "";
         foreach ($this->td_list as $key=>$item){
-            $selectSql.=",sum(if(dept.name='$item',1,0)) as num_{$key}";
+            if(!empty($item)){
+                $deptStr="dept.name='{$item}'";
+            }else{
+                $deptStr="(dept.name is null or dept.name='')";
+            }
+            $selectSql.=",sum(if({$deptStr},1,0)) as num_{$key}";
         }
         $rows = Yii::app()->db->createCommand()
             ->select("a.city{$selectSql}")
@@ -128,7 +133,12 @@ class SalesProdForm extends CFormModel
         $amtSql = implode("','",$amtSql);
         $selectSql = "";
         foreach ($this->td_list as $key=>$item){
-            $selectSql.=",sum(if(dept.name='$item',a.field_value,0)) as amt_{$key}";
+            if(!empty($item)){
+                $deptStr="dept.name='{$item}'";
+            }else{
+                $deptStr="(dept.name is null or dept.name='')";
+            }
+            $selectSql.=",sum(if({$deptStr},a.field_value,0)) as amt_{$key}";
         }
         $rows = Yii::app()->db->createCommand()
             ->select("b.city,sum(a.field_value) as amt_total{$selectSql}")
@@ -302,9 +312,10 @@ class SalesProdForm extends CFormModel
         if(!empty($this->data)){
             //$this->downJsonText=array();
             $html.="<tbody>";
-            $moData = key_exists("MO",$this->data)?$this->data["MO"]:array();
-            unset($this->data["MO"]);//澳门需要单独处理
-            $html.=$this->showServiceHtml($this->data,$type);
+            $data = $this->data;
+            $moData = key_exists("MO",$data)?$data["MO"]:array();
+            unset($data["MO"]);//澳门需要单独处理
+            $html.=$this->showServiceHtml($data,$type);
             $html.=$this->showServiceHtmlForMO($moData,$type);
             $html.="</tbody>";
             //$this->downJsonText=json_encode($this->downJsonText);

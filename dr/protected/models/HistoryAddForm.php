@@ -225,7 +225,7 @@ class HistoryAddForm extends CFormModel
             "u_sum"=>0,//U系统金额
         );
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $dateStrOne = $this->search_year."/{$month}";
             $dateStrTwo = $this->last_year."/{$month}";
             $arr[$dateStrOne]=0;
@@ -331,7 +331,7 @@ class HistoryAddForm extends CFormModel
         $list["start_result"]=self::comYes($list["now_week"],$list["start_two_gross"]);
         $list["result"]=self::comYes($list["now_week"],$list["two_gross"]);
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $nowStr = $this->search_year."/{$month}";
             $lastStr = $this->last_year."/{$month}";
             $list[$nowStr] = key_exists($nowStr,$list)?$list[$nowStr]:0;
@@ -470,7 +470,7 @@ class HistoryAddForm extends CFormModel
         );
         $dateTwoList = array();
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $bodyKey[]=$this->last_year."/{$month}";
             $dateTwoList[]=$this->search_year."/{$month}";
         }

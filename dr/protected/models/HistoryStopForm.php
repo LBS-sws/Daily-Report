@@ -183,7 +183,7 @@ class HistoryStopForm extends CFormModel
             "u_sum"=>0,//U系统金额
         );
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $dateStrOne = $this->search_year."/{$month}";
             $dateStrTwo = $this->last_year."/{$month}";
             $arr[$dateStrOne]=0;
@@ -274,7 +274,7 @@ class HistoryStopForm extends CFormModel
         $list["start_result"]=HistoryAddForm::comYes($list["now_week"],$list["start_two_gross"],true);
         $list["result"]=HistoryAddForm::comYes($list["now_week"],$list["two_gross"],true);
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $nowStr = $this->search_year."/{$month}";
             $lastStr = $this->last_year."/{$month}";
             $list[$nowStr] = key_exists($nowStr,$list)?$list[$nowStr]:0;
@@ -413,7 +413,7 @@ class HistoryStopForm extends CFormModel
         );
         $dateTwoList = array();
         for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?10:"0{$i}";
+            $month = $i>=10?$i:"0{$i}";
             $bodyKey[]=$this->last_year."/{$month}";
             $dateTwoList[]=$this->search_year."/{$month}";
         }
