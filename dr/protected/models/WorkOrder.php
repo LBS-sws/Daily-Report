@@ -72,6 +72,12 @@ class WorkOrder extends CListPageModel
         return Yii::t('returneport', 'Date') . ': ' . $this->criteria->year . '/' . $this->criteria->month;
     }
 
+    /**
+     * 根据城市名称获取城市ID和城市文本
+     *
+     * @param string $city 城市名称
+     * @return array 返回查询结果，包含城市ID和城市文本
+     */
     public function retrieveData($city)
     {
         if (count(explode(',', $city)) > 1) {
@@ -80,12 +86,25 @@ class WorkOrder extends CListPageModel
             $city_de = $city;
         }
         $citys = $this->getCityByCode($city_de);
-        $sql_scv = "select b.EnumID as City,b.Text as Text from service{$this->suffix}.enums b where b.EnumID IN({$citys[0]['city']}) AND b.EnumType = 1  ";
-        $ret = Yii::app()->db->createCommand($sql_scv)->queryAll();
-        return $ret;
+        if(!$citys[0]['city']){
+            $citys[0]['city'][] = ['City'=>'0', 'Text'=>'无数据'];
+            return $citys[0]['city'];
+        }
+        //取其中第一条
+        $city_str = explode(',', $citys[0]['city'])[0];
 
+        $sql_scv = "select b.EnumID as City,b.Text as Text from service{$this->suffix}.enums b where b.EnumID IN({$city_str}) AND b.EnumType = 1  ";
+        $ret = Yii::app()->db->createCommand($sql_scv)->queryAll();
+
+        return $ret;
     }
 
+    /**
+     * 根据城市代码获取城市ID
+     *
+     * @param string $city 城市代码
+     * @return array 返回查询结果，包含城市ID
+     */
     public function getCityByCode($city)
     {
         $rows = Yii::app()->db->createCommand()->select("GROUP_CONCAT(DISTINCT c.EnumID ) as city")->from("service{$this->suffix}.officecity as a")
@@ -93,6 +112,7 @@ class WorkOrder extends CListPageModel
             ->leftJoin("service{$this->suffix}.enums c", "c.EnumID = a.City ")
             ->where("b.Text IN($city) and b.EnumType = 8 AND c.EnumType = 1")
             ->queryAll();
+
         return $rows;
     }
 
