@@ -84,6 +84,7 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 ?>
 	<div class="box box-info">
 		<div class="box-body">
+            <?php echo TbHtml::hiddenField("KA_Search_True",1,array("id"=>"KA_Search_True"));?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'status'); ?>
@@ -692,10 +693,10 @@ Yii::app()->clientScript->registerScript('lookupServiceB4',$js,CClientScript::PO
 $js = Script::genLookupButtonEx('btnService', 'product', 'product_id', 'ServiceKAForm_service');
 Yii::app()->clientScript->registerScript('lookupService',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButtonEx('btnSalesman', 'staff', 'salesman_id','salesman');
+$js = Script::genLookupButtonEx('btnSalesman', 'staff', 'salesman_id','salesman',array(),false,array("kaSearch"=>"KA_Search_True"));
 Yii::app()->clientScript->registerScript('lookupSalesman',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButtonEx('btnOtherSalesman', 'staff', 'othersalesman_id', 'othersalesman');
+$js = Script::genLookupButtonEx('btnOtherSalesman', 'staff', 'othersalesman_id', 'othersalesman',array(),false,array("kaSearch"=>"KA_Search_True"));
 Yii::app()->clientScript->registerScript('lookupOtherSalesman',$js,CClientScript::POS_READY);
 
 $js = Script::genLookupButtonEx('btnTechnician', 'staff', 'technician_id', 'technician');

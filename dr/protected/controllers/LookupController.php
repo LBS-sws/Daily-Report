@@ -140,16 +140,20 @@ class LookupController extends Controller
 		echo TbHtml::listBox('lstlookup', '', $data, array('size'=>'15',));
 	}
 
-	public function actionStaffEx($search) {
+	public function actionStaffEx($search,$kaSearch=0) {
         $suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
 		$result = array();
 		$searchx = str_replace("'","\'",$search);
+        $kaSql = "";
+        if($kaSearch==1){
+            $kaSql = " or (a.city='ZY' and b.name like '%KA%')";
+        }
 
         $sql = "select a.id, concat(a.name, ' (', a.code, ')') as value from hr$suffix.hr_employee a
                 LEFT JOIN hr$suffix.hr_dept b on a.position = b.id 
 				where (a.code like '%".$searchx."%' or a.name like '%".$searchx."%') 
-				and (a.city='".$city."' or (a.city='ZY' and b.name like '%技术%'))
+				and (a.city='".$city."' or (a.city='ZY' and b.name like '%技术%') {$kaSql})
 				and a.staff_status=0 
 			 ";
         $result1 = Yii::app()->db->createCommand($sql)->queryAll();
