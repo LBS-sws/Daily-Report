@@ -147,7 +147,7 @@ class LookupController extends Controller
 		$searchx = str_replace("'","\'",$search);
         $kaSql = "";
         if($kaSearch==1){
-            $kaSql = " or (a.city='ZY' and b.name like '%KA%')";
+            $kaSql = " or b.name like '%KA%'";
         }
 
         $sql = "select a.id, concat(a.name, ' (', a.code, ')') as value from hr$suffix.hr_employee a
