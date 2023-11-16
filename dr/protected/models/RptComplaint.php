@@ -7,7 +7,8 @@ class RptComplaint extends ReportData2 {
 			'type'=>array('label'=>Yii::t('followup','Type'),'width'=>8,'align'=>'C'),
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>22,'align'=>'L'),
 			'address'=>array('label'=>Yii::t('customer','Address'),'width'=>40,'align'=>'L'),
-			'content'=>array('label'=>Yii::t('followup','Content'),'width'=>20,'align'=>'L'),
+			'content'=>array('label'=>Yii::t('followup','job content'),'width'=>20,'align'=>'L'),
+			'job_report'=>array('label'=>Yii::t('followup','job report'),'width'=>20,'align'=>'L'),
 			'cont_info'=>array('label'=>Yii::t('followup','Contact'),'width'=>23,'align'=>'L'),
 			'resp_staff'=>array('label'=>Yii::t('followup','Resp. Sales'),'width'=>15,'align'=>'L'),
 			'resp_tech'=>array('label'=>Yii::t('followup','Technician'),'width'=>15,'align'=>'L'),
@@ -43,6 +44,7 @@ class RptComplaint extends ReportData2 {
 			'company_name',
 			'address',
 			'content',
+			'job_report',
 			'cont_info',
 			'resp_staff',
 			'resp_tech',
@@ -134,6 +136,7 @@ class RptComplaint extends ReportData2 {
 				$temp['address'] = $rec===false ? '' : $rec['address'];
 
 				$temp['content'] = $row['content'];
+				$temp['job_report'] = $row['job_report'];
 				$temp['cont_info'] = $row['cont_info'];
 				$temp['resp_staff'] = $row['resp_staff'];
 				$temp['resp_tech'] = $row['resp_tech'];

@@ -8,6 +8,7 @@ class FollowupForm extends CFormModel
 	public $company_id = 0;
 	public $company_name;
 	public $content;
+	public $job_report;
 	public $cont_info;
 	public $resp_staff;
 	public $resp_tech;
@@ -44,7 +45,8 @@ class FollowupForm extends CFormModel
 			'entry_dt'=>Yii::t('followup','Date').' '.Yii::t('misc','(Y/M/D)'),
 			'type'=>Yii::t('followup','Type'),
 			'company_name'=>Yii::t('followup','Customer'),
-			'content'=>Yii::t('followup','Content'),
+			'content'=>Yii::t('followup','job content'),
+			'job_report'=>Yii::t('followup','job report'),
 			'cont_info'=>Yii::t('followup','Contact'),
 			'resp_staff'=>Yii::t('followup','Resp. Sales'),
 			'resp_tech'=>Yii::t('followup','Technician'),
@@ -78,7 +80,7 @@ class FollowupForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, resp_staff, resp_tech, mgr_notify, follow_staff, follow_tech, follow_action,
+			array('id, resp_staff, resp_tech,job_report, mgr_notify, follow_staff, follow_tech, follow_action,
 				mgr_talk, change, tech_notify, cont_info, type, mcard_remarks, mcard_staff,
 				fp_cust_name, fp_comment, svc_comment, svc_cust_name, company_id, leader
 				','safe'),
@@ -109,6 +111,7 @@ class FollowupForm extends CFormModel
 				$this->company_name = $row['company_name'];
 				$this->type = $row['type'];
 				$this->content = $row['content'];
+				$this->job_report = $row['job_report'];
 				$this->cont_info = $row['cont_info'];
 				$this->resp_staff = $row['resp_staff'];
 				$this->resp_tech = $row['resp_tech'];
@@ -170,7 +173,7 @@ class FollowupForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_followup(
-							entry_dt, type, company_id, company_name, content, cont_info, 
+							entry_dt, type, company_id, company_name, content,job_report, cont_info, 
 							resp_staff, resp_tech, mgr_notify, sch_dt,
 							follow_staff, leader, follow_tech, fin_dt, follow_action, mgr_talk, 
 							changex, tech_notify, fp_fin_dt, fp_call_dt, fp_cust_name, fp_comment,
@@ -178,7 +181,7 @@ class FollowupForm extends CFormModel
 							mcard_remarks, mcard_staff,
 							city, luu, lcu
 						) values (
-							:entry_dt, :type, :company_id, :company_name, :content, :cont_info, 
+							:entry_dt, :type, :company_id, :company_name, :content,:job_report, :cont_info, 
 							:resp_staff, :resp_tech, :mgr_notify, :sch_dt,
 							:follow_staff, :leader, :follow_tech, :fin_dt, :follow_action, :mgr_talk, 
 							:change, :tech_notify, :fp_fin_dt, :fp_call_dt, :fp_cust_name, :fp_comment,
@@ -194,6 +197,7 @@ class FollowupForm extends CFormModel
 							company_id = :company_id, 
 							company_name = :company_name, 
 							content = :content, 
+							job_report = :job_report, 
 							cont_info = :cont_info, 
 							resp_staff = :resp_staff, 
 							resp_tech = :resp_tech, 
@@ -241,6 +245,8 @@ class FollowupForm extends CFormModel
 			$command->bindParam(':company_name',$this->company_name,PDO::PARAM_STR);
 		if (strpos($sql,':content')!==false)
 			$command->bindParam(':content',$this->content,PDO::PARAM_STR);
+		if (strpos($sql,':job_report')!==false)
+			$command->bindParam(':job_report',$this->job_report,PDO::PARAM_STR);
 		if (strpos($sql,':cont_info')!==false)
 			$command->bindParam(':cont_info',$this->cont_info,PDO::PARAM_STR);
 		if (strpos($sql,':resp_staff')!==false)

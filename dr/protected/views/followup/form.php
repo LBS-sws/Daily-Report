@@ -97,6 +97,15 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 					); ?>
 				</div>
 			</div>
+
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'job_report',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-7">
+					<?php echo $form->textArea($model, 'job_report',
+						array('rows'=>3,'cols'=>50,'maxlength'=>5000,'readonly'=>($model->scenario=='view'))
+					); ?>
+				</div>
+			</div>
 	
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'cont_info',array('class'=>"col-sm-2 control-label")); ?>

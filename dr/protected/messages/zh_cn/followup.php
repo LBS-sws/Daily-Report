@@ -29,6 +29,8 @@ return array(
 	'Follow up Date'=>'致电日期',
 	'Comment'=>'客户意见',
 	'Content'=>'投诉内容及结果',
+    'job content'=>'投诉内容',
+    'job report'=>'处理结果',
 	'Contact'=>'投诉者及联络电话',
 	
 	'Type'=>'服务类别',
