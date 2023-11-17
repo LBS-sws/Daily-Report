@@ -130,6 +130,7 @@ class CustomerForm extends CFormModel
 		switch ($this->scenario) {
 			case 'delete':
 				$sql = "delete from swo_company where id = :id and city = :city";
+				$this->delHistorySave();
 				break;
 			case 'new':
 				$sql = "insert into swo_company(
@@ -210,4 +211,38 @@ class CustomerForm extends CFormModel
 			3=>Yii::t('customer','Others'),
 		);
 	}
+
+    //哪些字段修改后需要记录
+    protected function historyUpdateList(){
+	    $list = array(
+	        'code','name','full_name','tax_reg_no','cont_name','cont_phone','email','address',
+	        'group_id','group_name','status'
+        );
+        return $list;
+    }
+
+    //哪些字段修改后需要记录
+    protected function getNameForValue($key,$value){
+        return $value;
+    }
+
+    protected function delHistorySave(){
+        $model = new CustomerForm();
+        $model->retrieveData($this->id);
+        $keyArr = self::historyUpdateList();
+        $delText=array();
+        $delText[]="id：".$this->id;
+        foreach ($keyArr as $key){
+            $delText[]=$this->getAttributeLabel($key)."：".self::getNameForValue($key,$model->$key);
+        }
+        $delText= implode("<br/>",$delText);
+        $systemLogModel = new SystemLogForm();
+        $systemLogModel->log_date=date("Y/m/d H:i:s");
+        $systemLogModel->log_user=Yii::app()->user->id;
+        $systemLogModel->log_type=get_class($this);
+        $systemLogModel->log_type_name="客户资料";
+        $systemLogModel->option_str="删除";
+        $systemLogModel->option_text=$delText;
+        $systemLogModel->insertSystemLog("D");
+    }
 }
