@@ -538,15 +538,18 @@ class General {
 		return $rtn;
 	}
 
-	public function getInstalledSystemFunctions() {
+	public static function getInstalledSystemFunctions() {
 		$rtn = array();
 		$sysid = Yii::app()->user->system();
 		$basePath = Yii::app()->basePath;
 		$systems = General::systemMapping();
-		$cpathid = end(explode('/',$systems[$sysid]['webroot']));
+        $param_arr = explode('/',$systems[$sysid]['webroot']);
+		$cpathid = $param_arr['3'];
 		foreach ($systems as $key=>$value) {
 			$rtn[$key] = array('name'=>$value['name'], 'item'=>array());
-			$pathid = end(explode('/',$systems[$key]['webroot']));
+            $param_arr = explode('/',$systems[$key]['webroot']);
+			$pathid = $param_arr['3'];
+
 			if (isset($value['external']) && $value['external']) {
 				$rtn[$key]['item']['zzexternal']['XX01']['name'] = 'System Use';
 				$rtn[$key]['item']['zzexternal']['XX01']['tag'] = '';
@@ -579,23 +582,25 @@ class General {
 		return $rtn;
 	}
 
-	public function systemMapping() {
+	public static function systemMapping() {
 		$rtn = require(Yii::app()->basePath.'/config/system.php');
 		return $rtn;
 	}
 	
-	public function getLocaleAppLabels() {
+	public static function getLocaleAppLabels() {
 		$rtn = array();
 		$sysid = Yii::app()->user->system();
 		$basePath = Yii::app()->basePath;
 		$lang = Yii::app()->language;
 		if (Yii::app()->sourceLanguage!=$lang) {
 			$systems = General::systemMapping();
-			$cpathid = end(explode('/',$systems[$sysid]['webroot']));
+            $param_arr = explode('/',$systems[$sysid]['webroot']);
+            $cpathid = $param_arr['3'];
 			foreach ($systems as $key=>$value) {
 				if (isset($value['external']) && $value['external']) {
 				} else {
-					$pathid = end(explode('/',$systems[$key]['webroot']));
+                    $param_arr = explode('/',$systems[$key]['webroot']);
+					$pathid = $param_arr['3'];
 					$msgFile = ((strpos($basePath, '/'.$pathid.'/')===false) ? str_replace('/'.$cpathid.'/','/'.$pathid.'/',$basePath) : $basePath)
 						.'/messages/'.$lang.'/app.php';
 //					$tmp = require($msgFile);
@@ -607,7 +612,7 @@ class General {
 		return $rtn;
 	}
 
-	public function getUpdateDate() {
+	public static function getUpdateDate() {
 		$file = Yii::app()->basePath.'/config/lud.php';
 		if (file_exists($file)) {
 			$lud = require($file);
@@ -648,7 +653,8 @@ class General {
         $systemList = require(Yii::app()->basePath.'/config/system.php');
         foreach ($systemList as $row){
             if($row["name"]=="Daily Report"){//读取日报表系统的公共文件
-                $objName = end(explode("/",$row["webroot"]));
+                $param_arr = explode("/",$row["webroot"]);
+                $objName = $param_arr['3'];
                 $configPath = dirname(Yii::app()->basePath)."/../{$objName}/protected";
                 include_once($configPath."/components/SysBlock.php");
                 return true;

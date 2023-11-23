@@ -38,7 +38,7 @@ class CListPageModel extends CFormModel
 		return true;
 	}
 	
-	public function sqlWithPageCriteria($sql, $pageNum) {
+	public static function sqlWithPageCriteria($sql, $pageNum) {
 		$rtn = $sql;
 		if ($pageNum <= 0) $pageNum = 1;
 		$offset = ($this->noOfItem != 0) ? ($pageNum-1) * $this->noOfItem : 0;
@@ -46,7 +46,7 @@ class CListPageModel extends CFormModel
 		return $rtn;
 	}
 	
-	public function determinePageNum($pageNum)
+	public static function determinePageNum($pageNum)
 	{
 		if ($pageNum!=0)
 			$this->pageNum = $pageNum;
@@ -54,11 +54,11 @@ class CListPageModel extends CFormModel
 			if (empty($this->pageNum) || $this->pageNum==0) $this->pageNum = 1;
 	}
 
-	public function criteriaName() {
+	public static function criteriaName() {
 		return 'criteria_'.get_class($this);
 	}
 	
-	public function setCriteria($criteria)
+	public static function setCriteria($criteria)
 	{
 		if (count($criteria) > 0) {
 			foreach ($criteria as $k=>$v) {
@@ -67,7 +67,7 @@ class CListPageModel extends CFormModel
 		}
 	}
 	
-	public function getCriteria() {
+	public static function getCriteria() {
 		return array(
 			'searchField'=>$this->searchField,
 			'searchValue'=>$this->searchValue,
@@ -81,19 +81,19 @@ class CListPageModel extends CFormModel
 		);
 	}
 	
-	public function searchColumns() {
+	public static function searchColumns() {
 		return array();
 	}
 	
-	public function staticSearchColumns() {
+	public static function staticSearchColumns() {
 		return array();
 	}
 	
-	public function isStaticSearch() {
+	public static function isStaticSearch() {
 		return in_array($this->searchField, $this->staticSearchColumns());
 	}
 	
-	public function isAdvancedSearch() {
+	public static function isAdvancedSearch() {
 		return ($this->searchField=='ex_advanced');
 	}
 	
@@ -183,7 +183,7 @@ class CListPageModel extends CFormModel
 		return $rtn;
 	}
 
-	public function getDateRangeCondition($field) {
+	public static function getDateRangeCondition($field) {
 		if ($this->dateRangeValue=='0') return '';
 		$d = date('Y-m-d', strtotime('-'.$this->dateRangeValue.' months'));
 		return " and $field >= '$d' ";

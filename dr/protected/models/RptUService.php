@@ -106,7 +106,7 @@ class RptUService extends ReportData2 {
 		}
 	}
 
-	public function getUserList($UStaffCodeList,$endDate){
+	public static function getUserList($UStaffCodeList,$endDate){
         $suffix = Yii::app()->params['envSuffix'];
         if(!empty($UStaffCodeList)){
             $codeStr = implode(",",$UStaffCodeList);

@@ -99,7 +99,7 @@ class RptUServiceDetail extends ReportData2 {
 		}
 	}
 
-	public function getUserList($city_allow,$endDate){
+	public static function getUserList($city_allow,$endDate){
         $suffix = Yii::app()->params['envSuffix'];
         $whereSql = "a.city in ({$city_allow})";
         $rows = Yii::app()->db->createCommand()
