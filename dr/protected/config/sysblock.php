@@ -85,5 +85,11 @@ return array(
         'function'=>'GA04',
         'message'=>Yii::t('block','Please complete Academic Credit System - Credit Request Confirmation before using other functions.'),
     ),
+    'nu.GA04' => array( //派单系统
+        'validation'=>'isCreditConfirmed',
+        'system'=>'nu',
+        'function'=>'',
+        'message'=>'',
+    ),
 );
 ?>

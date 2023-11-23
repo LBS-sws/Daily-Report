@@ -112,3 +112,81 @@ function remoteLoginOnlib(id,url,home) {
 		}
 	});
 }
+
+// 前往派单系统
+function goNewUnited(id, url, home, string){
+	if(id!=='nu'){ return false; }
+
+	var cookie = {
+		'Token': 'yaAuthAdminToken',
+		'Username': 'yaAuthUsername',
+		'Nickname': 'yaAuthNickname',
+		'Avatar': 'yaAuthAvatar',
+		'TokenName': 'yaSettingsTokenName',
+		'TokenType': 'yaSettingsTokenType',
+		'SystemName': 'yaSettingsSystemName',
+		'PageTitle': 'yaSettingsPageTitle',
+		'LogoUrl': 'yaSettingsLogoUrl',
+		'FaviconUrl': 'yaSettingsFaviconUrl'
+	};
+
+	/* 先请求派单系统，获取token */
+	var homeurl = home+'/api/system.login/login';
+
+	if(getCookie(cookie.Token)){
+		window.open(url, '_self');
+	}else{
+		$.ajax({
+			type: 'post',
+			url: homeurl,
+			dataType: 'json',
+			data: {
+				'iopfd':string
+			},
+			success: function(json) {
+				// console.log(json)
+				if (json!='') {
+					// 设置cookie
+					setCookie(cookie['Token'],json.data.AdminToken)
+					setCookie(cookie['Username'],json.data.name)
+					setCookie(cookie['Nickname'],json.data.nickname)
+					setCookie(cookie['Avatar'],null)
+					setCookie(cookie['SystemName'],json.data.system_name)
+					setCookie(cookie['PageTitle'],json.data.page_title)
+					setCookie(cookie['LogoUrl'],json.data.logo_url)
+					setCookie(cookie['FaviconUrl'],json.data.favicon_url)
+					setCookie(cookie['TokenType'],json.data.token_type)
+					setCookie(cookie['TokenName'],json.data.token_name)
+
+					window.open(url, '_self');
+				}
+			}, error: function(xhr, status, error) {
+				console.log(error);
+			}
+		});
+	}
+}
+
+//读取cookie
+function getCookie(name) {
+	let cookies = document.cookie.split(';');
+	for (let i = 0; i < cookies.length; i++) {
+		let cookie = cookies[i].trim();
+		if (cookie.startsWith(name + '=')) {
+			return cookie.substring(name.length + 1);
+		}
+	}
+	// Return null if the cookie is not found
+	return false;
+}
+
+//设置cookie
+function setCookie(name, value, daysToExpire) {
+	let expirationDate = new Date();
+	expirationDate.setDate(expirationDate.getDate() + daysToExpire);
+
+	let cookieValue = `${name}=${value}; expires=${expirationDate.toUTCString()}; path=/`;
+
+	// Set the cookie in the document
+	document.cookie = cookieValue;
+}

@@ -1,6 +1,13 @@
 <?php
 
 return array(
+	'nu'=>array(
+		'webroot'=>'http://lbsapps.local.cn/nu',
+		'name'=>'New United',
+		'icon'=>'fa fa-suitcase',
+		'param'=>'/admin',
+		'script'=>'goNewUnited',
+	),
 	'drs'=>array(
 		'webroot'=>'http://192.168.3.64/dr-new',
 		'name'=>'Daily Report',
