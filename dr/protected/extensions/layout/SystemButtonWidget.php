@@ -18,7 +18,27 @@ EOF;
 				$url = $value['webroot'];
 				if (!isset($value['script'])) {
 					$temp = '$("#'.$oid.'").on("click",function(){$("#syschangedialog").modal("hide");window.location="'.$url.'";});';
-				} else {
+                }elseif($id=='nu'){
+                    $url = $value['webroot'].$value['param'];
+                    $incl_js = true;
+                    $homeurl = $value['webroot'];
+                    //构建数据
+                    $data = array(
+                        'user_id'=>Yii::app()->user->id,
+                        'system'=>Yii::app()->session['system'],
+                        'city'=>Yii::app()->session['city'],
+                        'disp_name'=>Yii::app()->session['disp_name'],
+                        'logon_time'=>Yii::app()->session['logon_time'],
+                    );
+                    // 加密数组
+                    $jsonString = json_encode($data,true);
+                    $String = base64_encode($jsonString);
+                    $key = str_replace('=','',base64_encode('fda25643gg654365dfafdsa'));
+                    $jsonString = ($key.$String);
+                    $encryptedString = base64_encode($jsonString);
+                    //拼接
+                    $temp = '$("#'.$oid.'").on("click",function(){$("#syschangedialog").modal("hide");'.$value['script'].'("'.$id.'","'.$url.'","'.$homeurl.'","'.$encryptedString.'");});';
+                } else {
 					$func_name = $value['script'];
 					$lang = Yii::app()->language;
 					$homeurl = Yii::app()->createUrl("");
