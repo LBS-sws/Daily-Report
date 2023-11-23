@@ -38,7 +38,7 @@ class CListPageModel extends CFormModel
 		return true;
 	}
 	
-	public static function sqlWithPageCriteria($sql, $pageNum) {
+	public function sqlWithPageCriteria($sql, $pageNum) {
 		$rtn = $sql;
 		if ($pageNum <= 0) $pageNum = 1;
 		$offset = ($this->noOfItem != 0) ? ($pageNum-1) * $this->noOfItem : 0;
@@ -46,7 +46,7 @@ class CListPageModel extends CFormModel
 		return $rtn;
 	}
 	
-	public static function determinePageNum($pageNum)
+	public function determinePageNum($pageNum)
 	{
 		if ($pageNum!=0)
 			$this->pageNum = $pageNum;
@@ -54,11 +54,11 @@ class CListPageModel extends CFormModel
 			if (empty($this->pageNum) || $this->pageNum==0) $this->pageNum = 1;
 	}
 
-	public static function criteriaName() {
+	public function criteriaName() {
 		return 'criteria_'.get_class($this);
 	}
 	
-	public static function setCriteria($criteria)
+	public function setCriteria($criteria)
 	{
 		if (count($criteria) > 0) {
 			foreach ($criteria as $k=>$v) {
@@ -67,7 +67,7 @@ class CListPageModel extends CFormModel
 		}
 	}
 	
-	public static function getCriteria() {
+	public function getCriteria() {
 		return array(
 			'searchField'=>$this->searchField,
 			'searchValue'=>$this->searchValue,
@@ -89,11 +89,11 @@ class CListPageModel extends CFormModel
 		return array();
 	}
 	
-	public static function isStaticSearch() {
+	public function isStaticSearch() {
 		return in_array($this->searchField, $this->staticSearchColumns());
 	}
 	
-	public static function isAdvancedSearch() {
+	public function isAdvancedSearch() {
 		return ($this->searchField=='ex_advanced');
 	}
 	
@@ -183,7 +183,7 @@ class CListPageModel extends CFormModel
 		return $rtn;
 	}
 
-	public static function getDateRangeCondition($field) {
+	public function getDateRangeCondition($field) {
 		if ($this->dateRangeValue=='0') return '';
 		$d = date('Y-m-d', strtotime('-'.$this->dateRangeValue.' months'));
 		return " and $field >= '$d' ";
