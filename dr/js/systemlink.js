@@ -159,6 +159,8 @@ function goNewUnited(id, url, home, string){
 					setCookie(cookie['TokenName'],json.data.token_name)
 
 					window.open(url, '_self');
+				}else{
+					alert('切换失败，找不到账号')
 				}
 			}, error: function(xhr, status, error) {
 				console.log(error);
