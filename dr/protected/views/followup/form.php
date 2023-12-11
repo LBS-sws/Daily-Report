@@ -76,6 +76,12 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 						echo $form->dropDownList($model, 'type', General::getServiceTypeList(true), array('disabled'=>($model->scenario=='view')));
 					?>
 				</div>
+				<?php echo $form->labelEx($model,'pest_type_id',array('class'=>"col-sm-1 control-label")); ?>
+				<div class="col-sm-3">
+					<?php
+						echo $form->dropDownList($model, 'pest_type_id',PestTypeForm::getPestTypeList($model->pest_type_id), array('disabled'=>($model->scenario=='view'),'multiple'=>'multiple','id'=>'pest_type_id'));
+					?>
+				</div>
 			</div>
 
 			<div class="form-group">
@@ -403,6 +409,31 @@ if ($model->scenario!='view') {
 		));
 	Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 }
+
+switch(Yii::app()->language) {
+    case 'zh_cn': $lang = 'zh-CN'; break;
+    case 'zh_tw': $lang = 'zh-TW'; break;
+    default: $lang = Yii::app()->language;
+}
+$disabled = ($model->scenario=='view') ? 'true' : 'false';
+$js = <<<EOF
+$('#pest_type_id').select2({
+	tags: false,
+	multiple: true,
+	maximumInputLength: 0,
+	maximumSelectionLength: 10,
+	allowClear: true,
+	language: '$lang',
+	disabled: $disabled,
+	templateSelection: formatState
+});
+
+function formatState(state) {
+	var rtn = $('<span style="color:black">'+state.text+'</span>');
+	return rtn;
+}
+EOF;
+Yii::app()->clientScript->registerScript('select2_1',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);

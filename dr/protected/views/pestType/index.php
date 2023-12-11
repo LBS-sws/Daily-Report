@@ -1,9 +1,9 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - Complaint Cases';
+$this->pageTitle=Yii::app()->name . ' - PestType';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'followup-list',
+'id'=>'pestType-list',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_INLINE,
@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Cases';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('followup','Complaint Cases'); ?></strong>
+		<strong><?php echo Yii::t('app','Pest Type Setting'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -26,32 +26,23 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Cases';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
 		<?php 
-			if (Yii::app()->user->validRWFunction('A03'))
-				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','New Record'), array(
-					'submit'=>Yii::app()->createUrl('followup/new'), 
+			if (Yii::app()->user->validRWFunction('C12'))
+				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add'), array(
+					'submit'=>Yii::app()->createUrl('pestType/new'),
 				)); 
-			 echo TbHtml::button('dummyButton', array('style'=>'display:none','disabled'=>true,'submit'=>'#',));
 		?>
 	</div>
 	</div></div>
-	<?php 
-		$search = array(
-						'type',
-						'pest_type_name',
-						'company_name',
-						'content',
-						'cont_info',
-						'resp_staff',
-						'resp_tech',
-					);
-		if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
-		$this->widget('ext.layout.ListPageWidget', array(
-			'title'=>Yii::t('followup','Complaint Cases List'),
+	<?php $this->widget('ext.layout.ListPageWidget', array(
+			'title'=>Yii::t('followup','Pest Type List'),
 			'model'=>$model,
-				'viewhdr'=>'//followup/_listhdr',
-				'viewdtl'=>'//followup/_listdtl',
-				'search'=>$search,
-				'hasDateButton'=>true,
+				'viewhdr'=>'//pestType/_listhdr',
+				'viewdtl'=>'//pestType/_listdtl',
+				'gridsize'=>'24',
+				'height'=>'600',
+				'search'=>array(
+							'pest_name'
+						),
 		));
 	?>
 </section>
@@ -67,4 +58,3 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Cases';
 	$js = Script::genTableRowClick();
 	Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 ?>
-

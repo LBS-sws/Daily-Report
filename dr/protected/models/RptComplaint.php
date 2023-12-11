@@ -4,7 +4,8 @@ class RptComplaint extends ReportData2 {
 		return array(
             'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
 			'entry_dt'=>array('label'=>Yii::t('followup','Date'),'width'=>18,'align'=>'C'),
-			'type'=>array('label'=>Yii::t('followup','Type'),'width'=>8,'align'=>'C'),
+			'type'=>array('label'=>Yii::t('followup','Type'),'width'=>10,'align'=>'C'),
+			'pest_type_name'=>array('label'=>Yii::t('followup','Pest Type'),'width'=>12,'align'=>'L'),
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>22,'align'=>'L'),
 			'address'=>array('label'=>Yii::t('customer','Address'),'width'=>40,'align'=>'L'),
 			'content'=>array('label'=>Yii::t('followup','job content'),'width'=>20,'align'=>'L'),
@@ -41,6 +42,7 @@ class RptComplaint extends ReportData2 {
 			'city_name',
 			'entry_dt',
 			'type',
+			'pest_type_name',
 			'company_name',
 			'address',
 			'content',
@@ -126,6 +128,7 @@ class RptComplaint extends ReportData2 {
                 $temp['city_name'] = General::getCityName($row["city"]);
 				$temp['entry_dt'] = General::toDate($row['entry_dt']);
 				$temp['type'] = $row['type'];
+				$temp['pest_type_name'] = $row['pest_type_name'];
 				$temp['company_name'] = $row['company_name'];
 				
 				$company_name = $row['company_name'];

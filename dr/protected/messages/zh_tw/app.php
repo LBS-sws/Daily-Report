@@ -182,5 +182,6 @@ return array(
     'WorkOrder' => '工作單管理',
     'LBS WorkOrder'=>'工作單報表',
     'Evaluation Statistics'=>'點評統計',
+    'Pest Type Setting'=>'蟲害類型設置',
 );
 ?>

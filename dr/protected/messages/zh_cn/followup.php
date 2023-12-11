@@ -46,5 +46,13 @@ return array(
 	'Call Back'=>'电话回访',
 
 	'Invalid Date'=>'日期不正确',
+	'Pest Type'=>'虫害类型',
+    'Pest Type List'=>'虫害类型列表',
+    'Pest Type Form'=>'虫害类型表单',
+	'Pest Type Name'=>'虫害类型名称',
+	'z_index'=>'层级',
+	'display'=>'是否显示',
+	'show'=>'显示',
+	'none'=>'隐藏',
 );
 ?>

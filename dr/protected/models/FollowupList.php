@@ -17,6 +17,7 @@ class FollowupList extends CListPageModel
 			'resp_tech'=>Yii::t('followup','Technician'),
 			'content'=>Yii::t('followup','Content'),
 			'cont_info'=>Yii::t('followup','Contact'),
+			'pest_type_name'=>Yii::t('followup','Pest Type'),
 			'city_name'=>Yii::t('misc','City'),
 		);
 	}
@@ -44,6 +45,9 @@ class FollowupList extends CListPageModel
 					break;
 				case 'type':
 					$clause .= General::getSqlConditionClause('a.type',$svalue);
+					break;
+				case 'pest_type_name':
+					$clause .= General::getSqlConditionClause('a.pest_type_name',$svalue);
 					break;
 				case 'company_name':
 					$clause .= General::getSqlConditionClause('a.company_name',$svalue);
@@ -91,6 +95,7 @@ class FollowupList extends CListPageModel
 					'resp_tech'=>$record['resp_tech'],
 					'content'=>$record['content'],
 					'type'=>$record['type'],
+					'pest_type_name'=>$record['pest_type_name'],
 					'cont_info'=>$record['cont_info'],
 					'city_name'=>$record['city_name'],
 				);

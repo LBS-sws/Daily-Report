@@ -391,6 +391,10 @@ return array(
                 'access'=>'C11',
                 'url'=>'/stopRemark/index',
             ),
+            'Pest Type Setting'=>array(
+                'access'=>'C12',
+                'url'=>'/pestType/index',
+            ),
 
 		),
 	),

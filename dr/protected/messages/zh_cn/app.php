@@ -184,5 +184,6 @@ return array(
     'Sales Month Count'=>'每月销售人数统计',
     'Capacity Count'=>'产能统计',
     'Sales productivity'=>'销售月均生产率',
+    'Pest Type Setting'=>'虫害类型设置',
 );
 ?>

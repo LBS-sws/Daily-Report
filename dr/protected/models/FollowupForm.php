@@ -32,7 +32,9 @@ class FollowupForm extends CFormModel
 	public $svc_comment;
 	public $mcard_remarks;
 	public $mcard_staff;
-	
+	public $pest_type_id;
+	public $pest_type_name;
+
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -71,6 +73,7 @@ class FollowupForm extends CFormModel
 			'fp_comment'=>Yii::t('followup','Comment'),
 			'mcard_remarks'=>Yii::t('followup','Contend of Update to Job Card'),
 			'mcard_staff'=>Yii::t('followup','Staff of Update Job Card'),
+			'pest_type_id'=>Yii::t('followup','Pest Type'),
 		);
 	}
 
@@ -80,7 +83,7 @@ class FollowupForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, resp_staff, resp_tech,job_report, mgr_notify, follow_staff, follow_tech, follow_action,
+			array('id, resp_staff, pest_type_id, pest_type_name, resp_tech,job_report, mgr_notify, follow_staff, follow_tech, follow_action,
 				mgr_talk, change, tech_notify, cont_info, type, mcard_remarks, mcard_staff,
 				fp_cust_name, fp_comment, svc_comment, svc_cust_name, company_id, leader
 				','safe'),
@@ -91,8 +94,22 @@ class FollowupForm extends CFormModel
 			array('sch_dt, fin_dt, fp_fin_dt, fp_call_dt, svc_next_dt, svc_call_dt','date','allowEmpty'=>true,
 				'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
 			),
+            array('pest_type_id','validatePestType'),
 		);
 	}
+
+    public function validatePestType($attribute, $params) {
+        $id_str = $this->pest_type_id;
+        if(!empty($id_str)){
+            $this->pest_type_name = array();
+            $list = PestTypeForm::getPestTypeList($id_str);
+            foreach ($id_str as $id){
+                if(key_exists($id,$list)){
+                    $this->pest_type_name[] = $list[$id];
+                }
+            }
+        }
+    }
 
 	public function retrieveData($index)
 	{
@@ -135,6 +152,8 @@ class FollowupForm extends CFormModel
 				$this->svc_comment = $row['svc_comment'];
 				$this->mcard_remarks = $row['mcard_remarks'];
 				$this->mcard_staff = $row['mcard_staff'];
+				$this->pest_type_id = empty($row['pest_type_id'])?null:explode(",",$row['pest_type_id']);
+				$this->pest_type_name = $row['pest_type_name'];
 				break;
 			}
 		}
@@ -178,7 +197,7 @@ class FollowupForm extends CFormModel
 							follow_staff, leader, follow_tech, fin_dt, follow_action, mgr_talk, 
 							changex, tech_notify, fp_fin_dt, fp_call_dt, fp_cust_name, fp_comment,
 							svc_next_dt, svc_call_dt, svc_cust_name, svc_comment, 
-							mcard_remarks, mcard_staff,
+							mcard_remarks, mcard_staff,pest_type_id,pest_type_name,
 							city, luu, lcu
 						) values (
 							:entry_dt, :type, :company_id, :company_name, :content,:job_report, :cont_info, 
@@ -186,7 +205,7 @@ class FollowupForm extends CFormModel
 							:follow_staff, :leader, :follow_tech, :fin_dt, :follow_action, :mgr_talk, 
 							:change, :tech_notify, :fp_fin_dt, :fp_call_dt, :fp_cust_name, :fp_comment,
 							:svc_next_dt, :svc_call_dt, :svc_cust_name, :svc_comment, 
-							:mcard_remarks, :mcard_staff,
+							:mcard_remarks, :mcard_staff,:pest_type_id,:pest_type_name,
 							:city, :luu, :lcu
 						)";
 				break;
@@ -221,6 +240,8 @@ class FollowupForm extends CFormModel
 							svc_comment = :svc_comment,
 							mcard_remarks = :mcard_remarks,
 							mcard_staff = :mcard_staff,
+							pest_type_id = :pest_type_id,
+							pest_type_name = :pest_type_name,
 							luu = :luu 
 						where id = :id and city = :city
 						";
@@ -249,6 +270,14 @@ class FollowupForm extends CFormModel
 			$command->bindParam(':job_report',$this->job_report,PDO::PARAM_STR);
 		if (strpos($sql,':cont_info')!==false)
 			$command->bindParam(':cont_info',$this->cont_info,PDO::PARAM_STR);
+		if (strpos($sql,':pest_type_id')!==false){
+            $id_str = empty($this->pest_type_id)?null:implode(",",$this->pest_type_id);
+            $command->bindParam(':pest_type_id',$id_str,PDO::PARAM_STR);
+        }
+		if (strpos($sql,':pest_type_name')!==false){
+            $name_str = empty($this->pest_type_name)?null:implode("、",$this->pest_type_name);
+            $command->bindParam(':pest_type_name',$name_str,PDO::PARAM_STR);
+        }
 		if (strpos($sql,':resp_staff')!==false)
 			$command->bindParam(':resp_staff',$this->resp_staff,PDO::PARAM_STR);
 		if (strpos($sql,':resp_tech')!==false)
