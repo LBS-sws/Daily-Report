@@ -99,15 +99,25 @@ class FollowupForm extends CFormModel
 	}
 
     public function validatePestType($attribute, $params) {
-        $id_str = $this->pest_type_id;
-        if(!empty($id_str)){
-            $this->pest_type_name = array();
-            $list = PestTypeForm::getPestTypeList($id_str);
-            foreach ($id_str as $id){
-                if(key_exists($id,$list)){
-                    $this->pest_type_name[] = $list[$id];
+        $type = $this->type;
+        $this->pest_type_name = null;
+        $typeList = self::getServiceTypeListEx();
+        if(key_exists($type,$typeList["options"])){
+            $rpt = $typeList["options"][$type]["data-rpt"];
+            //只有IB能选择害虫类型
+            $this->pest_type_id = $rpt=="IB"?$this->pest_type_id:null;
+            $id_str = $this->pest_type_id;
+            if(!empty($id_str)){
+                $this->pest_type_name = array();
+                $list = PestTypeForm::getPestTypeList($id_str);
+                foreach ($id_str as $id){
+                    if(key_exists($id,$list)){
+                        $this->pest_type_name[] = $list[$id];
+                    }
                 }
             }
+        }else{
+            $this->addError($attribute, "服务类型不存在，请刷新重试");
         }
     }
 
@@ -160,6 +170,21 @@ class FollowupForm extends CFormModel
 		
 		return true;
 	}
+
+
+    public static function getServiceTypeListEx()
+    {
+        $list = array('list'=>array(),'options'=>array());
+        $sql = "select id,rpt_cat, description from swo_service_type order by description";
+        $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        if (count($rows) > 0) {
+            foreach ($rows as $row) {
+                $list['list'][$row['id']] = $row['description'];
+                $list['options'][$row['id']] = array("data-rpt"=>$row['rpt_cat']);
+            }
+        }
+        return $list;
+    }
 	
 	public function saveData()
 	{

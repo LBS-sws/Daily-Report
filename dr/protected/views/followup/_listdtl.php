@@ -5,7 +5,6 @@
 <?php endif ?>
 	<td><?php echo $this->record['entry_dt']; ?></td>
 	<td><?php echo $this->record['type']; ?></td>
-	<td><?php echo $this->record['pest_type_name']; ?></td>
 	<td><?php echo $this->record['company_name']; ?></td>
 	<td><?php echo $this->record['content']; ?></td>
 	<td><?php echo $this->record['cont_info']; ?></td>

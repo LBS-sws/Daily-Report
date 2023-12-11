@@ -37,7 +37,6 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Cases';
 	<?php 
 		$search = array(
 						'type',
-						'pest_type_name',
 						'company_name',
 						'content',
 						'cont_info',

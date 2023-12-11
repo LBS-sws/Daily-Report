@@ -18,11 +18,6 @@
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('pest_type_name').$this->drawOrderArrow('a.pest_type_name'),'#',$this->createOrderLink('followup-list','a.pest_type_name'))
-			;
-		?>
-	</th>
-	<th>
 		<?php echo TbHtml::link($this->getLabelName('company_name').$this->drawOrderArrow('company_name'),'#',$this->createOrderLink('followup-list','company_name'))
 			;
 		?>

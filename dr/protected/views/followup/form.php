@@ -72,16 +72,20 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'type',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php 
-						echo $form->dropDownList($model, 'type', General::getServiceTypeList(true), array('disabled'=>($model->scenario=='view')));
-					?>
-				</div>
-				<?php echo $form->labelEx($model,'pest_type_id',array('class'=>"col-sm-1 control-label")); ?>
-				<div class="col-sm-3">
 					<?php
-						echo $form->dropDownList($model, 'pest_type_id',PestTypeForm::getPestTypeList($model->pest_type_id), array('disabled'=>($model->scenario=='view'),'multiple'=>'multiple','id'=>'pest_type_id'));
-					?>
+                    $typeList = FollowupForm::getServiceTypeListEx();
+
+                    echo $form->dropDownList($model, 'type', $typeList['list'], array('disabled'=>($model->scenario=='view'),'id'=>'followup_type','options'=>$typeList['options']));
+                    ?>
 				</div>
+                <div class="pestDiv">
+                    <?php echo $form->labelEx($model,'pest_type_id',array('class'=>"col-sm-1 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php
+                        echo $form->dropDownList($model, 'pest_type_id',PestTypeForm::getPestTypeList($model->pest_type_id), array('disabled'=>($model->scenario=='view'),'multiple'=>'multiple','id'=>'pest_type_id'));
+                        ?>
+                    </div>
+                </div>
 			</div>
 
 			<div class="form-group">
@@ -432,6 +436,16 @@ function formatState(state) {
 	var rtn = $('<span style="color:black">'+state.text+'</span>');
 	return rtn;
 }
+
+$('#followup_type').change(function(){
+    var rpt = $(this).children('option:selected').data('rpt');
+    if(rpt=='IB'){
+        $('#pest_type_id').parents('.pestDiv:first').show();
+    }else{
+        $('#pest_type_id').parents('.pestDiv:first').hide();
+    }
+}).trigger('change');
+
 EOF;
 Yii::app()->clientScript->registerScript('select2_1',$js,CClientScript::POS_READY);
 
