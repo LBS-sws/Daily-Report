@@ -179,8 +179,8 @@ class FollowupForm extends CFormModel
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         if (count($rows) > 0) {
             foreach ($rows as $row) {
-                $list['list'][$row['id']] = $row['description'];
-                $list['options'][$row['id']] = array("data-rpt"=>$row['rpt_cat']);
+                $list['list'][$row['description']] = $row['description'];
+                $list['options'][$row['description']] = array("data-rpt"=>$row['rpt_cat']);
             }
         }
         return $list;
