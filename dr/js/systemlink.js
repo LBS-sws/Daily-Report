@@ -116,6 +116,7 @@ function remoteLoginOnlib(id,url,home) {
 // 前往派单系统
 function goNewUnited(id, url, home, string){
 	if(id!=='nu'){ return false; }
+	var token_time = 43200//设置cookie有效时间 5小时
 
 	var cookie = {
 		'Token': 'yaAuthAdminToken',
@@ -147,7 +148,7 @@ function goNewUnited(id, url, home, string){
 				// console.log(json)
 				if (json!='') {
 					// 设置cookie
-					setCookie(cookie['Token'],json.data.AdminToken)
+					setCookie(cookie['Token'],json.data.AdminToken,json.data.token_time || token_time)
 					setCookie(cookie['Username'],json.data.name)
 					setCookie(cookie['Nickname'],json.data.nickname)
 					setCookie(cookie['Avatar'],null)
@@ -185,7 +186,7 @@ function getCookie(name) {
 //设置cookie
 function setCookie(name, value, daysToExpire) {
 	let expirationDate = new Date();
-	expirationDate.setDate(expirationDate.getDate() + daysToExpire);
+	expirationDate.setTime(expirationDate.getTime() + (daysToExpire * 1000)); // Convert seconds to milliseconds
 
 	let cookieValue = `${name}=${value}; expires=${expirationDate.toUTCString()}; path=/`;
 
