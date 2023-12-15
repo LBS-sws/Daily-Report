@@ -46,6 +46,9 @@ class DownSummary{
             foreach ($headerArr as $list){
                 $startStr = $this->getColumn($colOne);
                 $colspan = key_exists("colspan",$list)?count($list["colspan"])-1:0;
+                if($colspan<0){
+                    continue;
+                }
                 $this->objPHPExcel->getActiveSheet()
                     ->setCellValueByColumnAndRow($colOne, $this->current_row, $list["name"]);
                 $colOne+=$colspan;

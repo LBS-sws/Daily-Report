@@ -96,7 +96,8 @@ class SalesAnalysisForm extends CFormModel
         return CitySetForm::getCitySetList($city_allow);
     }
 
-    public static function getSalesForHr($city_allow,$endDate="",$startDate=""){
+    //暂时不使用
+    public static function getSalesForHrNew($city_allow,$endDate="",$startDate=""){
         $endDate = empty($endDate)?date("Y/m/d"):$endDate;
         $suffix = Yii::app()->params['envSuffix'];
         $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
@@ -120,8 +121,7 @@ class SalesAnalysisForm extends CFormModel
         return $rows;
     }
 
-    //暂时不使用
-    public static function getSalesForHrOld($city_allow,$endDate="",$startDate=""){
+    public static function getSalesForHr($city_allow,$endDate="",$startDate=""){
         $endDate = empty($endDate)?date("Y/m/d"):$endDate;
         $suffix = Yii::app()->params['envSuffix'];
         $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
