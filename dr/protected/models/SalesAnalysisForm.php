@@ -100,6 +100,31 @@ class SalesAnalysisForm extends CFormModel
         $endDate = empty($endDate)?date("Y/m/d"):$endDate;
         $suffix = Yii::app()->params['envSuffix'];
         $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
+        $startDate = empty($startDate)?date("Y/01/01",strtotime($endDate)):$startDate;
+        $list=array('staff'=>array(),'user'=>array());
+        $rows = Yii::app()->db->createCommand()
+            ->select("a.id,a.code,a.name,a.city,d.user_id,a.entry_time,a.staff_status,a.leave_time,a.office_id,g.name as office_name,
+            dept.name as dept_name,
+            CONCAT('') as city_name,CONCAT('') as region,CONCAT('') as region_name")
+            ->from("security{$suffix}.sec_user_access f")
+            ->leftJoin("hr{$suffix}.hr_binding d","d.user_id=f.username")
+            ->leftJoin("hr{$suffix}.hr_employee a","d.employee_id=a.id")
+            ->leftJoin("hr{$suffix}.hr_office g","a.office_id=g.id")
+            ->leftJoin("hr{$suffix}.hr_dept dept","a.position=dept.id")
+            ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}' and (
+                (a.staff_status = 0)
+                or
+                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/31')>='{$startDate}')
+             ) AND a.city in ({$city_allow})"
+            )->order("a.city desc,a.office_id asc,a.id asc")->queryAll();
+        return $rows;
+    }
+
+    //暂时不使用
+    public static function getSalesForHrOld($city_allow,$endDate="",$startDate=""){
+        $endDate = empty($endDate)?date("Y/m/d"):$endDate;
+        $suffix = Yii::app()->params['envSuffix'];
+        $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
         $startDate = empty($startDate)?$endDate:$startDate;
         $list=array('staff'=>array(),'user'=>array());
         $rows = Yii::app()->db->createCommand()
@@ -230,6 +255,7 @@ class SalesAnalysisForm extends CFormModel
     protected function setStaffRowForNowData(&$staffRow,$nowData){
         $username = $staffRow["user_id"];
         $timer = strtotime($staffRow["entry_time"]);
+        $leaveDate = $staffRow["staff_status"]==-1?date("Y/m",strtotime($staffRow["leave_time"])):"9999/12";
         $entry_year = date("Y",$timer);
         $entry_month = date("n",$timer);
         $sum = 0;
@@ -246,6 +272,9 @@ class SalesAnalysisForm extends CFormModel
                 }elseif ($entry_month==$i&&empty($value)){//入职当月且没有签单金额
                     $value="-";
                 }
+            }
+            if($leaveDate<$yearMonth){//已离职
+                $value="";
             }
             if($value!==""&&is_numeric($value)){//有效数据
                 $sum+=$value;
@@ -267,6 +296,7 @@ class SalesAnalysisForm extends CFormModel
         $data = array();
         if($staffRows){
             foreach ($staffRows as $staffRow){
+                $leave_timer = $staffRow["staff_status"]==-1?strtotime($staffRow["leave_time"]):strtotime("9999/12");
                 $entry_timer = strtotime($staffRow["entry_time"]);
                 $city = $staffRow['city'];
                 $region = key_exists($city,$cityList)?$cityList[$city]["region_name"]:"none";
