@@ -251,5 +251,8 @@ return array(
     'monthServiceU_3'=>'當月合約凈銷售額 =（ 新增服務(除一次性服務 ) - 終止服務 + 恢復服務 - 暫停服務 +/- 更改服務 ）/ 12',
     'monthServiceU_4'=>'一次性凈盈虧 = 當月"一次性服務+新增（產品）" 與 "上月一次性服務+新增產品" 的和',
 
+    'Capacity Staff Not'=>'不達標員工',
+    'Not money'=>'不達標金額',
+    'Download Not Sales'=>'下載不達標員工',
 );
 ?>

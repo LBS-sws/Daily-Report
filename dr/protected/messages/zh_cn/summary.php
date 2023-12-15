@@ -251,5 +251,8 @@ return array(
     'monthServiceU_3'=>'当月合约净销售额 =（ 新增服务(除一次性服务 ) - 终止服务 + 恢复服务 - 暂停服务 +/- 更改服务 ）/ 12',
     'monthServiceU_4'=>'一次性净盈亏 = 当月"一次性服务+新增（产品）" 与 "上月一次性服务+新增产品" 的和',
 
+    'Capacity Staff Not'=>'不达标员工',
+    'Not money'=>'不达标金额',
+    'Download Not Sales'=>'下载不达标员工',
 );
 ?>

@@ -595,7 +595,7 @@ class SalesAnalysisForm extends CFormModel
                             $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             $tdClass = self::getTextColorForKeyStr($text,$keyStr,$cityList['life_num']);
-                            $this->downJsonText[$cityList['region']][$cityList['id']][$keyStr]=$text;
+                            $this->downJsonText[$cityList['region']][$cityList['id']][$keyStr]=array("text"=>$text,"tdClass"=>$tdClass);
                             $html.="<td class='{$tdClass}'><span>{$text}</span></td>";
                         }
                         $html.="</tr>";
@@ -651,6 +651,74 @@ class SalesAnalysisForm extends CFormModel
         $this->last_year = $model->last_year;
         $this->start_date = $model->start_date;
         $this->end_date = $model->end_date;
+    }
+
+    protected function getValueForArr($arr){
+        if(is_array($arr)){
+            return $arr["text"];
+        }else{
+            return $arr;
+        }
+    }
+
+    protected function getTopArrNot(){
+        $topList=array(
+            array("name"=>Yii::t("summary","Month"),"rowspan"=>2),//月份
+            array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
+            array("name"=>Yii::t("summary","Employee Name"),"rowspan"=>2),//销售名字
+            array("name"=>Yii::t("summary","dept name"),"rowspan"=>2),//销售职位
+            array("name"=>Yii::t("summary","staff office"),"rowspan"=>2),//办事处
+            array("name"=>Yii::t("summary","life num"),"rowspan"=>2),//生命线
+            array("name"=>Yii::t("summary","Not money"),"rowspan"=>2),//不达标金额
+        );
+        return $topList;
+    }
+
+    //下載(所有未达标数据)
+    public function downExcelNot($excelData){
+        $this->validateDate("","");
+        $monthList=array();
+        for($i=1;$i<=$this->search_month;$i++){
+            $month = $i>=10?$i:"0{$i}";
+            $monthList[]=$this->search_year."/{$month}";
+        }
+        $headList = $this->getTopArrNot();
+        //所有数据
+        $data = key_exists("one",$excelData)?json_decode($excelData["one"],true):array();
+        $attr = array();
+        foreach ($data as $regionKey=>$region) {
+            foreach ($region as $keyStr => $list) {
+                if($keyStr=="count"){ //合计不统计
+                    continue;
+                }
+                $temp = array(
+                    "month_num"=>"",//月份
+                    "city_name"=>$this->getValueForArr($list["city_name"]),//城市
+                    "employee_name"=>$this->getValueForArr($list["employee_name"]),//销售名字
+                    "dept_name"=>$this->getValueForArr($list["dept_name"]),//销售职位
+                    "office_name"=>$this->getValueForArr($list["office_name"]),//办事处
+                    "life_num"=>$this->getValueForArr($list["life_num"]),//生命线
+                    "money"=>"",//不达标金额
+                );
+                foreach ($monthList as $monthKey){
+                    if(isset($list[$monthKey]["tdClass"])&&$list[$monthKey]["tdClass"]=="text-danger"){
+                        $salesTemp = $temp;
+                        $salesTemp["month_num"]=$monthKey;
+                        $salesTemp["money"]=$this->getValueForArr($list[$monthKey]);
+                        $attr[]=$salesTemp;
+                    }
+                }
+            }
+        }
+        $excel = new DownSummary();
+        $excel->colTwo=7;
+        $excel->SetHeaderTitle(Yii::t("summary","Capacity Staff Not")."（{$this->search_date}）");
+        $titleTwo = date("Y/m/01/",strtotime($this->end_date))." ~ ".$this->end_date;
+        $excel->SetHeaderString($titleTwo);
+        $excel->init();
+        $excel->setSummaryHeader($headList);
+        $excel->setUServiceData($attr);
+        $excel->outExcel(Yii::t("summary","Capacity Staff Not"));
     }
 
     //下載

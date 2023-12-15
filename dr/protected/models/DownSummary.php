@@ -254,6 +254,10 @@ class DownSummary{
                 foreach ($region as $keyStr=>$list){
                     $col = 0;
                     foreach ($list as $item){
+                        if(is_array($item)){//后续需要文字颜色
+                            $tdClass = isset($item["tdClass"])?$item["tdClass"]:"";
+                            $item = isset($item["text"])?$item["text"]:"error";
+                        }
                         $this->objPHPExcel->getActiveSheet()
                             ->setCellValueByColumnAndRow($col, $this->current_row, $item);
                         $col++;

@@ -28,7 +28,7 @@ class SalesAnalysisController extends Controller
 				'expression'=>array('SalesAnalysisController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view','downExcel'),
+				'actions'=>array('index','view','downExcel','downExcelNot'),
 				'expression'=>array('SalesAnalysisController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -36,6 +36,18 @@ class SalesAnalysisController extends Controller
 			),
 		);
 	}
+    public function actionDownExcelNot()
+    {
+        $model = new SalesAnalysisForm('view');
+        if (isset($_POST['SalesAnalysisForm'])) {
+            $model->attributes = $_POST['SalesAnalysisForm'];
+            $excelData = key_exists("excel",$_POST)?$_POST["excel"]:array();
+            $model->downExcelNot($excelData);
+        }else{
+            $model->setScenario("index");
+            $this->render('index',array('model'=>$model));
+        }
+    }
     public function actionDownExcel()
     {
         $model = new SalesAnalysisForm('view');
