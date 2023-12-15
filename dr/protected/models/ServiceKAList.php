@@ -27,7 +27,7 @@ class ServiceKAList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
 		$sql1 = "select a.*,f.code as com_code,f.name as com_name,g.name as nature_two_name, b.description as nature_desc, c.description as type_desc, d.name as city_name, 
-					docman$suffix.countdoc('SERVICE',a.id) as no_of_attm   
+					docman$suffix.countdoc('SERVICEKA',a.id) as no_of_attm   
 				from swo_service_ka a inner join security$suffix.sec_city d on a.city=d.code 
 					left outer join swo_nature b on a.nature_type=b.id 
 					left outer join swo_nature_type g on a.nature_type_two=g.id 
