@@ -42,8 +42,11 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 		?>
 	</div>
             <div class="btn-group pull-right" role="group">
-                <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('summary','Download Not Sales'), array(
+                <?php
+                /*
+                echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('summary','Download Not Sales'), array(
                     'submit'=>Yii::app()->createUrl('salesAnalysis/downExcelNot')));
+                */
                 ?>
                 <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('dialog','Download'), array(
                     'submit'=>Yii::app()->createUrl('salesAnalysis/downExcel')));
