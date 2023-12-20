@@ -37,7 +37,7 @@ EOF;
                     $jsonString = ($key.$String);
                     $encryptedString = base64_encode($jsonString);
                     //拼接
-                    $temp = '$("#'.$oid.'").on("click",function(){$("#syschangedialog").modal("hide");'.$value['script'].'("'.$id.'","'.$url.'","'.$homeurl.'","'.$encryptedString.'");});';
+                    $temp = '$("#'.$oid.'").on("click",function(){$("#syschangedialog").modal("hide");'.$value['script'].'("'.$id.'","'.$url.'","'.$homeurl.'","'.$encryptedString.'","'.$data['user_id'].'");});';
                 } else {
 					$func_name = $value['script'];
 					$lang = Yii::app()->language;

@@ -114,7 +114,7 @@ function remoteLoginOnlib(id,url,home) {
 }
 
 // 前往派单系统
-function goNewUnited(id, url, home, string){
+function goNewUnited(id, url, home, string, user_id){
 	if(id!=='nu'){ return false; }
 	var token_time = 43200//设置cookie有效时间 5小时
 
@@ -128,13 +128,17 @@ function goNewUnited(id, url, home, string){
 		'SystemName': 'yaSettingsSystemName',
 		'PageTitle': 'yaSettingsPageTitle',
 		'LogoUrl': 'yaSettingsLogoUrl',
-		'FaviconUrl': 'yaSettingsFaviconUrl'
+		'FaviconUrl': 'yaSettingsFaviconUrl',
+		'Id': 'yaLbsId',
+		'ttl':'yaAuthAdminTokenTTl',
 	};
+	var timestamp = Math.floor(Date.now() / 1000);
 
 	/* 先请求派单系统，获取token */
 	var homeurl = home+'/api/system.login/login';
 
-	if(getCookie(cookie.Token)){
+	//token 没过期 && token属于当前LBS用户 && token至少还能使用一个小时
+	if(getCookie(cookie.Token) && user_id==getCookie(cookie.Id) && timestamp<=getCookie(cookie.ttl)-3600){
 		window.open(url, '_self');
 	}else{
 		$.ajax({
@@ -158,6 +162,8 @@ function goNewUnited(id, url, home, string){
 					setCookie(cookie['FaviconUrl'],json.data.favicon_url)
 					setCookie(cookie['TokenType'],json.data.token_type)
 					setCookie(cookie['TokenName'],json.data.token_name)
+					setCookie(cookie['Id'],user_id)
+					setCookie(cookie['ttl'],timestamp+parseInt(token_time))
 
 					window.open(url, '_self');
 				}else{
