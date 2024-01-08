@@ -106,7 +106,7 @@ class SalesProdForm extends CFormModel
             $selectSql.=",sum(if({$deptStr},1,0)) as num_{$key}";
         }
         $rows = Yii::app()->db->createCommand()
-            ->select("a.city{$selectSql}")
+            ->select("a.city,sum(1) as num_total{$selectSql}")
             ->from("security{$suffix}.sec_user_access f")
             ->leftJoin("hr{$suffix}.hr_binding d","d.user_id=f.username")
             ->leftJoin("hr{$suffix}.hr_employee a","d.employee_id=a.id")
@@ -202,8 +202,8 @@ class SalesProdForm extends CFormModel
         $arr=array(
             "city"=>"",
             "city_name"=>"",
-            "num_total"=>0,//人数总数
-            "amt_total"=>0,//金额总数
+            "num_total"=>0,//人数总数 (该总数在mysql内计算)
+            "amt_total"=>0,//金额总数 (该总数在mysql内计算)
         );
         foreach ($this->td_list as $key=>$item){
             $arr["num_".$key]=0;//人数
