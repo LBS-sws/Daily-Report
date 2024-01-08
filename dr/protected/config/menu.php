@@ -432,6 +432,11 @@ return array(
 				'url'=>'/systemLog/index',
 				'tag'=>'@',
 			),
+			'Api Curl'=>array(
+				'access'=>'D07',
+				'url'=>'/CurlNotes/index',
+				'tag'=>'@',
+			),
 		),
 	),
 );
