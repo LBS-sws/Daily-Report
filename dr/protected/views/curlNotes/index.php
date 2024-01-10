@@ -76,9 +76,10 @@ $this->pageTitle=Yii::app()->name . ' - CurlNotes';
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <?php
+echo TbHtml::button("",array("submit"=>"#","class"=>"hide"));
 	$js = "
 	    $('.text-break').click(function(){
-	        var text = $(this).data('text');
+	        var text = $(this).children('pre').text();
 	        if(typeof text=='object'){
 	            text = JSON.stringify(text);
 	        }
