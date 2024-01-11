@@ -19,6 +19,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
     .table-fixed>thead>tr>th.header-width{ height: 0px;padding: 0px;overflow: hidden;border-width: 0px;line-height: 0px;}
 
     tr.searchTr{ background:#b8e9fb;}
+    td.fullTd{ background: #ffeb3b;}
 </style>
 
 <section class="content-header">
@@ -231,6 +232,26 @@ $js="
         if(dept_name!=''){
             arr[dept_name]=0;
         }
+        //连续3个不达标，需要填充颜色
+        var fullObj = [];
+        var fullNum=0;
+        $(this).children('td').each(function(forNum,tdObj){
+            if($(tdObj).hasClass('text-danger')){
+                fullNum++;
+            }else{
+                fullNum=0;
+            }
+            if(fullNum>3){
+                fullObj.push(tdObj);
+            }else if(fullNum==3){
+                fullObj.push($(tdObj).prev());
+                fullObj.push($(tdObj).prev().prev());
+                fullObj.push(tdObj);
+            }
+        });
+        $.each(fullObj,function(){
+            $(this).addClass('fullTd');
+        });
     });
     $.each(arr,function(key,val){
         $('#searchEx').append('<option value=\"'+key+'\">'+key+'</option>');
