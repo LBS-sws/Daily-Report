@@ -39,6 +39,7 @@ $this->pageTitle=Yii::app()->name . ' - CurlNotes';
         'gridsize'=>'24',
         'height'=>'600',
         'search'=>array(
+            'id',
             'status_type',
             'info_type',
             'data_content',
@@ -83,6 +84,10 @@ echo TbHtml::button("",array("submit"=>"#","class"=>"hide"));
 	        if(typeof text=='object'){
 	            text = JSON.stringify(text);
 	        }
+	        text = text.replace(/\\u(\w{4})/gi, function(match, group1) {
+                return String.fromCharCode(parseInt(group1, 16));
+            });
+            text=text.replaceAll('\\\\', '');
 	        $('#textInput').val(text);
 	        $('#textModal').modal('show');
 	    });

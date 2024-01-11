@@ -2,11 +2,11 @@
     <td><?php echo $this->record['id']; ?></td>
     <td><?php echo $this->record['info_type']; ?></td>
 	<td class="text-break">
-        <pre style="display: none;"><?php echo $this->record['data_content']; ?></pre>
+        <pre style="display: none;"><?php echo htmlspecialchars($this->record['data_content']); ?></pre>
         <span>查看</span>
     </td>
 	<td class="text-break">
-        <pre style="display: none;"><?php echo $this->record['out_content']; ?></pre>
+        <pre style="display: none;"><?php echo htmlspecialchars($this->record['out_content']); ?></pre>
         <span>查看</span>
     </td>
 	<td><?php echo $this->record['message']; ?></td>

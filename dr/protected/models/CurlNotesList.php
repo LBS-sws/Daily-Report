@@ -37,6 +37,9 @@ class CurlNotesList extends CListPageModel
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
+				case 'id':
+					$clause .= General::getSqlConditionClause('id',$svalue);
+					break;
 				case 'status_type':
 					$clause .= General::getSqlConditionClause('status_type',$svalue);
 					break;
@@ -94,15 +97,75 @@ class CurlNotesList extends CListPageModel
 	}
 
 	public function sendID($index){
+        $uid = Yii::app()->user->id;
         $suffix = Yii::app()->params['envSuffix'];
         $row = Yii::app()->db->createCommand()->select("*")->from("datasync{$suffix}.sync_api_curl")
             ->where("id=:id and status_type!='P'", array(':id'=>$index))->queryRow();
         if($row){
-            Yii::app()->db->createCommand()->update("datasync{$suffix}.sync_api_curl",array("status_type"=>"P"),"id={$index}");
+            Yii::app()->db->createCommand()->update("datasync{$suffix}.sync_api_curl",array(
+                "status_type"=>"P",
+                "lcu"=>$uid,
+            ),"id={$index}");
             return true;
         }else{
             return false;
         }
+    }
+
+    private function serviceData($num){
+        return array(
+            "status"=>1,//客户服务的状态
+            "city"=>"ZH",//城市
+            "status_dt"=>"2024-1-".($num>20?$num%20:$num)." 16:03:28",//记录时间
+            "contract_no"=>"888888-1{$num}",//合约编号
+            "contract_type"=>"普通合约",//合约类型（普通合约、KA合约）
+            "company_code"=>"dddd112-ZH",//客户公司编号
+            "company_type"=>2,//客户公司类型
+            "service_type"=>10,//服务类型
+            "month_cycle"=>8191,//服务內容
+            "week_cycle"=>15,//服务內容
+            "day_cycle"=>4,//服务內容
+            "service_name_rec"=>"常驻灭虫",//服务內容
+            "service_type_rec"=>13,//服务內容
+            "amt_paid"=>12000*$num,//发票金额
+            "sales_code"=>"400002",//销售编号
+            "amt_install"=>$num%2==0?100*$num:null,//安装金额
+            "item_04"=>$num%2==0?100*$num:null,//是否需要安装费用
+            "item_05"=>null,//是否需要安装费用
+            "item_06"=>null,//是否需要安装费用
+            "item_07"=>null,//是否需要安装费用
+            "item_08"=>null,//是否需要安装费用
+            "item_09"=>null,//是否需要安装费用
+            "item_10"=>null,//是否需要安装费用
+            "item_13"=>null,//是否需要安装费用
+            "surplus"=>$num,//剩余次数
+            "other_sales_code"=>null,//跨区销售员编号
+            "sign_dt"=>"2024-01-09",//签约日期
+            "ctrt_end_dt"=>"2025-01-09",//合同终止日期
+            "first_dt"=>"2024-01-11",//首次日期
+            "technician_01"=>"400002",//首次技术员1编号
+            "technician_02"=>null,//首次技术员2编号
+            "technician_03"=>null,//首次技术员3编号
+            "reason"=>"没有原因",//原因
+            "remarks2"=>"客户位置比较偏僻",//备注
+            "prepay_month"=>$num%2==0?100*$num:null,//预付月数
+            "prepay_start"=>$num%2==0?100*$num:null,//预付起始月
+            "stop_dt"=>null,//终止日期
+            "beforeData"=>array(),//客户服务修改之前的数据(没有数据时)
+            /*
+            "beforeData"=>array(//客户服务修改之前的数据(有数据时)
+                "amt_paid"=>14000,//发票金额
+                "status"=>1,//客户服务的状态
+                "month_cycle"=>8191,//服务內容
+                "week_cycle"=>31,//服务內容
+                "day_cycle"=>64,//服务內容
+                "ctrt_end_dt"=>"2025-01-09",//合同终止日期
+                "stop_dt"=>null,//终止日期
+                "service_type"=>10,//服务类型
+                "service_name_rec"=>"常驻灭虫",//服务內容
+                "service_type_rec"=>13,//服务內容
+            ),*/
+        );
     }
 
     public function testCompany(){
@@ -149,60 +212,16 @@ class CurlNotesList extends CListPageModel
     }
 
     public function testServiceOne(){
-	    $data = array(
-            "status"=>1,//客户服务的状态
-            "city"=>"ZH",//城市
-            "status_dt"=>"2024-1-10 16:03:28",//记录时间
-            "contract_no"=>"888888-1",//合约编号
-            "contract_type"=>"普通合约",//合约类型（普通合约、KA合约）
-            "company_code"=>"dddd112-ZH",//客户公司编号
-            "company_type"=>2,//客户公司类型
-            "service_type"=>10,//服务类型
-            "month_cycle"=>8191,//服务內容
-            "week_cycle"=>15,//服务內容
-            "day_cycle"=>4,//服务內容
-            "service_name_rec"=>"常驻灭虫",//服务內容
-            "service_type_rec"=>13,//服务內容
-            "amt_paid"=>16000,//发票金额
-            "sales_code"=>"400002",//销售编号
-            "amt_install"=>100,//安装金额
-            "item_04"=>100,//是否需要安装费用
-            "item_05"=>null,//是否需要安装费用
-            "item_06"=>null,//是否需要安装费用
-            "item_07"=>null,//是否需要安装费用
-            "item_08"=>null,//是否需要安装费用
-            "item_09"=>null,//是否需要安装费用
-            "item_10"=>null,//是否需要安装费用
-            "item_13"=>null,//是否需要安装费用
-            "surplus"=>2,//剩余次数
-            "other_sales_code"=>null,//跨区销售员编号
-            "sign_dt"=>"2024-01-09",//签约日期
-            "ctrt_end_dt"=>"2025-01-09",//合同终止日期
-            "first_dt"=>"2024-01-11",//首次日期
-            "technician_01"=>"400002",//首次技术员1编号
-            "technician_02"=>null,//首次技术员2编号
-            "technician_03"=>null,//首次技术员3编号
-            "reason"=>"没有原因",//原因
-            "remarks2"=>"客户位置比较偏僻",//备注
-            "prepay_month"=>2,//预付月数
-            "prepay_start"=>0,//预付起始月
-            "stop_dt"=>null,//终止日期
-            "beforeData"=>array(),//客户服务修改之前的数据(没有数据时)
-            /*
-            "beforeData"=>array(//客户服务修改之前的数据(有数据时)
-                "amt_paid"=>14000,//发票金额
-                "status"=>1,//客户服务的状态
-                "month_cycle"=>8191,//服务內容
-                "week_cycle"=>31,//服务內容
-                "day_cycle"=>64,//服务內容
-                "ctrt_end_dt"=>"2025-01-09",//合同终止日期
-                "stop_dt"=>null,//终止日期
-                "service_type"=>10,//服务类型
-                "service_name_rec"=>"常驻灭虫",//服务內容
-                "service_type_rec"=>13,//服务內容
-            ),*/
-        );
+	    $data = self::serviceData(1);
 	    $this->sendCurl("/sync/serviceOne",$data);
+    }
+
+    public function testServiceFull(){
+	    $data =array();
+	    for ($i=1;$i<=10;$i++){
+	        $data[]=self::serviceData($i);
+        }
+	    $this->sendCurl("/sync/serviceFull",$data);
     }
 
     private function sendCurl($url,$data){
