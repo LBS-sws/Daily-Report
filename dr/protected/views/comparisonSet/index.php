@@ -33,7 +33,7 @@ $this->pageTitle=Yii::app()->name . ' - ComparisonSet';
     $className = get_class($model);
     $search_add_html= TbHtml::dropDownList($className.'[comparison_year]',$model->comparison_year,SummarySetList::getSelectYear(),
         array("class"=>"form-control submitBtn"));
-    $search_add_html.= TbHtml::dropDownList($className.'[month_type]',$model->month_type,SummarySetList::getSummaryMonthList(),
+    $search_add_html.= TbHtml::dropDownList($className.'[month_type]',$model->month_type,SummarySetList::getSummaryMonthList(1,false,$model->comparison_year),
         array("class"=>"form-control submitBtn"));
 
     $this->widget('ext.layout.ListPageWidget', array(

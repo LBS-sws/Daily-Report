@@ -50,7 +50,7 @@ class PerMonthStop extends PerMonth
             $city = $cityRow["code"];
             $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
             $defMoreList["add_type"] = $cityRow["add_type"];
-            ComparisonForm::setComparisonConfig($defMoreList,$this->search_year,$this->month_type,$city);
+            ComparisonForm::setComparisonConfig($defMoreList,$this->search_year,$this->search_date,$city);
 
             $this->addListForCity($defMoreList,$city,$serviceT);
             $this->addListForCity($defMoreList,$city,$monthServiceAddForY,1,$yearMonth);

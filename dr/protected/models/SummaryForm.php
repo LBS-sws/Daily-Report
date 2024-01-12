@@ -156,7 +156,7 @@ class SummaryForm extends CFormModel
                         $this->data[$regionKey]["list"][$cityKey]["u_actual_money"]+=$this->data[$regionKey]["list"][$cityKey]["u_invoice_num"];//服务生意额需要加上产品金额
                         $this->data[$regionKey]["list"][$cityKey]["num_growth"]=0;//净增长
 
-                        ComparisonForm::setComparisonConfig($this->data[$regionKey]["list"][$cityKey],$this->summary_year,$this->month_type,$cityKey);
+                        ComparisonForm::setComparisonConfig($this->data[$regionKey]["list"][$cityKey],$this->summary_year,$this->start_date,$cityKey);
                     }
                 }
             }

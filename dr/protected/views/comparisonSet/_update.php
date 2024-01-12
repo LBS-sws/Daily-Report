@@ -6,7 +6,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">
                         <?php
-                        $monthStr = SummarySetList::getSummaryMonthList($model->month_type,true);
+                        $monthStr = SummarySetList::getSummaryMonthList($model->month_type,true,$model->comparison_year);
                         echo Yii::t("summary","Update Annual Target")."<small>({$monthStr})</small>";
                         ?>
                     </h4>
@@ -19,13 +19,13 @@
                             </p>
                         </div>
                         <div class="form-group">
-                            <?php echo TbHtml::label(Yii::t('summary',"Gross"),"",array("class"=>"col-lg-4 control-label"));?>
+                            <?php echo TbHtml::label(Yii::t('summary',"None Gross"),"",array("class"=>"col-lg-4 control-label"));?>
                             <div class="col-lg-4">
                                 <?php echo TbHtml::numberField("","",array("id"=>"one_gross"));?>
                             </div>
                         </div>
                         <div class="form-group">
-                            <?php echo TbHtml::label(Yii::t('summary',"Net"),"",array("class"=>"col-lg-4 control-label"));?>
+                            <?php echo TbHtml::label(Yii::t('summary',"None Net"),"",array("class"=>"col-lg-4 control-label"));?>
                             <div class="col-lg-4">
                                 <?php echo TbHtml::numberField("","",array("id"=>"one_net"));?>
                             </div>
@@ -38,13 +38,13 @@
                             </p>
                         </div>
                         <div class="form-group">
-                            <?php echo TbHtml::label(Yii::t('summary',"Gross"),"",array("class"=>"col-lg-4 control-label"));?>
+                            <?php echo TbHtml::label(Yii::t('summary',"None Gross"),"",array("class"=>"col-lg-4 control-label"));?>
                             <div class="col-lg-4">
                                 <?php echo TbHtml::numberField("","",array("id"=>"two_gross"));?>
                             </div>
                         </div>
                         <div class="form-group">
-                            <?php echo TbHtml::label(Yii::t('summary',"Net"),"",array("class"=>"col-lg-4 control-label"));?>
+                            <?php echo TbHtml::label(Yii::t('summary',"None Net"),"",array("class"=>"col-lg-4 control-label"));?>
                             <div class="col-lg-4">
                                 <?php echo TbHtml::numberField("","",array("id"=>"two_net"));?>
                             </div>
@@ -57,13 +57,13 @@
                             </p>
                         </div>
                         <div class="form-group">
-                            <?php echo TbHtml::label(Yii::t('summary',"Gross"),"",array("class"=>"col-lg-4 control-label"));?>
+                            <?php echo TbHtml::label(Yii::t('summary',"None Gross"),"",array("class"=>"col-lg-4 control-label"));?>
                             <div class="col-lg-4">
                                 <?php echo TbHtml::numberField("","",array("id"=>"three_gross"));?>
                             </div>
                         </div>
                         <div class="form-group">
-                            <?php echo TbHtml::label(Yii::t('summary',"Net"),"",array("class"=>"col-lg-4 control-label"));?>
+                            <?php echo TbHtml::label(Yii::t('summary',"None Net"),"",array("class"=>"col-lg-4 control-label"));?>
                             <div class="col-lg-4">
                                 <?php echo TbHtml::numberField("","",array("id"=>"three_net"));?>
                             </div>

@@ -160,13 +160,21 @@ class SummarySetList extends CListPageModel
         return $arr;
     }
 
-    public static function getSummaryMonthList($key=1,$bool=false){
-        $arr = array(
-            1=>Yii::t("summary","1 month - 3 month"),
-            4=>Yii::t("summary","4 month - 6 month"),
-            7=>Yii::t("summary","7 month - 9 month"),
-            10=>Yii::t("summary","10 month - 12 month"),
-        );
+    public static function getSummaryMonthList($key=1,$bool=false,$year=2023){
+        if($year==2024){//特别处理2024年
+            $arr = array(
+                1=>Yii::t("summary","1 month - 3 month"),
+                4=>Yii::t("summary","4 month - 7 month"),
+                7=>Yii::t("summary","8 month - 12 month"),
+            );
+        }else{
+            $arr = array(
+                1=>Yii::t("summary","1 month - 3 month"),
+                4=>Yii::t("summary","4 month - 6 month"),
+                7=>Yii::t("summary","7 month - 9 month"),
+                10=>Yii::t("summary","10 month - 12 month"),
+            );
+        }
         if($bool){
             if(key_exists($key,$arr)){
                 return $arr[$key];

@@ -210,7 +210,7 @@ class ComparisonForm extends CFormModel
             $city = $cityRow["code"];
             $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
             $defMoreList["add_type"] = $cityRow["add_type"];
-            self::setComparisonConfig($defMoreList,$this->comparison_year,$this->month_type,$city);
+            self::setComparisonConfig($defMoreList,$this->comparison_year,$this->start_date,$city);
             $defMoreList["u_actual_money"]+=key_exists($city,$uServiceMoney)?$uServiceMoney[$city]:0;
             $defMoreList["u_sum"]+=key_exists($city,$uInvMoney)?$uInvMoney[$city]["sum_money"]:0;
             $defMoreList["u_actual_money"]+=$defMoreList["u_sum"];//生意额需要加上U系统产品金额
@@ -260,7 +260,29 @@ class ComparisonForm extends CFormModel
     }
 
     //設置滾動生意額及年初生意額
-    public static function setComparisonConfig(&$arr,$year,$month_type,$city){
+    public static function setComparisonConfig(&$arr,$year,$start_date,$city){
+        $monthNum = date("n",strtotime($start_date));
+        if($year==2024){
+            $monthList = array(
+                1=>array("min"=>1,"max"=>3),
+                4=>array("min"=>4,"max"=>7),
+                7=>array("min"=>8,"max"=>12),
+            );
+        }else{
+            $monthList = array(
+                1=>array("min"=>1,"max"=>3),
+                4=>array("min"=>4,"max"=>6),
+                7=>array("min"=>7,"max"=>9),
+                10=>array("min"=>10,"max"=>12),
+            );
+        }
+        $month_type = 1;
+        foreach ($monthList as $monthKey=>$monthItem){
+            if($monthItem["min"]<=$monthNum&&$monthNum<=$monthItem["max"]){
+                $month_type = $monthKey;
+                break;
+            }
+        }
         foreach (self::$con_list as $itemStr){//初始化
             $arr[$itemStr]=0;
             $arr[$itemStr."_rate"]=0;

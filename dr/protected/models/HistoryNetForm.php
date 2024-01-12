@@ -135,7 +135,7 @@ class HistoryNetForm extends CFormModel
             $city = $cityRow["code"];
             $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
             $defMoreList["add_type"] = $cityRow["add_type"];
-            ComparisonForm::setComparisonConfig($defMoreList,$this->search_year,$this->month_type,$city);
+            ComparisonForm::setComparisonConfig($defMoreList,$this->search_year,$this->search_date,$city);
 
             $this->addListForCity($defMoreList,$city,$serviceN);
             $this->addListForCity($defMoreList,$city,$lastServiceN);

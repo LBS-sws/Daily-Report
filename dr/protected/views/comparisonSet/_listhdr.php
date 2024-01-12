@@ -19,21 +19,21 @@
 </tr>
 <tr>
     <th width="15%" class="upside">
-        <?php echo Yii::t('summary',"Gross");?>
+        <?php echo Yii::t('summary',"None Gross");?>
     </th>
     <th width="15%" class="upside">
-        <?php echo Yii::t('summary',"Net");?>
+        <?php echo Yii::t('summary',"None Net");?>
     </th>
     <th width="15%" class="base">
-        <?php echo Yii::t('summary',"Gross");?>
+        <?php echo Yii::t('summary',"None Gross");?>
     </th>
     <th width="15%" class="base">
-        <?php echo Yii::t('summary',"Net");?>
+        <?php echo Yii::t('summary',"None Net");?>
     </th>
     <th width="15%" class="minimum">
-        <?php echo Yii::t('summary',"Gross");?>
+        <?php echo Yii::t('summary',"None Gross");?>
     </th>
     <th width="15%" class="minimum">
-        <?php echo Yii::t('summary',"Net");?>
+        <?php echo Yii::t('summary',"None Net");?>
     </th>
 </tr>
