@@ -262,7 +262,9 @@ class ComparisonForm extends CFormModel
     //設置滾動生意額及年初生意額
     public static function setComparisonConfig(&$arr,$year,$start_date,$city){
         $monthNum = date("n",strtotime($start_date));
+        $year2024 = false;//2024年的年初生意额 = 滚动生意额
         if($year==2024){
+            $year2024 = true;
             $monthList = array(
                 1=>array("min"=>1,"max"=>3),
                 4=>array("min"=>4,"max"=>7),
@@ -305,6 +307,9 @@ class ComparisonForm extends CFormModel
         if($setRow){
             foreach (self::$con_list as $itemStr){//写入滚动生意额
                 $arr[$itemStr]=empty($setRow[$itemStr])?0:floatval($setRow[$itemStr]);
+                if($year2024){//2024年的年初生意额 = 滚动生意额
+                    $arr["start_".$itemStr] = $arr[$itemStr];
+                }
             }
         }
     }
