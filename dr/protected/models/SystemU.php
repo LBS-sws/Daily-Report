@@ -1,8 +1,8 @@
 <?php
 //获取新版U系统数据的所有接口
 class SystemU {
-    //public static $IP="118.89.46.224";//LBS服务器IP
-    public static $IP="113.76.108.3";//LBS服务器IP
+    public static $IP="118.89.46.224";//LBS服务器IP
+    //public static $IP="113.76.108.3";//LBS服务器IP
 
     //获取发票内容
     public static function getData($city, $start, $end, $customer='',$printBool=false) {
