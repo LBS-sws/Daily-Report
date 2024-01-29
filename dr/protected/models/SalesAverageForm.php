@@ -78,28 +78,22 @@ class SalesAverageForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $citySetList = CitySetForm::getCitySetList($city_allow);
+
         $lineList = LifelineForm::getLifeLineList($city_allow,$this->end_date);
-        $staffList = $this->getStaffCountForCity($city_allow,$citySetList);
-        $uList = $this->getUData($this->start_date,$this->end_date,$citySetList);
-        $serviceList = $this->getServiceData($citySetList,$city_allow);
+        $staffList = $this->getStaffCountForCity($city_allow);
+        $uList = CountSearch::getUInvMoney($this->start_date,$this->end_date,$city_allow);
+        $serviceList = CountSearch::getServiceForType($this->start_date,$this->end_date,$city_allow);
 
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
-            $region = $cityRow["region_name"];
-            if(!key_exists($region,$data)){
-                $data[$region]=array();
-            }
-            if(key_exists($city,$serviceList)){
-                $arr=$serviceList[$city];
-            }else{
-                $arr=$this->defMoreCity($city,$cityRow["city_name"]);
-            }
-            $arr["life_num"]=key_exists($city,$lineList)?$lineList[$city]:80000;
-            $arr["staff_num"]=key_exists($city,$staffList)?$staffList[$city]:0;
-            $arr["amt_sum"]+=key_exists($city,$uList)?$uList[$city]:0;
-            $arr["region_name"]=$cityRow["region_name"];
-            $arr["add_type"]=$cityRow["add_type"];
-            $data[$region][$city]=$arr;
+            $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
+
+            //$defMoreList["life_num"]=key_exists($city,$lineList)?$lineList[$city]:80000;
+            $defMoreList["staff_num"]+=key_exists($city,$staffList)?$staffList[$city]:0;
+            $defMoreList["amt_sum"]+=key_exists($city,$uList)?$uList[$city]["sum_money"]:0;
+            $defMoreList["amt_sum"]+=key_exists($city,$serviceList)?$serviceList[$city]:0;
+            $defMoreList["one_gross"]=key_exists($city,$lineList)?$lineList[$city]:80000;
+            RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
 
         $this->data = $data;
@@ -108,70 +102,19 @@ class SalesAverageForm extends CFormModel
         return true;
     }
 
-    private function getServiceData($citySetList,$city_allow){
-        $data=array();
-        $suffix = Yii::app()->params['envSuffix'];
-        $where="not(f.rpt_cat='INV' and f.single=1) and a.status_dt BETWEEN '{$this->start_date}' and '{$this->end_date}'";
-        $selectSql = "a.city,sum(case a.paid_type
-							when 'Y' then a.amt_paid
-							when 'M' then a.amt_paid * a.ctrt_period
-							else a.amt_paid
-						end
-					) as sum_amount";
-        $serviceRows = Yii::app()->db->createCommand()
-            ->select($selectSql)
-            ->from("swo_service a")
-            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-            ->where("a.city in ({$city_allow}) and a.city not in ('ZY') and a.status='N' and {$where}")
-            ->group("a.city")
-            ->queryAll();
-        //所有需要計算的客戶服務(ID客戶服務)
-        $serviceRowsID = Yii::app()->db->createCommand()
-            ->select("a.city,sum(amt_money) as sum_amount")
-            ->from("swoper$suffix.swo_serviceid a")
-            ->leftJoin("swoper$suffix.swo_customer_type_id f","a.cust_type=f.id")
-            ->where("a.city in ({$city_allow}) and a.city not in ('ZY') and a.status='N' and {$where}")
-            ->group("a.city")
-            ->queryAll();
-        $serviceRows = $serviceRows?$serviceRows:array();
-        $serviceRowsID = $serviceRowsID?$serviceRowsID:array();
-        $rows = array_merge($serviceRows,$serviceRowsID);
-
-        if(!empty($rows)){
-            foreach ($rows as $row){
-                $city = $row["city"];
-                $citySet = CitySetForm::getListForCityCode($city,$citySetList);
-                if(!key_exists($city,$data)){
-                    $data[$city]=$this->defMoreCity($city,$citySet["city_name"]);
-                }
-                if($citySet["add_type"]==1){//叠加(城市配置的叠加)
-                    if(!key_exists($citySet["region_code"],$data)){
-                        $data[$citySet["region_code"]]=$this->defMoreCity($citySet["region_code"],$citySet["region_name"]);
-                    }
-                }
-                $sumAmount = round($row["sum_amount"],2);
-                $data[$city]["amt_sum"]+=$sumAmount;
-
-                if($citySet["add_type"]==1){//叠加(城市配置的叠加)
-                    $data[$citySet["region_code"]]["amt_sum"]+=$sumAmount;
-                }
-            }
-        }
-        return $data;
-    }
-
     private function defMoreCity($city,$city_name){
         return array(
             "city"=>$city,
             "amt_sum"=>0,
-            "life_num"=>0,
+            //"life_num"=>0,
+            "one_gross"=>0,
             "staff_num"=>0,
             "city_name"=>$city_name,
             "region_name"=>"none",
         );
     }
 
-    private function getStaffCountForCity($city_allow,$citySetList){
+    private function getStaffCountForCity($city_allow){
         $list = array();
         $endDate = $this->end_date;
         $suffix = Yii::app()->params['envSuffix'];
@@ -190,44 +133,11 @@ class SalesAverageForm extends CFormModel
         if($rows){
             foreach ($rows as $row){
                 $city = $row["city"];
-                $citySet = CitySetForm::getListForCityCode($city,$citySetList);
                 $staff_count=empty($row["staff_count"])?0:$row["staff_count"];
                 if(!key_exists($city,$list)){
                     $list[$city]=0;
                 }
                 $list[$city]+=$staff_count;
-
-                if($citySet["add_type"]==1){//叠加(城市配置的叠加)
-                    if(!key_exists($citySet["region_code"],$list)){
-                        $list[$citySet["region_code"]]=0;
-                    }
-                    $list[$citySet["region_code"]]+=$staff_count;
-                }
-            }
-        }
-        return $list;
-    }
-
-    private function getUData($startDate,$endDate,$citySetList){
-        $list=array();
-        $json = Invoice::getInvData($startDate,$endDate);
-        if($json["message"]==="Success"){
-            $jsonData = $json["data"];
-            foreach ($jsonData as $row){
-                $city = SummaryForm::resetCity($row["city"]);
-                $citySet = CitySetForm::getListForCityCode($city,$citySetList);
-                if(!key_exists($city,$list)){
-                    $list[$city]=0;
-                }
-                $money = is_numeric($row["invoice_amt"])?floatval($row["invoice_amt"]):0;
-                $list[$city]+=$money;
-
-                if($citySet["add_type"]==1){//叠加(城市配置的叠加)
-                    if(!key_exists($citySet["region_code"],$list)){
-                        $list[$citySet["region_code"]]=0;
-                    }
-                    $list[$citySet["region_code"]]+=$money;
-                }
             }
         }
         return $list;
@@ -237,7 +147,8 @@ class SalesAverageForm extends CFormModel
         $list["amt_average"]=empty($list["staff_num"])?0:round($list["amt_sum"]/$list["staff_num"]);
         $list["amt_auto"]=round(($list["amt_average"]/$this->day_num)*$this->month_day);
         if($bool){
-            $list["life_num"]="-";
+            //$list["life_num"]="-";
+            $list["one_gross"]="-";
         }
     }
 
@@ -348,7 +259,8 @@ class SalesAverageForm extends CFormModel
             "staff_num",
             "amt_average",
             "amt_auto",
-            "life_num",
+            //"life_num",
+            "one_gross",
         );
 
         return $bodyKey;
@@ -357,7 +269,10 @@ class SalesAverageForm extends CFormModel
     //設置百分比顏色
     private function getTdClassForRow($row){
         $tdClass = "";
-        if($row["life_num"]>$row["amt_auto"]){
+/*        if($row["life_num"]>$row["amt_auto"]){
+            $tdClass="danger";
+        }*/
+        if($row["one_gross"]>$row["amt_auto"]){
             $tdClass="danger";
         }
         return $tdClass;
@@ -370,9 +285,9 @@ class SalesAverageForm extends CFormModel
         if(!empty($data)){
             $allRow = array('city_num'=>0);//总计(所有地区)
             foreach ($data as $region=>$regionList){
-                if(!empty($regionList)) {
+                if(!empty($regionList["list"])) {
                     $regionRow = array('city_num'=>0);//地区汇总
-                    foreach ($regionList as $cityList) {
+                    foreach ($regionList["list"] as $cityList) {
                         $city = $cityList["city"];
                         $allRow["city_num"]++;
                         $regionRow["city_num"]++;

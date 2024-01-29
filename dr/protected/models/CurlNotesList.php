@@ -123,7 +123,8 @@ class CurlNotesList extends CListPageModel
             "company_type"=>2,//客户公司类型
             "service_type"=>10,//服务类型
             "month_cycle"=>8191,//服务內容
-            "week_cycle"=>15,//服务內容
+            "week_cycle"=>78,//服务內容
+            //"week_cycle"=>15,//服务內容
             "day_cycle"=>4,//服务內容
             "service_name_rec"=>"常驻灭虫",//服务內容
             "service_type_rec"=>13,//服务內容
@@ -222,6 +223,54 @@ class CurlNotesList extends CListPageModel
 	        $data[]=self::serviceData($i);
         }
 	    $this->sendCurl("/sync/serviceFull",$data);
+    }
+
+    public function testIp(){
+	    $data =array();
+	    $this->sendCurl("/sync/ip",$data);
+    }
+
+    public function systemU($type){
+        //$city = Yii::app()->user->city();
+        $city = "CD";
+        $list = array(
+            ////获取发票内容
+            "getData"=>array("args"=>array("city"=>"'{$city}'","start"=>"2023-01-01", "end"=>"2024-02-01", "customer"=>"")),
+            //获取INV类型的详情
+            "getInvDataDetail"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
+            //获取INV类型的城市汇总
+            "getInvDataCityAmount"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
+            //获取INV类型的城市(月份)汇总
+            "getInvDataCityMonth"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
+            //获取INV类型的城市(周)汇总
+            "getInvDataCityWeek"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
+            //获取服务单月数据
+            "getUServiceMoney"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
+            //获取服务单月数据（月為鍵名)
+            "getUServiceMoneyToMonth"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
+            //获取服务单月数据（周為鍵名)
+            "getUServiceMoneyToWeek"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
+            //获取技术员金额（技术员编号為鍵名)
+            "getTechnicianMoney"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
+            //获取技术员金额U系统详情（需要自己分开服务单）
+            "getTechnicianDetail"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
+            //获取技术员的创新金额、夜单金额、服务金额
+            "getTechnicianSNC"=>array("args"=>array("year"=>"2023","month"=>"2","city"=>"'{$city}'")),
+        );
+        if(key_exists($type,$list)){
+            $params=array();
+            if(!empty($list[$type]["args"])){
+                foreach ($list[$type]["args"] as $item=>$value){
+                    $params[$item] = key_exists($item,$_GET)?$_GET[$item]:"";
+                    $params[$item] = !empty($params[$item])?$params[$item]:$value;
+                }
+            }
+            $params["printBool"] = true;
+            $func_name = "SystemU::".$type;
+            $json = call_user_func_array($func_name, $params);
+        }else{
+            echo "404";
+        }
     }
 
     private function sendCurl($url,$data){

@@ -29,38 +29,25 @@ class RptUServiceDetail extends ReportData2 {
         $city_allow = self::getCityAllow($city);
         $startDay = isset($this->criteria->start_dt)?date("Y/m/d",strtotime($this->criteria->start_dt)):date("Y/m/d");
         $endDay = isset($this->criteria->end_dt)?date("Y/m/d",strtotime($this->criteria->end_dt)):date("Y/m/d");
-        $citySql = " and b.Text in ({$city_allow})";
-        $suffix = Yii::app()->params['envSuffix'];
-        $rows = Yii::app()->db->createCommand()
-            ->select("b.Text,a.Addr,h.Text as area_name,g.Text as city_name,
-            a.CustomerName,a.CustomerID,a.ContractNumber,
-            a.JobDate,a.StartTime,a.FinishDate,a.FinishTime,
-            a.Fee,a.TermCount,Staff01,Staff02,Staff03")
-            ->from("service{$suffix}.joborder a")
-            ->leftJoin("service{$suffix}.officecity f","a.City = f.City")
-            ->leftJoin("service{$suffix}.enums b","f.Office = b.EnumID and b.EnumType=8")
-            ->leftJoin("service{$suffix}.enums h","a.District = h.EnumID and h.EnumType=1")
-            ->leftJoin("service{$suffix}.enums g","a.City = g.EnumID and g.EnumType=1")
-            ->where("a.Status=3 and b.Text not in ('ZY') and a.JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
-            ->order("b.Text,a.JobDate desc")
-            ->queryAll();
-        $staffStrList = array("Staff01","Staff02","Staff03");
+
+        $rows = CountSearch::getTechnicianDetail($startDay,$endDay,$city_allow);
+        $staffStrList = array("staff01","staff02","staff03");
         $list = array();
         $userList = $this->getUserList($city_allow,$endDay);
         $city_name = "";
         $oldCity = "";
 		if ($rows) {
 			foreach ($rows as $row) {
-                $city = SummaryForm::resetCity($row["Text"]);
+                $city = SummaryForm::resetCity($row["city_code"]);
                 if($oldCity!==$city){
                     $city_name = General::getCityName($city);
                     $oldCity = $city;
                 }
-                $money = empty($row["TermCount"])?0:floatval($row["Fee"])/floatval($row["TermCount"]);
+                $money = empty($row["term_count"])?0:(floatval($row["fee"])+floatval($row["add_first"]))/floatval($row["term_count"]);
 
                 $staffCount = 1;
-                $staffCount+= empty($row["Staff02"])?0:1;
-                $staffCount+= empty($row["Staff03"])?0:1;
+                $staffCount+= empty($row["staff02"])?0:1;
+                $staffCount+= empty($row["staff03"])?0:1;
                 $money = $money/$staffCount;//如果多人，需要平分金額
                 $money = round($money,2);
                 foreach ($staffStrList as $staffStr){
@@ -70,17 +57,17 @@ class RptUServiceDetail extends ReportData2 {
                     if(!empty($staff)){
                         $list[]=array(
                             "city"=>$city_name,//LBS城市
-                            "job_date"=>$row["JobDate"],//工作日期（U系统）
-                            "contract_code"=>$row["ContractNumber"],//合约编号（U系统）
-                            "customer_code"=>$row["CustomerID"],//客户编号（U系统）
-                            "customer_name"=>$row["CustomerName"],//客户名称（U系统）
+                            "job_date"=>$row["job_date"],//工作日期（U系统）
+                            "contract_code"=>$row["contract_code"],//合约编号（U系统）
+                            "customer_code"=>$row["customer_code"],//客户编号（U系统）
+                            "customer_name"=>$row["customer_name"],//客户名称（U系统）
                             "username"=>$username,//员工(人事系統)
                             "dept_name"=>$user["dept_name"],//职位（人事系统）
                             "city_name"=>$row["city_name"],//市（U系统）
-                            "district"=>$row["area_name"],//区（U系统）
-                            "address"=>$row["Addr"],//地址（U系统）
-                            "start_date"=>$row["JobDate"]." ".$row["StartTime"],//（U系统）
-                            "end_date"=>$row["FinishDate"]." ".$row["FinishTime"],//（U系统）
+                            "district"=>$row["district"],//区（U系统）
+                            "address"=>$row["address"],//地址（U系统）
+                            "start_date"=>$row["start_date"],//（U系统）
+                            "end_date"=>$row["end_date"],//（U系统）
                             "amt"=>$money,//服务金额
                         );
                     }

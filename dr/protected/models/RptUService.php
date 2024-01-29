@@ -21,69 +21,44 @@ class RptUService extends ReportData2 {
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $startDay = isset($this->criteria->start_dt)?date("Y/m/d",strtotime($this->criteria->start_dt)):date("Y/m/d");
         $endDay = isset($this->criteria->end_dt)?date("Y/m/d",strtotime($this->criteria->end_dt)):date("Y/m/d");
-        $citySql = " and b.Text in ({$city_allow})";
-        $suffix = Yii::app()->params['envSuffix'];
-        $rows = Yii::app()->db->createCommand()->select("b.Text,a.Fee,a.TermCount,Staff01,Staff02,Staff03")
-            ->from("service{$suffix}.joborder a")
-            ->leftJoin("service{$suffix}.officecity f","a.City = f.City")
-            ->leftJoin("service{$suffix}.enums b","f.Office = b.EnumID and b.EnumType=8")
-            ->where("a.Status=3 and b.Text not in ('ZY') and a.JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
-            ->order("b.Text")
-            ->queryAll();
-        $UStaffCodeList=array();
-        $staffStrList = array("Staff01","Staff02","Staff03");
-        $list = array();
-		if ($rows) {
-			foreach ($rows as $row) {
-                $city = SummaryForm::resetCity($row["Text"]);
-                $money = empty($row["TermCount"])?0:floatval($row["Fee"])/floatval($row["TermCount"]);
 
-                $staffCount = 1;
-                $staffCount+= empty($row["Staff02"])?0:1;
-                $staffCount+= empty($row["Staff03"])?0:1;
-                $money = $money/$staffCount;//如果多人，需要平分金額
-                $money = round($money,2);
-                foreach ($staffStrList as $staffStr){
-                    $staff = $row[$staffStr];//员工编号
-                    if(!empty($staff)){
-                        if(!key_exists($staff,$list)){
-                            $UStaffCodeList[$staff]="'{$staff}'";
-                            $list[$staff]=array(
-                                "city_code"=>$city,//城市编号
-                                "staff"=>$staff,//员工
-                                "area"=>"",//区域(U系统)
-                                "u_city"=>$city,//城市(U系统)
-                                "u_city_name"=>"",//城市(U系统)
-                                "city"=>"",//城市(LBS系统)
-                                "name"=>"",//员工名称
-                                "dept_name"=>"",//员工名称
-                                "entry_month"=>"",//员工名称
-                                "amt"=>0,//服务金额
-                            );
-                        }
-                        $list[$staff]["amt"]+=$money;
-                    }
-                }
-			}
-		}
+        $list = array();
+        $rows = CountSearch::getTechnicianMoney($startDay,$endDay,$city_allow);
+        $UStaffCodeList = array_column($rows,"staff");
         $userList = $this->getUserList($UStaffCodeList,$endDay);
         $cityList = self::getCityList($city_allow);
         $conditionList = empty($this->condition)?array(1,2,3):array($this->condition);
-		foreach ($list as &$item){//由于数据太多，尝试优化
-            $user = self::getUserListForCode($item["staff"],$userList);
+		foreach ($rows as $item){//由于数据太多，尝试优化
+            $staff_code = isset($item["staff"])?$item["staff"]:"none";
+            $u_city = isset($item["city_code"])?$item["city_code"]:"none";
+            $u_city = SummaryForm::resetCity($u_city);
+            $amt = isset($item["amt"])&&is_numeric($item["amt"])?floatval($item["amt"]):0;
+            $temp = array(
+                "city_code"=>$u_city,//城市编号
+                "staff"=>$staff_code,//员工
+                "area"=>"",//区域(U系统)
+                "u_city"=>$u_city,//城市(U系统)
+                "u_city_name"=>"",//城市(U系统)
+                "city"=>"",//城市(LBS系统)
+                "name"=>"",//员工名称
+                "dept_name"=>"",//员工名称
+                "entry_month"=>"",//员工名称
+                "amt"=>$amt,//服务金额
+            );
+            $user = self::getUserListForCode($staff_code,$userList);
             $entryMonth = empty($user["entry_month"])?0:$user["entry_month"];
             //年资范围
             $bool =$entryMonth>=$this->seniority_min&&$entryMonth<=$this->seniority_max;
             if(in_array($user["level_type"],$conditionList)&&$bool){ //职位且年资范围
-                $uCity = self::getCityListForCode($item["city_code"],$cityList);
-                $item["area"] = $uCity["region_name"];
-                $item["u_city_name"] = $uCity["city_name"];
-                $item["city"] = $user["city"];
-                $item["dept_name"] = $user["dept_name"];
-                $item["entry_month"] = $user["entry_month"];
-                $item["name"] = $user["name"]." ({$user["code"]})".($user["staff_status"]==-1?Yii::t("summary"," - Leave"):"");
-            }else{
-                unset($list[$item["staff"]]);
+                $uCity = self::getCityListForCode($u_city,$cityList);
+                $temp["area"] = $uCity["region_name"];
+                $temp["u_city_name"] = $uCity["city_name"];
+                $temp["city"] = $user["city"];
+                $temp["dept_name"] = $user["dept_name"];
+                $temp["entry_month"] = $user["entry_month"];
+                $temp["name"] = $user["name"]." ({$user["code"]})".($user["staff_status"]==-1?Yii::t("summary"," - Leave"):"");
+
+                $list[$staff_code] = $temp;
             }
         }
         $this->data = $list;
@@ -109,8 +84,8 @@ class RptUService extends ReportData2 {
 	public function getUserList($UStaffCodeList,$endDate){
         $suffix = Yii::app()->params['envSuffix'];
         if(!empty($UStaffCodeList)){
-            $codeStr = implode(",",$UStaffCodeList);
-            $whereSql = "a.code in ({$codeStr})";
+            $codeStr = implode("','",$UStaffCodeList);
+            $whereSql = "a.code in ('{$codeStr}')";
         }else{
             $whereSql = "a.code=0";
         }

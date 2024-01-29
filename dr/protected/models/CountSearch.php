@@ -3,7 +3,7 @@
 /**
  * 合同同比分析、查詢
  */
-class CountSearch{
+class CountSearch extends SearchForCurlU {
 
     private static $whereSQL=" and not(f.rpt_cat='INV' and f.single=1)";
     private static $IDBool=true;//是否需要ID服務的查詢
@@ -661,6 +661,9 @@ class CountSearch{
 
     //获取U系统的服务单数据
     public static function getUServiceMoney($startDay,$endDay,$city_allow=""){
+        if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
+            return self::getCurlServiceForCity($startDay,$endDay,$city_allow);
+        }
         $list = array();
         $citySql = "";
         $textSql = "b.Text";
@@ -732,6 +735,9 @@ class CountSearch{
 
     //获取U系统的產品数据
     public static function getUInvMoney($startDay,$endDay,$city_allow=""){
+        if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
+            return self::getCurlInvForCity($startDay,$endDay,$city_allow);
+        }
         if(self::$system===1){//台灣版的產品為lbs的inv新增
             return self::getServiceTWForAdd($startDay,$endDay,$city_allow);
         }
@@ -779,6 +785,9 @@ class CountSearch{
             $monthList[$lastYear]=0;
             $startDay =$lastYear."/01";
         }
+        if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
+            return self::getCurlServiceForMonth($startDay,$endDay,$city_allow);
+        }
         for ($i=1;$i<=$maxMonth;$i++){
             $month = $i<10?"0".$i:$i;
             $monthList["{$year}/{$month}"]=0;
@@ -818,6 +827,10 @@ class CountSearch{
 
     //获取U系统的服务单数据（月為鍵名)
     public static function getUServiceMoneyToMonthEx($startDay,$endDay,$city_allow=""){
+        if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
+            return self::getCurlServiceForMonth($startDay,$endDay,$city_allow);
+        }
+
         $monthList = array();
         $i=0;
         do{
@@ -1233,6 +1246,9 @@ class CountSearch{
 
     //获取U系统的服务单数据(周為鍵名)
     public static function getUServiceMoneyForWeek($startDay,$endDay,$city_allow=""){
+        if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
+            return self::getCurlServiceForWeek($startDay,$endDay,$city_allow);
+        }
         $list = array();
         $citySql = "";
         $textSql = "b.Text";
@@ -1304,6 +1320,9 @@ class CountSearch{
 
     //获取U系统的產品数据（周為鍵名)
     public static function getUInvMoneyForWeek($startDay,$endDay,$city_allow=""){
+        if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
+            return self::getCurlInvForWeek($startDay,$endDay,$city_allow);
+        }
         if(self::$system===1){//台灣版的產品為lbs的inv新增
             return self::getServiceTWForWeekAdd($startDay,$endDay,$city_allow);
         }
@@ -1423,6 +1442,9 @@ class CountSearch{
         $year = date("Y",strtotime($endDay));
         $maxMonth = date("n",strtotime($endDay));
         $startDay =($year-1)."/12/01";
+        if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
+            return self::getCurlInvForMonth($startDay,$endDay,$city_allow);
+        }
         $json = Invoice::getInvData($startDay,$endDay,$city);
         $monthList = array();
         $monthList[($year-1)."/12"]=0;
@@ -1461,6 +1483,9 @@ class CountSearch{
         }
         if(self::$system===2&&!empty($city)&&strpos($city,"'MY'")!==false){//國際版
             $city.=",'KL','SL'";
+        }
+        if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
+            return self::getCurlInvForMonth($startDay,$endDay,$city_allow);
         }
         $json = Invoice::getInvData($startDay,$endDay,$city);
         $monthList = array();
@@ -1562,6 +1587,108 @@ class CountSearch{
                 $name_label = $row["name"]."({$row["code"]})";
                 $name_label.= empty($row["staff_status"])?"":"（已离职）";
                 $list[] = array("name"=>$row["name"],"code"=>$row["code"],"city"=>$row["city"],"user_id"=>$row["user_id"],"name_label"=>$name_label);
+            }
+        }
+        return $list;
+    }
+
+    //查询技术员服务金额
+    public static function getTechnicianMoney($begin,$end,$city=''){
+        if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
+            return self::getCurlTechnicianMoney($begin,$end,$city);
+        }
+        $citySql="";
+        $startDay = !empty($begin)?date("Y/m/d",strtotime($begin)):date("Y/m/01");
+        $endDay = !empty($end)?date("Y/m/d",strtotime($end)):date("Y/m/d");
+        if(!empty($city)){
+            $citySql = " and b.Text in ({$city})";
+        }
+        $suffix = Yii::app()->params['envSuffix'];//区分正式版、测试版
+        $rows = Yii::app()->db->createCommand()->select("b.Text,a.Fee,a.AddFirst,a.TermCount,Staff01,Staff02,Staff03")
+            ->from("service{$suffix}.joborder a")
+            ->leftJoin("service{$suffix}.officecity f","a.City = f.City")
+            ->leftJoin("service{$suffix}.enums b","f.Office = b.EnumID and b.EnumType=8")
+            ->where("a.Status=3 and b.Text not in ('ZY') and a.JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
+            ->order("b.Text")
+            ->queryAll();
+        $staffStrList = array("Staff01","Staff02","Staff03");
+        $list = array();
+        if ($rows) {
+            foreach ($rows as $row) {
+                $city = $row["Text"];
+                $money = empty($row["TermCount"])?0:(floatval($row["Fee"])+floatval($row["AddFirst"]))/floatval($row["TermCount"]);
+
+                $staffCount = 1;
+                $staffCount+= empty($row["Staff02"])?0:1;
+                $staffCount+= empty($row["Staff03"])?0:1;
+                $money = $money/$staffCount;//如果多人，需要平分金額
+                $money = round($money,2);
+                foreach ($staffStrList as $staffStr){
+                    $staff = $row[$staffStr];//员工编号
+                    if(!empty($staff)){
+                        if(!key_exists($staff,$list)){
+                            $list[$staff]=array(
+                                "city_code"=>$city,//城市编号
+                                "staff"=>$staff,//员工编号
+                                "amt"=>0,//服务金额
+                            );
+                        }
+                        $list[$staff]["amt"]+=$money;
+                    }
+                }
+            }
+        }
+        return $list;
+    }
+
+    //U系统技术员服务详情
+    public static function getTechnicianDetail($begin,$end,$city=''){
+        if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
+            return self::getCurlTechnicianDetail($begin,$end,$city);
+        }
+        $citySql="";
+        $startDay = !empty($begin)?date("Y/m/d",strtotime($begin)):date("Y/m/01");
+        $endDay = !empty($end)?date("Y/m/d",strtotime($end)):date("Y/m/d");
+        if(!empty($city)){
+            $citySql = " and b.Text in ({$city})";
+        }
+        $suffix = Yii::app()->params['envSuffix'];//区分正式版、测试版
+
+        $rows = Yii::app()->db->createCommand()
+            ->select("b.Text,a.Addr,h.Text as area_name,g.Text as city_name,
+            a.CustomerName,a.CustomerID,a.ContractNumber,
+            a.JobDate,a.StartTime,a.FinishDate,a.FinishTime,
+            a.Fee,a.AddFirst,a.TermCount,Staff01,Staff02,Staff03")
+            ->from("service{$suffix}.joborder a")
+            ->leftJoin("service{$suffix}.officecity f","a.City = f.City")
+            ->leftJoin("service{$suffix}.enums b","f.Office = b.EnumID and b.EnumType=8")
+            ->leftJoin("service{$suffix}.enums h","a.District = h.EnumID and h.EnumType=1")
+            ->leftJoin("service{$suffix}.enums g","a.City = g.EnumID and g.EnumType=1")
+            ->where("a.Status=3 and b.Text not in ('ZY') and a.JobDate BETWEEN '{$startDay}' AND '{$endDay}' {$citySql}")
+            ->order("b.Text,a.JobDate desc")
+            ->queryAll();
+        $list = array();
+
+        if ($rows) {
+            foreach ($rows as $row) {
+                $list[]=array(
+                    "city_code"=>$row["Text"],//城市编号（U系统）
+                    "staff01"=>$row["Staff01"],//员工编号01（U系统）
+                    "staff02"=>$row["Staff02"],//员工编号02（U系统）
+                    "staff03"=>$row["Staff03"],//员工编号03（U系统）
+                    "job_date"=>$row["JobDate"],//工作日期（U系统）
+                    "contract_code"=>$row["ContractNumber"],//合约编号（U系统）
+                    "customer_code"=>$row["CustomerID"],//客户编号（U系统）
+                    "customer_name"=>$row["CustomerName"],//客户名称（U系统）
+                    "city_name"=>$row["city_name"],//市（U系统）
+                    "district"=>$row["area_name"],//区（U系统）
+                    "address"=>$row["Addr"],//地址（U系统）
+                    "start_date"=>$row["JobDate"]." ".$row["StartTime"],//（U系统）
+                    "end_date"=>$row["FinishDate"]." ".$row["FinishTime"],//（U系统）
+                    "fee"=>empty($row["Fee"])?0:floatval($row["Fee"]),//费用（U系统）
+                    "add_first"=>empty($row["AddFirst"])?0:floatval($row["AddFirst"]),//首次加做金额（U系统）
+                    "term_count"=>$row["TermCount"],//次数（U系统）
+                );
             }
         }
         return $list;

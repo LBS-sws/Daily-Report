@@ -212,6 +212,9 @@ class CapacityArea extends CFormModel
 
             if($this->search_month==$i&&$this->day_num!=$this->month_day){ //如果查询的不是整月，则查询上月
                 $lastStr = "sales_".$this->last_month;
+                if(!key_exists("sales_".$nowStr,$list)){//1月查询或许有问题
+                    $list["sales_".$nowStr]=0;
+                }
                 $list["sales_".$nowStr] = key_exists($lastStr,$list)?$list[$lastStr]:$list["sales_".$nowStr];
             }
             $lastNum = $list[$nowStr];
@@ -243,6 +246,9 @@ class CapacityArea extends CFormModel
             if($this->search_month!=$i||$this->day_num==$this->month_day){ //如果查询的不是整月，则查询上月
                 $monthArrTwo[]=array("name"=>$i.Yii::t("summary","Month"));
             }
+        }
+        if(empty($monthArrTwo)){//查询1月有异常
+            $monthArrTwo[]=array("name"=>"none");
         }
         $topList=array(
             array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
@@ -363,6 +369,9 @@ class CapacityArea extends CFormModel
             if($this->search_month!=$i||$this->day_num==$this->month_day){ //如果查询的不是整月，则查询上月
                 $arrTwo[]="sales_".$this->search_year."/{$month}";
             }
+        }
+        if(empty($arrTwo)){//查询1月有异常
+            $arrTwo[]="sales_".$this->last_month;
         }
 
         $bodyKey[]="now_week";
