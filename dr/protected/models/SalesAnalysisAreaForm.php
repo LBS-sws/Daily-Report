@@ -4,9 +4,11 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
 {
 
     public function retrieveData() {
+        $twoYear = date("Y",strtotime($this->start_date));
+        $twoYear = ($twoYear-1)."/01/01";
         $city_allow = Yii::app()->user->city_allow();
         $staffRows = $this->getSalesForHr($city_allow,$this->search_date);//员工信息
-        $nowData = $this->getNowYearData($this->start_date,$this->end_date,$city_allow);//本年度的数据
+        $nowData = $this->getNowYearData($twoYear,$this->end_date,$city_allow);//两年度的数据
         $cityList = self::getCityListAndRegion($city_allow);//城市信息
         $this->data = $this->groupAreaForStaffAndData($staffRows,$cityList,$nowData);
 
@@ -17,20 +19,37 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
 
     protected function resetTdRow(&$list,$bool=false){
         if($bool){
+            $twoYear = date("Y",strtotime($this->start_date));
+            $twoYear = ($twoYear-1)."/01/01";
             $sum=0;
-            for ($i=1;$i<=$this->search_month;$i++) {
-                $yearMonth = $this->search_year . "/" . ($i < 10 ? "0{$i}" : $i);
-                $sum+=$list[$yearMonth];
+            $count=0;
+            for($i=0;$i<=24;$i++){
+                $dateTimer = strtotime($twoYear." + {$i} months");
+                if($dateTimer<=strtotime($this->end_date)){
+                    $yearMonth = date("Y/m",$dateTimer);
+                    $sum+=$list[$yearMonth];
+                    $count++;
+                }else{
+                    break;
+                }
             }
-            $list["now_average"]=round($sum/$this->search_month);
+            $list["now_average"]=empty($count)?0:round($sum/$count);
         }
     }
 
     public function getTopArr(){
+        $twoYear = date("Y",strtotime($this->start_date));
+        $twoYear = ($twoYear-1)."/01/01";
         $area_name=key_exists("region_name",$this->data)?$this->data["region_name"]:"{city}";
         $monthArr = array();
-        for($i=1;$i<=$this->search_month;$i++){
-            $monthArr[]=array("name"=>$i.Yii::t("summary","Month"));
+
+        for($i=0;$i<=24;$i++){
+            $dateTimer = strtotime($twoYear." + {$i} months");
+            if($dateTimer<=strtotime($this->end_date)){
+                $monthArr[]=array("name"=>date("Y年m月",$dateTimer));
+            }else{
+                break;
+            }
         }
         $monthArr[]=array("name"=>Yii::t("summary","Average"));
         $topList=array(
@@ -112,9 +131,9 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
         $html="<tr>";
         for($i=0;$i<$this->th_sum;$i++){
             if($i==0){
-                $width=150;
+                $width=170;
             }else{
-                $width=70;
+                $width=80;
             }
             $html.="<th class='header-width' data-width='{$width}' width='{$width}px'>{$i}</th>";
         }
@@ -133,13 +152,20 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
 
     //获取td对应的键名
     protected function getDataAllKeyStr(){
+        $twoYear = date("Y",strtotime($this->start_date));
+        $twoYear = ($twoYear-1)."/01/01";
         $bodyKey = array(
             "name",
             "fte_num"
         );
-        for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?$i:"0{$i}";
-            $bodyKey[]=$this->search_year."/{$month}";
+
+        for($i=0;$i<=24;$i++){
+            $dateTimer = strtotime($twoYear." + {$i} months");
+            if($dateTimer<=strtotime($this->end_date)){
+                $bodyKey[]=date("Y/m",$dateTimer);
+            }else{
+                break;
+            }
         }
         $bodyKey[]="now_average";
         return $bodyKey;
@@ -150,7 +176,7 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
         $bodyKey = $this->getDataAllKeyStr();
         $html="";
         if(!empty($data)){
-            ksort($data,1);//根据键名从小到大排序
+            //ksort($data,1);//根据键名从小到大排序
             foreach ($data as $monthStr=>$cityList){
                 $this->resetTdRow($cityList);
                 $html.="<tr>";

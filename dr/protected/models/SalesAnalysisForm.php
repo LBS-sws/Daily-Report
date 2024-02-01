@@ -286,17 +286,16 @@ class SalesAnalysisForm extends CFormModel
     }
 
     protected function groupAreaForStaffAndData($staffRows,$cityList,$nowData){
-        if($this->search_year==2023){
-            $nowStaffDate = "{$this->search_year}/03/01";
-            $startMonth = 3;
+        $startYear = date("Y",strtotime($this->start_date));
+        $startYear-=1;
+        if($startYear==2023){
+            $nowStaffDate = "{$startYear}/03/01";
         }else{
-            $nowStaffDate = "{$this->search_year}/01/01";
-            $startMonth = 1;
+            $nowStaffDate = "{$startYear}/01/01";
         }
         $data = array();
         if($staffRows){
             foreach ($staffRows as $staffRow){
-                $leave_timer = $staffRow["staff_status"]==-1?strtotime($staffRow["leave_time"]):strtotime("9999/12");
                 $entry_timer = strtotime($staffRow["entry_time"]);
                 $city = $staffRow['city'];
                 $region = key_exists($city,$cityList)?$cityList[$city]["region_name"]:"none";
@@ -304,10 +303,16 @@ class SalesAnalysisForm extends CFormModel
                     $monthDataList=array(
                         0=>array("name"=>Yii::t("summary","now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array())
                     );
-                    for($i=$startMonth;$i<=$this->search_month;$i++){
-                        $monthDataList[$i]=array(
-                            "name"=>$i.Yii::t("summary"," month now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array()
-                        );
+                    for($i=0;$i<=24;$i++){
+                        $dateTimer = strtotime($nowStaffDate." + {$i} months");
+                        $yearMonth = date("Y/m",$dateTimer);
+                        if($dateTimer<=strtotime($this->end_date)){
+                            $monthDataList[$yearMonth]=array(
+                                "name"=>date("Y年m",$dateTimer).Yii::t("summary"," month now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array()
+                            );
+                        }else{
+                            break;
+                        }
                     }
                     $data[$region]=array(
                         "region"=>$region,
@@ -318,7 +323,7 @@ class SalesAnalysisForm extends CFormModel
                 if($entry_timer<strtotime($nowStaffDate)){
                     $month = 0;//老员工
                 }else{
-                    $month = date("n",$entry_timer);//某月新入职员工
+                    $month = date("Y/m",$entry_timer);//某月新入职员工
                     if(!key_exists($month,$data[$region]["list"])){
                         $data[$region]["list"][$month]=array(
                             "name"=>$month.Yii::t("summary"," month now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array()
@@ -336,19 +341,28 @@ class SalesAnalysisForm extends CFormModel
     //将员工的金额汇总
     protected function setMonthAmt(&$data,$nowData,$username){
         $list = array();
+        $twoYear = date("Y",strtotime($this->start_date));
+        $twoYear = ($twoYear-1)."/01/01";
         $sum=0;
+        $count=0;
         if(key_exists($username,$nowData)){
             $list = $nowData[$username];
         }
-        for($i=1;$i<=$this->search_month;$i++){
-            $key = $this->search_year."/".($i<10?"0{$i}":$i);
-            if(!key_exists($key,$data)){
-                $data[$key]=0;
+        for($i=0;$i<=24;$i++){
+            $dateTimer = strtotime($twoYear." + {$i} months");
+            if($dateTimer<=strtotime($this->end_date)){
+                $key = date("Y/m",$dateTimer);
+                if(!key_exists($key,$data)){
+                    $data[$key]=0;
+                }
+                $data[$key]+=key_exists($key,$list)?$list[$key]:0;
+                $sum+=$data[$key];
+                $count++;
+            }else{
+                break;
             }
-            $data[$key]+=key_exists($key,$list)?$list[$key]:0;
-            $sum+=$data[$key];
         }
-        $data["now_average"]=round($sum/$this->search_month);
+        $data["now_average"]=empty($count)?0:round($sum/$count);
     }
 
     protected function groupCityForStaffAndData($staffRows,$cityList,$nowData,$lifelineList){
@@ -409,12 +423,15 @@ class SalesAnalysisForm extends CFormModel
         }else{
             $city_allow = "'{$city}'";
         }
+        $twoYear = date("Y",strtotime($this->start_date));
+        $twoYear = ($twoYear-1)."/01/01";
         $lifelineList = LifelineForm::getLifeLineList($city_allow,$this->search_date);//生命线
         $staffRows = $this->getSalesForHr($city_allow,$this->search_date);//员工信息
         $lastData = $this->getLastYearData($city_allow);//前一年的平均值
         $nowData = $this->getNowYearData($this->start_date,$this->end_date,$city_allow);//本年度的数据
+        $twoYearData = $this->getNowYearData($twoYear,$this->end_date,$city_allow);//两年内的数据
         $cityList = self::getCityListAndRegion($city_allow);//城市信息
-        $this->twoDate = $this->groupAreaForStaffAndData($staffRows,$cityList,$nowData);
+        $this->twoDate = $this->groupAreaForStaffAndData($staffRows,$cityList,$twoYearData);
         $this->threeDate = $this->groupCityForStaffAndData($staffRows,$cityList,$nowData,$lifelineList);
         $this->fourDate = $this->groupFTEForStaffAndData($city_allow);
         if($staffRows){
