@@ -256,33 +256,46 @@ class SalesAnalysisForm extends CFormModel
         $username = $staffRow["user_id"];
         $timer = strtotime($staffRow["entry_time"]);
         $leaveDate = $staffRow["staff_status"]==-1?date("Y/m",strtotime($staffRow["leave_time"])):"9999/12";
-        $entry_year = date("Y",$timer);
-        $entry_month = date("n",$timer);
-        $sum = 0;
-        $count = 0;
-        for ($i=1;$i<=$this->search_month;$i++){
-            $yearMonth = $this->search_year."/".($i<10?"0{$i}":$i);
-            $value=0;
-            if(key_exists($username,$nowData)){
-                $value = key_exists($yearMonth,$nowData[$username])?$nowData[$username][$yearMonth]:0;
-            }
-            if($entry_year==$this->search_year){
-                if($entry_month>$i){//未入职显示空
+        $entry_ym = date("Y/m",$timer);
+        $lastSum = 0;
+        $lastCount = 0;
+        $nowSum = 0;
+        $nowCount = 0;
+        $twoYear = $this->search_year;
+        $twoYear = ($twoYear-1)."/01/01";
+        for($i=0;$i<=24;$i++){
+            $dateTimer = empty($i)?strtotime($twoYear):strtotime($twoYear." + {$i} months");
+            if($dateTimer<=strtotime($this->end_date)){
+                $yearMonth = date("Y/m",$dateTimer);
+                $value=0;
+                if(key_exists($username,$nowData)){
+                    $value = key_exists($yearMonth,$nowData[$username])?$nowData[$username][$yearMonth]:0;
+                }
+                if($entry_ym>$yearMonth){//未入职显示空
                     $value="";
-                }elseif ($entry_month==$i&&empty($value)){//入职当月且没有签单金额
+                }elseif ($entry_ym==$yearMonth&&empty($value)){//入职当月且没有签单金额
                     $value="-";
                 }
+                if($leaveDate<$yearMonth){//已离职
+                    $value="";
+                }
+
+                if($value!==""&&is_numeric($value)){//有效数据
+                    if(date("Y",$dateTimer)==date("Y",strtotime($this->end_date))){
+                        $nowCount++;
+                        $nowSum+=$value;
+                    }else{
+                        $lastCount++;
+                        $lastSum+=$value;
+                    }
+                }
+                $staffRow[$yearMonth]=$value;
+            }else{
+                break;
             }
-            if($leaveDate<$yearMonth){//已离职
-                $value="";
-            }
-            if($value!==""&&is_numeric($value)){//有效数据
-                $sum+=$value;
-                $count++;
-            }
-            $staffRow[$yearMonth]=$value;
         }
-        $staffRow["now_average"]=empty($count)?0:round($sum/$count);
+        $staffRow["now_average"]=empty($nowCount)?0:round($nowSum/$nowCount);
+        $staffRow["last_average"]=empty($lastCount)?0:round($lastSum/$lastCount);
     }
 
     protected function groupAreaForStaffAndData($staffRows,$cityList,$nowData){
@@ -304,7 +317,7 @@ class SalesAnalysisForm extends CFormModel
                         0=>array("name"=>Yii::t("summary","now sales"),"fte_num"=>0,"region"=>$region,'user_name'=>array())
                     );
                     for($i=0;$i<=24;$i++){
-                        $dateTimer = strtotime($nowStaffDate." + {$i} months");
+                        $dateTimer = empty($i)?strtotime($nowStaffDate):strtotime($nowStaffDate." + {$i} months");
                         $yearMonth = date("Y/m",$dateTimer);
                         if($dateTimer<=strtotime($this->end_date)){
                             $monthDataList[$yearMonth]=array(
@@ -341,7 +354,7 @@ class SalesAnalysisForm extends CFormModel
     //将员工的金额汇总
     protected function setMonthAmt(&$data,$nowData,$username){
         $list = array();
-        $twoYear = date("Y",strtotime($this->start_date));
+        $twoYear = $this->search_year;
         $twoYear = ($twoYear-1)."/01/01";
         $sum=0;
         $count=0;
@@ -349,7 +362,7 @@ class SalesAnalysisForm extends CFormModel
             $list = $nowData[$username];
         }
         for($i=0;$i<=24;$i++){
-            $dateTimer = strtotime($twoYear." + {$i} months");
+            $dateTimer = empty($i)?strtotime($twoYear):strtotime($twoYear." + {$i} months");
             if($dateTimer<=strtotime($this->end_date)){
                 $key = date("Y/m",$dateTimer);
                 if(!key_exists($key,$data)){
@@ -423,11 +436,11 @@ class SalesAnalysisForm extends CFormModel
         }else{
             $city_allow = "'{$city}'";
         }
-        $twoYear = date("Y",strtotime($this->start_date));
+        $twoYear = $this->search_year;
         $twoYear = ($twoYear-1)."/01/01";
         $lifelineList = LifelineForm::getLifeLineList($city_allow,$this->search_date);//生命线
         $staffRows = $this->getSalesForHr($city_allow,$this->search_date);//员工信息
-        $lastData = $this->getLastYearData($city_allow);//前一年的平均值
+        //$lastData = $this->getLastYearData($city_allow);//前一年的平均值
         $nowData = $this->getNowYearData($this->start_date,$this->end_date,$city_allow);//本年度的数据
         $twoYearData = $this->getNowYearData($twoYear,$this->end_date,$city_allow);//两年内的数据
         $cityList = self::getCityListAndRegion($city_allow);//城市信息
@@ -447,12 +460,12 @@ class SalesAnalysisForm extends CFormModel
                     $staffRow["city_name"] = $cityList[$city]["city_name"];
                     $staffRow["region_name"] = $cityList[$city]["region_name"];
                 }
-                if(key_exists($username,$lastData)){//上一年平均生意额
+/*                if(key_exists($username,$lastData)){//上一年平均生意额
                     $staffRow["last_average"] = round($lastData[$username]["last_amt"]/$lastData[$username]["count_month"]);
-                }
+                }*/
                 //生命线
                 $staffRow["life_num"] = LifelineForm::getLineValueForC_O($lifelineList,$city,$staffRow["office_id"]);
-                $this->setStaffRowForNowData($staffRow,$nowData);
+                $this->setStaffRowForNowData($staffRow,$twoYearData);
                 $region = empty($staffRow["region_name"])?"null":$staffRow["region_name"];
                 if (!key_exists($region,$data)){
                     $data[$region]=array("list"=>array(),"region_code"=>$region,"region_name"=>$staffRow["region_name"]);
@@ -470,13 +483,32 @@ class SalesAnalysisForm extends CFormModel
     protected function resetTdRow(&$list,$bool=false){
         if($bool){
             $sum=0;
-            for ($i=1;$i<=$this->search_month;$i++) {
-                $yearMonth = $this->search_year . "/" . ($i < 10 ? "0{$i}" : $i);
-                $sum+=$list[$yearMonth];
+            $count=0;
+            for ($i=0;$i<=12;$i++) {
+                $yearMonth = empty($i)?$this->search_year."/01":date("Y/m",strtotime($this->search_year."/01/01 + {$i} months"));
+                if($yearMonth<=date("Y/m",strtotime($this->end_date))){
+                    $sum+=$list[$yearMonth];
+                    $count++;
+                }else{
+                    break;
+                }
             }
             $list["last_average"]="-";
             $list["life_num"]="-";
-            $list["now_average"]=round($sum/$this->search_month);
+            $list["now_average"]=empty($count)?0:round($sum/$count);
+            //计算上一个年度
+            $sum=0;
+            $count=0;
+            for ($i=0;$i<=12;$i++) {
+                $yearMonth = empty($i)?($this->search_year-1)."/01":date("Y/m",strtotime(($this->search_year-1)."/01/01 + {$i} months"));
+                if($yearMonth<=date("Y/m",strtotime(($this->search_year-1)."/12/01"))){
+                    $sum+=$list[$yearMonth];
+                    $count++;
+                }else{
+                    break;
+                }
+            }
+            $list["last_average"]=empty($count)?0:round($sum/$count);
         }
     }
 
@@ -491,6 +523,10 @@ class SalesAnalysisForm extends CFormModel
     }
 
     public function getTopArr(){
+        $lastMonthArr = array();
+        for($i=1;$i<=12;$i++){
+            $lastMonthArr[]=array("name"=>$i.Yii::t("summary","Month"));
+        }
         $monthArr = array();
         for($i=1;$i<=$this->search_month;$i++){
             $monthArr[]=array("name"=>$i.Yii::t("summary","Month"));
@@ -507,6 +543,9 @@ class SalesAnalysisForm extends CFormModel
                     array("name"=>$this->search_year.Yii::t("summary"," life num")),//参考生命线
                 )
             ),//参考
+            array("name"=>($this->search_year-1).Yii::t("summary"," year sales"),"background"=>"#00B0F0","color"=>"#FFFFFF",
+                "colspan"=>$lastMonthArr
+            ),//销售金额
             array("name"=>$this->search_year.Yii::t("summary"," year sales"),"background"=>"#00B0F0","color"=>"#FFFFFF",
                 "colspan"=>$monthArr
             )//销售金额
@@ -597,9 +636,21 @@ class SalesAnalysisForm extends CFormModel
             "last_average",
             "life_num"
         );
-        for($i=1;$i<=$this->search_month;$i++){
-            $month = $i>=10?$i:"0{$i}";
-            $bodyKey[]=$this->search_year."/{$month}";
+        $twoYear = $this->search_year;
+        $twoYear = ($twoYear-1)."/01/01";
+        for($i=0;$i<=11;$i++){
+            $dateTimer = empty($i)?strtotime($twoYear):strtotime($twoYear." + {$i} months");
+            $yearMonth = date("Y/m",$dateTimer);
+            $bodyKey[]=$yearMonth;
+        }
+        for($i=0;$i<=12;$i++){
+            $dateTimer = empty($i)?strtotime($this->search_year."/01/01"):strtotime($this->search_year."/01/01 + {$i} months");
+            if($dateTimer<=strtotime($this->end_date)){
+                $yearMonth = date("Y/m",$dateTimer);
+                $bodyKey[]=$yearMonth;
+            }else{
+                break;
+            }
         }
         $bodyKey[]="now_average";
         return $bodyKey;

@@ -4,7 +4,7 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
 {
 
     public function retrieveData() {
-        $twoYear = date("Y",strtotime($this->start_date));
+        $twoYear = $this->search_year;
         $twoYear = ($twoYear-1)."/01/01";
         $city_allow = Yii::app()->user->city_allow();
         $staffRows = $this->getSalesForHr($city_allow,$this->search_date);//员工信息
@@ -19,12 +19,12 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
 
     protected function resetTdRow(&$list,$bool=false){
         if($bool){
-            $twoYear = date("Y",strtotime($this->start_date));
+            $twoYear = $this->search_year;
             $twoYear = ($twoYear-1)."/01/01";
             $sum=0;
             $count=0;
             for($i=0;$i<=24;$i++){
-                $dateTimer = strtotime($twoYear." + {$i} months");
+                $dateTimer = empty($i)?strtotime($twoYear):strtotime($twoYear." + {$i} months");
                 if($dateTimer<=strtotime($this->end_date)){
                     $yearMonth = date("Y/m",$dateTimer);
                     $sum+=$list[$yearMonth];
@@ -38,13 +38,13 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
     }
 
     public function getTopArr(){
-        $twoYear = date("Y",strtotime($this->start_date));
+        $twoYear = $this->search_year;
         $twoYear = ($twoYear-1)."/01/01";
         $area_name=key_exists("region_name",$this->data)?$this->data["region_name"]:"{city}";
         $monthArr = array();
 
         for($i=0;$i<=24;$i++){
-            $dateTimer = strtotime($twoYear." + {$i} months");
+            $dateTimer = empty($i)?strtotime($twoYear):strtotime($twoYear." + {$i} months");
             if($dateTimer<=strtotime($this->end_date)){
                 $monthArr[]=array("name"=>date("Y年m月",$dateTimer));
             }else{
@@ -152,7 +152,7 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
 
     //获取td对应的键名
     protected function getDataAllKeyStr(){
-        $twoYear = date("Y",strtotime($this->start_date));
+        $twoYear = $this->search_year;
         $twoYear = ($twoYear-1)."/01/01";
         $bodyKey = array(
             "name",
@@ -160,7 +160,7 @@ class SalesAnalysisAreaForm extends SalesAnalysisForm
         );
 
         for($i=0;$i<=24;$i++){
-            $dateTimer = strtotime($twoYear." + {$i} months");
+            $dateTimer = empty($i)?strtotime($twoYear):strtotime($twoYear." + {$i} months");
             if($dateTimer<=strtotime($this->end_date)){
                 $bodyKey[]=date("Y/m",$dateTimer);
             }else{
