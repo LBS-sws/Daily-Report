@@ -100,8 +100,10 @@ class CitySetForm extends CFormModel
 		if ($rows){
 		    foreach ($rows as $row){
 		        $minCity = $row["code"];
-		        $minList = self::getCityAllowForCity($minCity);
-                $list = array_merge($list,$minList);
+		        if($minCity!=$city){//防止死循环
+                    $minList = self::getCityAllowForCity($minCity);
+                    $list = array_merge($list,$minList);
+                }
             }
 		}
 		return $list;
