@@ -2,6 +2,29 @@
 
 class CurlNotesList extends CListPageModel
 {
+    public $info_type;
+
+    public function rules()
+    {
+        return array(
+            array('info_type,attr, pageNum, noOfItem, totalRow,city, searchField, searchValue, orderField, orderType, filter, dateRangeValue','safe',),
+        );
+    }
+
+    public function getCriteria() {
+        return array(
+            'info_type'=>$this->info_type,
+            'searchField'=>$this->searchField,
+            'searchValue'=>$this->searchValue,
+            'orderField'=>$this->orderField,
+            'orderType'=>$this->orderType,
+            'noOfItem'=>$this->noOfItem,
+            'pageNum'=>$this->pageNum,
+            'filter'=>$this->filter,
+            'city'=>$this->city,
+            'dateRangeValue'=>$this->dateRangeValue,
+        );
+    }
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -21,7 +44,7 @@ class CurlNotesList extends CListPageModel
 			'lud'=>Yii::t('curl','lud'),
 		);
 	}
-	
+
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
@@ -34,6 +57,10 @@ class CurlNotesList extends CListPageModel
 				where 1=1 
 			";
 		$clause = "";
+		if(!empty($this->info_type)){
+            $svalue = str_replace("'","\'",$this->info_type);
+		    $clause.=" and info_type='$svalue' ";
+        }
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
@@ -78,8 +105,8 @@ class CurlNotesList extends CListPageModel
 			foreach ($records as $k=>$record) {
 					$this->attr[] = array(
 						'id'=>$record['id'],
+						'info_type'=>self::getInfoTypeList($record['info_type'],true),
 						'status_type'=>$record['status_type'],
-						'info_type'=>$record['info_type'],
 						'data_content'=>$record['data_content'],
 						'out_content'=>$record['out_content'],
 						//'data_content'=>urldecode($record['data_content']),
@@ -95,6 +122,24 @@ class CurlNotesList extends CListPageModel
 		$session['curlNotes_c01'] = $this->getCriteria();
 		return true;
 	}
+
+	//翻译curl的类型
+	public static function getInfoTypeList($key="",$bool=false){
+        $list = array(
+            "ServiceOne"=>"服务合约",
+            "Company"=>"客户公司",
+            "Complaint"=>"跟进单"
+        );
+        if($bool){
+            if(key_exists($key,$list)){
+                return $list[$key];
+            }else{
+                return $key;
+            }
+        }else{
+            return $list;
+        }
+    }
 
 	public function sendID($index){
         $uid = Yii::app()->user->id;
@@ -116,12 +161,14 @@ class CurlNotesList extends CListPageModel
         return array(
             "status"=>1,//客户服务的状态
             "city"=>"ZH",//城市
-            "status_dt"=>"2024-1-".($num>20?$num%20:$num)." 16:03:28",//记录时间
+            "status_dt"=>"2024-02-".($num>20?$num%20:$num)." 16:03:28",//记录时间
             "contract_no"=>"888888-1{$num}",//合约编号
             "contract_type"=>"普通合约",//合约类型（普通合约、KA合约）
             "company_code"=>"dddd112-ZH",//客户公司编号
             "company_type"=>2,//客户公司类型
             "service_type"=>10,//服务类型
+            "lbs_type_one"=>2,//LBS对应id（一级栏位）
+            "lbs_type_two"=>74,//LBS对应id（二级栏位）
             "month_cycle"=>8191,//服务內容
             "week_cycle"=>78,//服务內容
             //"week_cycle"=>15,//服务內容
@@ -147,6 +194,8 @@ class CurlNotesList extends CListPageModel
             "technician_01"=>"400002",//首次技术员1编号
             "technician_02"=>null,//首次技术员2编号
             "technician_03"=>null,//首次技术员3编号
+            "technician_arr"=>array("400001","400002","400003","400004"),//负责技术员数组
+            "first_tech_arr"=>array("400002","400003"),//首次技术员数组
             "reason"=>"没有原因",//原因
             "remarks2"=>"客户位置比较偏僻",//备注
             "prepay_month"=>$num%2==0?100*$num:null,//预付月数
@@ -163,6 +212,8 @@ class CurlNotesList extends CListPageModel
                 "ctrt_end_dt"=>"2025-01-09",//合同终止日期
                 "stop_dt"=>null,//终止日期
                 "service_type"=>10,//服务类型
+                "lbs_type_one"=>2,//LBS对应id（一级栏位）
+                "lbs_type_two"=>74,//LBS对应id（二级栏位）
                 "service_name_rec"=>"常驻灭虫",//服务內容
                 "service_type_rec"=>13,//服务內容
             ),*/
