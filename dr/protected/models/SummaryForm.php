@@ -129,6 +129,8 @@ class SummaryForm extends CFormModel
 				return "MY";
 			case "SL":
 				return "MY";
+			case "JB"://2024/02/21增加了JB
+				return "MY";
 		}
 		return $city;
 	}

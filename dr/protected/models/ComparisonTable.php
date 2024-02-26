@@ -13,6 +13,11 @@ class ComparisonTable extends ComparisonForm {
     public function ajaxDetailForHtml(){
         $city = key_exists("city",$_GET)?$_GET["city"]:0;
         $cityList = CitySetForm::getCityAllowForCity($city);
+        if(CountSearch::getSystem()==2){
+            if(in_array("MY",$cityList)){
+                $cityList = array_merge($cityList,array("SL","KL","JB"));
+            }
+        }
         $this->city_allow = "'".implode("','",$cityList)."'";
         $this->start_date = key_exists("startDate",$_GET)?$_GET["startDate"]:"";
         $this->end_date = key_exists("endDate",$_GET)?$_GET["endDate"]:"";

@@ -45,13 +45,18 @@ class RptUServiceDetail extends ReportData2 {
                 }
                 $money = empty($row["term_count"])?0:(floatval($row["fee"])+floatval($row["add_first"]))/floatval($row["term_count"]);
 
-                $staffCount = 1;
-                $staffCount+= empty($row["staff02"])?0:1;
-                $staffCount+= empty($row["staff03"])?0:1;
+                if(key_exists("staff_arr",$row)){//新版U系统有多个员工
+                    $staffCount = count($row["staff_arr"]);
+                    $staffStrList = $row["staff_arr"];
+                }else{
+                    $staffCount = 1;
+                    $staffCount+= empty($row["staff02"])?0:1;
+                    $staffCount+= empty($row["staff03"])?0:1;
+                }
                 $money = $money/$staffCount;//如果多人，需要平分金額
                 $money = round($money,2);
                 foreach ($staffStrList as $staffStr){
-                    $staff = $row[$staffStr];//员工编号
+                    $staff = key_exists("staff_arr",$row)?$staffStr:$row[$staffStr];//员工编号
                     $user = self::getUserListForCode($staff,$userList);
                     $username = $user["name"]." ({$user["code"]})".($user["staff_status"]==-1?Yii::t("summary"," - Leave"):"");
                     if(!empty($staff)){

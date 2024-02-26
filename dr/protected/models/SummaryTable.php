@@ -19,6 +19,11 @@ class SummaryTable extends SummaryForm{
     public function ajaxDetailForHtml(){
         $city = key_exists("city",$_GET)?$_GET["city"]:0;
         $cityList = CitySetForm::getCityAllowForCity($city);
+        if(CountSearch::getSystem()==2){
+            if(in_array("MY",$cityList)){
+                $cityList = array_merge($cityList,array("SL","KL","JB"));
+            }
+        }
         $this->city_allow = "'".implode("','",$cityList)."'";
         $this->start_date = key_exists("startDate",$_GET)?$_GET["startDate"]:"";
         $this->end_date = key_exists("endDate",$_GET)?$_GET["endDate"]:"";
@@ -778,9 +783,11 @@ class SummaryTable extends SummaryForm{
 
     //U系统的产品
     public static function getUInvList($startDay,$endDay,$city_allow=""){
+        /*
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
             return SearchForCurlU::getCurlInvDetail($startDay,$endDay,$city_allow);
         }
+        */
         if(self::$system===1){//台灣版的產品為lbs的inv新增
             return self::getUInvTWList($startDay,$endDay,$city_allow);
         }
@@ -823,11 +830,14 @@ class SummaryTable extends SummaryForm{
         }
         $list = array();
         $Catering = self::$system===2?"Catering":"餐饮类";
+        /*
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
             $json = SystemU::getInvDataDetail($startDay,$endDay,$city_allow);
         }else{
             $json = Invoice::getInvData($startDay,$endDay,$city_allow);
         }
+        */
+        $json = Invoice::getInvData($startDay,$endDay,$city_allow);
         if($json["message"]==="Success"){
             foreach ($json["data"] as $row){
                 if($type==="cate"&&$row["customer_type"]===$Catering){
