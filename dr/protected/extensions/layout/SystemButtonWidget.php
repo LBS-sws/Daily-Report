@@ -22,9 +22,14 @@ EOF;
                     $url = $value['webroot'].$value['param'];
                     $incl_js = true;
                     $homeurl = $value['webroot'];
+                    //查询staff_employ表
+                    $suffix = Yii::app()->params['envSuffix'];
+                    $sql ='select `e`.code from `hr'.$suffix.'`.`hr_binding` `h` join `hr'.$suffix.'`.`hr_employee` `e` on `h`.employee_id=`e`.id where `h`.user_id="'.Yii::app()->user->id.'"';
+                    $rows = Yii::app()->db->createCommand($sql)->queryRow();
                     //构建数据
                     $data = array(
                         'user_id'=>Yii::app()->user->id,
+                        'code'=> !empty($rows['code']) ? $rows['code'] : false,
                         'system'=>Yii::app()->session['system'],
                         'city'=>Yii::app()->session['city'],
                         'disp_name'=>Yii::app()->session['disp_name'],
@@ -37,7 +42,7 @@ EOF;
                     $jsonString = ($key.$String);
                     $encryptedString = base64_encode($jsonString);
                     //拼接
-                    $temp = '$("#'.$oid.'").on("click",function(){$("#syschangedialog").modal("hide");'.$value['script'].'("'.$id.'","'.$url.'","'.$homeurl.'","'.$encryptedString.'","'.$data['user_id'].'");});';
+                    $temp = '$("#'.$oid.'").on("click",function(){$("#syschangedialog").modal("hide");'.$value['script'].'("'.$id.'","'.$url.'","'.$homeurl.'","'.$encryptedString.'","'.$data['user_id'].'","'.$data['code'].'");});';
                 } else {
 					$func_name = $value['script'];
 					$lang = Yii::app()->language;
