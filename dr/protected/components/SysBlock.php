@@ -597,5 +597,64 @@ class SysBlock {
     public function test() {
         return false;
     }
+
+    /**
+    每月15日, 驗證 用户上月是否没有填写月报表数据表单(限制)
+     **/
+    public function isMonthlyEntryEnd() {
+        $uid = Yii::app()->user->id;
+        $suffix = Yii::app()->params['envSuffix'];
+        $day = date('d');
+        $sql = "select a_control from security$suffix.sec_user_access 
+				where username='$uid' and system_id='drs' and a_read_write like '%A09%'
+			";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        if ($row===false) return true;
+        if ($day>14){
+            return $this->validateMonthlyEntry();
+        }
+        return true;
+    }
+    /**
+    每月15日, 驗證 用户上月是否没有填写月报表数据表单(提示)
+     **/
+    public function isMonthlyEntryTip() {
+        $uid = Yii::app()->user->id;
+        $suffix = Yii::app()->params['envSuffix'];
+        $day = date('d');
+        $sql = "select a_control from security$suffix.sec_user_access 
+				where username='$uid' and system_id='drs' and a_read_write like '%A09%'
+			";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        if ($row===false) return true;
+        if($day>=10&&$day<=14){
+            return $this->validateMonthlyEntry();
+        }
+        return true;
+    }
+    /**
+    用户上月是否没有填写月报表数据表单
+     **/
+    private function validateMonthlyEntry(){
+        $city = Yii::app()->user->city();
+        $year = date('Y',strtotime("-1 months"));
+        $month = date('n',strtotime("-1 months"));
+        $suffix = Yii::app()->params['envSuffix'];
+        $value_null=" (
+        (a.data_value is null)
+        or
+        (a.data_value='')
+        )";
+        $row = Yii::app()->db->createCommand()->select("count(a.id)")
+            ->from("swoper{$suffix}.swo_monthly_dtl a")
+            ->leftJoin("swoper{$suffix}.swo_monthly_hdr b","a.hdr_id=b.id")
+            ->leftJoin("swoper{$suffix}.swo_monthly_field f","a.data_field=f.code")
+            ->where("b.city='{$city}'and f.upd_type != 'Y' and b.year_no={$year} and b.month_no={$month} and {$value_null}")
+            ->queryScalar();
+        if($row>0){//该城市有栏位没有填写
+            return false;
+        }
+        return true;
+    }
 }
 ?>
