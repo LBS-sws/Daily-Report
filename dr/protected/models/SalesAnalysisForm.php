@@ -659,7 +659,7 @@ class SalesAnalysisForm extends CFormModel
     //設置顏色
     public static function getTextColorForKeyStr($text,$keyStr,$num){
         $tdClass = "";
-        if($text!==""&&(strpos($keyStr,'/')!==false||$keyStr=="now_average")&&is_numeric($text)){
+        if($text!==""&&(strpos($keyStr,'/')!==false||$keyStr!="now_average")&&is_numeric($text)){
             if($text>=$num){
                 $tdClass="text-green";
             }else{
