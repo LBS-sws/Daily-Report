@@ -111,5 +111,8 @@ return array(
     'city'=>'城市',
     'ka city'=>'ka城市',
     'area'=>'区域',
+
+    'rank for sales'=>'地区排行榜(销售系统)',
+    'rank for dr'=>'总经理排行榜(日报表系统)',
 );
 ?>

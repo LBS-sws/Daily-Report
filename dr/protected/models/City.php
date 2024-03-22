@@ -46,6 +46,7 @@ class City extends CActiveRecord
 	public function getAncestorInChargeList($code) {
 		$rtn = array();
 		$list = $this->getAncestorList($code);
+        $list = empty($list)?0:$list;//当list为空时，无法进行下一步查询
 		$rows = $this->findAll(array("condition"=>"code in ($list)"));
 		if (!empty($rows)) {
 			foreach ($rows as $row) {

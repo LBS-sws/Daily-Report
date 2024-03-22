@@ -9,10 +9,17 @@ class CityForm extends CFormModel
 	public $ka_bool;//城市类型 0：城市 1：ka城市 2：区域
 	public $incharge;
 	public $currency;
+	public $SARANK;//销售系统排行榜
+	public $DRRANK;//日报表系统排行榜
 
-	protected $dynamic_fields = array(
-								'currency',
-							);
+    protected $dynamic_fields = array(
+        //货币
+        'currency'=>array("type"=>"list","func"=>array("Currency","getDropDownList"),"param"=>array()),
+        //销售系统排行榜
+        'SARANK'=>array("type"=>"list","func"=>array("CityForm","getRankList"),"param"=>array()),
+        //日报表系统排行榜
+        'DRRANK'=>array("type"=>"list","func"=>array("CityForm","getRankList"),"param"=>array()),
+    );
 	
 	/**
 	 * Declares customized attribute labels.
@@ -28,6 +35,8 @@ class CityForm extends CFormModel
 			'incharge'=>Yii::t('code','In Charge'),
 			'currency'=>Yii::t('code','Currency'),
 			'ka_bool'=>Yii::t('code','city type'),
+			'SARANK'=>Yii::t('code','rank for sales'),
+			'DRRANK'=>Yii::t('code','rank for dr'),
 		);
 	}
 
@@ -36,6 +45,9 @@ class CityForm extends CFormModel
 	 */
 	public function rules()
 	{
+        $list = array_keys($this->dynamic_fields);
+	    $list = implode(",",$list);
+        $list.= ",region,ka_bool,incharge";
 		return array(
 			array('code','unique','allowEmpty'=>false,
 					'attributeName'=>'code',
@@ -44,9 +56,24 @@ class CityForm extends CFormModel
 					'on'=>'new',
 				),
 			array('name,code,ka_bool','required'),
-			array('region,ka_bool,incharge,currency','safe'),
+			array($list,'safe'),
 		);
 	}
+
+	public function getDynamicFields(){
+	    return $this->dynamic_fields;
+    }
+
+    public static function getRankList(){
+	    return array(
+	        "0"=>Yii::t("misc","Off"),
+	        "1"=>Yii::t("misc","On"),
+        );
+    }
+
+    public static function getDropDownList() {
+        return Currency::getDropDownList();
+    }
 
 	public function retrieveData($index)
 	{
@@ -64,7 +91,7 @@ class CityForm extends CFormModel
 			$rows = Yii::app()->db->createCommand($sql)->queryAll();
 			if (count($rows) > 0) {
 				foreach ($rows as $row) {
-					if (in_array($row['field_id'],$this->dynamic_fields)) {
+					if (key_exists($row['field_id'],$this->dynamic_fields)) {
 						$fieldid = $row['field_id'];
 						$this->$fieldid = $row['field_value'];
 					}
@@ -155,7 +182,7 @@ class CityForm extends CFormModel
 
 		$uid = Yii::app()->user->id;
 
-		foreach ($this->dynamic_fields as $field_id) {
+		foreach ($this->dynamic_fields as $field_id=>$list) {
 			$command=$connection->createCommand($sql);
 			if (strpos($sql,':code')!==false)
 				$command->bindParam(':code',$this->code,PDO::PARAM_STR);
@@ -169,7 +196,7 @@ class CityForm extends CFormModel
 			if (strpos($sql,':luu')!==false)
 				$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 			$command->execute();
-		}	
+		}
 
 		return true;
 	}

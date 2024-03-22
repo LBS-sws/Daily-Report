@@ -109,5 +109,8 @@ return array(
     'city'=>'城市',
     'ka city'=>'ka城市',
     'area'=>'區域',
+
+    'rank for sales'=>'地區排行榜(銷售系統)',
+    'rank for dr'=>'總經理排行榜(日報表系統)',
 );
 ?>

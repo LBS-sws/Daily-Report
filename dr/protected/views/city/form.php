@@ -107,17 +107,33 @@ $this->pageTitle=Yii::app()->name . ' - City Form';
 				</div>
 			</div>
 
-			<div class="form-group">
-				<?php echo $form->labelEx($model,'currency',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-3">
-					<?php 
-						$item = Currency::getDropDownList();
-						echo $form->dropDownList($model, 'currency', $item,
-							array('disabled'=>($model->scenario=='view'))
-						); 
-					?>
-				</div>
-			</div>
+            <?php
+                foreach ($model->getDynamicFields() as $key=>$fileList){
+                    echo '<div class="form-group">';
+                    echo $form->labelEx($model,$key,array('class'=>"col-sm-2 control-label"));
+                    echo '<div class="col-sm-3">';
+                    switch ($fileList["type"]){
+                        case "list":
+                            $item = call_user_func_array($fileList["func"], $fileList["param"]);
+                            echo $form->dropDownList($model, $key, $item,
+                                array('disabled'=>($model->scenario=='view'))
+                            );
+                            break;
+                        case "text":
+                            echo $form->textField($model,$key,
+                                array('readonly'=>($model->scenario=='view'))
+                            );
+                            break;
+                        case "number":
+                            echo $form->numberField($model,$key,
+                                array('readonly'=>($model->scenario=='view'))
+                            );
+                            break;
+                    }
+                    echo '</div>';
+                    echo '</div>';
+                }
+            ?>
 		</div>
 	</div>
 </section>
