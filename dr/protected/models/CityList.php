@@ -15,20 +15,23 @@ class CityList extends CListPageModel
 			'region_name'=>Yii::t('code','Region'),
 			'incharge'=>Yii::t('code','In Charge'),
 			'ka_bool'=>Yii::t('code','city type'),
+            'SARANK'=>Yii::t('code','rank for sales'),
 		);
 	}
 	
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
-		$sql1 = "select a.*, b.name as region_name, c.disp_name as incharge 
+		$sql1 = "select a.*, b.name as region_name, c.disp_name as incharge,f.field_value as SARANK  
 				from security$suffix.sec_city a left outer join security$suffix.sec_city b on a.region=b.code 
 					left outer join security$suffix.sec_user c on a.incharge= c.username 
+					left outer join security$suffix.sec_city_info f on a.code= f.code and f.field_id='SARANK' 
 				where 1=1 
 			";
 		$sql2 = "select count(a.code)
 				from security$suffix.sec_city a left outer join security$suffix.sec_city b on a.region=b.code 
 					left outer join security$suffix.sec_user c on a.incharge= c.username 
+					left outer join security$suffix.sec_city_info f on a.code= f.code and f.field_id='SARANK'
 				where 1=1 
 			";
 		$clause = "";
@@ -88,6 +91,7 @@ class CityList extends CListPageModel
 						'name'=>$record['name'],
 						'region_name'=>$record['region_name'],
 						'incharge'=>$record['incharge'],
+						'SARANK'=>$record['SARANK']==1?Yii::t("misc","On"):Yii::t("misc","Off"),
 						'ka_bool'=>self::getCityTypeList($record['ka_bool'],true),
 					);
 			}

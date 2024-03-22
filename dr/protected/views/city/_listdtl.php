@@ -5,4 +5,5 @@
 	<td><?php echo $this->record['ka_bool']; ?></td>
 	<td><?php echo $this->record['region_name']; ?></td>
 	<td><?php echo $this->record['incharge']; ?></td>
+	<td><?php echo $this->record['SARANK']; ?></td>
 </tr>

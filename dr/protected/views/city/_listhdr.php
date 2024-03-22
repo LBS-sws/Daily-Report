@@ -25,4 +25,9 @@
 			;
 		?>
 	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('SARANK').$this->drawOrderArrow('f.field_value'),'#',$this->createOrderLink('code-list','f.field_value'))
+			;
+		?>
+	</th>
 </tr>
