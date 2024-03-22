@@ -128,6 +128,13 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
                         array('class'=>'form-control','maxlength'=>30,));
                     ?>
                 </div>
+                <?php echo $form->labelEx($model,'office_id',array('class'=>"col-sm-1 control-label")); ?>
+                <div class="col-sm-2">
+					<?php 
+					$this_city = empty($model->city)?Yii::app()->user->city():$model->city;
+					echo $form->dropDownList($model, 'office_id', GetNameToId::getOfficeNameListForCity($this_city), array('readonly'=>($model->getReadonly())));
+					?>
+                </div>
 			</div>
 			<div class="form-group">
 				<?php

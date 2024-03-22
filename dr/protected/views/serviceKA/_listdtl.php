@@ -3,6 +3,7 @@
 <?php if (!Yii::app()->user->isSingleCity()) : ?>
 	<td><?php echo $this->record['city_name']; ?></td>
 <?php endif ?>
+	<td><?php echo $this->record['office_name']; ?></td>
 	<td><?php echo $this->record['service_no']; ?></td>
 	<td><?php echo $this->record['company_name']; ?></td>
 	<td><?php echo $this->record['type_desc']; ?></td>

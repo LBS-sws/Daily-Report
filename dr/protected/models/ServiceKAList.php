@@ -2,6 +2,7 @@
 
 class ServiceKAList extends CListPageModel
 {
+	public $office_type="all";
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -19,6 +20,29 @@ class ServiceKAList extends CListPageModel
 			'status'=>Yii::t('service','Record Type'),
 			'status_dt'=>Yii::t('service','Record Date'),
 			'city_name'=>Yii::t('misc','City'),
+			'office_name'=>"归属",
+		);
+	}
+
+	public function rules()
+	{
+		return array(
+			array('office_type,attr, pageNum, noOfItem, totalRow,city, searchField, searchValue, orderField, orderType, filter, dateRangeValue','safe',),
+		);
+	}
+	
+	public function getCriteria() {
+		return array(
+			'office_type'=>$this->office_type,
+			'searchField'=>$this->searchField,
+			'searchValue'=>$this->searchValue,
+			'orderField'=>$this->orderField,
+			'orderType'=>$this->orderType,
+			'noOfItem'=>$this->noOfItem,
+			'pageNum'=>$this->pageNum,
+			'filter'=>$this->filter,
+            'city'=>$this->city,
+			'dateRangeValue'=>$this->dateRangeValue,
 		);
 	}
 	
@@ -44,6 +68,14 @@ class ServiceKAList extends CListPageModel
 				where a.city in ($city)  
 			";
 		$clause = "";
+		switch ($this->office_type) {
+			case 'office_one'://本部
+				$clause .= " and a.office_id is null";
+				break;
+			case 'office_two'://办事处
+				$clause .= " and a.office_id is not null";
+				break;
+		}
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
@@ -114,6 +146,7 @@ class ServiceKAList extends CListPageModel
 					'status'=>General::getStatusDesc($record['status']),
 					'status_dt'=>General::toDate($record['status_dt']),
 					'city_name'=>$record['city_name'],
+					'office_name'=>GetNameToId::getOfficeNameForID($record['office_id']),
 					'no_of_attm'=>$record['no_of_attm'],
 				);
 			}

@@ -33,6 +33,24 @@ $this->pageTitle=Yii::app()->name . ' - Service';
 		?>
 	</div>
 	</div></div>
+	
+	<div class="box">
+        <div class="box-body">
+            <div class="form-group">
+                <label><?php echo "归属：";?></label>
+                <div class="btn-group" role="group">
+                    <?php
+                    $modelName = get_class($model);
+                    $officeList=GetNameToId::getStaticOfficeType();
+                    foreach ($officeList as $key=>$value){
+                        $class = $key===$model->office_type?" btn-primary active":"";
+                        echo TbHtml::button($value,array("class"=>"btn_submit".$class,"data-key"=>$key));
+                    }
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
 	<?php 
 		$search = array(
 						'company_name',
@@ -58,6 +76,7 @@ $this->pageTitle=Yii::app()->name . ' - Service';
 	echo $form->hiddenField($model,'totalRow');
 	echo $form->hiddenField($model,'orderField');
 	echo $form->hiddenField($model,'orderType');
+	echo $form->hiddenField($model,'office_type');
 ?>
 
 <?php
@@ -125,11 +144,21 @@ $this->pageTitle=Yii::app()->name . ' - Service';
 //					),
 					'show'=>false,
 				));
+				
+$url = Yii::app()->createUrl('service/index',array("pageNum"=>1));
 
 $js = "
 $('.clickable-row').click(function() {
 	window.document.location = $(this).data('href');
 });
+
+
+    $('.btn_submit').on('click',function(){
+        var key=$(this).data('key');
+        $('#ServiceList_orderField').val('');
+        $('#ServiceList_office_type').val(key);
+        jQuery.yii.submitForm(this,'{$url}',{});
+    });
 ";
 Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 

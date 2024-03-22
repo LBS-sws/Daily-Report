@@ -7,6 +7,42 @@
  * Time: 11:00
  */
 class GetNameToId{
+    //获取办事处名字
+    public static function getStaticOfficeType(){
+        return array(
+			"all"=>"全部",
+			"office_one"=>"本部",
+			"office_two"=>"办事处",
+		);
+    }
+	
+    //获取办事处名字
+    public static function getOfficeNameForID($id){
+        $suffix = Yii::app()->params['envSuffix'];
+        $row = Yii::app()->db->createCommand()->select("name")
+            ->from("hr{$suffix}.hr_office")
+            ->where("id=:id",array(":id"=>$id))->queryRow();
+        if($row){
+            return $row["name"];
+        }
+        return "本部";
+    }
+	
+    //获取办事处列表
+    public static function getOfficeNameListForCity($city){
+		$data = array(""=>"本部");
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("id,name")
+            ->from("hr{$suffix}.hr_office")
+            ->where("city=:city",array(":city"=>$city))->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $data[$row["id"]]=$row["name"];
+            }
+        }
+        return $data;
+    }
+	
     //获取员工名字
     public static function getEmployeeNameForId($id){
         $suffix = Yii::app()->params['envSuffix'];
