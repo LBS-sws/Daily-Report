@@ -6,7 +6,8 @@ class RankMonthList extends CListPageModel
     public $month;
 
     private $notCity=array('QD','KA','KS','TY','HK','TN','ZS1','TC','MY','CN','TP','ZY','HXHB','MO','HD','JMS','HN','XM','CS','H-N','HD1','RW','RN','WL','HB','HX','HN2','HN1');
-	/**
+    //notCity已失效，改由sec_city_info数据表设置开关
+    /**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
 	 * the same as its name with the first letter in upper case.
@@ -28,6 +29,22 @@ class RankMonthList extends CListPageModel
             array('year,month,attr, pageNum, noOfItem, totalRow,city, searchField, searchValue, orderField, orderType, filter, dateRangeValue','safe',),
         );
     }
+
+    public static function getCityForRank(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("code")
+            ->from("security{$suffix}.sec_city_info")
+            ->where("field_id='DRRANK' and field_value=1")
+            ->group("code")->queryAll();
+        $list = array(0);
+        if (count($rows) > 0) {
+            foreach ($rows as $row) {
+                $code = $row["code"];
+                $list[]="'{$code}'";
+            }
+        }
+        return implode(",",$list);
+    }
 	
 	public function retrieveDataByPage($pageNum=1)
 	{
@@ -38,17 +55,17 @@ class RankMonthList extends CListPageModel
             $this->year = $date[0];
             $this->month = $date[1];
         }
-        $notCity = implode("','",$this->notCity);
+        $inCity = self::getCityForRank();
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql1 = "select a.year_no,a.month_no,a.f73,b.name 
 				from swo_monthly_hdr a 
 				LEFT JOIN security{$suffix}.sec_city b ON a.city=b.code
-				where a.year_no={$this->year} AND a.month_no={$this->month} AND b.name is not NULL AND a.city not in ('{$notCity}') 
+				where a.year_no={$this->year} AND a.month_no={$this->month} AND b.name is not NULL AND a.city in ({$inCity}) 
 			";
 		$sql2 = "select count(a.id)
 				from swo_monthly_hdr a 
 				LEFT JOIN security{$suffix}.sec_city b ON a.city=b.code
-				where a.year_no={$this->year} AND a.month_no={$this->month} AND b.name is not NULL AND a.city not in ('{$notCity}') 
+				where a.year_no={$this->year} AND a.month_no={$this->month} AND b.name is not NULL AND a.city in ({$inCity}) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
