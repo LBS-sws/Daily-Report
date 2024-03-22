@@ -5,7 +5,7 @@ class RankMonthList extends CListPageModel
     public $year;
     public $month;
 
-    private $notCity=array('KA','KS','TY','HK','TN','ZS1','TC','MY','CN','TP','ZY','HXHB','MO','HD','JMS','HN','XM','CS','H-N','HD1','RW','RN','WL','HB','HX','HN2','HN1');
+    private $notCity=array('QD','KA','KS','TY','HK','TN','ZS1','TC','MY','CN','TP','ZY','HXHB','MO','HD','JMS','HN','XM','CS','H-N','HD1','RW','RN','WL','HB','HX','HN2','HN1');
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
