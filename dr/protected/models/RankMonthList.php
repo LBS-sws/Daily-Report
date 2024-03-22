@@ -36,7 +36,7 @@ class RankMonthList extends CListPageModel
             ->from("security{$suffix}.sec_city_info")
             ->where("field_id='DRRANK' and field_value=1")
             ->group("code")->queryAll();
-        $list = array(0);
+        $list = array("'0'");
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $code = $row["code"];
