@@ -661,11 +661,9 @@ class CountSearch extends SearchForCurlU {
 
     //获取U系统的服务单数据
     public static function getUServiceMoney($startDay,$endDay,$city_allow=""){
-        /*
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
             return self::getCurlServiceForCity($startDay,$endDay,$city_allow);
         }
-        */
         $list = array();
         $citySql = "";
         $textSql = "b.Text";
@@ -737,11 +735,9 @@ class CountSearch extends SearchForCurlU {
 
     //获取U系统的產品数据
     public static function getUInvMoney($startDay,$endDay,$city_allow=""){
-        /*
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
             return self::getCurlInvForCity($startDay,$endDay,$city_allow);
         }
-        */
         if(self::$system===1){//台灣版的產品為lbs的inv新增
             return self::getServiceTWForAdd($startDay,$endDay,$city_allow);
         }
@@ -789,11 +785,9 @@ class CountSearch extends SearchForCurlU {
             $monthList[$lastYear]=0;
             $startDay =$lastYear."/01";
         }
-        /*
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
             return self::getCurlServiceForMonth($startDay,$endDay,$city_allow);
         }
-        */
         for ($i=1;$i<=$maxMonth;$i++){
             $month = $i<10?"0".$i:$i;
             $monthList["{$year}/{$month}"]=0;
@@ -833,11 +827,9 @@ class CountSearch extends SearchForCurlU {
 
     //获取U系统的服务单数据（月為鍵名)
     public static function getUServiceMoneyToMonthEx($startDay,$endDay,$city_allow=""){
-        /*
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
             return self::getCurlServiceForMonth($startDay,$endDay,$city_allow);
         }
-        */
 
         $monthList = array();
         $i=0;
@@ -1254,11 +1246,9 @@ class CountSearch extends SearchForCurlU {
 
     //获取U系统的服务单数据(周為鍵名)
     public static function getUServiceMoneyForWeek($startDay,$endDay,$city_allow=""){
-        /*
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
             return self::getCurlServiceForWeek($startDay,$endDay,$city_allow);
         }
-        */
         $list = array();
         $citySql = "";
         $textSql = "b.Text";
@@ -1330,11 +1320,9 @@ class CountSearch extends SearchForCurlU {
 
     //获取U系统的產品数据（周為鍵名)
     public static function getUInvMoneyForWeek($startDay,$endDay,$city_allow=""){
-        /*
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
             return self::getCurlInvForWeek($startDay,$endDay,$city_allow);
         }
-        */
         if(self::$system===1){//台灣版的產品為lbs的inv新增
             return self::getServiceTWForWeekAdd($startDay,$endDay,$city_allow);
         }
@@ -1454,11 +1442,9 @@ class CountSearch extends SearchForCurlU {
         $year = date("Y",strtotime($endDay));
         $maxMonth = date("n",strtotime($endDay));
         $startDay =($year-1)."/12/01";
-        /*
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
             return self::getCurlInvForMonth($startDay,$endDay,$city_allow);
         }
-        */
         $json = Invoice::getInvData($startDay,$endDay,$city);
         $monthList = array();
         $monthList[($year-1)."/12"]=0;
@@ -1498,11 +1484,9 @@ class CountSearch extends SearchForCurlU {
         if(self::$system===2&&!empty($city)&&strpos($city,"'MY'")!==false){//國際版
             $city.=",'KL','SL'";
         }
-        /*
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
             return self::getCurlInvForMonth($startDay,$endDay,$city_allow);
         }
-        */
         $json = Invoice::getInvData($startDay,$endDay,$city);
         $monthList = array();
         $i=0;
@@ -1612,11 +1596,9 @@ class CountSearch extends SearchForCurlU {
 
     //查询技术员服务金额
     public static function getTechnicianMoney($begin,$end,$city=''){
-        /*
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
             return self::getCurlTechnicianMoney($begin,$end,$city);
         }
-        */
         $citySql="";
         $startDay = !empty($begin)?date("Y/m/d",strtotime($begin)):date("Y/m/01");
         $endDay = !empty($end)?date("Y/m/d",strtotime($end)):date("Y/m/d");
@@ -1663,11 +1645,9 @@ class CountSearch extends SearchForCurlU {
 
     //U系统技术员服务详情
     public static function getTechnicianDetail($begin,$end,$city=''){
-        /*
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
             return self::getCurlTechnicianDetail($begin,$end,$city);
         }
-        */
         $citySql="";
         $startDay = !empty($begin)?date("Y/m/d",strtotime($begin)):date("Y/m/01");
         $endDay = !empty($end)?date("Y/m/d",strtotime($end)):date("Y/m/d");
