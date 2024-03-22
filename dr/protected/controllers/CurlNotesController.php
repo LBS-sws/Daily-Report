@@ -24,7 +24,7 @@ class CurlNotesController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('send','testCompany','testComplaint','testServiceOne','TestServiceFull','testIp','System'),
+				'actions'=>array('send','testOffice','testCompany','testComplaint','testServiceOne','TestServiceFull','testIp','System'),
 				'expression'=>array('CurlNotesController','allowReadWrite'),
 			),
 			array('allow', 
@@ -63,6 +63,13 @@ class CurlNotesController extends Controller
             Dialog::message(Yii::t('dialog','Validation Message'), "数据异常");
         }
         $this->redirect(Yii::app()->createUrl('curlNotes/index'));
+	}
+
+	public function actionTestOffice()
+	{
+        $model = new CurlNotesList();
+        $model->testOffice();
+        die();
 	}
 
 	public function actionTestCompany()

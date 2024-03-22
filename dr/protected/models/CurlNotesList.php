@@ -126,6 +126,7 @@ class CurlNotesList extends CListPageModel
 	//翻译curl的类型
 	public static function getInfoTypeList($key="",$bool=false){
         $list = array(
+            "Office"=>"办事处",
             "ServiceOne"=>"服务合约",
             "Company"=>"客户公司",
             "Complaint"=>"跟进单"
@@ -201,6 +202,7 @@ class CurlNotesList extends CListPageModel
             "prepay_month"=>$num%2==0?100*$num:null,//预付月数
             "prepay_start"=>$num%2==0?100*$num:null,//预付起始月
             "stop_dt"=>null,//终止日期
+            "office_id"=>4,//办事处（U系统id）
             "beforeData"=>array(),//客户服务修改之前的数据(没有数据时)
             /*
             "beforeData"=>array(//客户服务修改之前的数据(有数据时)
@@ -218,6 +220,16 @@ class CurlNotesList extends CListPageModel
                 "service_type_rec"=>13,//服务內容
             ),*/
         );
+    }
+
+    public function testOffice(){
+	    $data = array(
+            "type"=>"add",//操作类型
+            "name"=>"珠海办事处",//办事处名称
+            "city"=>"ZH",//城市
+            "u_id"=>"3",//U系统id
+        );
+	    $this->sendCurl("/sync/office",$data);
     }
 
     public function testCompany(){
@@ -240,15 +252,15 @@ class CurlNotesList extends CListPageModel
 
     public function testComplaint(){
 	    $data = array(
-            "entry_dt"=>"2024-1-10 12:16:35",//客诉日期
+            "entry_dt"=>"2024-2-10 12:16:35",//客诉日期
             "type"=>7,//服务类别
-            "followup_id"=>22,//U系统的客诉id(唯一标识)
+            "followup_id"=>23,//U系统的客诉id(唯一标识)
             "status"=>1,//投诉个案的状态
             "city"=>"ZH",//城市
             "service_name"=>"飄盈香",//客户服务
             "service_code"=>"IA",//客户服务
             "company_name"=>"客户名称",//客户名称
-            "company_code"=>"dddd112-ZH",//客户编号
+            "company_code"=>"sdasda",//客户编号
             "content"=>"投诉测试~~~~~~~~测试",//投诉内容
             "job_report"=>"处理结果~~~~~~~~测试",//处理结果
             "contact_name"=>"某某公司",//投诉者
@@ -259,6 +271,26 @@ class CurlNotesList extends CListPageModel
             "staff_01"=>"400003",//跟进(此投诉)技术员
             "staff_02"=>"400002",//跟进(此投诉)技术员
             "staff_03"=>null,//跟进(此投诉)技术员
+            "staff_arr"=>array("400002","400003"),//跟进(此投诉)技术员
+        );
+        $data = array(
+            "followup_id"=> 95968,
+            "entry_dt"=> "2024-02-26 11:52:23",
+            "type"=> 15,
+            "company_code"=> "QXYKN001-NN",
+            "company_name"=> "一口泥炉烤肉（凤翔店）",
+            "sch_dt"=> "2024-2-26",
+            "city"=> "NN",
+            "status"=> 2,
+            "service_code"=> "INV",
+            "service_name"=> "送皂液",
+            "content"=> "配送一桶洗地易。",
+            "job_report"=> "",
+            "contact_name"=> "潘峻成",
+            "contact_tel"=> "19858159662",
+            "resp_staff"=> "",
+            "resp_tech"=> "",
+            "staff_arr"=> ["402218"]
         );
 	    $this->sendCurl("/sync/complaint",$data);
     }
