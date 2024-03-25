@@ -87,7 +87,7 @@ class RptCustrenew extends ReportData2 {
 				$temp['cont_info'] = $row['cont_info'];
 				$temp['first_dt'] = General::toDate($row['first_dt']);
 				$temp['first_tech'] = $row['first_tech'];
-				$temp['remarks'] = $row['remarks'];
+				$temp['remarks'] = $row['remarks2'];
 				$temp['equip_install_dt'] = General::toDate($row['equip_install_dt']);
 				$temp['diff_ctrt_dt'] = (empty($temp['equip_install_dt']) || empty($temp['sign_dt'])) ? '' :
 					(strtotime($row['equip_install_dt'])-strtotime($row['sign_dt']))/86400;

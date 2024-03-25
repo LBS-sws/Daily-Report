@@ -118,7 +118,7 @@ class RptCustamend extends ReportData2 {
 				$temp['ctrt_period'] = $row['ctrt_period'];
 				$temp['ctrt_end_dt'] = General::toDate($row['ctrt_end_dt']);
 				$temp['first_dt'] = General::toDate($row['first_dt']);
-				$temp['remarks'] = $row['remarks'];
+				$temp['remarks'] = $row['remarks2'];
 
 				$this->data[] = $temp;
 			}

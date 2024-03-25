@@ -75,7 +75,7 @@ class RptCustresume extends ReportData2 {
 				$temp['sign_dt'] = General::toDate($row['sign_dt']);
 				$temp['ctrt_period'] = $row['ctrt_period'];
 				$temp['ctrt_end_dt'] = General::toDate($row['ctrt_end_dt']);
-				$temp['remarks'] = $row['remarks'];
+				$temp['remarks'] = $row['remarks2'];
 				$temp['lud'] = General::toDate($row['lcd']);
 				$this->data[] = $temp;
 			}
