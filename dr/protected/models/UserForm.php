@@ -431,6 +431,9 @@ class UserForm extends CFormModel
 				$ro .= ($aval=='RO') ? $aid : '';
 				$cn .= ($aval=='CN') ? $aid : '';
 			}
+			if(!isset($a_sys[$idx])){
+			    continue;
+            }
 			$sid = $a_sys[$idx];
 			$command=$connection->createCommand($sql);
 			if (strpos($sql,':username')!==false)
