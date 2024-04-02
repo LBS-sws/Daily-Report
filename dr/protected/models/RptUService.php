@@ -21,7 +21,7 @@ class RptUService extends ReportData2 {
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $startDay = isset($this->criteria->start_dt)?date("Y/m/d",strtotime($this->criteria->start_dt)):date("Y/m/d");
         $endDay = isset($this->criteria->end_dt)?date("Y/m/d",strtotime($this->criteria->end_dt)):date("Y/m/d");
-
+        $this->data=array();
         $list = array();
         $rows = CountSearch::getTechnicianMoney($startDay,$endDay,$city_allow);
         $UStaffCodeList = array_column($rows,"staff");
@@ -50,6 +50,9 @@ class RptUService extends ReportData2 {
             //年资范围
             $bool =$entryMonth>=$this->seniority_min&&$entryMonth<=$this->seniority_max;
             if(in_array($user["level_type"],$conditionList)&&$bool){ //职位且年资范围
+                if(!key_exists($u_city,$list)){
+                    $list[$u_city]=array();
+                }
                 $uCity = self::getCityListForCode($u_city,$cityList);
                 $temp["area"] = $uCity["region_name"];
                 $temp["u_city_name"] = $uCity["city_name"];
@@ -58,10 +61,21 @@ class RptUService extends ReportData2 {
                 $temp["entry_month"] = $user["entry_month"];
                 $temp["name"] = $user["name"]." ({$user["code"]})".($user["staff_status"]==-1?Yii::t("summary"," - Leave"):"");
 
-                $list[$staff_code] = $temp;
+                $list[$u_city][$staff_code] = $temp;
             }
         }
-        $this->data = $list;
+
+
+        if(!empty($list)){
+            foreach ($list as $row){
+                if(!empty($row)){
+                    foreach ($row as $key=>$item){
+                        $this->data[$key] = $item;
+                    }
+                }
+            }
+        }
+        //$this->data = $list;
 		return true;
 	}
 
