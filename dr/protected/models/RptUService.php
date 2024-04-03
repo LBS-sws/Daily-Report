@@ -70,7 +70,7 @@ class RptUService extends ReportData2 {
             foreach ($list as $row){
                 if(!empty($row)){
                     foreach ($row as $key=>$item){
-                        $this->data[$key] = $item;
+                        $this->data["".$key] = $item;
                     }
                 }
             }

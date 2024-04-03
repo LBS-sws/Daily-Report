@@ -45,6 +45,10 @@ class RptUServiceDetail extends ReportData2 {
                 }
                 $money = empty($row["term_count"])?0:(floatval($row["fee"])+floatval($row["add_first"]))/floatval($row["term_count"]);
 
+                //revise_fee
+                if(key_exists("revise_fee",$row)){//调整服务单金额(2024-04-03)
+                    $money+=floatval($row["revise_fee"]);
+                }
                 if(key_exists("staff_arr",$row)){//新版U系统有多个员工
                     $staffCount = count($row["staff_arr"]);
                     $staffStrList = $row["staff_arr"];
