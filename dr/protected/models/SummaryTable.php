@@ -143,8 +143,49 @@ class SummaryTable extends SummaryForm{
 
     //终止服务
     private function ServiceStop(){
-        $rows = self::getServiceSTForType($this->start_date,$this->end_date,$this->city_allow,"T");
-        return self::getTableForRows($rows,$this->city_allow);
+        $rows = self::getServiceSTListForType($this->start_date,$this->end_date,$this->city_allow,"T");
+        $listGood = self::getTableListForRows($rows["goodList"],$this->city_allow);
+        $listNot = self::getTableListForRows($rows["notList"],$this->city_allow);
+        return self::getTableForTab($listGood,$listNot);
+    }
+
+    public static function getTableForTab($listGood,$listNot){
+        $tabs = array();
+        $tabs[] = array(
+            'label'=>"正常的终止服务",
+            'content'=>"<p>&nbsp;</p>".$listGood["html"],
+            'active'=>false,
+        );
+        $tabs[] = array(
+            'label'=>"暂停后的终止服务",
+            'content'=>"<p>&nbsp;</p>".$listNot["html"],
+            'active'=>false,
+        );
+        $html = "<table class='table table-bordered table-striped table-condensed table-hover'>";
+        $html.="<thead><tr><th>类型</th><th>数量</th><th>金额</th></tr><tbody>";
+        $html.="<tr>";
+        $html.="<td class='text-right'>"."正常的终止服务"."</td>";
+        $html.="<td>".$listGood["count"]."</td>";
+        $html.="<td>".$listGood["amt"]."</td>";
+        $html.="</tr>";
+        $html.="<tr>";
+        $html.="<td class='text-right'>"."暂停后的终止服务"."</td>";
+        $html.="<td>".$listNot["count"]."</td>";
+        $html.="<td>".$listNot["amt"]."</td>";
+        $html.="</tr>";
+        $html.="<tr>";
+        $html.="<td class='text-right'><b>"."汇总："."</b></td>";
+        $html.="<td><b>".($listGood["count"]+$listNot["count"])."</b></td>";
+        $html.="<td><b>".($listGood["amt"]+$listNot["amt"])."</b></td>";
+        $html.="</tr>";
+        $html.="</tbody>";
+        $html.="</table>";
+        $tabs[] = array(
+            'label'=>"汇总",
+            'content'=>"<p>&nbsp;</p>".$html,
+            'active'=>true,
+        );
+        return TbHtml::tabbable("tabs", $tabs, array());
     }
 
     public static function getTableForRows($rows,$city_allow,$invTable=array(),$week_day=1,$month_day=0){
@@ -251,6 +292,100 @@ class SummaryTable extends SummaryForm{
         }
         $html.="</table>";
         return $html;
+    }
+
+
+    public static function getTableListForRows($rows,$city_allow){
+        $companyList = GetNameToId::getCompanyList($city_allow);
+        $html="";
+        $html.= "<table class='table table-bordered table-striped table-condensed table-hover'>";
+        $html.="<thead><tr>";
+        $html.="<th width='90px'>".Yii::t('summary','menu name')."</th>";//菜單名稱
+        $html.="<th width='90px'>".Yii::t('service','Contract No')."</th>";//合同编号
+        $html.="<th width='90px'>".Yii::t('summary','City')."</th>";//城市
+        $html.="<th width='90px'>".Yii::t('summary','search day')."</th>";//日期
+        $html.="<th>".Yii::t('service','Customer')."</th>";//客户编号及名称
+        $html.="<th width='100px'>".Yii::t('service','Resp. Sales')."</th>";//客户编号及名称
+        $html.="<th>".Yii::t('service','Customer Type')."</th>";//客户类别
+        $html.="<th width='120px'>".Yii::t('service','Paid Amt')."</th>";//服务金额
+        $html.="<th width='80px'>".Yii::t('customer','Contract Period')."</th>";//合同年限(月)
+        $html.="<th width='100px'>".Yii::t('summary','all money')."</th>";//合同总金额
+        $html.="<th width='1px'></th>";
+        $html.="</tr></thead>";
+        $sum = 0;
+        $count=0;
+        if($rows){
+            $html.="<tbody>";
+            $city="";
+            $cityName = "";
+            foreach ($rows as $row){
+                $count++;
+                if($city!=$row["city"]){
+                    $cityName= General::getCityName($row["city"]);
+                    $city = $row["city"];
+                }
+                switch ($row["sql_type_name"]){
+                    case "D":
+                        $menuStr = Yii::t("app","Customer Service ID");//菜單名稱
+                        $link = self::drawEditButton('A11', 'serviceID/edit', 'serviceID/view', array('index'=>$row['id']));
+                        break;
+                    case "KA":
+                        $menuStr = Yii::t("app","Customer Service KA");//菜單名稱
+                        $link = self::drawEditButton('A13', 'serviceKA/edit', 'serviceKA/view', array('index'=>$row['id']));
+                        break;
+                    default:
+                        $menuStr = Yii::t("app","Customer Service");//菜單名稱
+                        $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
+                }
+                $companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
+                $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
+                $row["ctrt_period"] = is_numeric($row["ctrt_period"])?floatval($row["ctrt_period"]):0;
+
+                if($row["paid_type"]=="M") {//月金额
+                    $row["sum_amount"] = $row["amt_paid"]*$row["ctrt_period"];
+                }else{
+                    $row["sum_amount"] = $row["amt_paid"];
+                }
+                $row["sum_amount"]=round($row["sum_amount"],2);
+                $sum+=$row["sum_amount"];
+                $html.="<tr data-id='{$row["id"]}'>";
+                $html.="<td>".$menuStr."</td>";
+                $html.="<td>".$row["contract_no"]."</td>";
+                $html.="<td>".$cityName."</td>";
+                $html.="<td>".General::toDate($row["status_dt"])."</td>";
+                $html.="<td>".$companyName."</td>";
+                $html.="<td>".$row["salesman"]."</td>";
+                $html.="<td>".$row["cust_type_name"]."</td>";
+                $html.="<td>".$row["amt_paid"]."(".GetNameToId::getPaidTypeForId($row["paid_type"]).") "."</td>";
+                $html.="<td>".$row["ctrt_period"]."</td>";
+                $html.="<td>".$row["sum_amount"]."</td>";
+                $html.="<td>{$link}</td>";
+                $html.="</tr>";
+            }
+            $html.="</tbody><tfoot>";
+            $html.="<tr>";
+            $html.="<td colspan='4' class='text-right'>".Yii::t("summary","total count:")."</td>";
+            $html.="<td colspan='2'>".$count."</td>";
+            $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
+            $html.="<td colspan='2'>".$sum."</td>";
+            $html.="</tr>";
+            if(!empty($invTable)){
+                $html.="<tr><td colspan='10'>&nbsp;</td></tr>";
+                $count+=$invTable["count"];
+                $sum+=$invTable["sum"];
+                $html.="<tr>";
+                $html.="<td colspan='4' class='text-right'>".Yii::t("summary","total count:")."</td>";
+                $html.="<td colspan='2'>".$count."</td>";
+                $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
+                $html.="<td colspan='2'>".$sum."</td>";
+                $html.="</tr>";
+            }
+            $html.="</tfoot>";
+        }else{
+            $html.="<tbody><tr><td colspan='10'>".Yii::t("summary","none data")."</td></tr></tbody>";
+        }
+        $html.="</table>";
+        return array("html"=>$html,"amt"=>$sum,"count"=>$count);
     }
 
     public static function getTableForInv($rows,$city_allow){
@@ -549,6 +684,102 @@ class SummaryTable extends SummaryForm{
             $queryIARows = array_merge($queryIARows,$queryKARows);
         }
         return array_merge($queryIARows,$queryIDRows);
+    }
+
+
+    //客户服务查询(暫停、終止)
+    public static function getServiceSTListForType($startDate,$endDate,$city_allow,$type){
+        $whereSql = "a.status='{$type}' and a.status in ('S','T') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        $whereSql.= " and a.city in ({$city_allow})";
+        $whereSql .= self::$whereSQL;
+        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+            f.description as cust_type_name";
+        $queryIARows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
+            ->from("swo_service a")
+            ->leftJoin("swo_service_contract_no n","a.id=n.service_id")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where($whereSql." and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
+        $returnList = array("goodList"=>array(),"notList"=>array());
+        if($queryIARows){
+            foreach ($queryIARows as $key=>$row){
+                $month_date = date("Y/m",strtotime($row['status_dt']));
+                $nextRow= Yii::app()->db->createCommand()
+                    ->select("status")->from("swo_service_contract_no")
+                    ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["no_id"]}' and 
+                        status_dt>'{$row['status_dt']}' and 
+                        DATE_FORMAT(status_dt,'%Y/%m')='{$month_date}'")
+                    ->order("status_dt asc")
+                    ->queryRow();//查詢本月的後面一條數據
+                if($nextRow&&in_array($nextRow["status"],array("S","T"))){
+                    continue;
+                }else{
+                    $prevRow= Yii::app()->db->createCommand()
+                        ->select("status")->from("swo_service_contract_no")
+                        ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["no_id"]}' and status_dt<='{$row['status_dt']}'")
+                        ->order("status_dt desc")
+                        ->queryRow();//查詢本月的前面一條數據
+                    if($prevRow&&in_array($prevRow["status"],array("S","T"))){
+                        $returnList["notList"][] = $row;
+                    }else{
+                        $returnList["goodList"][] = $row;
+                    }
+                }
+            }
+        }
+
+        if(self::$IDBool){
+            $queryIDRows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
+            $queryIDRows = $queryIDRows?$queryIDRows:array();
+            array_merge($returnList["goodList"],$queryIDRows);
+        }
+
+        if(self::$KABool){
+            $queryKARows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
+            if($queryKARows){
+                foreach ($queryKARows as $key=>$row){
+                    $month_date = date("Y/m",strtotime($row['status_dt']));
+                    $nextRow= Yii::app()->db->createCommand()
+                        ->select("status")->from("swo_service_ka_no")
+                        ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["no_id"]}' and 
+                        status_dt>'{$row['status_dt']}' and 
+                        DATE_FORMAT(status_dt,'%Y/%m')='{$month_date}'")
+                        ->order("status_dt asc")
+                        ->queryRow();//查詢本月的後面一條數據
+                    if($nextRow&&in_array($nextRow["status"],array("S","T"))){
+                        continue;
+                    }else{
+                        $prevRow= Yii::app()->db->createCommand()
+                            ->select("status")->from("swo_service_ka_no")
+                            ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["no_id"]}' and status_dt<='{$row['status_dt']}'")
+                            ->order("status_dt desc")
+                            ->queryRow();//查詢本月的前面一條數據
+                        if($prevRow&&in_array($prevRow["status"],array("S","T"))){
+                            $returnList["notList"][] = $row;
+                        }else{
+                            $returnList["goodList"][] = $row;
+                        }
+                    }
+                }
+            }
+        }
+        return $returnList;
     }
 
     //暂停超过2个月的服务
