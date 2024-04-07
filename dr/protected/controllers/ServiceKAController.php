@@ -34,6 +34,10 @@ class ServiceKAController extends Controller
 				'expression'=>array('ServiceKAController','allowReadWrite'),
 			),
 			array('allow', 
+				'actions'=>array('copy'),
+				'expression'=>array('ServiceKAController','allowCopy'),
+			),
+			array('allow',
 				'actions'=>array('index','view','filedownload'),
 				'expression'=>array('ServiceKAController','allowReadOnly'),
 			),
@@ -118,6 +122,18 @@ class ServiceKAController extends Controller
 		$model->status_dt = date('Y/m/d');
 		$model->backlink = Yii::app()->request->urlReferrer;
 		$this->render('form',array('model'=>$model,));
+	}
+
+	public function actionCopy($index=0)
+	{
+		$model = new ServiceKAForm('edit');
+        $bool = $model->dataCopy($index);
+        if($bool){
+            Dialog::message(Yii::t('dialog','Information'), Yii::t('service','Record Copy'));
+            $this->redirect(Yii::app()->createUrl('service/edit',array("index"=>$model->id)));
+        }else{
+            $this->redirect(Yii::app()->createUrl('serviceKA/edit',array("index"=>$index)));
+        }
 	}
 
 	public function actionRenew($index=0)
@@ -414,5 +430,9 @@ class ServiceKAController extends Controller
 
 	public static function allowReadOnly() {
 		return Yii::app()->user->validFunction('A13');
+	}
+
+	public static function allowCopy() {
+		return Yii::app()->user->validFunction('D07');
 	}
 }

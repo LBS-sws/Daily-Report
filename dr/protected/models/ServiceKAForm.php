@@ -73,6 +73,54 @@ class ServiceKAForm extends ServiceForm
         }
     }
 
+    public function dataCopy($index){
+        $row = Yii::app()->db->createCommand()->select("a.*,b.contract_no")
+            ->from("swo_service_ka a")
+            ->leftJoin("swo_service_ka_no b","a.id=b.service_id")
+            ->where("a.id=:id",array(":id"=>$index))
+            ->queryRow();
+        if($row){
+            if(empty($row["contract_no"])){
+                Dialog::message(Yii::t('dialog','Validation Message'), "合同编号为空，无法复制");
+                return false;
+            }else{
+                $bool = Yii::app()->db->createCommand()->select("a.id,b.contract_no")
+                    ->from("swo_service a")
+                    ->leftJoin("swo_service_contract_no b","a.id=b.service_id")
+                    ->where("a.status_dt=:status_dt and a.status=:status and b.contract_no=:contract_no",array(
+                        ":status"=>$row["status"],
+                        ":status_dt"=>$row["status_dt"],
+                        ":contract_no"=>$row["contract_no"],
+                    ))->queryRow();
+                if($bool){
+                    Dialog::message(Yii::t('dialog','Validation Message'), "客户服务已存在，无法复制：".$bool["id"]);
+                    return false;
+                }
+                $data = $row;
+                unset($data["id"]);
+                unset($data["contract_no"]);
+                Yii::app()->db->createCommand()->insert("swo_service",$data);
+                $this->id = Yii::app()->db->getLastInsertID();
+                Yii::app()->db->createCommand()->insert("swo_service_contract_no",array(
+                    "contract_no"=>$row["contract_no"],
+                    "status_dt"=>$row["status_dt"],
+                    "status"=>$row["status"],
+                    "service_id"=>$this->id,
+                ));
+                Yii::app()->db->createCommand()->insert("swo_service_history",array(
+                    "update_html"=>"<span>复制</span><br><span>复制ka_id：{$index}</span>",
+                    "update_type"=>2,
+                    "service_type"=>1,
+                    "service_id"=>$this->id,
+                    "lcu"=>Yii::app()->user->id
+                ));
+                return true;
+            }
+        }else{
+            return false;
+        }
+    }
+
 	public function retrieveData($index)
 	{
 		$suffix = Yii::app()->params['envSuffix'];

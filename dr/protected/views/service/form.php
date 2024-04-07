@@ -74,6 +74,14 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                             'data-toggle'=>'modal','data-target'=>'#flowinfodialog',)
                     );
                     ?>
+
+                    <?php
+                    if (Yii::app()->user->validRWFunction('D07')){
+                        echo TbHtml::button('<span class="fa fa-copy"></span> '.Yii::t('service','Copy To KA'), array(
+                                'submit'=>Yii::app()->createUrl('service/copy',array("index"=>$model->id)))
+                        );
+                    }
+                    ?>
                 </div>
             <?php endif ?>
 	</div></div>

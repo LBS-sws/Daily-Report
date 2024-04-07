@@ -157,5 +157,9 @@ return array(
     'Paid Amt Type'=>'服務金額類型',
     'tracking'=>'跟蹤因素詳情',
     'Secondary field'=>'二級欄位',
+
+    'Copy To KA'=>'復製到KA服務',
+    'Copy To Service'=>'復製到客戶服務',
+    'Record Copy'=>'復製成功，且已保存',
 );
 ?>
