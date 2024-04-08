@@ -9,9 +9,6 @@
 		<?php echo TbHtml::link($this->getLabelName('office_name').$this->drawOrderArrow('a.office_id'),'#',$this->createOrderLink('service-list','a.office_id'));?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('service_no').$this->drawOrderArrow('service_no'),'#',$this->createOrderLink('service-list','service_no'));?>
-	</th>
-	<th>
 		<?php echo TbHtml::link($this->getLabelName('company_name').$this->drawOrderArrow('company_name'),'#',$this->createOrderLink('service-list','company_name'));?>
 	</th>
 	<th>
