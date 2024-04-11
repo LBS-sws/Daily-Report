@@ -382,10 +382,10 @@ Yii::app()->clientScript->registerScript('lookupCompany',$js,CClientScript::POS_
 $js = Script::genLookupButtonEx('btnStaffResp', 'staff', '', 'resp_staff');
 Yii::app()->clientScript->registerScript('lookupStaffREsp',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButtonEx('btnStaffTech', 'staff', '', 'resp_tech');
+$js = Script::genLookupButtonEx('btnStaffTech', 'StaffAnd', '', 'resp_tech');
 Yii::app()->clientScript->registerScript('lookupStaffTech',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButtonEx('btnStaffFollow', 'staff', '', 'follow_staff',
+$js = Script::genLookupButtonEx('btnStaffFollow', 'StaffAnd', '', 'follow_staff',
     array(),
     true,
     array("maxCount"=>5)

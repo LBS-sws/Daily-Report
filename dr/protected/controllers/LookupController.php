@@ -26,7 +26,7 @@ class LookupController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('company','staff','product','companyex2','companyex','staffex','staffex2','productex','template','userstaffex','reasonex'),
+				'actions'=>array('company','staff','product','companyex2','companyex','staffex','staffAndEx','staffex2','productex','template','userstaffex','reasonex'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -172,6 +172,54 @@ class LookupController extends Controller
 				and  leave_dt is not null and leave_dt<>0 and leave_dt <= now() ";
 		$result2 = Yii::app()->db->createCommand($sql)->queryAll();
 		
+		$records = array_merge($result1, $result3, $result2);
+		if (count($records) > 0) {
+            $result[] = array(
+                'id'=>0,
+                'value'=>'',
+            );
+			foreach ($records as $k=>$record) {
+				$result[] = array(
+						'id'=>$record['id'],
+						'value'=>$record['value'],
+					);
+			}
+		}
+		print json_encode($result);
+	}
+
+	public function actionStaffAndEx($search,$kaSearch=0) {
+        $suffix = Yii::app()->params['envSuffix'];
+		$city = Yii::app()->user->city();
+		$result = array();
+		$searchx = str_replace("'","\'",$search);
+        $kaSql = "";
+        if($kaSearch==1){
+            $kaSql = " or b.name like '%KA%'";
+        }
+
+        $sql = "select a.id, concat(a.name, ' (', a.code, ')') as value from hr$suffix.hr_employee a
+                LEFT JOIN hr$suffix.hr_dept b on a.position = b.id 
+				where (a.code like '%".$searchx."%' or a.name like '%".$searchx."%') 
+				and (a.city='".$city."' or (a.city='ZY' and b.name like '%技术%') {$kaSql})
+				and ((a.staff_status=0 and a.table_type=1) or (a.staff_status=1 and a.table_type!=1)) 
+			 ";
+        $result1 = Yii::app()->db->createCommand($sql)->queryAll();
+
+		$suffix = Yii::app()->params['envSuffix'];
+		$sql = "select a.id, concat(a.name, ' (', a.code, ')') as value from swo_staff_v a, hr$suffix.hr_plus_city b
+				where (a.code like '%".$searchx."%' or a.name like '%".$searchx."%') 
+				and b.city='".$city."'
+				and (a.leave_dt is null or a.leave_dt=0 or a.leave_dt > now())
+				and a.id=b.employee_id
+			";
+		$result3 = Yii::app()->db->createCommand($sql)->queryAll();
+
+		$sql = "select id, concat(name, ' (', code, ')',' ".Yii::t('app','(Resign)')."') as value from swo_staff_v
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
+				and  leave_dt is not null and leave_dt<>0 and leave_dt <= now() ";
+		$result2 = Yii::app()->db->createCommand($sql)->queryAll();
+
 		$records = array_merge($result1, $result3, $result2);
 		if (count($records) > 0) {
             $result[] = array(
