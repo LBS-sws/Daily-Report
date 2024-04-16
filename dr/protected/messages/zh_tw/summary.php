@@ -161,6 +161,7 @@ return array(
     'comparison_remark_15'=>'15、目標完成度（滾動新生意）=  新增金額 / 滾動新生意目標 * 100%',
     'comparison_remark_16'=>'16、目標完成度（滾動淨增長）=  淨增金額  / 滾動淨增長目標 * 100%',
     'comparison_remark_13_new'=>'13、月停單率 = （“一次性服務+新增（產品）” + “上月一次性服務+新增產品” + 終止金額/12） / 上月服務生意額',
+    'comparison_remark_14_new'=>'14、總停單金額 = 上月一次性服務+新增產品 + 終止 + 恢復 + 暫停 + 更改<br/>綜合停單率 = （總停單金額 / 12 ）/  上月服務生意額 * 100%',
 
     'staff office'=>'辦事處',
     'office Name'=>'辦事處名稱',
@@ -258,5 +259,6 @@ return array(
     'Capacity Staff Not'=>'不達標員工',
     'Not money'=>'不達標金額',
     'Download Not Sales'=>'下載不達標員工',
+    'Composite Stop Rate'=>'綜合停單率',
 );
 ?>

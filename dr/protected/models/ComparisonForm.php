@@ -325,6 +325,7 @@ class ComparisonForm extends CFormModel
             "u_sum"=>0,//U系统金额
             "stopSumOnly"=>0,//本月停單金額（月）
             "monthStopRate"=>0,//月停單率
+            "comStopRate"=>0,//综合停單率
             "new_sum_last"=>0,//新增(上一年)
             "new_sum"=>0,//新增
             "new_rate"=>0,//新增对比比例
@@ -366,9 +367,14 @@ class ComparisonForm extends CFormModel
         //2023年9月改版：月停单率 = (new_sum_n+new_month_n+stop_sum/12)/last_u_actual
         if($bool){
             $list["monthStopRate"] = "-";
+            $list["comStopRate"] = "-";
         }else{
             $list["monthStopRate"] = $list["new_sum_n"]+$list["new_month_n"]+round($list["stop_sum"]/12,2);
             $list["monthStopRate"] = $this->comparisonRate($list["monthStopRate"],$list["last_u_actual"]);
+
+            $list["comStopRate"] = $list["new_month_n"]+$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
+            $list["comStopRate"]/= 12;
+            $list["comStopRate"] = $this->comparisonRate($list["comStopRate"],$list["last_u_actual"]);
         }
         $list["net_sum"]=0;
         $list["net_sum"]+=$list["new_sum"]+$list["new_sum_n"]+$list["new_month_n"];
@@ -522,6 +528,7 @@ class ComparisonForm extends CFormModel
                     array("name"=>$this->comparison_year),//查询年份
                     array("name"=>Yii::t("summary","YoY change")),//YoY change
                     array("name"=>Yii::t("summary","Month Stop Rate")),//月停单率
+                    array("name"=>Yii::t("summary","Composite Stop Rate")),//月停单率
                 )
             ),//YTD终止
             array("name"=>Yii::t("summary","YTD Resume").$monthStr,"exprName"=>$monthStr,"background"=>"#C5D9F1",
@@ -667,7 +674,7 @@ class ComparisonForm extends CFormModel
             "city_name","u_actual_money","new_sum_last","new_sum","new_rate",
             "new_sum_n_last","new_sum_n","new_n_rate",
             "new_month_n_last","new_month_n","new_month_rate",
-            "stop_sum_last","stop_sum","stop_rate","monthStopRate",
+            "stop_sum_last","stop_sum","stop_rate","monthStopRate","comStopRate",
             "resume_sum_last","resume_sum","resume_rate",
             "pause_sum_last","pause_sum","pause_rate",
             "amend_sum_last","amend_sum","amend_rate",

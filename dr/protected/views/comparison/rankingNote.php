@@ -50,6 +50,7 @@
                 <p><?php echo Yii::t("summary","comparison_remark_11");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_12");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_13_new");?></p>
+                <p><?php echo Yii::t("summary","comparison_remark_14_new");?></p>
             </div>
         </div>
     </div>
