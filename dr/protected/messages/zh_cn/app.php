@@ -185,5 +185,6 @@ return array(
     'Capacity Count'=>'产能统计',
     'Sales productivity'=>'销售月均生产率',
     'Pest Type Setting'=>'虫害类型设置',
+    'Supplier report'=>'供应商资料报表',
 );
 ?>

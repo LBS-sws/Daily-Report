@@ -49,7 +49,15 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 				</div>
 			</div>
 		<?php else: ?>
-			<?php echo $form->hiddenField($model, 'city'); ?>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->hiddenField($model, 'city'); ?>
+                    <?php echo TbHtml::textField('city', General::getCityName(Yii::app()->user->city()),
+                        array('readonly'=>(true))
+                    ); ?>
+                </div>
+            </div>
 		<?php endif ?>
 
 		<?php if ($model->showField('start_dt')): ?>

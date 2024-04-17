@@ -183,5 +183,6 @@ return array(
     'LBS WorkOrder'=>'工作單報表',
     'Evaluation Statistics'=>'點評統計',
     'Pest Type Setting'=>'蟲害類型設置',
+    'Supplier report'=>'供應商資料報表',
 );
 ?>

@@ -37,5 +37,6 @@ return array(
 'item_desc'=>'擇要',
 'Company Details'=>'基本資料',
 'Transaction Record'=>'付款記錄',
+    'Supplier report'=>'供應商資料報表',
 );
 ?>

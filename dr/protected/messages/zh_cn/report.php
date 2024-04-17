@@ -76,5 +76,6 @@ return array(
     'Amendment'=>'更改',
     'Terminate'=>'终止',
     'U Service Detail'=>'U系统服务报表',
+    'Supplier report'=>'供应商资料报表',
 );
 ?>

@@ -60,6 +60,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('chain'),'expression'=>array('ReportController','allowChain')),
 			array('allow','actions'=>array('activeService'),'expression'=>array('ReportController','allowActiveService')),
 			array('allow','actions'=>array('contractCom'),'expression'=>array('ReportController','allowContractCom')),
+			array('allow','actions'=>array('supplier'),'expression'=>array('ReportController','allowSupplier')),
 			array('allow',
 				'actions'=>array('generate'),
 				'expression'=>array('ReportController','allowReadOnly'),
@@ -597,6 +598,23 @@ class ReportController extends Controller
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
 
+// Report: Supplier
+	protected static function allowSupplier() {
+		return Yii::app()->user->validFunction('B37');
+	}
+
+	public function actionSupplier() {
+		$this->function_id = 'B37';
+		Yii::app()->session['active_func'] = $this->function_id;
+        $this->showUI('supplier','Supplier report', 'city');
+		//$this->showUIFbList('uService', 'Summary Service Cases Report', 'start_dt,end_dt,format');
+	}
+
+    protected function genSupplier($criteria) {
+        $this->addQueueItem('RptSupplier', $criteria, 'A4');
+        Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+    }
+
 // Report: CustomerKA
 	protected static function allowCustomerKA() {
 		return Yii::app()->user->validFunction('B34');
@@ -779,6 +797,7 @@ class ReportController extends Controller
 				if ($model->id=='contractCom') $this->genContractCom($model);
 				if ($model->id=='uService') $this->genUService($model);
 				if ($model->id=='uServiceDetail') $this->genUServiceDetail($model);
+				if ($model->id=='supplier') $this->genSupplier($model);
 				if ($model->id=='customerKA') $this->genCustomerKA($model);
 				if ($model->id=='chain') $this->genChain($model);
 				if ($model->id=='activeService') $this->genActiveService($model);
