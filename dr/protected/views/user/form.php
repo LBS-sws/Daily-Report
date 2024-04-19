@@ -404,6 +404,29 @@ $('.fastChange').change(function(){
         }
     });
 });
+$('#UserForm_city').change(function(){
+    var city = $(this).val();
+    var lookBool = true;
+    $('#UserForm_look_city').find('input[type=\"checkbox\"]').prop('checked',false);
+    $('.fastChange').prop('checked',false);
+    $('.fastChange').each(function(){
+        var checkCity = $(this).attr('name');
+        if(checkCity==city){
+            $(this).prop('checked',true);
+            $(this).trigger('change');
+            lookBool = false;
+            return false;
+        }
+    });
+    if(lookBool){
+        $('#UserForm_look_city').find('input[type=\"checkbox\"]').each(function(){
+            var checkCity = $(this).val();
+            if(checkCity==city){
+                $(this).prop('checked',true);
+            }
+        });
+    }
+});
 	";
 Yii::app()->clientScript->registerScript('fastChange',$js,CClientScript::POS_READY);
 ?>
