@@ -24,7 +24,7 @@ class UserController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('new','edit','delete','save','applytemplate'),
+				'actions'=>array('new','edit','delete','save','applytemplate','lookCity'),
 				'expression'=>array('UserController','allowReadWrite'),
 			),
 			array('allow', 
@@ -37,7 +37,14 @@ class UserController extends Controller
 		);
 	}
 
-	public function actionIndex($pageNum=0) 
+	public function actionLookCity()
+	{
+        $model = new UserForm('view');
+        $model->resetLookCityForNull();
+        Yii::app()->end();
+    }
+
+	public function actionIndex($pageNum=0)
 	{
 		$model = new UserList;
 		if (isset($_POST['UserList'])) {

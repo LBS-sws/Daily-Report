@@ -15,6 +15,7 @@ class UserForm extends CFormModel
 	public $logoff_time;
 	public $status='A';
 	public $city;
+	public $look_city=array();
 	public $fail_count;
 	public $lock;
 	public $email;
@@ -55,6 +56,7 @@ class UserForm extends CFormModel
 			'logoff_time'=>Yii::t('user','Logoff Time'),
 			'group_id'=>Yii::t('user','Group'),
 			'city'=>Yii::t('user','City'),
+			'look_city'=>Yii::t('user','Look City'),
 			'lock'=>Yii::t('user','Lock'),
 			'email'=>Yii::t('user','Email'),
 			'signature'=>Yii::t('user','Signature'),
@@ -68,7 +70,7 @@ class UserForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('username, disp_name, city','required'),
+			array('username, disp_name, city, look_city','required'),
 			array('username','filter','filter'=>'trim'),
 			array('username','unique','allowEmpty'=>false,
 					'attributeName'=>'username',
@@ -212,6 +214,7 @@ class UserForm extends CFormModel
 				$this->status = $row['status'];
 				$this->logon_time = $row['logon_time'];
 				$this->logoff_time = $row['logoff_time'];
+				$this->look_city = explode(",",$row['look_city']);
 				$this->city = $row['city'];
 				$this->fail_count = $row['fail_count'];
 				$this->lock = (Yii::app()->params['noOfLoginRetry']>0 && Yii::app()->params['noOfLoginRetry']<=$this->fail_count) ?
@@ -307,7 +310,7 @@ class UserForm extends CFormModel
     //哪些字段修改后需要记录
     protected static function historyUpdateList(){
         $list = array(
-            'city', 'email', 'status'
+            'city', 'email', 'status', 'look_city'
         );
         return $list;
     }
@@ -319,6 +322,18 @@ class UserForm extends CFormModel
                 break;
             case "status":
                 $value = GetNameToId::getUserStatusForKey($value);
+                break;
+            case "look_city":
+                $str = "";
+                if(is_array($value)){
+                    foreach ($value as $item){
+                        $str.=empty($str)?"":"、";
+                        $str.=General::getCityName($item);
+                    }
+                }else{
+                    $str=$value;
+                }
+                $value = $str;
                 break;
         }
         return $value;
@@ -364,15 +379,15 @@ class UserForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into security$suffix.sec_user
-							(username, password, disp_name, email, status, lcu, luu, city)
+							(username, password, disp_name, email, status, lcu, luu, city, look_city)
 						values 
-							(:username, :password, :dispname, :email, :status, :lcu, :luu, :city)
+							(:username, :password, :dispname, :email, :status, :lcu, :luu, :city, :look_city)
 					";
 				break;
 			case 'edit':
 				$sql = "update security$suffix.sec_user set ";
 				if ($hashPass !== '') $sql .= "password = :password, ";
-				$sql .= "disp_name = :dispname, email = :email, city = :city, "
+				$sql .= "disp_name = :dispname, email = :email, city = :city, look_city = :look_city, "
 					. (($this->lock==Yii::t('misc','Yes') && $this->fail_count==0) ? "fail_count = 0, " : "")
 					. "luu = :luu, status = :status where username = :username";
 				break;
@@ -392,6 +407,10 @@ class UserForm extends CFormModel
 			$command->bindParam(':password',$hashPass,PDO::PARAM_STR);
 		if (strpos($sql,':city')!==false)
 			$command->bindParam(':city',$this->city,PDO::PARAM_STR);
+		if (strpos($sql,':look_city')!==false){
+            $look_city = !empty($this->look_city)?implode(",",$this->look_city):null;
+            $command->bindParam(':look_city',$look_city,PDO::PARAM_STR);
+        }
 		if (strpos($sql,':lcu')!==false)
 			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
@@ -526,4 +545,82 @@ class UserForm extends CFormModel
 		}
 		return $rtn;
 	}
+
+	public static function getCityListForCity(){
+        $suffix = Yii::app()->params['envSuffix'];
+        //$sql = "select field_id, field_value from security$suffix.sec_template_info where temp_id=$id";
+        $rows = Yii::app()->db->createCommand()->select("code,name")->from("security{$suffix}.sec_city")
+            ->where("ka_bool in (0,1)")->queryAll();//0：城市 1：KA城市 2：区域
+        $list = array();
+        if($rows){
+            foreach ($rows as $row){
+                $list[$row["code"]] = $row["name"];
+            }
+        }
+        return $list;
+    }
+
+	public static function getCityListForArea(){
+        $suffix = Yii::app()->params['envSuffix'];
+        //$sql = "select field_id, field_value from security$suffix.sec_template_info where temp_id=$id";
+        $rows = Yii::app()->db->createCommand()->select("code,name")->from("security{$suffix}.sec_city")
+            ->where("ka_bool=2")->queryAll();//0：城市 1：KA城市 2：区域
+        $list = array();
+        if($rows){
+            foreach ($rows as $row){
+                $city_allow = self::getMinCityForMaxCity($row["code"]);
+                $cityStr = implode(",",array_keys($city_allow));
+
+                $list[$row["code"]] = array("name"=>$row["name"],"city"=>$cityStr,"code"=>$row["code"]);
+            }
+        }
+        return $list;
+    }
+
+    public static function getMinCityForMaxCity($city,$city_allow=array()){
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("code,name,ka_bool")->from("security{$suffix}.sec_city")
+            ->where("region=:region",array(":region"=>$city))->queryAll();//0：城市 1：KA城市 2：区域
+        if($rows){
+            foreach ($rows as $row){
+                if(!key_exists($row["code"],$city_allow)){
+                    $city_allow[$row["code"]]=$row;
+                    $city_allow = self::getMinCityForMaxCity($row["code"],$city_allow);
+                }
+            }
+        }
+	    return $city_allow;
+    }
+
+    public function resetLookCityForNull(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("username,city")->from("security{$suffix}.sec_user")
+            ->where("look_city is null")->queryAll();
+        echo "Start:<br/>";
+        if($rows){
+            $i=0;
+            foreach ($rows as $row){
+                $i++;
+                echo "{$i}、员工:".$row["username"]." ，城市：".$row["city"];
+                $city_allow = self::getMinCityForMaxCity($row["city"]);
+                $cityStr = array();
+                if(!empty($city_allow)){
+                    foreach ($city_allow as $item){
+                        if($item["ka_bool"]!=2){
+                            $cityStr[]=$item["code"];
+                        }
+                    }
+                }else{
+                    $cityStr[] = $row["city"];
+                }
+                $cityStr = implode(",",$cityStr);
+                echo "，管辖城市：".$cityStr;
+                Yii::app()->db->createCommand()->update("security{$suffix}.sec_user",array(
+                    "look_city"=>$cityStr
+                ),"username=:username",array(":username"=>$row["username"]));
+                echo "<br/>";
+            }
+        }
+        echo "End<br/>";
+    }
 }

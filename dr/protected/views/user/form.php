@@ -97,6 +97,29 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 				?>
 				</div>
 			</div>
+
+			<div class="form-group">
+				<?php
+                echo TbHtml::label(Yii::t("user","Fast City"),"",array('class'=>"col-sm-2 control-label"));
+                ?>
+				<div class="col-sm-10">
+				<?php
+                $fastCityList = UserForm::getCityListForArea();
+                foreach ($fastCityList as $row){
+                    echo TbHtml::checkBox($row["code"],false,array('label'=>$row["name"],"class"=>"fastChange",'data-city'=>$row["city"],'labelOptions'=>array("class"=>"checkbox-inline")));
+                }
+                ?>
+				</div>
+			</div>
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'look_city',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-10">
+				<?php
+                echo $form->inlineCheckBoxList($model, 'look_city', UserForm::getCityListForCity(),
+					array('disabled'=>($model->scenario=='view'),'id'=>'look_city'));
+				?>
+				</div>
+			</div>
 			
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'email',array('class'=>"col-sm-2 control-label")); ?>
@@ -369,6 +392,20 @@ Yii::app()->clientScript->registerScript('lookupSelect',$js,CClientScript::POS_R
 
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
+
+$js = "
+$('.fastChange').change(function(){
+    var cityStr = ','+$(this).data('city')+',';
+    var checkBool = $(this).is(':checked')?true:false;
+    $('#UserForm_look_city').find('input[type=\"checkbox\"]').each(function(){
+        var city = ','+$(this).val()+',';
+        if(cityStr.indexOf(city)>-1){
+            $(this).prop('checked',checkBool);
+        }
+    });
+});
+	";
+Yii::app()->clientScript->registerScript('fastChange',$js,CClientScript::POS_READY);
 ?>
 
 <?php $this->endWidget(); ?>

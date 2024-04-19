@@ -21,5 +21,7 @@ return array(
 'Signature'=>'簽名檔',
 'Misc'=>'雜項',
 'Unlock'=>'解鎖',
+    'Look City'=>'管轄城市',
+    'Fast City'=>'快捷操作',
 );
 ?>
