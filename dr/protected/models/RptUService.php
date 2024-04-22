@@ -17,7 +17,13 @@ class RptUService extends ReportData2 {
 	
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
-        $city_allow = $this->criteria->city;
+        $city = $this->criteria->city;
+        if(!General::isJSON($city)){
+            $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+        }else{
+            $city_allow = json_decode($city,true);
+            $city_allow = "'".implode("','",$city_allow)."'";
+        }
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $startDay = isset($this->criteria->start_dt)?date("Y/m/d",strtotime($this->criteria->start_dt)):date("Y/m/d");
         $endDay = isset($this->criteria->end_dt)?date("Y/m/d",strtotime($this->criteria->end_dt)):date("Y/m/d");

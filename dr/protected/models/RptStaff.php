@@ -29,8 +29,12 @@ class RptStaff extends ReportData2 {
 //		$city = Yii::app()->user->city();
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = $this->criteria->city;
-        $city_allow = City::model()->getDescendantList($city);
-        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
+        if(!General::isJSON($city)){
+            $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+        }else{
+            $city_allow = json_decode($city,true);
+            $city_allow = "'".implode("','",$city_allow)."'";
+        }
         $localOffice = Yii::t("staff","local office");
 		$cutoff = isset($this->criteria->end_dt) ? $this->criteria->end_dt : date("Y/m/d");
 		
@@ -120,7 +124,7 @@ class RptStaff extends ReportData2 {
 				$temp['remarks'] = $row['remarks'];
 				$temp['leader'] = General::getLeaderDesc($row['leader']);
 				$temp['lud'] = General::toDate($row['lud']);
-				
+
 				$employee = $this->getEmployeeRecord($row['code'],$model);
 				$temp['year_day'] = $employee['year_day'];
 				$temp['education'] = $employee['education'];
@@ -128,7 +132,7 @@ class RptStaff extends ReportData2 {
 //				$temp['staff_type'] = General::getStaffTypeDesc(strtoupper($employee['staff_type']));
 				$staff_type = empty($row['staff_type'])?$row['dept_class']:$row['staff_type'];
 				$temp['staff_type'] = General::getStaffTypeDesc(strtoupper($staff_type));
-				
+
 				$this->data[] = $temp;
 			}
 		}
@@ -212,8 +216,8 @@ class RptStaff extends ReportData2 {
 	}
 	
 	public function getReportName() {
-		$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';
-		return parent::getReportName().$city_name;
+		//$city_name = isset($this->criteria) ? ' - '.General::getCityNameForList($this->criteria->city) : '';
+		return parent::getReportName();
 	}
 }
 ?>

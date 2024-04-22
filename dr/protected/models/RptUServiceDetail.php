@@ -122,9 +122,12 @@ class RptUServiceDetail extends ReportData2 {
 	}
 
 	public static function getCityAllow($city){
-        $city_allow = City::model()->getDescendantList($city);
-        $cstr = $city;
-        $city_allow .= (empty($city_allow)) ? "'$cstr'" : ",'$cstr'";
+        if(!General::isJSON($city)){
+            $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+        }else{
+            $city_allow = json_decode($city,true);
+            $city_allow = "'".implode("','",$city_allow)."'";
+        }
         if (CountSearch::getSystem()==2&&strpos($city_allow,'MY')!==false){ //國際版的MY需要轉換成KL，SL
             $city_allow.=",'KL','SL'";
         }

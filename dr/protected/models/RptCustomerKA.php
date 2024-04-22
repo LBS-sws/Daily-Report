@@ -212,8 +212,12 @@ class RptCustomerKA extends ReportData2 {
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
-        $city_allow = City::model()->getDescendantList($city);
-        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
+        if(!General::isJSON($city)){
+            $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+        }else{
+            $city_allow = json_decode($city,true);
+            $city_allow = "'".implode("','",$city_allow)."'";
+        }
 
         $type = $this->customerType;
 		
@@ -296,13 +300,14 @@ class RptCustomerKA extends ReportData2 {
 				$this->data[] = $temp;
 			}
 		}
+
 		return true;
 	}
 
 	public function getReportName() {
-    	$statusName = GetNameToId::getServiceStatusForKey($this->customerType);
-		$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';
-		return Yii::t("report","KA customer report").$city_name."({$statusName})";
+    	//$statusName = GetNameToId::getServiceStatusForKey($this->customerType);
+		//$city_name = isset($this->criteria) ? ' - '.General::getCityNameForList($this->criteria->city) : '';
+		return Yii::t("report","KA customer report");
 	}
 }
 ?>

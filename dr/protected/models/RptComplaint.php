@@ -106,8 +106,12 @@ class RptComplaint extends ReportData2 {
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
-        $city_allow = City::model()->getDescendantList($city);
-        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
+        if(!General::isJSON($city)){
+            $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+        }else{
+            $city_allow = json_decode($city,true);
+            $city_allow = "'".implode("','",$city_allow)."'";
+        }
 		$sql = "select a.*
 					from swo_followup a 
 		";
@@ -171,8 +175,8 @@ class RptComplaint extends ReportData2 {
 	}
 	
 	public function getReportName() {
-		$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';
-		return parent::getReportName().$city_name;
+		//$city_name = isset($this->criteria) ? ' - '.General::getCityNameForList($this->criteria->city) : '';
+		return parent::getReportName();
 	}
 }
 ?>

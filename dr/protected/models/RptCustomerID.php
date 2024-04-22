@@ -242,8 +242,12 @@ class RptCustomerID extends ReportData2 {
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
-        $city_allow = City::model()->getDescendantList($city);
-        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
+        if(!General::isJSON($city)){
+            $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+        }else{
+            $city_allow = json_decode($city,true);
+            $city_allow = "'".implode("','",$city_allow)."'";
+        }
 		if ($this->criteria->type=='?') { // 為應付日报表总汇增加ID服务内容 - Percy
 			$type = $this->customerType;
 		} else {
@@ -361,8 +365,8 @@ class RptCustomerID extends ReportData2 {
 	}
 
 	public function getReportName() {
-		$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';
-		return parent::getReportName().$city_name;
+		//$city_name = isset($this->criteria) ? ' - '.General::getCityNameForList($this->criteria->city) : '';
+		return parent::getReportName();
 	}
 }
 ?>

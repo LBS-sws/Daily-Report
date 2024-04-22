@@ -31,8 +31,12 @@ class RptChain extends ReportData2{
         $city = $this->criteria->city;
         $this->chain_num = $this->criteria->chain_num;
         $this->company_status = $this->criteria->company_status;
-        $city_allow = City::model()->getDescendantList($city);
-        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
+        if(!General::isJSON($city)){
+            $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+        }else{
+            $city_allow = json_decode($city,true);
+            $city_allow = "'".implode("','",$city_allow)."'";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         $chainSQL = Yii::app()->db->createCommand()->select("group_id,group_name,count(id) as chain_num")
             ->from("swo_company")
@@ -102,8 +106,8 @@ class RptChain extends ReportData2{
 	}
 
 	public function getReportName() {
-		$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';
-		return parent::getReportName().$city_name;
+		//$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';
+		return parent::getReportName();
 	}
 
     public static function getCompanyStatus($key='',$bool=false){

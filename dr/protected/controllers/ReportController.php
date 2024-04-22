@@ -530,7 +530,7 @@ class ReportController extends Controller
 	public function actionSummarySC() {
 		$this->function_id = 'B30';
 		Yii::app()->session['active_func'] = $this->function_id;
-        $this->showUI('summarySC','Summary Service Cases Report', 'start_dt,end_dt');
+        $this->showUI('summarySC','Summary Service Cases Report', 'start_dt,end_dt,city');
 		//$this->showUIFbList('summarySC', 'Summary Service Cases Report', 'start_dt,end_dt,format');
 	}
 
@@ -571,7 +571,7 @@ class ReportController extends Controller
 	public function actionUService() {
 		$this->function_id = 'B32';
 		Yii::app()->session['active_func'] = $this->function_id;
-        $this->showUI('uService','U Service Amount', 'start_dt,end_dt');
+        $this->showUI('uService','U Service Amount', 'start_dt,end_dt,city');
 		//$this->showUIFbList('uService', 'Summary Service Cases Report', 'start_dt,end_dt,format');
 	}
 
@@ -794,12 +794,12 @@ class ReportController extends Controller
 				if ($model->id=='feedback') $this->genFeedback($model);
 				if ($model->id=='customerID') $this->genCustomerID($model);
 				if ($model->id=='summarySC') $this->genSummarySC($model);
-				if ($model->id=='contractCom') $this->genContractCom($model);
+				//if ($model->id=='contractCom') $this->genContractCom($model);
 				if ($model->id=='uService') $this->genUService($model);
 				if ($model->id=='uServiceDetail') $this->genUServiceDetail($model);
 				if ($model->id=='supplier') $this->genSupplier($model);
 				if ($model->id=='customerKA') $this->genCustomerKA($model);
-				if ($model->id=='chain') $this->genChain($model);
+				//if ($model->id=='chain') $this->genChain($model);
 				if ($model->id=='activeService') $this->genActiveService($model);
 //				Yii::app()->end();
 			} else {

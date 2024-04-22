@@ -60,7 +60,7 @@ class ReportChainForm extends CReportForm
         $data = array(
             'RPT_ID'=>$this->id,
             'RPT_NAME'=>$this->name,
-            'CITY'=>$this->city,
+            'CITY'=>(is_array($this->city) ? json_encode($this->city) : $this->city),
             'PAPER_SZ'=>$this->paper_sz,
             'FIELD_LST'=>$this->fields,
             'START_DT'=>General::toMyDate($this->start_dt),

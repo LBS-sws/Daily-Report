@@ -17,7 +17,14 @@ class RptSummarySC extends ReportData2 {
         $data = array();
         $city_allow="all";
         if(isset($this->criteria->city)&&!empty($this->criteria->city)){
-            $city_allow = $this->criteria->city;
+            //$city_allow = $this->criteria->city;
+            $city = $this->criteria->city;
+            if(!General::isJSON($city)){
+                $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+            }else{
+                $city_allow = json_decode($city,true);
+                $city_allow = "'".implode("','",$city_allow)."'";
+            }
         }
         $citySetList = CitySetForm::getCitySetList($city_allow);
 

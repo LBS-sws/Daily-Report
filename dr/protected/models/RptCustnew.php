@@ -39,8 +39,12 @@ class RptCustnew extends ReportData2 {
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
-        $city_allow = City::model()->getDescendantList($city);
-        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
+        if(!General::isJSON($city)){
+            $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+        }else{
+            $city_allow = json_decode($city,true);
+            $city_allow = "'".implode("','",$city_allow)."'";
+        }
 		
 		$sql = "select a.*, b.description as nature,f.code as com_code,f.name as com_name, c.description as customer_type, d.cust_type_name as cust_type_name_two 
 					from swo_service a
@@ -101,8 +105,8 @@ class RptCustnew extends ReportData2 {
 		return true;
 	}
 	public function getReportName() {
-		$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';
-		return parent::getReportName().$city_name;
+		//$city_name = isset($this->criteria) ? ' - '.General::getCityNameForList($this->criteria->city) : '';
+		return parent::getReportName();
 	}
 }
 ?>

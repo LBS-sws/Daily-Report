@@ -18,7 +18,7 @@
 </head>
 
 <body class="hold-transition <?php echo Yii::app()->params['appcolor']; ?> sidebar-mini">
-<div class="wrapper">
+<div class="wrapper" style="overflow: hidden;">
 
 	<header class="main-header">
 		<!-- Logo -->

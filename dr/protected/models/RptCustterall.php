@@ -48,8 +48,12 @@ class RptCustterall extends ReportData2 {
 	    $this->data=array();
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
-        $city_allow = City::model()->getDescendantList($city);
-        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
+        if(!General::isJSON($city)){
+            $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+        }else{
+            $city_allow = json_decode($city,true);
+            $city_allow = "'".implode("','",$city_allow)."'";
+        }
 		$sql = "select a.*, b.description as nature, c.description as customer_type, d.cont_name, d.cont_phone, d.address
 					from swo_service a
 					left outer join swo_nature b on a.nature_type=b.id 
@@ -120,8 +124,8 @@ class RptCustterall extends ReportData2 {
 	}
 
 	public function getReportName() {
-		$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';
-        $city_name = parent::getReportName().$city_name;
+		//$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';
+        $city_name = parent::getReportName();
 
         $city_name=str_replace("/", "_", $city_name);
         return $city_name;

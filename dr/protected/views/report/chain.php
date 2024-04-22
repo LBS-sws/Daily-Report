@@ -39,11 +39,18 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 
             <?php if ($model->showField('city') && !Yii::app()->user->isSingleCity()): ?>
                 <div class="form-group">
-                    <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                    <?php echo $form->labelEx($model,'cityx',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
-                        <?php echo $form->dropDownList($model, 'city', General::getCityListWithNoDescendant(Yii::app()->user->city_allow()),
-                            array('disabled'=>($model->scenario=='view'))
-                        ); ?>
+                        <?php
+                        $item = General::getCityListWithCityAllow(Yii::app()->user->city_allow());
+                        if (empty($model->city)) {
+                            $model->city = array();
+                            foreach ($item as $key=>$value) {$model->city[] = $key;}
+                        }
+                        echo $form->listbox($model, 'city', $item,
+                            array('size'=>6,'multiple'=>'multiple')
+                        );
+                        ?>
                     </div>
                 </div>
             <?php else: ?>

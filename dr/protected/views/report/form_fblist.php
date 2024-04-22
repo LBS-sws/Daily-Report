@@ -85,16 +85,16 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'cityx',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php 
-						$item = General::getCityListWithNoDescendant(Yii::app()->user->city_allow());
-						if (empty($model->city)) {
-							$model->city = array();
-							foreach ($item as $key=>$value) {$model->city[] = $key;}
-						}
-						echo $form->listbox($model, 'city', $item, 
-							array('size'=>6,'multiple'=>'multiple')
-						); 
-					?>
+                    <?php
+                    $item = General::getCityListWithCityAllow(Yii::app()->user->city_allow());
+                    if (empty($model->city)) {
+                        $model->city = array();
+                        foreach ($item as $key=>$value) {$model->city[] = $key;}
+                    }
+                    echo $form->listbox($model, 'city', $item,
+                        array('size'=>6,'multiple'=>'multiple')
+                    );
+                    ?>
 				</div>
 			</div>
 			

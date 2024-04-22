@@ -31,8 +31,12 @@ class RptRenewal extends ReportData2 {
 	public function retrieveData() {
 //		$city = Yii::app()->user->city();
 		$city = $this->criteria->city;
-        $city_allow = City::model()->getDescendantList($city);
-        $city_allow .= (empty($city_allow)) ? "'$city'" : ",'$city'";
+        if(!General::isJSON($city)){
+            $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+        }else{
+            $city_allow = json_decode($city,true);
+            $city_allow = "'".implode("','",$city_allow)."'";
+        }
 		
 		$sql = "select
 					a.*, d.description as nature, c.description as customer_type
@@ -62,7 +66,7 @@ class RptRenewal extends ReportData2 {
 			if ($where!='') $sql .= $where;	
 		}
 		$sql .= " order by a.city,a.ctrt_end_dt";
-		echo $sql;
+		//echo $sql;
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
