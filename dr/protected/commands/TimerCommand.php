@@ -20,15 +20,12 @@ class TimerCommand extends CConsoleCommand {
         $kittyEmail = $email->getKittyEmail();
         if($userlist){
             foreach ($userlist as $user){
-                if($this->city != $user["city"]){
-                    $this->city = $user["city"];
-                    $this->city_list = $email->getAllCityToMaxCity($user["city"]);
-                }
                 $message="";
+                $city_list = empty($user["look_city"])?array($user["city"]):explode(",",$user["look_city"]); //判斷是否需要查詢下級城市
+
                 foreach ($this->send_list as $send){
                     $maxBool = false;//最大權限
                     $html = "";
-                    $city_list = $send["city_allow"]?$this->city_list:array($user["city"]); //判斷是否需要查詢下級城市
                     $bool = array_intersect($this->city_list,$send["city_list"]);
                     if(key_exists("joeEmail",$send)){//驗證是否額外給繞生發郵件
                         if($send["joeEmail"]){
@@ -118,8 +115,11 @@ class TimerCommand extends CConsoleCommand {
                 $row["status_desc"]=$row["status"]=="N"?"新增":"续约";
                 $row["status_dt"]=General::toDate($row["status_dt"]);
                 if(!in_array($row["city"],$this->city_list)){
+                    $this->city_list[]=$row["city"];
+                    /*
                     $cityAllow = Email::getAllCityToMinCity($row["city"]);
                     $this->city_list = array_unique(array_merge($cityAllow,$this->city_list));
+                    */
                 }
                 if(!key_exists($row["city"],$arr)){
                     $arr["city_list"][]=$row["city"];

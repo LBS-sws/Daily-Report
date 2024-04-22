@@ -204,7 +204,7 @@ class Email {
         }
         $suffix = Yii::app()->params['envSuffix'];
         $systemId = Yii::app()->params['systemId'];
-        $rows = Yii::app()->db->createCommand()->select("a.username,a.city,a.email,(CASE WHEN a.username IN (SELECT incharge FROM security$suffix.sec_city) THEN 1 ELSE 0 END) AS incharge,c.a_read_write")
+        $rows = Yii::app()->db->createCommand()->select("a.username,a.city,a.look_city,a.email,(CASE WHEN a.username IN (SELECT incharge FROM security$suffix.sec_city) THEN 1 ELSE 0 END) AS incharge,c.a_read_write")
             ->from("security$suffix.sec_user a")
             ->leftJoin("security$suffix.sec_city b","a.city = b.code")
             ->leftJoin("security$suffix.sec_user_access c","a.username = c.username")
