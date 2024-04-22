@@ -194,10 +194,14 @@ class Email {
     //
     public function getEmailUserList($city_allow,$usernameEx=""){
         if(!empty($city_allow)){
-            $city_allow = implode("','",$city_allow);
-            $sql = "a.city in ('CN','$city_allow')";
+            $sql = "";
+            foreach ($city_allow as $city){
+                $sql.= empty($sql)?"":" or ";
+                $sql.= "FIND_IN_SET('{$city}',a.look_city)";
+            }
+            $sql = "({$sql})";
             if(!empty($usernameEx)){//額外的lcu
-                $sql = " (a.city in ('CN','$city_allow') or a.username='{$usernameEx}')";
+                $sql.= " or a.username='{$usernameEx}'";
             }
         }else{
             return false;
