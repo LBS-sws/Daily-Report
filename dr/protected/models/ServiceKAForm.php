@@ -139,6 +139,8 @@ class ServiceKAForm extends ServiceForm
 				$this->commission = $row['commission'];
 				$this->other_commission = $row['other_commission'];
 				$this->service_no = $row['service_no'];
+                $this->customer_code = $row['com_code'];
+                $this->customer_name = $row['com_name'];
 				$this->company_id = empty($row['company_id'])?"":$row['company_id'];
 				$this->company_name = empty($row['com_name'])?$row['company_name']:$row['com_code'].$row['com_name'];
 				$this->nature_type = $row['nature_type'];

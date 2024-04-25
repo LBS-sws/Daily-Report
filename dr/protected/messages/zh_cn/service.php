@@ -163,5 +163,19 @@ return array(
     'Copy To KA'=>'复制到KA服务',
     'Copy To Service'=>'复制到客户服务',
     'Record Copy'=>'复制成功，且已保存',
+
+    'City'=>'城市',
+    'Apply date'=>'申请日期',
+    'Cross city'=>'承接城市',
+    'Rate number'=>'比例',
+    'Rate For Amt'=>'比例后金额',
+    'reject note'=>'拒绝原因',
+    'My Cross Apply'=>'我的交叉派单',
+    'status type'=>'状态',
+    'pending review'=>'待审核',
+    'rejected'=>'已拒绝',
+    'finish'=>'已完成',
+    'audit date'=>'审核时间',
+    'audit user'=>'审核账号',
 );
 ?>

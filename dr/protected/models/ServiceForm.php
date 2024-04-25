@@ -12,6 +12,8 @@ class ServiceForm extends CFormModel
 	public $service_no;
 	public $service_new_id=0;
 	public $company_id;
+	public $customer_code;
+	public $customer_name;
 	public $company_name;
 	public $nature_type;
 	public $nature_type_two;
@@ -341,6 +343,8 @@ class ServiceForm extends CFormModel
 				$this->commission = $row['commission'];
 				$this->other_commission = $row['other_commission'];
 				$this->service_no = $row['service_no'];
+				$this->customer_code = $row['com_code'];
+				$this->customer_name = $row['com_name'];
 				$this->company_id = empty($row['company_id'])?"":$row['company_id'];
 				$this->company_name = empty($row['com_name'])?$row['company_name']:$row['com_code'].$row['com_name'];
 				$this->nature_type = $row['nature_type'];

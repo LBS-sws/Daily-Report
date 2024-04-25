@@ -184,5 +184,9 @@ return array(
     'Evaluation Statistics'=>'點評統計',
     'Pest Type Setting'=>'蟲害類型設置',
     'Supplier report'=>'供應商資料報表',
+    'Cross dispatch'=>'交叉派單',
+    'Cross Apply'=>'申請交叉派單',
+    'Cross Audit'=>'審核交叉派單',
+    'Cross Search'=>'查詢交叉派單',
 );
 ?>

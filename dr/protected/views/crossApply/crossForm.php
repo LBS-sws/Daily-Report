@@ -1,0 +1,134 @@
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+        <a href="#cross" aria-controls="cross" role="tab" data-toggle="tab"><?php echo Yii::t("app","Cross Apply");?></a>
+    </li>
+    <li role="presentation">
+        <a href="#service" aria-controls="service" role="tab" data-toggle="tab"><?php echo Yii::t("app","Customer Service");?></a>
+    </li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+    <!-- cross -->
+    <div role="tabpanel" class="tab-pane active" id="cross">
+        <p>&nbsp;</p>
+        <?php if ($model->status_type==2): ?>
+            <div class="form-group has-error">
+                <?php echo $form->labelEx($model,'reject_note',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-7">
+                    <?php echo $form->textArea($model, 'reject_note',
+                        array('readonly'=>true,'rows'=>4)
+                    ); ?>
+                </div>
+            </div>
+        <?php endif ?>
+        <div class="form-group">
+            <?php echo $form->labelEx($model,'contract_no',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php echo $form->textField($model, 'contract_no',
+                    array('readonly'=>true)
+                ); ?>
+            </div>
+            <?php echo Tbhtml::label(Yii::t("service","status type"),'',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-2">
+                <?php
+                echo Tbhtml::textField('status_type',CrossApplyList::getStatusStrForStatusType($model->status_type),array('readonly'=>true));
+                ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $form->labelEx($model,'apply_date',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php echo $form->textField($model, 'apply_date',
+                    array('readonly'=>$model->readonly(),'id'=>'cross_apply_date','prepend'=>"<span class='fa fa-calendar'></span>")
+                ); ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $form->labelEx($model,'cross_city',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php echo $form->dropDownList($model, 'cross_city',CrossApplyForm::getCityList(),
+                    array('empty'=>'','id'=>'cross_cross_city','readonly'=>$model->readonly())
+                ); ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $form->labelEx($model,'month_amt',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php echo $form->textField($model, 'month_amt',
+                    array('readonly'=>$model->readonly(),'id'=>'cross_month_amt','prepend'=>"<span class='fa fa-cny'></span>")
+                ); ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $form->labelEx($model,'rate_num',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php echo $form->textField($model, 'rate_num',
+                    array('readonly'=>$model->readonly(),'id'=>'cross_rate_num','append'=>"%")
+                ); ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo Tbhtml::label(Yii::t("service","Rate For Amt"),'',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php
+                $rate_amt = $model->month_amt*$model->rate_num;
+                $rate_amt = is_numeric($rate_amt)?($rate_amt/100):0;
+                echo Tbhtml::textField('rate_amt',$rate_amt,array('id'=>'cross_rate_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>"));
+                ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $form->labelEx($model,'remark',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-7">
+                <?php echo $form->textArea($model, 'remark',
+                    array('readonly'=>$model->readonly(),'id'=>'cross_textArea','rows'=>4)
+                ); ?>
+            </div>
+        </div>
+        <?php if ($model->status_type==5): ?>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'luu',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-2">
+                    <?php echo $form->textField($model, 'luu',
+                        array('readonly'=>true)
+                    ); ?>
+                </div>
+                <?php echo $form->labelEx($model,'audit_date',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-2">
+                    <?php echo $form->textField($model, 'audit_date',
+                        array('readonly'=>true)
+                    ); ?>
+                </div>
+            </div>
+        <?php endif ?>
+    </div>
+
+    <!-- service -->
+    <div role="tabpanel" class="tab-pane" id="service">
+        <p>&nbsp;</p>
+        <?php $this->renderPartial('//crossApply/serviceForm',array("model"=>$model,"form"=>$form)); ?>
+    </div>
+</div>
+
+<?php
+if($model->status_type==2){
+    $js="
+	$('#cross_rate_num,#cross_month_amt').on('change keyup',function(){
+	    var rate_num= $('#cross_rate_num').val();
+	    var month_amt= $('#cross_month_amt').val();
+	    var rate_amt= 0;
+	    if(rate_num!=''&&month_amt!=''){
+	        rate_amt = month_amt*(rate_num/100);
+	        rate_amt = rate_amt.toFixed(2);
+	        $('#cross_rate_amt').val(rate_amt);
+	    }else{
+	        $('#cross_rate_amt').val('');
+	    }
+	});
+	";
+    Yii::app()->clientScript->registerScript('crossDialog',$js,CClientScript::POS_READY);
+}
+?>

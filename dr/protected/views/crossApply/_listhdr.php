@@ -1,0 +1,43 @@
+<tr>
+	<th></th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('contract_no').$this->drawOrderArrow('a.contract_no'),'#',$this->createOrderLink('crossApply-list','a.contract_no'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('apply_date').$this->drawOrderArrow('a.apply_date'),'#',$this->createOrderLink('crossApply-list','a.apply_date'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('month_amt').$this->drawOrderArrow('a.month_amt'),'#',$this->createOrderLink('crossApply-list','a.month_amt'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('rate_num').$this->drawOrderArrow('a.rate_num'),'#',$this->createOrderLink('crossApply-list','a.rate_num'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('rate_amt').$this->drawOrderArrow('a.rate_amt'),'#',$this->createOrderLink('crossApply-list','a.rate_amt'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('old_city').$this->drawOrderArrow('b.name'),'#',$this->createOrderLink('crossApply-list','b.name'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('cross_city').$this->drawOrderArrow('f.name'),'#',$this->createOrderLink('crossApply-list','f.name'))
+			;
+		?>
+	</th>
+    <th>
+        <?php echo TbHtml::link($this->getLabelName('status_type').$this->drawOrderArrow('a.status_type'),'#',$this->createOrderLink('crossApply-list','a.status_type'))
+        ;
+        ?>
+    </th>
+</tr>

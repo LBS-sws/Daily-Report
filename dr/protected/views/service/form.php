@@ -70,6 +70,14 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 	</div>
             <?php if ($model->scenario!='new'): ?>
                 <div class="btn-group pull-right" role="group">
+                    <?php
+                    if (Yii::app()->user->validRWFunction('CD01')&&!empty($model->contract_no)&&$model->status=="N"){ //交叉派单
+                        echo TbHtml::button('<span class="fa fa-superpowers"></span> '.Yii::t('app','Cross dispatch'), array(
+                                'data-toggle'=>'modal','data-target'=>'#crossDialog',)
+                        );
+                    }
+                    ?>
+
                     <?php echo TbHtml::button('<span class="fa fa-list"></span> '.Yii::t('service','Flow Info'), array(
                             'data-toggle'=>'modal','data-target'=>'#flowinfodialog',)
                     );
@@ -669,7 +677,11 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 													));
 ?>
 
-
+<?php
+if (Yii::app()->user->validRWFunction('CD01')&&$model->status=="N"){ //交叉派单
+    $this->renderPartial('//crossApply/crossDialog');
+}
+?>
 <?php
 Script::genFileUpload($model,$form->id,'SERVICE');
 $link3 = Yii::app()->createAbsoluteUrl("service/getcusttypelist");
@@ -848,13 +860,14 @@ $js = Script::genDeleteData(Yii::app()->createUrl('service/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 if ($model->scenario!='view') {
-	$js = "
-	$('#ServiceForm_status_dt').datepicker({autoclose: true, format: 'yyyy/mm/dd'});
-	$('#ServiceForm_sign_dt').datepicker({autoclose: true, format: 'yyyy/mm/dd'});
-	$('#ServiceForm_ctrt_end_dt').datepicker({autoclose: true, format: 'yyyy/mm/dd'});
-	$('#ServiceForm_first_dt').datepicker({autoclose: true, format: 'yyyy/mm/dd'});
-	$('#ServiceForm_equip_install_dt').datepicker({autoclose: true, format: 'yyyy/mm/dd'});
-	";
+    $js = Script::genDatePicker(array(
+        'ServiceForm_status_dt',
+        'ServiceForm_sign_dt',
+        'ServiceForm_ctrt_end_dt',
+        'ServiceForm_first_dt',
+        'ServiceForm_equip_install_dt',
+        'cross_apply_date',
+    ));
 	Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 }
 

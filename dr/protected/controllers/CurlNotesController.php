@@ -109,6 +109,7 @@ class CurlNotesController extends Controller
 
 	public function actionSystem($type)
 	{
+	    set_time_limit(0);
         $model = new CurlNotesList();
         $model->systemU($type);
         die();

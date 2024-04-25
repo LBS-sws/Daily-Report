@@ -59,6 +59,24 @@ return array(
 			),
 		),
 	),
+    'Cross dispatch'=>array(//交叉派单
+        'access'=>'CD',
+        'icon'=>'fa-superpowers',
+        'items'=>array(
+            'Cross Apply'=>array(//交叉派单申请
+                'access'=>'CD01',
+                'url'=>'/crossApply/index',
+            ),
+            'Cross Audit'=>array(//交叉派单审核
+                'access'=>'CD02',
+                'url'=>'/crossAudit/index',
+            ),
+            'Cross Search'=>array(//交叉派单查询
+                'access'=>'CD03',
+                'url'=>'/crossSearch/index',
+            ),
+        ),
+    ),
     'Quality'=>array(
         'access'=>'E',
         'icon'=>'fa-life-ring',

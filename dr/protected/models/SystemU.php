@@ -20,7 +20,7 @@ class SystemU {
         );
         if (!empty($customer)) $data['customer'] = $customer;
         $data_string = json_encode($data);
-        $curlStartDate = date("Y/m/d H:i:s");
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -64,7 +64,7 @@ class SystemU {
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
-        $curlStartDate = date("Y/m/d H:i:s");
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -108,7 +108,7 @@ class SystemU {
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
-        $curlStartDate = date("Y/m/d H:i:s");
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -152,7 +152,7 @@ class SystemU {
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
-        $curlStartDate = date("Y/m/d H:i:s");
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -196,7 +196,7 @@ class SystemU {
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
-        $curlStartDate = date("Y/m/d H:i:s");
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -240,7 +240,7 @@ class SystemU {
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
-        $curlStartDate = date("Y/m/d H:i:s");
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -284,7 +284,7 @@ class SystemU {
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
-        $curlStartDate = date("Y/m/d H:i:s");
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -328,7 +328,7 @@ class SystemU {
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
-        $curlStartDate = date("Y/m/d H:i:s");
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -372,7 +372,7 @@ class SystemU {
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
-        $curlStartDate = date("Y/m/d H:i:s");
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -416,7 +416,7 @@ class SystemU {
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
-        $curlStartDate = date("Y/m/d H:i:s");
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -460,7 +460,7 @@ class SystemU {
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
-        $curlStartDate = date("Y/m/d H:i:s");
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -504,7 +504,7 @@ class SystemU {
             "month"=>$month,
         );
         $data_string = json_encode($data);
-        $curlStartDate = date("Y/m/d H:i:s");
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -526,6 +526,51 @@ class SystemU {
             $rtn['message'] = self::getJsonError(json_last_error());
         }
 
+        return $rtn;
+    }
+
+    //给U系统发送交叉派单的数据
+    public static function sendUForCross($data) {
+        $rtn = array('message'=>'', 'code'=>400);
+        $key = self::generate_key();
+        $root = Yii::app()->params['uCurlRootURL'];
+        $url = $root.'/index.php/api/lbs.CrossAudit/getAuditInfo';
+        $data["key"] = $key;
+        $data_string = json_encode($data);
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type:application/json',
+            'Content-Length:'.strlen($data_string),
+        ));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $out = curl_exec($ch);
+        if ($out===false) {
+            $rtn['message'] = curl_error($ch);
+            $rtn['outData'] = $rtn['message'];
+        } else {
+            $rtn['outData'] = $out;
+            $json = json_decode($out, true);
+            $rtn['message'] = isset($json["message"])?$json["message"]:"";
+            if(isset($json["code"])&&$json["code"]==200){
+                $rtn['code'] = 200;
+            }
+        }
+
+        $sqlData=array(
+            "status_type"=>$rtn['code']==200?"C":"E",
+            "info_type"=>"cross",
+            "info_url"=>$url,
+            "data_content"=>json_encode($data),
+            "out_content"=>$rtn['outData'],
+            "message"=>$rtn['message'],
+        );
+        $suffix = Yii::app()->params['envSuffix'];
+        Yii::app()->db->createCommand()->insert("hr{$suffix}.hr_api_curl",$sqlData);
         return $rtn;
     }
 
@@ -569,7 +614,7 @@ class SystemU {
     }
 
     private static function printCurl($url,$data,$out,$curlStartDate){
-        $curlEndDate = date("Y/m/d H:i:s");
+        $curlEndDate = date_format(date_create(),"Y/m/d H:i:s");
         $curlDateLength = strtotime($curlEndDate)-strtotime($curlStartDate);
         echo "请求时间：".$curlStartDate;
         echo "<br/>";

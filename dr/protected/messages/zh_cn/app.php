@@ -186,5 +186,9 @@ return array(
     'Sales productivity'=>'销售月均生产率',
     'Pest Type Setting'=>'虫害类型设置',
     'Supplier report'=>'供应商资料报表',
+    'Cross dispatch'=>'交叉派单',
+    'Cross Apply'=>'申请交叉派单',
+    'Cross Audit'=>'审核交叉派单',
+    'Cross Search'=>'查询交叉派单',
 );
 ?>
