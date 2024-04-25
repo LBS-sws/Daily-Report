@@ -8,6 +8,9 @@ $this->pageTitle=Yii::app()->name . ' - CurlNotes';
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_INLINE,
 )); ?>
+<style>
+    td{word-break: break-all;}
+</style>
 
 <section class="content-header">
 	<h1>

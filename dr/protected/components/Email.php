@@ -244,13 +244,7 @@ class Email {
         $suffix = Yii::app()->params['envSuffix'];
         $systemId = Yii::app()->params['systemId'];
         //$city = Yii::app()->user->city();
-        $cityList = $this->getAllCityToMinCity($city);
-        if(count($cityList)>1){
-            $cityList = "'".implode("','",$cityList)."'";
-            $sql = " and b.city in ($cityList) ";
-        }else{
-            $sql = " and b.city = '$city' ";
-        }
+        $sql = " and FIND_IN_SET('{$city}',b.look_city) ";
         if(!is_array($str)){
             $likeSql = " and a.a_read_write like '%$str%'";
         }else{

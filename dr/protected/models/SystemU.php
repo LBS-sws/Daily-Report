@@ -555,7 +555,7 @@ class SystemU {
         } else {
             $rtn['outData'] = $out;
             $json = json_decode($out, true);
-            $rtn['message'] = isset($json["message"])?$json["message"]:"";
+            $rtn['message'] = isset($json["msg"])?$json["msg"]:"";
             if(isset($json["code"])&&$json["code"]==200){
                 $rtn['code'] = 200;
             }
@@ -568,6 +568,7 @@ class SystemU {
             "data_content"=>json_encode($data),
             "out_content"=>$rtn['outData'],
             "message"=>$rtn['message'],
+            "lcu"=>Yii::app()->user->id,
         );
         $suffix = Yii::app()->params['envSuffix'];
         Yii::app()->db->createCommand()->insert("hr{$suffix}.hr_api_curl",$sqlData);

@@ -59,7 +59,12 @@ class CurlNotesList extends CListPageModel
 		$clause = "";
 		if(!empty($this->info_type)){
             $svalue = str_replace("'","\'",$this->info_type);
-		    $clause.=" and info_type='$svalue' ";
+            //"ServiceFull"=>"服务合约",
+            if($svalue=="ServiceOne"){
+                $clause.=" and info_type in ('ServiceOne','ServiceFull') ";
+            }else{
+                $clause.=" and info_type='$svalue' ";
+            }
         }
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
@@ -134,8 +139,8 @@ class CurlNotesList extends CListPageModel
         if($bool){
             if(key_exists($key,$list)){
                 return $list[$key];
-            }else{
-                return $key;
+            }else{//ServiceFull"=>"服务合约",
+                return $key=="ServiceFull"?"服务合约":$key;
             }
         }else{
             return $list;
@@ -162,8 +167,8 @@ class CurlNotesList extends CListPageModel
         return array(
             "status"=>1,//客户服务的状态
             "city"=>"ZH",//城市
-            "status_dt"=>"2024-02-".($num>20?$num%20:$num)." 16:03:28",//记录时间
-            "contract_no"=>"888888-1{$num}",//合约编号
+            "status_dt"=>"2024-04-".($num>20?$num%20:$num)." 10:33:28",//记录时间
+            "contract_no"=>"8558-1{$num}",//合约编号
             "contract_type"=>"普通合约",//合约类型（普通合约、KA合约）
             "company_code"=>"dddd112-ZH",//客户公司编号
             "company_type"=>2,//客户公司类型
@@ -177,7 +182,7 @@ class CurlNotesList extends CListPageModel
             "service_name_rec"=>"常驻灭虫",//服务內容
             "service_type_rec"=>13,//服务內容
             "amt_paid"=>12000*$num,//发票金额
-            "sales_code"=>"400002",//销售编号
+            "sales_code"=>"800002",//销售编号
             "amt_install"=>$num%2==0?100*$num:null,//安装金额
             "item_04"=>$num%2==0?100*$num:null,//是否需要安装费用
             "item_05"=>null,//是否需要安装费用
@@ -188,15 +193,15 @@ class CurlNotesList extends CListPageModel
             "item_10"=>null,//是否需要安装费用
             "item_13"=>null,//是否需要安装费用
             "surplus"=>$num,//剩余次数
-            "other_sales_code"=>null,//跨区销售员编号
+            "other_sales_code"=>"789444",//跨区销售员编号
             "sign_dt"=>"2024-01-09",//签约日期
-            "ctrt_end_dt"=>"2025-01-09",//合同终止日期
+            "ctrt_end_dt"=>"",//合同终止日期
             "first_dt"=>"2024-01-11",//首次日期
             "technician_01"=>"400002",//首次技术员1编号
             "technician_02"=>null,//首次技术员2编号
             "technician_03"=>null,//首次技术员3编号
-            "technician_arr"=>array("400001","400002","400003","400004"),//负责技术员数组
-            "first_tech_arr"=>array("400002","400003"),//首次技术员数组
+            "technician_arr"=>array("900001","900002","900003","900004"),//负责技术员数组
+            "first_tech_arr"=>array("900002","900003"),//首次技术员数组
             "reason"=>"没有原因",//原因
             "remarks2"=>"客户位置比较偏僻",//备注
             "prepay_month"=>$num%2==0?100*$num:null,//预付月数
@@ -211,14 +216,16 @@ class CurlNotesList extends CListPageModel
                 "month_cycle"=>8191,//服务內容
                 "week_cycle"=>31,//服务內容
                 "day_cycle"=>64,//服务內容
-                "ctrt_end_dt"=>"2025-01-09",//合同终止日期
+                "ctrt_end_dt"=>"0000-00-00",//合同终止日期
+                //"ctrt_end_dt"=>"2025-01-09",//合同终止日期
                 "stop_dt"=>null,//终止日期
                 "service_type"=>10,//服务类型
                 "lbs_type_one"=>2,//LBS对应id（一级栏位）
                 "lbs_type_two"=>74,//LBS对应id（二级栏位）
                 "service_name_rec"=>"常驻灭虫",//服务內容
                 "service_type_rec"=>13,//服务內容
-            ),*/
+            ),
+            */
         );
     }
 
@@ -334,7 +341,7 @@ class CurlNotesList extends CListPageModel
             //获取服务单月数据（周為鍵名)
             "getUServiceMoneyToWeek"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
             //获取技术员金额（技术员编号為鍵名)
-            "getTechnicianMoney"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
+            "getTechnicianMoney"=>array("args"=>array("start"=>"2024-03-01","end"=>"2024-03-31","city"=>"'{$city}'")),
             //获取技术员金额U系统详情（需要自己分开服务单）
             "getTechnicianDetail"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
             //获取技术员的创新金额、夜单金额、服务金额
