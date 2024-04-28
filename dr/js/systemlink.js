@@ -171,6 +171,8 @@ function goNewUnited(id, url, home, string, user_id,code){
 					alert('账号在派单系统未设置办公室权限,无法跳转，请联系你的上级处理')
 				}else if(json.code===400){//账号禁用
 					alert('账号在派单系统被禁用,禁止跳转')
+				}else if(json.code) {
+					alert(json.message)
 				}else{
 					alert('切换失败，找不到账号')
 				}
