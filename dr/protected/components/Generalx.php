@@ -480,6 +480,19 @@ class General {
 		return Yii::app()->db->createCommand($sql)->queryScalar();
 	}
 
+	public static function getCityNameForList($code) {
+	    if (self::isJSON($code)){
+            $list = json_decode($code,true);
+            $cityList = array();
+            foreach ($list as $city){
+                $cityList[]=self::getCityName($city);
+            }
+            return implode("、",$cityList);
+        }else{
+	        return self::getCityName($code);
+        }
+	}
+
 	public function getInstalledSystemList() {
 		$rtn = array();
 		$systems = Yii::app()->params['systemMapping'];
