@@ -119,11 +119,14 @@ $this->pageTitle=Yii::app()->name . ' - UService Form';
                         </div>
 
                         <div class="form-group">
+                            <?php echo $form->hiddenField($model, 'city'); ?>
                             <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
-                            <div class="col-sm-2">
-                                <?php echo $form->dropDownList($model, 'city',UServiceForm::getCityList(),
-                                    array('readonly'=>true)
-                                ); ?>
+                            <div class="col-sm-4">
+                                <?php
+                                echo $form->textArea($model, 'city_desc',
+                                    array('rows'=>2,'cols'=>80,'maxlength'=>1000,'readonly'=>true)
+                                );
+                                ?>
                             </div>
                         </div>
                         <div class="form-group">

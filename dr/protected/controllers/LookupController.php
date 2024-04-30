@@ -26,7 +26,8 @@ class LookupController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('company','staff','product','companyex2','companyex','staffex','staffAndEx','staffex2','productex','template','userstaffex','reasonex'),
+				'actions'=>array('company','staff','product','companyex2','companyex','staffex','staffAndEx','staffex2','productex','template','userstaffex','reasonex',
+                    'citySearchex'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -331,6 +332,28 @@ class LookupController extends Controller
 			}
 		}
 		print json_encode($result);
+	}
+
+	public function actionCitySearchex($search)
+	{
+        $city_allow = Yii::app()->user->city_allow();
+        $searchx = str_replace("'","\'",$search);
+        $list = array();
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("code,name")
+            ->from("security{$suffix}.sec_city")
+            ->where("code in ({$city_allow}) and (code like '%{$searchx}%' or name like '%{$searchx}%')")
+            ->order("name")
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $list[] =array(
+                    "id"=>$row["code"],
+                    "value"=>$row["name"],
+                );
+            }
+        }
+		print json_encode($list);
 	}
 
 	public function actionTemplate($system) {

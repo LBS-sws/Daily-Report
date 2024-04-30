@@ -57,6 +57,67 @@ function lookupclear() {
 EOF;
 		return $str;
 	}
+
+	public static function genLookupSelectText() {
+		$mesg = Yii::t('dialog','No Record Found');
+		$str = <<<EOF
+$('#btnLookupSelect').on('click',function() {
+	$('#lookupdialog').modal('hide');
+	lookupselectText();
+});
+		
+$('#btnLookupCancel').on('click',function() {
+	$('#lookupdialog').modal('hide');
+	lookupclearText();
+});
+
+function lookupselectText() {
+	var codeval = "";
+	var valueval = "";
+	$("#lstlookup option:selected").each(function(i, selected) {
+		codeval = ((codeval=="") ? codeval : codeval+"~") + $(selected).val();
+		valueval = ((valueval=="") ? valueval : valueval+" ") + $(selected).text();
+	});
+	if(valueval==''){
+	    valueval='全部';
+	}
+	var ofstr = $('#lookupotherfield').val();
+
+	if (valueval!='$mesg') {
+		var codefield = $('#lookupcodefield').val();
+		var valuefield = $('#lookupvaluefield').val();
+		if (codefield!='') $('#'+codefield).val(codeval);
+		$('#'+valuefield).val(valueval);
+		
+		var others = (ofstr!='') ? ofstr.split("/") : new Array();
+		if (others.length > 0) {
+			$.each(others, function(idx, item) {
+				var field = item.split(",");
+				if (field.length > 0) {
+					var fldId = 'otherfld_'+codeval+'_'+field[0];
+					var fldVal = $('#'+fldId).val();
+					$('#'+field[1]).val(fldVal);
+				}
+			});
+		}
+	}
+	
+	lookupclearText();
+}
+
+function lookupclearText() {
+	$('#lookuptype').val('');
+	$('#lookupcodefield').val('');
+	$('#lookupvaluefield').val('');
+	$("#txtlookup").val('');
+	$("#lstlookup").empty();
+	$('#fieldvalue').empty();
+	$("#lstlookup").removeAttr('multiple');
+	$("#lookup-label").removeAttr('style');
+}
+EOF;
+		return $str;
+	}
  
 	public static function genLookupButton($btnName, $lookupType, $codeField, $valueField, $multiselect=false) {
 		$multiflag = $multiselect ? 'true' : 'false';
@@ -103,6 +164,52 @@ EOF;
 $('#$btnName').on('click',function() {
 	var code = $("input[id*='$codeField']").attr("id");
 	var value = $("input[id*='$valueField']").attr("id");
+	var title = $("label[for='"+value+"']").text();
+	$lookuptypeStmt
+	$('#lookupcodefield').val(code);
+	$('#lookupvaluefield').val(value);
+	$('#lookupotherfield').val('$others');
+	$('#lookupparamfield').val('$params');
+	if ($multiflag){
+	    $('#lstlookup').attr('multiple','multiple');
+	    $('#lookup-label').attr('style','display: block');
+	}else{
+	    $('#lstlookup').removeAttr('multiple');
+	    $('#lookup-label').attr('style','display: none');
+	}
+//	$('#lookupdialog').dialog('option','title',title);
+	$('#lookupdialog').find('.modal-title').text(title);
+	$('#lookupdialog').modal('show');
+});
+EOF;
+		return $str;
+	}
+
+	public static function genLookupButtonText($btnName, $lookupType, $codeField, $valueField, $otherFields=array(), $multiselect=false, $paramFields=array()) {
+		$others = '';
+		if (!empty($otherFields)) {
+			foreach ($otherFields as $key=>$field) {
+				$others .= ($others=='' ? '' : '/').$key.','.$field;
+			}
+		}
+		$params = '';
+		if (!empty($paramFields)) {
+			foreach ($paramFields as $key=>$field) {
+				$params .= ($params=='' ? '' : '/').$key.','.$field;
+			}
+		}
+		$multiflag = $multiselect ? 'true' : 'false';
+		$lookuptypeStmt = ($lookupType!=='*') ? "$('#lookuptype').val('$lookupType');" : '';
+
+		if(key_exists("maxCount",$paramFields)){
+            $lookuptypeStmt.="$('#lstlookup').attr('maxCount','{$paramFields['maxCount']}');";
+        }else{
+            $lookuptypeStmt.="$('#lstlookup').removeAttr('maxCount');";
+        }
+		$str = <<<EOF
+$('#$btnName').on('click',function() {
+	var code = $("input[id*='$codeField']").attr("id");
+	var value = $("*[id*='$valueField']").attr("id");
 	var title = $("label[for='"+value+"']").text();
 	$lookuptypeStmt
 	$('#lookupcodefield').val(code);

@@ -33,6 +33,7 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
 	<div class="box box-info">
 		<div class="box-body">
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
+			<?php echo $form->hiddenField($model, 'city'); ?>
 
             <div class="form-group">
                 <?php echo $form->labelEx($model,'search_type',array('class'=>"col-sm-2 control-label")); ?>
@@ -101,10 +102,19 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
 
             <div class="form-group">
                 <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-4">
+                    <?php
+                    echo $form->textArea($model, 'city_desc',
+                        array('rows'=>2,'cols'=>80,'maxlength'=>1000,'readonly'=>true)
+                    );
+                    ?>
+                </div>
                 <div class="col-sm-2">
-                    <?php echo $form->dropDownList($model, 'city',UServiceForm::getCityList(),
-                        array('readonly'=>false)
-                    ); ?>
+                    <?php
+                    echo TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('dialog','Select'),
+                        array('name'=>'btnCity','id'=>'btnCity',)
+                    );
+                    ?>
                 </div>
             </div>
             <div class="form-group">
@@ -135,8 +145,22 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
 	</div>
 </section>
 
+<?php $this->renderPartial('//site/lookup'); ?>
 
 <?php
+$js = Script::genLookupSearchEx();
+Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);
+
+$js = Script::genLookupButtonText('btnCity', 'citySearch', 'city', 'city_desc',
+    array(),
+    true
+);
+Yii::app()->clientScript->registerScript('lookupCity',$js,CClientScript::POS_READY);
+
+$js = Script::genLookupSelectText();
+Yii::app()->clientScript->registerScript('lookupSelect',$js,CClientScript::POS_READY);
+
+
 $js="
     $('#year_one,#year_two').change(function(){
         var year = $(this).val();

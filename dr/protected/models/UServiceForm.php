@@ -16,6 +16,7 @@ class UServiceForm extends CFormModel
 	public $seniority_max=9999;//年资（最大）
     public $month_type;
     public $city;
+    public $city_desc="全部";
     public $city_allow;
 
 	public $data=array();
@@ -52,18 +53,21 @@ class UServiceForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('condition,seniority_min,seniority_max,search_type,city,search_start_date,search_end_date,search_year,search_quarter,search_month','safe'),
-            array('search_type,city','required'),
+            array('condition,seniority_min,seniority_max,search_type,city,city_desc,search_start_date,search_end_date,search_year,search_quarter,search_month','safe'),
+            array('search_type','required'),
             array('search_type','validateDate'),
             array('city','validateCity'),
 		);
 	}
 
     public function validateCity($attribute, $params) {
-        $this->city = empty($this->city)?Yii::app()->user->city():$this->city;
-        $city_allow = City::model()->getDescendantList($this->city);
-        $cstr = $this->city;
-        $city_allow .= (empty($city_allow)) ? "'$cstr'" : ",'$cstr'";
+	    if(empty($this->city)){
+            $city_allow = Yii::app()->user->city_allow();
+        }else{
+	        $city_allow = explode("~",$this->city);
+            $city_allow = implode("','",$city_allow);
+            $city_allow = "'{$city_allow}'";
+        }
         $this->city_allow = $city_allow;
     }
 
@@ -131,6 +135,7 @@ class UServiceForm extends CFormModel
             'condition'=>$this->condition,
             'seniority_min'=>$this->seniority_min,
             'seniority_max'=>$this->seniority_max,
+            'city_desc'=>$this->city_desc,
             'city'=>$this->city
         );
     }
