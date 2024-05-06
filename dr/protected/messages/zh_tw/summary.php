@@ -260,5 +260,8 @@ return array(
     'Not money'=>'不達標金額',
     'Download Not Sales'=>'下載不達標員工',
     'Composite Stop Rate'=>'綜合停單率',
+
+    'Budget target'=>'預算目標',
+    'Achieve budget goals'=>'達成預算目標',
 );
 ?>

@@ -160,7 +160,7 @@ class PerMonthNet extends PerMonth
         $list["last_average"] = parent::perMonthNumber($list["last_average"]);
         $list["growth"]=HistoryAddForm::comYes($list["now_week"],$list["last_week"]);
         $list["start_two_result"]=HistoryAddForm::comYes($list["now_week"],$list["start_two_net"]);
-        $list["start_one_result"]=HistoryAddForm::comYes($list["now_week"],$list["start_one_net"]);
+        //$list["start_one_result"]=HistoryAddForm::comYes($list["now_week"],$list["start_one_net"]);
 
     }
 
@@ -193,10 +193,8 @@ class PerMonthNet extends PerMonth
 
         $topList[]=array("name"=>Yii::t("summary","Target contrast"),"background"=>"#DCE6F1",
             "colspan"=>array(
-                array("name"=>Yii::t("summary","Start Target").Yii::t("summary","(base)")),//年初目标(base)
-                array("name"=>Yii::t("summary","Start Target result").Yii::t("summary","(base)")),//达成目标(base)
-                array("name"=>Yii::t("summary","Start Target").Yii::t("summary","(upside)")),//年初目标(upside)
-                array("name"=>Yii::t("summary","Start Target result").Yii::t("summary","(upside)")),//达成目标(upside)
+                array("name"=>Yii::t("summary","Budget target")),//年初目标(base)
+                array("name"=>Yii::t("summary","Achieve budget goals")),//达成目标(base)
             )
         );//目标对比
 
@@ -219,8 +217,8 @@ class PerMonthNet extends PerMonth
         $bodyKey[]="growth";
         $bodyKey[]="start_two_net";//(Base)
         $bodyKey[]="start_two_result";//(Base)
-        $bodyKey[]="start_one_net";//(Upside)
-        $bodyKey[]="start_one_result";//(Upside)
+        //$bodyKey[]="start_one_net";//(Upside)
+        //$bodyKey[]="start_one_result";//(Upside)
 
         return $bodyKey;
     }
