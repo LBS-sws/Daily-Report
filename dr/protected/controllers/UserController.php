@@ -24,7 +24,7 @@ class UserController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('new','edit','delete','save','applytemplate','lookCity'),
+				'actions'=>array('new','edit','delete','save','applytemplate','lookCity','copy'),
 				'expression'=>array('UserController','allowReadWrite'),
 			),
 			array('allow', 
@@ -102,6 +102,16 @@ class UserController extends Controller
 	{
 		$model = new UserForm('new');
 		$this->render('form',array('model'=>$model,));
+	}
+
+	public function actionCopy($index)
+	{
+		$model = new UserForm('new');
+        if (!$model->retrieveDataForCopy($index)) {
+            throw new CHttpException(404,'The requested page does not exist.');
+        } else {
+            $this->render('form',array('model'=>$model,));
+        }
 	}
 	
 	public function actionEdit($index)

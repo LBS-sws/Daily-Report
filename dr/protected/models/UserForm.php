@@ -274,6 +274,43 @@ class UserForm extends CFormModel
 		}
 		return true;
 	}
+
+	public function retrieveDataForCopy($index) {
+		$suffix = Yii::app()->params['envSuffix'];
+		$sql = "select a.* from security$suffix.sec_user a where a.username='$index' and a.username<>'admin'";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) {
+                $this->look_city = explode(",",$row['look_city']);
+                $this->city = $row['city'];
+				break;
+			}
+
+			$sql = "select system_id, a_read_only, a_read_write, a_control 
+						from security$suffix.sec_user_access
+						where username='$index'
+				";
+			$dtls = Yii::app()->db->createCommand($sql)->queryAll();
+			if (count($dtls) > 0){
+				$a_sys = $this->systemMappingArray();
+
+				foreach ($dtls as $dtl) {
+					$sid = $dtl['system_id'];
+					$idx = array_search($sid, $a_sys);
+					if ($idx!==false) {
+						foreach($this->rights[$idx] as $key=>$value) {
+							$this->rights[$idx][$key] = (strpos($dtl['a_read_write'],$key)!==false) ? 'RW' :
+														((strpos($dtl['a_read_only'],$key)!==false) ? 'RO' :
+														((strpos($dtl['a_control'],$key)!==false) ? 'CN' : 'NA'
+														));
+							//isset($this->oriextrights[$sid]['XX01']) && $key=='XX01' && $this->oriextrights[$sid]['XX01'] = $this->rights[$idx][$key];
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
 	
 	protected function systemMappingArray() {
 		$rtn = array();

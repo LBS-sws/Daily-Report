@@ -54,6 +54,13 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 					}
 				?>
 	</div>
+            <?php if ($model->scenario!='new' && $model->scenario!='view'): ?>
+                <div class="btn-group pull-right" role="group">
+                    <?php echo TbHtml::button('<span class="fa fa-copy"></span> '.Yii::t('misc','Copy'), array(
+                        'submit'=>Yii::app()->createUrl('user/copy',array("index"=>$model->username))));
+                    ?>
+                </div>
+            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
