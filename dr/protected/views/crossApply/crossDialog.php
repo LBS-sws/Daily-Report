@@ -60,7 +60,7 @@
 	$js="
 	$('#crossDialog').on('show.bs.modal', function (event) {
 	    var month_amt = $('#ServiceForm_amt_paid').val();
-	    month_amt = $('#ServiceForm_paid_type').val()=='M'?month_amt:(month_amt/12);
+	    //month_amt = $('#ServiceForm_paid_type').val()=='M'?month_amt:(month_amt/12);
 	    $('#cross_service_id').val($('#ServiceForm_id').val());
 	    $('#cross_contract_no').val($('#ServiceForm_contract_no').val());
 	    $('#cross_apply_date').val('{$nowDate}');
