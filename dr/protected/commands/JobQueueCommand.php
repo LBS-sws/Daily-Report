@@ -358,18 +358,23 @@ EOF;
 					$model = $this->getModelById($criteria->id);
 					$model->criteria = $criteria;
 					$model->retrieveData();
-					$rptdata[] = array(
-							'headertitle'=>$model->getReportName(),
-							'headerstring'=>$model->getSelectString(),
-							'groupdefinition'=>$model->groups(),
-							'headerdefinition'=>$model->header_structure(),
-							'linedefinition'=>$model->fields(),
-							'linegroupdefinition'=>$model->line_group(),
-							'sublinedefinition'=>$model->subsections(),
-							'reportstructure'=>$model->report_structure(),
-							'data'=>$model->data,
-							'rpt_id'=>$rpt_id,
-						);
+                    $tempData = array(
+                        'headertitle'=>$model->getReportName(),
+                        'headerstring'=>$model->getSelectString(),
+                        'groupdefinition'=>$model->groups(),
+                        'headerdefinition'=>$model->header_structure(),
+                        'linedefinition'=>$model->fields(),
+                        'linegroupdefinition'=>$model->line_group(),
+                        'sublinedefinition'=>$model->subsections(),
+                        'reportstructure'=>$model->report_structure(),
+                        'data'=>$model->data,
+                        'rpt_id'=>$rpt_id,
+                    );
+
+                    if(method_exists($model,"getSheetExpr")){
+                        $tempData["getSheetExpr"]=$model->getSheetExpr();
+					}
+                    $rptdata[]=$tempData;
 				}
 				$sheet = 0;
 				$excel = new MyExcel(); 
@@ -385,9 +390,15 @@ EOF;
 					$excel->SetLineGroupDefinition($report['linegroupdefinition']);
 					$excel->SetSublineDefinition($report['sublinedefinition']);
 					$excel->SetReportStructure($report['reportstructure']);
-					
+					if(isset($report['getSheetExpr'])&&!empty($report['getSheetExpr'])){//额外的sheet
+						$excel->SetSheetExpr($report['getSheetExpr']);
+					}
+
 					$excel->generateOutput($report['data'], $sheet);
 					$sheet++;
+                    if(isset($report['getSheetExpr'])&&!empty($report['getSheetExpr'])){//额外的sheet
+                        $sheet+=count($report['getSheetExpr']);
+                    }
 				}
 				$output = $excel->getOutput();
 				break;
@@ -436,6 +447,7 @@ EOF;
 			case 'RptChain': $model = new RptChain(); break;
 			case 'RptContractCom': $model = new RptContractCom(); break;
 			case 'RptSupplier': $model = new RptSupplier(); break;
+			case 'RptServiceLoss': $model = new RptServiceLoss(); break;
 		}
 		return $model;
 	}

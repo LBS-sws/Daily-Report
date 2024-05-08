@@ -61,6 +61,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('activeService'),'expression'=>array('ReportController','allowActiveService')),
 			array('allow','actions'=>array('contractCom'),'expression'=>array('ReportController','allowContractCom')),
 			array('allow','actions'=>array('supplier'),'expression'=>array('ReportController','allowSupplier')),
+			array('allow','actions'=>array('serviceLoss'),'expression'=>array('ReportController','allowServiceLoss')),
 			array('allow',
 				'actions'=>array('generate'),
 				'expression'=>array('ReportController','allowReadOnly'),
@@ -326,6 +327,8 @@ class ReportController extends Controller
 	}
 
 	protected function genCustRenew($criteria) {
+        $this->function_id = 'B15';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptCustrenew', $criteria, 'A3');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -342,6 +345,8 @@ class ReportController extends Controller
 	}
 
 	protected function genCustAmend($criteria) {
+        $this->function_id = 'B05';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptCustamend', $criteria, 'A3');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -358,6 +363,8 @@ class ReportController extends Controller
 	}
 
 	protected function genCustSuspend($criteria) {
+        $this->function_id = 'B03';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptCustsuspend', $criteria, 'A3');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -374,6 +381,8 @@ class ReportController extends Controller
 	}
 
 	protected function genCustResume($criteria) {
+        $this->function_id = 'B04';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptCustresume', $criteria, 'A3');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -401,11 +410,15 @@ class ReportController extends Controller
 	}
 
 	protected function genCustTerminate($criteria) {
+        $this->function_id = 'B10';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptCustterminate', $criteria, 'A3');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
 
 	protected function genCustAll($criteria) {
+        $this->function_id = 'B24';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptCustterall', $criteria, 'A3');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -422,6 +435,8 @@ class ReportController extends Controller
 	}
 
 	protected function genComplaint($criteria) {
+        $this->function_id = 'B01';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptComplaint', $criteria, 'A3');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -438,6 +453,8 @@ class ReportController extends Controller
 	}
 
 	protected function genEnquiry($criteria) {
+        $this->function_id = 'B06';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptEnquiry', $criteria, 'A3');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -454,6 +471,8 @@ class ReportController extends Controller
 	}
 
 	protected function genLogistic($criteria) {
+        $this->function_id = 'B07';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptLogistic', $criteria, 'A3');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -470,6 +489,8 @@ class ReportController extends Controller
 	}
 	
 	protected function genQc($criteria) {
+        $this->function_id = 'B08';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptQc', $criteria, 'A3');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -486,6 +507,8 @@ class ReportController extends Controller
 	}
 
 	protected function genStaff($criteria) {
+        $this->function_id = 'B09';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptStaff', $criteria, 'A3');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -502,6 +525,8 @@ class ReportController extends Controller
 	}
 
 	protected function genRenewal($criteria) {
+        $this->function_id = 'B13';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptRenewal', $criteria, 'A4');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -518,6 +543,8 @@ class ReportController extends Controller
 	}
 
 	protected function genFeedbackstat($criteria) {
+        $this->function_id = 'B16';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptFeedbackstat', $criteria, 'A4');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -535,6 +562,8 @@ class ReportController extends Controller
 	}
 
     protected function genSummarySC($criteria) {
+        $this->function_id = 'B30';
+        Yii::app()->session['active_func'] = $this->function_id;
         $criteria->city="";
         $this->addQueueItem('RptSummarySC', $criteria, 'A4');
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
@@ -576,6 +605,8 @@ class ReportController extends Controller
 	}
 
     protected function genUService($criteria) {
+        $this->function_id = 'B32';
+        Yii::app()->session['active_func'] = $this->function_id;
         $criteria->city=Yii::app()->user->city_allow();
         $this->addQueueItem('RptUService', $criteria, 'A4');
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
@@ -594,6 +625,8 @@ class ReportController extends Controller
 	}
 
     protected function genUServiceDetail($criteria) {
+        $this->function_id = 'B35';
+        Yii::app()->session['active_func'] = $this->function_id;
         $this->addQueueItem('RptUServiceDetail', $criteria, 'A4');
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
@@ -611,7 +644,28 @@ class ReportController extends Controller
 	}
 
     protected function genSupplier($criteria) {
+        $this->function_id = 'B37';
+        Yii::app()->session['active_func'] = $this->function_id;
         $this->addQueueItem('RptSupplier', $criteria, 'A4');
+        Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+    }
+
+// Report: serviceLoss
+	protected static function allowServiceLoss() {
+		return Yii::app()->user->validFunction('B38');
+	}
+
+	public function actionServiceLoss() {
+		$this->function_id = 'B38';
+		Yii::app()->session['active_func'] = $this->function_id;
+        $this->showUI('serviceLoss','service loss report', 'city,year');
+		//$this->showUIFbList('uService', 'Summary Service Cases Report', 'start_dt,end_dt,format');
+	}
+
+    protected function genServiceLoss($criteria) {
+        $this->function_id = 'B38';
+        Yii::app()->session['active_func'] = $this->function_id;
+        $this->addQueueItem('RptServiceLoss', $criteria, 'A4');
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
 
@@ -627,6 +681,8 @@ class ReportController extends Controller
 	}
 
     protected function genCustomerKA($criteria) {
+        $this->function_id = 'B34';
+        Yii::app()->session['active_func'] = $this->function_id;
         $rptname = array(
             'RptCustomerKA'=>'KA customer report',//新增
             'RptCustomerKAC'=>'KA customer report',//续约
@@ -675,6 +731,8 @@ class ReportController extends Controller
 	}
 
     protected function genActiveService($criteria) {
+        $this->function_id = 'B31';
+        Yii::app()->session['active_func'] = $this->function_id;
         $this->addQueueItem('RptActiveService', $criteria, 'A4');
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
@@ -691,6 +749,8 @@ class ReportController extends Controller
 	}
 
 	protected function genFeedback($criteria) {
+        $this->function_id = 'B17';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$this->addQueueItem('RptFeedback', $criteria, 'A4');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
@@ -707,6 +767,8 @@ class ReportController extends Controller
 	}
 
 	protected function genMonthly($criteria) {
+        $this->function_id = 'B14';
+        Yii::app()->session['active_func'] = $this->function_id;
 		$criteria->format = 'MTHRPT';
 		$this->addQueueItem('RptMonthly', $criteria, 'A4');
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
@@ -798,6 +860,7 @@ class ReportController extends Controller
 				if ($model->id=='uService') $this->genUService($model);
 				if ($model->id=='uServiceDetail') $this->genUServiceDetail($model);
 				if ($model->id=='supplier') $this->genSupplier($model);
+				if ($model->id=='serviceLoss') $this->genServiceLoss($model);
 				if ($model->id=='customerKA') $this->genCustomerKA($model);
 				//if ($model->id=='chain') $this->genChain($model);
 				if ($model->id=='activeService') $this->genActiveService($model);

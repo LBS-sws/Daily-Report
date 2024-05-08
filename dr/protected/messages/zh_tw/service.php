@@ -175,5 +175,11 @@ return array(
     'finish'=>'已完成',
     'audit date'=>'審核時間',
     'audit user'=>'審核賬號',
+    ' year new amount'=>'年新增金額',
+    'pause amount'=>'暫停金額',
+    'stop amount'=>'終止金額',
+    'pause + stop'=>'暫停+終止金額',
+    'rate'=>'百分比',
+    'contract length'=>'合同執行月數',
 );
 ?>

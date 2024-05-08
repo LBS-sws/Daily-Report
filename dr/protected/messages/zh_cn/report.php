@@ -77,5 +77,6 @@ return array(
     'Terminate'=>'终止',
     'U Service Detail'=>'U系统服务报表',
     'Supplier report'=>'供应商资料报表',
+    'service loss report'=>'合约丢失数据分析',
 );
 ?>

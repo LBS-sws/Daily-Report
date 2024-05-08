@@ -190,5 +190,6 @@ return array(
     'Cross Apply'=>'申请交叉派单',
     'Cross Audit'=>'审核交叉派单',
     'Cross Search'=>'查询交叉派单',
+    'service loss report'=>'合约丢失数据分析',
 );
 ?>

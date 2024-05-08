@@ -76,5 +76,7 @@ return array(
     'Amendment'=>'更改',
     'Terminate'=>'終止',
     'U Service Detail'=>'U系統服務報表',
+    'Supplier report'=>'供應商資料報表',
+    'service loss report'=>'合約丟失數據分析',
 );
 ?>

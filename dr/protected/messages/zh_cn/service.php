@@ -177,5 +177,11 @@ return array(
     'finish'=>'已完成',
     'audit date'=>'审核时间',
     'audit user'=>'审核账号',
+    ' year new amount'=>'年新增金额',
+    'pause amount'=>'暂停金额',
+    'stop amount'=>'终止金额',
+    'pause + stop'=>'暂停+终止金额',
+    'rate'=>'百分比',
+    'contract length'=>'合同执行月数',
 );
 ?>

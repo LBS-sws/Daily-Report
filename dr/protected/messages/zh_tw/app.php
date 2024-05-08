@@ -188,5 +188,6 @@ return array(
     'Cross Apply'=>'申請交叉派單',
     'Cross Audit'=>'審核交叉派單',
     'Cross Search'=>'查詢交叉派單',
+    'service loss report'=>'合約丟失數據分析',
 );
 ?>

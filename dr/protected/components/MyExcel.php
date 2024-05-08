@@ -18,12 +18,21 @@ class MyExcel {
 
 	protected $report_structure = array();
 
+    protected $header_title;
+    protected $header_string;
+
+	protected $sheet_expr=array();
+
 	public function SetReportId($rpt_id) {
 		$this->report_id = $rpt_id;
 	}
 
 	public function SetHeaderTitle($invalue) {
 		$this->header_title = $invalue;
+	}
+
+	public function SetSheetExpr($invalue) {
+		$this->sheet_expr = $invalue;
 	}
 
 	public function SetHeaderString($invalue) {
@@ -92,6 +101,44 @@ class MyExcel {
             default:
                 $this->outHeader($sheetid);
                 $this->outDetail($data);
+        }
+        if(!empty($this->sheet_expr)){
+            $sheetid++;
+		    foreach ($this->sheet_expr as $sheetOne){
+		        $this->current_row=0;
+                $this->objPHPExcel->createSheet();
+                $sheet = $this->objPHPExcel->setActiveSheetIndex($sheetid);
+		        if(isset($sheetOne["header_title"])){
+                    $this->header_title = $sheetOne["header_title"];
+                    $sheet->setTitle($this->header_title);
+                }
+		        if(isset($sheetOne["header_string"])){
+                    $this->header_string = $sheetOne["header_string"];
+                }
+		        if(isset($sheetOne["hdr_def"])){
+                    $this->hdr_def = $sheetOne["hdr_def"];
+                }
+		        if(isset($sheetOne["line_def"])){
+                    $this->line_def = $sheetOne["line_def"];
+                }
+		        if(isset($sheetOne["group_def"])){
+                    $this->group_def = $sheetOne["group_def"];
+                }
+		        if(isset($sheetOne["subline_def"])){
+                    $this->subline_def = $sheetOne["subline_def"];
+                }
+		        if(isset($sheetOne["report_structure"])){
+                    $this->report_structure = $sheetOne["report_structure"];
+                }
+		        if(isset($sheetOne["line_group_def"])){
+                    $this->line_group_def = $sheetOne["line_group_def"];
+                }
+		        if(isset($sheetOne["data"])){
+                    $data = $sheetOne["data"];
+                }
+                $this->outHeader($sheetid);
+                $this->outDetail($data);
+            }
         }
 	}
 	
