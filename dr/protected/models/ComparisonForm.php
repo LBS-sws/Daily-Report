@@ -372,9 +372,10 @@ class ComparisonForm extends CFormModel
             $list["monthStopRate"] = $list["new_sum_n"]+$list["new_month_n"]+round($list["stop_sum"]/12,2);
             $list["monthStopRate"] = $this->comparisonRate($list["monthStopRate"],$list["last_u_actual"]);
 
-            $list["comStopRate"] = $list["new_month_n"]+$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
-            $list["comStopRate"]/= 12;
-            $list["comStopRate"] = $this->comparisonRate($list["comStopRate"],$list["last_u_actual"]);
+            $list["comStopRate"] = $list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
+            $list["comStopRate"]/= 12;//
+            $lastSum = $list["new_month_n"]+$list["last_u_actual"];
+            $list["comStopRate"] = $this->comparisonRate($list["comStopRate"],$lastSum);
         }
         $list["net_sum"]=0;
         $list["net_sum"]+=$list["new_sum"]+$list["new_sum_n"]+$list["new_month_n"];
