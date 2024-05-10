@@ -61,7 +61,7 @@ class RptServiceLoss extends ReportData2 {
                     'year_amt'=>array('label'=>$year.Yii::t('service',' year new amount'),'width'=>20,'align'=>'C'),//2023年新增金额
                     'sum_pause'=>array('label'=>Yii::t('service','pause amount'),'width'=>18,'align'=>'C'),//暂停金额
                     'sum_pause_rate'=>array('label'=>Yii::t('service','rate'),'width'=>18,'align'=>'C'),//百分比
-                    'sum_stop'=>array('label'=>Yii::t('service','pause amount'),'width'=>18,'align'=>'C'),//终止金额
+                    'sum_stop'=>array('label'=>Yii::t('service','stop amount'),'width'=>18,'align'=>'C'),//终止金额
                     'sum_stop_rate'=>array('label'=>Yii::t('service','rate'),'width'=>18,'align'=>'C'),//百分比
                     'sum_all'=>array('label'=>Yii::t('service','pause + stop'),'width'=>20,'align'=>'C'),//暂停+终止金额
                     'sum_all_rate'=>array('label'=>Yii::t('service','rate'),'width'=>18,'align'=>'C'),//百分比
