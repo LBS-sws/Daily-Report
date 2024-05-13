@@ -6,6 +6,7 @@ class CrossApplyForm extends CFormModel
 	public $id;
 	public $table_type=0;
 	public $service_id;
+	public $u_system_id;
 	public $contract_no;
 	public $apply_date;
 	public $month_amt;
@@ -85,6 +86,7 @@ class CrossApplyForm extends CFormModel
         if($row){
             $this->old_city = $row["city"];
             $this->contract_no = $row["contract_no"];
+            $this->resetContractNo();
         }else{
             $this->addError($attribute, "合约编号不存在，无法交叉派单");
             return false;
@@ -113,11 +115,30 @@ class CrossApplyForm extends CFormModel
             $this->luu = $row['luu'];
             $this->audit_user = $row['audit_user'];
             $this->audit_date = $row['audit_date'];
+            $this->resetContractNo();
             return true;
 		}else{
 		    return false;
         }
 	}
+
+	protected function resetContractNo(){
+        if($this->table_type==0){
+            $tableNameOne="swo_service";
+            $tableNameTwo="swo_service_contract_no";
+        }else{
+            $tableNameOne="swo_service";
+            $tableNameTwo="swo_service_ka_no";
+        }
+        $row = Yii::app()->db->createCommand()->select("a.city,a.u_system_id,b.contract_no")->from("{$tableNameOne} a")
+            ->leftJoin("{$tableNameTwo} b","a.id=b.service_id")
+            ->where("a.id=:id",array(":id"=>$this->service_id))->queryRow();
+        if($row){
+            $this->old_city = $row["city"];
+            $this->contract_no = $row["contract_no"];
+            $this->u_system_id = $row["u_system_id"];
+        }
+    }
 
     public static function getCityList(){
         $suffix = Yii::app()->params['envSuffix'];

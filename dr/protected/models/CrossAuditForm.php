@@ -26,6 +26,7 @@ class CrossAuditForm extends CrossApplyForm
             $this->service_id = $row["service_id"];
             $this->old_city = $row["old_city"];
             $this->lcu = $row["lcu"];
+            $this->resetContractNo();
         }else{
             $this->addError($attribute, "交叉派单不存在，请刷新重试");
             return false;
@@ -54,6 +55,7 @@ class CrossAuditForm extends CrossApplyForm
             $this->luu = $row['luu'];
             $this->audit_user = $row['audit_user'];
             $this->audit_date = $row['audit_date'];
+            $this->resetContractNo();
             return true;
 		}else{
 		    return false;
@@ -172,6 +174,7 @@ class CrossAuditForm extends CrossApplyForm
             "accept_contract_id"=>$this->cross_city,//承接方（城市代号：ZY）
             "audit_user_name"=>self::getEmployeeStrForUsername(Yii::app()->user->id),//审核人名称+编号如：400002_沈超
             "audit_date"=>$this->audit_date,//审核日期
+            "contract_id"=>$this->u_system_id,//u_system_id
         );
         SystemU::sendUForCross($data);
     }
