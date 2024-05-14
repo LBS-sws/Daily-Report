@@ -103,8 +103,8 @@ class MyExcel {
                 $this->outDetail($data);
         }
         if(!empty($this->sheet_expr)){
-            $sheetid++;
 		    foreach ($this->sheet_expr as $sheetOne){
+                $sheetid++;
 		        $this->current_row=0;
                 $this->objPHPExcel->createSheet();
                 $sheet = $this->objPHPExcel->setActiveSheetIndex($sheetid);

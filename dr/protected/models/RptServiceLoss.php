@@ -2,6 +2,7 @@
 class RptServiceLoss extends ReportData2 {
     public $dataList=array(
         "sumRate"=>array(),//占比
+        "sumDetail"=>array(),//暂停或终止-新增明细
     );
 
     protected function addDataList($city,$row){
@@ -21,7 +22,7 @@ class RptServiceLoss extends ReportData2 {
         $this->dataList["sumRate"][$city]["sum_pause"]+=trim($row["pause_amt"]);
         $this->dataList["sumRate"][$city]["sum_stop"]+=trim($row["stop_amt"]);
         $this->dataList["sumRate"][$city]["sum_all"]=$this->dataList["sumRate"][$city]["sum_pause"];
-        $this->dataList["sumRate"][$city]["sum_all"]+=$this->dataList["sumRate"][$city]["sum_pause"];
+        $this->dataList["sumRate"][$city]["sum_all"]+=$this->dataList["sumRate"][$city]["sum_stop"];
 
         $this->dataList["sumRate"][$city]["sum_pause_rate"]=$this->numRate($this->dataList["sumRate"][$city]["sum_pause"],$this->dataList["sumRate"][$city]["year_amt"]);
         $this->dataList["sumRate"][$city]["sum_stop_rate"]=$this->numRate($this->dataList["sumRate"][$city]["sum_stop"],$this->dataList["sumRate"][$city]["year_amt"]);
@@ -66,9 +67,52 @@ class RptServiceLoss extends ReportData2 {
                     'sum_all'=>array('label'=>Yii::t('service','pause + stop'),'width'=>20,'align'=>'C'),//暂停+终止金额
                     'sum_all_rate'=>array('label'=>Yii::t('service','rate'),'width'=>18,'align'=>'C'),//百分比
                 ),
-            )
+            ),
+            array(//暂停或终止-新增明细sheet
+                "header_title"=>"暂停或终止-新增明细",
+                "data"=>$this->dataList["sumDetail"],
+                "line_def"=>array(//页头
+                    'city_name'=>array('label'=>Yii::t('app','City'),'width'=>13,'align'=>'C'),//城市
+                    'status'=>array('label'=>Yii::t('service','Record Type'),'width'=>20,'align'=>'C'),//记录类别
+                    'status_dt'=>array('label'=>Yii::t('report','Date'),'width'=>20,'align'=>'C'),//日期
+                    'customer'=>array('label'=>Yii::t('service','Customer'),'width'=>18,'align'=>'C'),//客户编号及名称
+                    'cust_type_name'=>array('label'=>Yii::t('service','Customer Type'),'width'=>18,'align'=>'C'),//客户类别
+                    'nature'=>array('label'=>Yii::t('service','Nature'),'width'=>18,'align'=>'C'),//性质
+                    'reason'=>array('label'=>Yii::t('service','Reason'),'width'=>18,'align'=>'C'),//变动原因
+                    'month_amt'=>array('label'=>Yii::t('service','Monthly'),'width'=>20,'align'=>'C'),//月金额
+                    'ctrt_period'=>array('label'=>Yii::t('service','Contract Period'),'width'=>18,'align'=>'C'),//合同年限(月)
+                    'year_amt'=>array('label'=>Yii::t('service','Yearly'),'width'=>18,'align'=>'C'),//年金额
+                ),
+            ),
         );
         return $sheetList;
+    }
+
+    protected function addDataListForDetail($addRow,$stopRow){
+        $this->dataList["sumDetail"][] = array(
+            "city_name"=>$addRow["city_name"],
+            "status"=>$stopRow["status_desc"],
+            "status_dt"=>$stopRow["status_dt"],
+            "customer"=>$stopRow["company_name"],
+            "cust_type_name"=>$stopRow["cust_type_name"],
+            "nature"=>$stopRow["nature_name"],
+            "reason"=>$stopRow["reason"],
+            "month_amt"=>$stopRow["month_amt"],
+            "ctrt_period"=>$stopRow["ctrt_period"],
+            "year_amt"=>$stopRow["year_amt"],
+        );
+        $this->dataList["sumDetail"][] = array(
+            "city_name"=>$addRow["city_name"],
+            "status"=>$addRow["status_desc"],
+            "status_dt"=>$addRow["status_dt"],
+            "customer"=>$addRow["company_name"],
+            "cust_type_name"=>$addRow["cust_type_name"],
+            "nature"=>$addRow["nature_name"],
+            "reason"=>$addRow["reason"],
+            "month_amt"=>$addRow["month_amt"],
+            "ctrt_period"=>$addRow["ctrt_period"],
+            "year_amt"=>$addRow["year_amt"],
+        );
     }
 
 	public function fields() {
@@ -112,6 +156,7 @@ class RptServiceLoss extends ReportData2 {
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
 			    $city = $row["city"];
+                $row['status_dt'] = General::toMyDate($row['status_dt']);
                 $row['pause_amt'] = 0;
                 $row['stop_amt'] = 0;
                 $row['ctrt_period'] = is_numeric($row['ctrt_period'])?floatval($row['ctrt_period']):0;
@@ -126,20 +171,31 @@ class RptServiceLoss extends ReportData2 {
                 }
 			    //pause_amt,stop_amt
                 $stopRow = Yii::app()->db->createCommand()
-                    ->select("b.status,b.status_dt,b.ctrt_period,b.paid_type,b.amt_paid")
+                    ->select("b.*")
                     ->from("swo_service_contract_no a")
                     ->leftJoin("swo_service b","a.service_id=b.id")
                     ->where("a.contract_no=:code and DATE_FORMAT(b.status_dt,'%Y')='{$year}' and b.status in ('S','T')",
                         array(":code"=>$row["contract_no"])
                     )->order("b.status_dt desc")->queryRow();
                 if($stopRow){
+                    $row['nature_name'] = GetNameToId::getNatureOneNameForId($row['nature_type']);
+                    $stopRow['status_dt'] = General::toMyDate($stopRow['status_dt']);
                     $stopRow['ctrt_period'] = is_numeric($stopRow['ctrt_period'])?floatval($stopRow['ctrt_period']):0;
                     $stopRow['amt_paid'] = is_numeric($stopRow['amt_paid'])?floatval($stopRow['amt_paid']):0;
-                    $stopRow['stop_year_amt'] = $stopRow['paid_type']=="M"?$stopRow['amt_paid']*$stopRow['ctrt_period']:$stopRow['amt_paid'];
+                    $amt_paid = $stopRow['amt_paid'];
+                    if($stopRow["paid_type"]=="M"){
+                        $stopRow['month_amt'] = $amt_paid;
+                        $stopRow['year_amt'] = $amt_paid*$stopRow['ctrt_period'];
+                    }else{
+                        $month_amt = empty($stopRow['ctrt_period'])?0:$amt_paid/$stopRow['ctrt_period'];
+                        $stopRow['month_amt'] = round($month_amt,2);
+                        $stopRow['year_amt'] = $amt_paid;
+                    }
                     $temp = array();
                     $temp['city_name'] = $row['city_name'];
                     $temp['customer'] = $row['company_name'];
-                    $temp['nature'] = $row['nature_type'];
+                    //$temp['nature'] = $row['nature_type'];
+                    $temp['nature'] = $row['nature_name'];
                     $temp['month_amt'] = " ".$row['month_amt'];
                     $temp['ctrt_period'] = " ".$row['ctrt_period'];
                     $temp['year_amt'] = $row['year_amt'];
@@ -149,10 +205,18 @@ class RptServiceLoss extends ReportData2 {
                     $temp['stop_date'] = " ";
                     if($stopRow["status"]=="S"){//暂停
                         $temp['pause_date'] = " ".$stopRow['status_dt'];
-                        $row['pause_amt'] = $stopRow['stop_year_amt'];
+                        $row['pause_amt'] = $stopRow['year_amt'];
                     }else{//终止
                         $temp['stop_date'] = " ".$stopRow['status_dt'];
-                        $row['stop_amt'] = $stopRow['stop_year_amt'];
+                        $row['stop_amt'] = $stopRow['year_amt'];
+                    }
+                    if($temp['contract_len']<=0){
+                        $row["status_desc"]=GetNameToId::getServiceStatusForKey($row["status"]);
+                        $stopRow["status_desc"]=GetNameToId::getServiceStatusForKey($stopRow["status"]);
+                        $row["cust_type_name"]=GetNameToId::getCustOneNameForId($row["cust_type"]);
+                        $stopRow["cust_type_name"]=GetNameToId::getCustOneNameForId($stopRow["cust_type"]);
+                        $stopRow['nature_name'] = GetNameToId::getNatureOneNameForId($stopRow['nature_type']);
+                        $this->addDataListForDetail($row,$stopRow);
                     }
                     $this->data[] = $temp;
                 }
