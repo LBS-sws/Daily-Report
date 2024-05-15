@@ -16,17 +16,21 @@ class RptServiceLoss extends ReportData2 {
                 "sum_stop_rate"=>0,
                 "sum_all"=>0,
                 "sum_all_rate"=>0,
+                "re_sign_amt"=>0,
+                "re_sign_rate"=>0,
             );
         }
         $this->dataList["sumRate"][$city]["year_amt"]+=trim($row["year_amt"]);
         $this->dataList["sumRate"][$city]["sum_pause"]+=trim($row["pause_amt"]);
         $this->dataList["sumRate"][$city]["sum_stop"]+=trim($row["stop_amt"]);
+        $this->dataList["sumRate"][$city]["re_sign_amt"]+=trim($row["re_sign_amt"]);
         $this->dataList["sumRate"][$city]["sum_all"]=$this->dataList["sumRate"][$city]["sum_pause"];
         $this->dataList["sumRate"][$city]["sum_all"]+=$this->dataList["sumRate"][$city]["sum_stop"];
 
         $this->dataList["sumRate"][$city]["sum_pause_rate"]=$this->numRate($this->dataList["sumRate"][$city]["sum_pause"],$this->dataList["sumRate"][$city]["year_amt"]);
         $this->dataList["sumRate"][$city]["sum_stop_rate"]=$this->numRate($this->dataList["sumRate"][$city]["sum_stop"],$this->dataList["sumRate"][$city]["year_amt"]);
         $this->dataList["sumRate"][$city]["sum_all_rate"]=$this->numRate($this->dataList["sumRate"][$city]["sum_all"],$this->dataList["sumRate"][$city]["year_amt"]);
+        $this->dataList["sumRate"][$city]["re_sign_rate"]=$this->numRate($this->dataList["sumRate"][$city]["re_sign_amt"],$this->dataList["sumRate"][$city]["year_amt"]);
     }
 
     protected function numRate($num,$sum){
@@ -47,8 +51,9 @@ class RptServiceLoss extends ReportData2 {
         $timestamp2 = $datetime2->getTimestamp();
 
         $diff_seconds = $timestamp2 - $timestamp1;
+        $diff_day = round($diff_seconds / (60 * 60 * 24));
         $diff_month = round($diff_seconds / (60 * 60 * 24 * 30));
-        return $diff_month;
+        return array("diff_day"=>$diff_day,"diff_month"=>$diff_month);
     }
 
     public function getSheetExpr(){//额外的sheet
@@ -66,6 +71,8 @@ class RptServiceLoss extends ReportData2 {
                     'sum_stop_rate'=>array('label'=>Yii::t('service','rate'),'width'=>18,'align'=>'C'),//百分比
                     'sum_all'=>array('label'=>Yii::t('service','pause + stop'),'width'=>20,'align'=>'C'),//暂停+终止金额
                     'sum_all_rate'=>array('label'=>Yii::t('service','rate'),'width'=>18,'align'=>'C'),//百分比
+                    're_sign_amt'=>array('label'=>Yii::t('report','Re signing amount'),'width'=>22,'align'=>'C'),//重签金额（暂停或终止3个月后新增的单）
+                    're_sign_rate'=>array('label'=>Yii::t('service','rate'),'width'=>22,'align'=>'C'),//百分比
                 ),
             ),
             array(//暂停或终止-新增明细sheet
@@ -108,7 +115,7 @@ class RptServiceLoss extends ReportData2 {
             "customer"=>$addRow["company_name"],
             "cust_type_name"=>$addRow["cust_type_name"],
             "nature"=>$addRow["nature_name"],
-            "reason"=>$addRow["reason"],
+            "reason"=>"",
             "month_amt"=>$addRow["month_amt"],
             "ctrt_period"=>$addRow["ctrt_period"],
             "year_amt"=>$addRow["year_amt"],
@@ -159,6 +166,7 @@ class RptServiceLoss extends ReportData2 {
                 $row['status_dt'] = General::toMyDate($row['status_dt']);
                 $row['pause_amt'] = 0;
                 $row['stop_amt'] = 0;
+                $row['re_sign_amt'] = 0;
                 $row['ctrt_period'] = is_numeric($row['ctrt_period'])?floatval($row['ctrt_period']):0;
 			    $amt_paid = is_numeric($row['amt_paid'])?floatval($row['amt_paid']):0;
 			    if($row["paid_type"]=="M"){
@@ -200,7 +208,8 @@ class RptServiceLoss extends ReportData2 {
                     $temp['ctrt_period'] = " ".$row['ctrt_period'];
                     $temp['year_amt'] = $row['year_amt'];
                     $temp['new_date'] = " ".$row['status_dt'];
-                    $temp['contract_len'] = $this->dateDiff($row['status_dt'],$stopRow['status_dt']);
+                    $diffList = $this->dateDiff($row['status_dt'],$stopRow['status_dt']);
+                    $temp['contract_len'] = $diffList["diff_month"];
                     $temp['pause_date'] = " ";
                     $temp['stop_date'] = " ";
                     if($stopRow["status"]=="S"){//暂停
@@ -210,7 +219,8 @@ class RptServiceLoss extends ReportData2 {
                         $temp['stop_date'] = " ".$stopRow['status_dt'];
                         $row['stop_amt'] = $stopRow['year_amt'];
                     }
-                    if($temp['contract_len']<=0){
+                    if($diffList['diff_day']<-90){
+                        $row['re_sign_amt'] = $row['year_amt'];
                         $row["status_desc"]=GetNameToId::getServiceStatusForKey($row["status"]);
                         $stopRow["status_desc"]=GetNameToId::getServiceStatusForKey($stopRow["status"]);
                         $row["cust_type_name"]=GetNameToId::getCustOneNameForId($row["cust_type"]);

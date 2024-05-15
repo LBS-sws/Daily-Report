@@ -78,5 +78,6 @@ return array(
     'U Service Detail'=>'U系統服務報表',
     'Supplier report'=>'供應商資料報表',
     'service loss report'=>'合約丟失數據分析',
+    'Re signing amount'=>'重簽金額（暫停或終止3個月後新增的單）',
 );
 ?>
