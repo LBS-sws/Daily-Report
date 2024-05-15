@@ -529,10 +529,10 @@ class SummaryTable extends SummaryForm{
     }
 
     //客户服务查询(新增非一次性)
-    public static function getServiceRowsForAdd($startDate,$endDate,$city_allow){
+    public static function getServiceRowsForAdd($startDate,$endDate,$city_allow,$sqlExpr=""){
         $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         $whereSql.= " and a.city in ({$city_allow})";
-        $whereSql .= self::$whereSQL;
+        $whereSql .= self::$whereSQL.$sqlExpr;
         $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
@@ -604,6 +604,63 @@ class SummaryTable extends SummaryForm{
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
                 ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")->order("a.city,a.status_dt desc")->queryAll();
+            $queryKARows = $queryKARows?$queryKARows:array();
+            $queryIARows = array_merge($queryIARows,$queryKARows);
+        }
+        return array_merge($queryIARows,$queryIDRows);
+    }
+
+    //客户服务查询(更改增加)
+    public static function getServiceRowsForAD($startDate,$endDate,$city_allow,$sqlExpr=""){
+        $whereSql = "a.status='A' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        $whereSql.= " and a.city in ({$city_allow})";
+        $whereSql .= self::$whereSQL.$sqlExpr;
+        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+            f.description as cust_type_name";
+        $queryIARows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
+            ->from("swo_service a")
+            ->leftJoin("swo_service_contract_no n","a.id=n.service_id")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where("(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) > (case a.b4_paid_type
+							when 'M' then a.b4_amt_paid * a.ctrt_period
+							else a.b4_amt_paid
+						end
+					) and ".$whereSql)->order("a.city,a.status_dt desc")->queryAll();
+        $queryIARows = $queryIARows?$queryIARows:array();
+
+        if(self::$IDBool){
+            $queryIDRows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where("(a.amt_paid*a.ctrt_period)>a.b4_amt_money and ".$whereSql)->order("a.city,a.status_dt desc")->queryAll();
+            $queryIDRows = $queryIDRows?$queryIDRows:array();
+        }else{
+            $queryIDRows=array();
+        }
+        if(self::$KABool){
+            $queryKARows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where("(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) > (case a.b4_paid_type
+							when 'M' then a.b4_amt_paid * a.ctrt_period
+							else a.b4_amt_paid
+						end
+					) and ".$whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")->order("a.city,a.status_dt desc")->queryAll();
             $queryKARows = $queryKARows?$queryKARows:array();
             $queryIARows = array_merge($queryIARows,$queryKARows);
         }
@@ -861,12 +918,12 @@ class SummaryTable extends SummaryForm{
     }
 
     //一次性查询
-    public static function getOneServiceRows($startDay,$endDay,$city_allow=""){
+    public static function getOneServiceRows($startDay,$endDay,$city_allow="",$sqlExpr=""){
         $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
         if(!empty($city_allow)){
             $whereSql.= " and a.city in ({$city_allow})";
         }
-        $whereSql .= self::$whereSQL;
+        $whereSql .= self::$whereSQL.$sqlExpr;
         $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()

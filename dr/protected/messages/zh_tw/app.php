@@ -189,5 +189,6 @@ return array(
     'Cross Audit'=>'審核交叉派單',
     'Cross Search'=>'查詢交叉派單',
     'service loss report'=>'合約丟失數據分析',
+    'Bonus Month'=>'月度提成獎金表',
 );
 ?>

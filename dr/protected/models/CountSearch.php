@@ -349,12 +349,12 @@ class CountSearch extends SearchForCurlU {
     }
 
     //客户服务查询(更改)
-    public static function getServiceForA($startDate,$endDate,$city_allow=""){
+    public static function getServiceForA($startDate,$endDate,$city_allow="",$sqlEpr=""){
         $whereSql = "a.status='A' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         if(!empty($city_allow)&&$city_allow!="all"){
             $whereSql.= " and a.city in ({$city_allow})";
         }
-        $whereSql .= self::$whereSQL;
+        $whereSql .= self::$whereSQL.$sqlEpr;
         $list=array();
         $rows = Yii::app()->db->createCommand()
             ->select("sum(case a.paid_type
@@ -394,6 +394,82 @@ class CountSearch extends SearchForCurlU {
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->group("a.city")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=0;
+            }
+            $list[$row["city"]]+=$row["sum_amount"]-$row["b4_sum_amount"];
+        }
+        return $list;
+    }
+
+    //客户服务查询(更改增加)
+    public static function getServiceForAD($startDate,$endDate,$city_allow="",$sqlEpr=""){
+        $whereSql = "a.status='A' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL.$sqlEpr;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,sum(case a.b4_paid_type
+							when 'M' then a.b4_amt_paid * a.ctrt_period
+							else a.b4_amt_paid
+						end
+					) as b4_sum_amount,a.city")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where("(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) > (case a.b4_paid_type
+							when 'M' then a.b4_amt_paid * a.ctrt_period
+							else a.b4_amt_paid
+						end
+					) and ".$whereSql)->group("a.city")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,sum(a.b4_amt_money) as b4_sum_amount,a.city")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where("(a.amt_paid*a.ctrt_period)>a.b4_amt_money and ".$whereSql)
+                ->group("a.city")->queryAll();
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+        if(self::$KABool){
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,sum(case a.b4_paid_type
+							when 'M' then a.b4_amt_paid * a.ctrt_period
+							else a.b4_amt_paid
+						end
+					) as b4_sum_amount,a.city")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where("(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) > (case a.b4_paid_type
+							when 'M' then a.b4_amt_paid * a.ctrt_period
+							else a.b4_amt_paid
+						end
+					) and ".$whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
                 ->group("a.city")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
@@ -486,12 +562,12 @@ class CountSearch extends SearchForCurlU {
     }
 
     //服务新增（非一次性 和 一次性)
-    public static function getServiceAddForNY($startDay,$endDay,$city_allow=""){
+    public static function getServiceAddForNY($startDay,$endDay,$city_allow="",$sqlEpr=""){
         $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
         if(!empty($city_allow)&&$city_allow!="all"){
             $whereSql.= " and a.city in ({$city_allow})";
         }
-        $whereSql .= self::$whereSQL;
+        $whereSql .= self::$whereSQL.$sqlEpr;
         $sum_money = "case a.paid_type when 'M' then a.amt_paid * a.ctrt_period else a.amt_paid end";
         $list = array();
         $rows = Yii::app()->db->createCommand()
@@ -1694,5 +1770,70 @@ class CountSearch extends SearchForCurlU {
             }
         }
         return $list;
+    }
+
+    //获取地区负责人
+    public static function getCityChargeList($city_allow){
+        $suffix = Yii::app()->params['envSuffix'];//区分正式版、测试版
+        $whereSql = "incharge!='' and incharge is not null";
+        if(!empty($city_allow)){
+            $whereSql.=" and code in ({$city_allow})";
+        }
+        $rows = Yii::app()->db->createCommand()
+            ->select("*")->from("security{$suffix}.sec_city")
+            ->where($whereSql)->queryAll();//incharge
+        return $rows?$rows:array();
+    }
+
+    //根据账号查找员工
+    public static function getEmployeeIDForUsername($username){
+        $suffix = Yii::app()->params['envSuffix'];//区分正式版、测试版
+        $row = Yii::app()->db->createCommand()
+            ->select("employee_id")
+            ->from("hr{$suffix}.hr_binding a")
+            ->leftJoin("security{$suffix}.sec_user b","a.user_id=b.username")
+            ->where("a.user_id=:username",array(":username"=>$username))->queryRow();
+        return $row?$row["employee_id"]:0;
+    }
+
+    //根据员工id查找员工信息
+    public static function getEmployeeListForID($employee_id){
+        $suffix = Yii::app()->params['envSuffix'];//区分正式版、测试版
+        $row = Yii::app()->db->createCommand()
+            ->select("*")->from("hr{$suffix}.hr_employee")
+            ->where("id=:id",array(":id"=>$employee_id))->queryRow();
+        return $row?$row:array();
+    }
+
+    //根据员工id查找员工信息
+    public static function getDeptNameForDeptId($dept_id){
+        $suffix = Yii::app()->params['envSuffix'];//区分正式版、测试版
+        $row = Yii::app()->db->createCommand()
+            ->select("name")->from("hr{$suffix}.hr_dept")
+            ->where("id=:id",array(":id"=>$dept_id))->queryRow();
+        return $row?$row["name"]:"";
+    }
+
+    public static function getCityChargeSql($city_allow,$search_arr=array(),$bool=false){
+        $chargeList = self::getCityChargeList($city_allow);
+        $search_arr = empty($search_arr)?array('cityItem'=>'a.city','userItem'=>'a.salesman_id'):$search_arr;
+        $sql = "";
+        if(!empty($chargeList)){
+            foreach ($chargeList as $row){
+                $employee_id = self::getEmployeeIDForUsername($row['incharge']);
+                if(!empty($employee_id)){
+                    $sql.=empty($sql)?"":" or ";
+                    $sql.="({$search_arr['cityItem']}='{$row['code']}' and {$search_arr['userItem']}='{$employee_id}')";
+                }
+            }
+        }
+        if(!empty($sql)){
+            if($bool){
+                $sql = " and ({$sql})";
+            }else{
+                $sql = " and not({$sql})";
+            }
+        }
+        return $sql;
     }
 }

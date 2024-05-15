@@ -237,11 +237,15 @@ return array(
                 'access'=>'G02',
                 'url'=>'/comprehensive/index',
             ),
-            'Summary'=>array(
+            'Bonus Month'=>array( //月度提成奖金表
+                'access'=>'G24',
+                'url'=>'/bonusMonth/index',
+            ),
+            'Summary'=>array( //合同分析查询
                 'access'=>'G03',
                 'url'=>'/summary/index',
             ),
-            'Comparison'=>array(
+            'Comparison'=>array( //合同同比分析
                 'access'=>'G05',
                 'url'=>'/comparison/index',
             ),

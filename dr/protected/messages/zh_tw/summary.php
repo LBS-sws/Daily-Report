@@ -263,5 +263,12 @@ return array(
 
     'Budget target'=>'預算目標',
     'Achieve budget goals'=>'達成預算目標',
+
+    'data from summary'=>'來源系統-合同分析查詢',
+    'data from comparison'=>'來源系統-合同同比分析',
+    'city charge'=>'城市負責人',
+    'city charge detail'=>'地區主管需要剔除個人銷售業績後取數',
+    'employee name'=>'姓名',
+    'Update(for add)'=>'更改服務（只含新增）',
 );
 ?>
