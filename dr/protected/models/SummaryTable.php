@@ -796,7 +796,7 @@ class SummaryTable extends SummaryForm{
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
                 ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
             $queryIDRows = $queryIDRows?$queryIDRows:array();
-            array_merge($returnList["goodList"],$queryIDRows);
+            $returnList["goodList"] = array_merge($returnList["goodList"],$queryIDRows);
         }
 
         if(self::$KABool){
