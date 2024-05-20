@@ -34,7 +34,7 @@ class ComparisonSetList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
 	    $this->comparison_year = (empty($this->comparison_year)||!is_numeric($this->comparison_year))?date("Y"):$this->comparison_year;
-        $this->month_type = (!in_array($this->month_type,array(1,4,7,10)))?1:$this->month_type;
+        $this->month_type = is_numeric($this->month_type)&&$this->month_type<13?$this->month_type:($this->comparison_year>=2024?date("n"):1);
         $suffix = Yii::app()->params['envSuffix'];
         $sql1 = "select b.code,b.name 
 				from swo_city_set a 

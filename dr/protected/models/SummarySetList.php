@@ -28,7 +28,7 @@ class SummarySetList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
 	    $this->summary_year = (empty($this->summary_year)||!is_numeric($this->summary_year))?date("Y"):$this->summary_year;
-	    $this->month_type = (!in_array($this->month_type,array(1,4,7,10)))?1:$this->month_type;
+	    $this->month_type = is_numeric($this->month_type)&&$this->month_type<13?$this->month_type:1;
         $suffix = Yii::app()->params['envSuffix'];
         $notCityStr = ComparisonSetList::notCitySqlStr();
         $sql1 = "select code,name 
@@ -161,12 +161,18 @@ class SummarySetList extends CListPageModel
     }
 
     public static function getSummaryMonthList($key=1,$bool=false,$year=2023){
-        if($year==2024){//特别处理2024年
+        if($year>=2024){//2024年后需要单独设置
+            $arr = array();
+            for ($i=1;$i<=12;$i++){
+                $arr[$i] = $i.Yii::t("summary"," month");
+            }
+            /*
             $arr = array(
                 1=>Yii::t("summary","1 month - 3 month"),
                 4=>Yii::t("summary","4 month - 7 month"),
                 7=>Yii::t("summary","8 month - 12 month"),
             );
+            */
         }else{
             $arr = array(
                 1=>Yii::t("summary","1 month - 3 month"),
@@ -186,7 +192,7 @@ class SummarySetList extends CListPageModel
     }
 
     public static function getReminderTitle($year,$month_type){
-        $monthList = self::getSummaryMonthList();
+        $monthList = self::getSummaryMonthList(1,false,$year);
         $titleStart = Yii::t("summary","Whether to modify ");
         $list = array();
         foreach ($monthList as $key=>$str){

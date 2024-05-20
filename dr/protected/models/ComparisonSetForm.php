@@ -110,7 +110,7 @@ class ComparisonSetForm extends CFormModel
         $arr["city"] = $this->city;
         $arr["comparison_year"] = $this->comparison_year;
         if(!empty($this->cover_bool)){
-            $monthList = SummarySetList::getSummaryMonthList();
+            $monthList = SummarySetList::getSummaryMonthList(1,false,$this->comparison_year);
             foreach ($monthList as $month=>$str){
                 if ($month>$this->month_type){
                     $arr["month_type"] = $month;
