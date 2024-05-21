@@ -257,6 +257,7 @@ class SalesAnalysisForm extends CFormModel
         $timer = strtotime($staffRow["entry_time"]);
         $leaveDate = $staffRow["staff_status"]==-1?date("Y/m",strtotime($staffRow["leave_time"])):"9999/12";
         $entry_ym = date("Y/m",$timer);
+        $entry_ym_prev = date("Y/m",strtotime("{$entry_ym}/01 - 1 month"));
         $lastSum = 0;
         $lastCount = 0;
         $nowSum = 0;
@@ -272,7 +273,11 @@ class SalesAnalysisForm extends CFormModel
                     $value = key_exists($yearMonth,$nowData[$username])?$nowData[$username][$yearMonth]:0;
                 }
                 if($entry_ym>$yearMonth){//未入职显示空
-                    $value="";
+                    if($entry_ym_prev==$yearMonth) {//入职前一个月
+                        $value="；";
+                    }else{
+                        $value="";
+                    }
                 }elseif ($entry_ym==$yearMonth&&empty($value)){//入职当月且没有签单金额
                     $value="-";
                 }
