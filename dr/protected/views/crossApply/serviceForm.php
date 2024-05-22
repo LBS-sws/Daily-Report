@@ -9,6 +9,7 @@ if($model->table_type==0){
     $serviceModel = new ServiceKAForm("view");
     $serviceModel->retrieveData($model->service_id);
 }
+$serviceModel->amt_paid=$model->old_month_amt;
 $serviceModel->nature_type=GetNameToId::getNatureOneNameForId($serviceModel->nature_type);
 $serviceModel->nature_type_two=GetNameToId::getNatureTwoNameForId($serviceModel->nature_type_two);
 ?>

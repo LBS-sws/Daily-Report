@@ -35,4 +35,9 @@
 			;
 		?>
 	</th>
+    <th>
+        <?php echo TbHtml::link($this->getLabelName('status_type').$this->drawOrderArrow('a.status_type'),'#',$this->createOrderLink('crossSearch-list','a.status_type'))
+        ;
+        ?>
+    </th>
 </tr>

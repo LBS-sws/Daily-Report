@@ -31,13 +31,13 @@ class CrossSearchList extends CListPageModel
 				from swo_cross a
 				LEFT JOIN security{$suffix}.sec_city b ON a.old_city=b.code
 				LEFT JOIN security{$suffix}.sec_city f ON a.cross_city=f.code
-				where (a.cross_city in ({$city_allow}) or a.old_city in ({$city_allow})) and a.status_type=5 
+				where (a.cross_city in ({$city_allow}) or a.old_city in ({$city_allow})) and a.status_type in (3,5,6) 
 			";
 		$sql2 = "select count(a.id)
 				from swo_cross a
 				LEFT JOIN security{$suffix}.sec_city b ON a.old_city=b.code
 				LEFT JOIN security{$suffix}.sec_city f ON a.cross_city=f.code
-				where (a.cross_city in ({$city_allow}) or a.old_city in ({$city_allow}))  and a.status_type=5 
+				where (a.cross_city in ({$city_allow}) or a.old_city in ({$city_allow}))  and a.status_type in (3,5,6) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -63,7 +63,7 @@ class CrossSearchList extends CListPageModel
             $order .= " order by {$this->orderField} ";
 			if ($this->orderType=='D') $order .= "desc ";
 		}else{
-            $order .= " order by id desc ";
+            $order .= " order by a.status_type asc,a.id desc ";
         }
 
 		$sql = $sql2.$clause;
@@ -86,6 +86,8 @@ class CrossSearchList extends CListPageModel
 						'old_city'=>$record['old_city_name'],
 						'cross_city'=>$record['cross_city_name'],
 						'status_type'=>$record['status_type'],
+                        'status_str'=>CrossApplyList::getStatusStrForStatusType($record['status_type']),
+                        'color'=>CrossApplyList::getColorForStatusType($record['status_type']),
                     );
 			}
 		}

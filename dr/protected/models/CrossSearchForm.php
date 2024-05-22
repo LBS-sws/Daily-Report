@@ -9,8 +9,8 @@ class CrossSearchForm extends CrossApplyForm
 	{
 		return array(
             array('id,table_type,service_id,contract_no,apply_date,month_amt,rate_num,old_city,
-            cross_city,status_type,reject_note,remark,audit_date,audit_user','safe'),
-			array('service_id,apply_date,month_amt,rate_num,cross_city','required'),
+            cross_city,cross_type,status_type,reject_note,remark,audit_date,audit_user','safe'),
+			array('service_id,apply_date,month_amt,rate_num,cross_city,cross_type','required'),
 			array('reject_note','required',"on"=>array("reject")),
 			array('id','validateID'),
 		);
@@ -19,7 +19,7 @@ class CrossSearchForm extends CrossApplyForm
     public function validateID($attribute, $params) {
         $index = is_numeric($this->id)?$this->id:0;
         $city_allow = Yii::app()->user->city_allow();
-        $sql = "select * from swo_cross where id='".$index."' and status_type=1 and (cross_city in ({$city_allow}) or old_city in ({$city_allow}))";
+        $sql = "select * from swo_cross where id='".$index."' and status_type in (3,5,6) and (cross_city in ({$city_allow}) or old_city in ({$city_allow}))";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if($row){
             $this->table_type = $row["table_type"];
@@ -54,6 +54,10 @@ class CrossSearchForm extends CrossApplyForm
             $this->luu = $row['luu'];
             $this->audit_user = $row['audit_user'];
             $this->audit_date = $row['audit_date'];
+            $this->cross_type = $row['cross_type'];
+            $this->old_month_amt = $row["old_month_amt"];
+            $this->u_update_user = $row["u_update_user"];
+            $this->u_update_date = $row["u_update_date"];
             return true;
 		}else{
 		    return false;

@@ -24,7 +24,7 @@ class CurlNotesController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('send','testOffice','testCompany','testComplaint','testServiceOne','TestServiceFull','testIp','System'),
+				'actions'=>array('send','testOffice','testCompany','testComplaint','testServiceOne','TestServiceFull','testIp','testCrossOne','System'),
 				'expression'=>array('CurlNotesController','allowReadWrite'),
 			),
 			array('allow', 
@@ -90,6 +90,13 @@ class CurlNotesController extends Controller
 	{
         $model = new CurlNotesList();
         $model->testServiceOne();
+        die();
+	}
+
+	public function actionTestCrossOne($index=3)
+	{
+        $model = new CurlNotesList();
+        $model->testCrossOne($index);
         die();
 	}
 

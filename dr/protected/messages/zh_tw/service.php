@@ -181,5 +181,15 @@ return array(
     'pause + stop'=>'暫停+終止金額',
     'rate'=>'百分比',
     'contract length'=>'合同執行月數',
+
+    'Cross type'=>'業務場景',
+    'long contract'=>'長約',
+    'short contract'=>'短約',
+    'more contract'=>'資質借用',
+
+    'pending U System'=>'待U系統確認',
+    'rejected U System'=>'U系統已拒絕',
+    'U audit date'=>'U系統審核時間',
+    'U audit user'=>'U系統審核賬號',
 );
 ?>

@@ -30,6 +30,12 @@
     </div>
 </div>
 <div class="form-group">
+    <?php echo Tbhtml::label(Yii::t("service","Cross type"),'',array('class'=>"col-lg-3 control-label")); ?>
+    <div class="col-lg-5">
+        <?php echo Tbhtml::dropDownList('CrossApply[cross_type]','',CrossApplyForm::getCrossTypeList(),array('empty'=>'')); ?>
+    </div>
+</div>
+<div class="form-group">
     <?php echo Tbhtml::label(Yii::t("service","Monthly"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
         <?php echo Tbhtml::textField('CrossApply[month_amt]','',array('id'=>'cross_month_amt','prepend'=>"<span class='fa fa-cny'></span>")); ?>

@@ -55,6 +55,14 @@
             </div>
         </div>
         <div class="form-group">
+            <?php echo $form->labelEx($model,'cross_type',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php echo $form->dropDownList($model, 'cross_type',CrossApplyForm::getCrossTypeList(),
+                    array('empty'=>'','readonly'=>$model->readonly())
+                ); ?>
+            </div>
+        </div>
+        <div class="form-group">
             <?php echo $form->labelEx($model,'month_amt',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
                 <?php echo $form->textField($model, 'month_amt',
@@ -88,7 +96,7 @@
                 ); ?>
             </div>
         </div>
-        <?php if ($model->status_type==5): ?>
+        <?php if (in_array($model->status_type,array(2,3,5,6))): ?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'luu',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-2">
@@ -103,6 +111,22 @@
                     ); ?>
                 </div>
             </div>
+            <?php if (in_array($model->status_type,array(5,6))): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'u_update_user',array('class'=>"col-lg-2 control-label")); ?>
+                    <div class="col-lg-2">
+                        <?php echo $form->textField($model, 'u_update_user',
+                            array('readonly'=>true)
+                        ); ?>
+                    </div>
+                    <?php echo $form->labelEx($model,'u_update_date',array('class'=>"col-lg-2 control-label")); ?>
+                    <div class="col-lg-2">
+                        <?php echo $form->textField($model, 'u_update_date',
+                            array('readonly'=>true)
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif ?>
         <?php endif ?>
     </div>
 

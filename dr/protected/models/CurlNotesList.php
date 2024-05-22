@@ -134,7 +134,8 @@ class CurlNotesList extends CListPageModel
             "Office"=>"办事处",
             "ServiceOne"=>"服务合约",
             "Company"=>"客户公司",
-            "Complaint"=>"跟进单"
+            "Complaint"=>"跟进单",
+            "Cross"=>"交叉派单",
         );
         if($bool){
             if(key_exists($key,$list)){
@@ -167,7 +168,7 @@ class CurlNotesList extends CListPageModel
         return array(
             "status"=>1,//客户服务的状态
             "city"=>"ZH",//城市
-            "status_dt"=>"2024-04-".($num>20?$num%20:$num)." 10:33:28",//记录时间
+            "status_dt"=>"2024-05-".($num>20?$num%20:$num)." 10:33:28",//记录时间
             "contract_no"=>"8558-1{$num}",//合约编号
             "contract_type"=>"普通合约",//合约类型（普通合约、KA合约）
             "company_code"=>"dddd112-ZH",//客户公司编号
@@ -208,6 +209,7 @@ class CurlNotesList extends CListPageModel
             "prepay_start"=>$num%2==0?100*$num:null,//预付起始月
             "stop_dt"=>null,//终止日期
             "office_id"=>4,//办事处（U系统id）
+            "contract_id"=>11114,//办事处（U系统id）
             "beforeData"=>array(),//客户服务修改之前的数据(没有数据时)
             /*
             "beforeData"=>array(//客户服务修改之前的数据(有数据时)
@@ -305,6 +307,17 @@ class CurlNotesList extends CListPageModel
     public function testServiceOne(){
 	    $data = self::serviceData(1);
 	    $this->sendCurl("/sync/serviceOne",$data);
+    }
+
+    public function testCrossOne($index){
+        $data = array(
+            "lbs_id"=> $index,
+            "status_type"=>0,
+            "u_update_user"=> "40002_沈超",
+            "u_update_date"=> "2024-5-22 10:53:23",
+            "office_id"=> null,
+        );
+	    $this->sendCurl("/sync/crossOne",$data);
     }
 
     public function testServiceFull(){

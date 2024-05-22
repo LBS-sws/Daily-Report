@@ -183,5 +183,15 @@ return array(
     'pause + stop'=>'暂停+终止金额',
     'rate'=>'百分比',
     'contract length'=>'合同执行月数',
+
+    'Cross type'=>'业务场景',
+    'long contract'=>'长约',
+    'short contract'=>'短约',
+    'more contract'=>'资质借用',
+
+    'pending U System'=>'待U系统确认',
+    'rejected U System'=>'U系统已拒绝',
+    'U audit date'=>'U系统审核时间',
+    'U audit user'=>'U系统审核账号',
 );
 ?>

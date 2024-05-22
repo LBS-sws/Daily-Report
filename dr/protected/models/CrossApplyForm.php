@@ -21,6 +21,11 @@ class CrossApplyForm extends CFormModel
 	public $luu;
 	public $lcu;
 
+    public $cross_type;
+    public $old_month_amt;
+    public $u_update_user;
+    public $u_update_date;
+
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -41,6 +46,9 @@ class CrossApplyForm extends CFormModel
         $list["luu"] = Yii::t('service','audit user');
         $list["audit_date"] = Yii::t('service','audit date');
         $list["audit_user"] = Yii::t('service','audit user');
+        $list["cross_type"] = Yii::t('service','Cross type');
+        $list["u_update_date"] = Yii::t('service','U audit date');
+        $list["u_update_user"] = Yii::t('service','U audit user');
 
 		return $list;
 	}
@@ -51,9 +59,9 @@ class CrossApplyForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('id,table_type,service_id,contract_no,apply_date,month_amt,rate_num,old_city,
+            array('id,table_type,service_id,contract_no,apply_date,month_amt,rate_num,old_city,cross_type,
             cross_city,status_type,reject_note,remark,audit_date,audit_user,luu','safe'),
-			array('service_id,apply_date,cross_city','required'),
+			array('service_id,apply_date,cross_type,cross_city','required'),
             array('month_amt','numerical','allowEmpty'=>false),
             array('rate_num','numerical','allowEmpty'=>false,'min'=>0,'max'=>100),
             array('service_id','validateServiceID'),
@@ -86,7 +94,7 @@ class CrossApplyForm extends CFormModel
         if($row){
             $this->old_city = $row["city"];
             $this->contract_no = $row["contract_no"];
-            $this->resetContractNo();
+            $this->resetContractNo(true);
         }else{
             $this->addError($attribute, "合约编号不存在，无法交叉派单");
             return false;
@@ -115,6 +123,10 @@ class CrossApplyForm extends CFormModel
             $this->luu = $row['luu'];
             $this->audit_user = $row['audit_user'];
             $this->audit_date = $row['audit_date'];
+            $this->cross_type = $row['cross_type'];
+            $this->old_month_amt = $row["old_month_amt"];
+            $this->u_update_user = $row["u_update_user"];
+            $this->u_update_date = $row["u_update_date"];
             $this->resetContractNo();
             return true;
 		}else{
@@ -122,21 +134,24 @@ class CrossApplyForm extends CFormModel
         }
 	}
 
-	protected function resetContractNo(){
+	protected function resetContractNo($bool=false){
         if($this->table_type==0){
             $tableNameOne="swo_service";
             $tableNameTwo="swo_service_contract_no";
         }else{
-            $tableNameOne="swo_service";
+            $tableNameOne="swo_service_ka";
             $tableNameTwo="swo_service_ka_no";
         }
-        $row = Yii::app()->db->createCommand()->select("a.city,a.u_system_id,b.contract_no")->from("{$tableNameOne} a")
+        $row = Yii::app()->db->createCommand()->select("a.city,a.u_system_id,b.contract_no,a.amt_paid")->from("{$tableNameOne} a")
             ->leftJoin("{$tableNameTwo} b","a.id=b.service_id")
             ->where("a.id=:id",array(":id"=>$this->service_id))->queryRow();
         if($row){
             $this->old_city = $row["city"];
             $this->contract_no = $row["contract_no"];
             $this->u_system_id = $row["u_system_id"];
+            if($bool){
+                $this->old_month_amt = $row["amt_paid"];
+            }
         }
     }
 
@@ -152,6 +167,24 @@ class CrossApplyForm extends CFormModel
             }
         }
         return $list;
+    }
+
+    public static function getCrossTypeList(){
+        return array(
+            2=>Yii::t("service","more contract"),//资质借用
+            3=>Yii::t("service","short contract"),//短约
+            4=>Yii::t("service","long contract"),//长约
+        );
+    }
+
+    public static function getCrossTypeStrToKey($key){
+        $list = self::getCrossTypeList();
+        $key="".$key;
+        if (key_exists($key,$list)){
+            return $list[$key];
+        }else{
+            return $key;
+        }
     }
 	
 	public function saveData()
@@ -179,8 +212,8 @@ class CrossApplyForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_cross(
-						service_id, contract_no, apply_date, month_amt, rate_num, old_city, cross_city, remark, lcu, lcd) values (
-						:service_id, :contract_no, :apply_date, :month_amt, :rate_num, :old_city, :cross_city, :remark, :lcu, :lcd)";
+						service_id, contract_no, apply_date, month_amt, rate_num, old_city, cross_city, cross_type, old_month_amt, remark, lcu, lcd) values (
+						:service_id, :contract_no, :apply_date, :month_amt, :rate_num, :old_city, :cross_city, :cross_type, :old_month_amt, :remark, :lcu, :lcd)";
 				break;
 			case 'edit':
 				$sql = "update swo_cross set 
@@ -188,6 +221,8 @@ class CrossApplyForm extends CFormModel
 					month_amt = :month_amt,
 					rate_num = :rate_num,
 					cross_city = :cross_city,
+					cross_type = :cross_type,
+					old_month_amt = :old_month_amt,
 					status_type = 1,
 					reject_note = NULL ,
 					remark = :remark ,
@@ -217,6 +252,10 @@ class CrossApplyForm extends CFormModel
             $command->bindParam(':cross_city',$this->cross_city,PDO::PARAM_STR);
         if (strpos($sql,':remark')!==false)
             $command->bindParam(':remark',$this->remark,PDO::PARAM_STR);
+        if (strpos($sql,':cross_type')!==false)
+            $command->bindParam(':cross_type',$this->cross_type,PDO::PARAM_STR);
+        if (strpos($sql,':old_month_amt')!==false)
+            $command->bindParam(':old_month_amt',$this->old_month_amt,PDO::PARAM_STR);
 
 		if (strpos($sql,':lcu')!==false)
 			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);

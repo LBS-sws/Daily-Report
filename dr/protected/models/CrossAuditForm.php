@@ -9,8 +9,8 @@ class CrossAuditForm extends CrossApplyForm
 	{
 		return array(
             array('id,table_type,service_id,contract_no,apply_date,month_amt,rate_num,old_city,
-            cross_city,status_type,reject_note,remark,audit_date,audit_user','safe'),
-			array('service_id,apply_date,month_amt,rate_num,cross_city','required'),
+            cross_city,cross_type,status_type,reject_note,remark,audit_date,audit_user','safe'),
+			array('service_id,apply_date,month_amt,rate_num,cross_city,cross_type','required'),
 			array('reject_note','required',"on"=>array("reject")),
 			array('id','validateID'),
 		);
@@ -25,6 +25,7 @@ class CrossAuditForm extends CrossApplyForm
             $this->table_type = $row["table_type"];
             $this->service_id = $row["service_id"];
             $this->old_city = $row["old_city"];
+            $this->cross_type = $row['cross_type'];
             $this->lcu = $row["lcu"];
             $this->resetContractNo();
         }else{
@@ -55,6 +56,10 @@ class CrossAuditForm extends CrossApplyForm
             $this->luu = $row['luu'];
             $this->audit_user = $row['audit_user'];
             $this->audit_date = $row['audit_date'];
+            $this->cross_type = $row['cross_type'];
+            $this->old_month_amt = $row["old_month_amt"];
+            $this->u_update_user = $row["u_update_user"];
+            $this->u_update_date = $row["u_update_date"];
             $this->resetContractNo();
             return true;
 		}else{
@@ -93,7 +98,7 @@ class CrossAuditForm extends CrossApplyForm
                 $sql = "update swo_cross set 
 					audit_user = :audit_user, 
 					audit_date = :audit_date,
-					status_type = 5,
+					status_type = 3,
 					luu = :luu
 					where id = :id";
 			    break;
@@ -175,6 +180,7 @@ class CrossAuditForm extends CrossApplyForm
             "audit_user_name"=>self::getEmployeeStrForUsername(Yii::app()->user->id),//审核人名称+编号如：400002_沈超
             "audit_date"=>$this->audit_date,//审核日期
             "contract_id"=>$this->u_system_id,//u_system_id
+            "cross_type"=>$this->cross_type,//类型：4:长约 3：短约 2：资质借用
         );
         SystemU::sendUForCross($data);
     }
