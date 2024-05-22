@@ -27,7 +27,7 @@ class CrossAuditForm extends CrossApplyForm
             $this->old_city = $row["old_city"];
             $this->cross_type = $row['cross_type'];
             $this->lcu = $row["lcu"];
-            $this->resetContractNo();
+            $this->resetContractNo(true);
         }else{
             $this->addError($attribute, "交叉派单不存在，请刷新重试");
             return false;
