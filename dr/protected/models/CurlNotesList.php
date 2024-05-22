@@ -312,8 +312,8 @@ class CurlNotesList extends CListPageModel
     public function testCrossOne($index){
         $data = array(
             "lbs_id"=> $index,
-            "status_type"=>0,
-            "u_update_user"=> "40002_沈超",
+            "status_type"=>1,
+            "u_update_user"=> "40002_测试",
             "u_update_date"=> "2024-5-22 10:53:23",
             "office_id"=> null,
         );
