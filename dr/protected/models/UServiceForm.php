@@ -389,6 +389,7 @@ class UServiceForm extends CFormModel
             1=>Yii::t("summary","Technician level"),
             2=>Yii::t("summary","Technical supervisor"),
             3=>Yii::t("summary","Other personnel"),
+            4=>Yii::t("summary","KA Technician"),
         );
     }
 

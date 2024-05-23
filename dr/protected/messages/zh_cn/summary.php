@@ -270,5 +270,7 @@ return array(
     'city charge detail'=>'地区主管需要剔除个人销售业绩后取数',
     'employee name'=>'姓名',
     'Update(for add)'=>'更改服务（只含新增）',
+
+    'KA Technician'=>'KA技术服务',
 );
 ?>

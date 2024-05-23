@@ -274,7 +274,7 @@ class SalesAnalysisForm extends CFormModel
                 }
                 if($entry_ym>$yearMonth){//未入职显示空
                     if($entry_ym_prev==$yearMonth) {//入职前一个月
-                        $value="；";
+                        $value=";";
                     }else{
                         $value="";
                     }

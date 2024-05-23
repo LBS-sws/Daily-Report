@@ -270,5 +270,7 @@ return array(
     'city charge detail'=>'地區主管需要剔除個人銷售業績後取數',
     'employee name'=>'姓名',
     'Update(for add)'=>'更改服務（只含新增）',
+
+    'KA Technician'=>'KA技術服務',
 );
 ?>
