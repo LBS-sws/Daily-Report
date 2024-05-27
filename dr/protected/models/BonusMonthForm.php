@@ -107,6 +107,7 @@ class BonusMonthForm extends CFormModel
             if(key_exists($city,$serviceAddForNY)){
                 $defMoreList["new_sum"]+=$serviceAddForNY[$city]["num_new"];
                 $defMoreList["one_service"]+=$serviceAddForNY[$city]["num_new_n"];
+                $defMoreList["u_sum"]+=$serviceAddForNY[$city]["num_new_n"];
             }
             $defMoreList["u_sum"]+=key_exists($city,$uInvMoney)?$uInvMoney[$city]["sum_money"]:0;
 
@@ -211,6 +212,7 @@ class BonusMonthForm extends CFormModel
             $list["num_growth"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
             $list["num_growth"]+=$list["amend_sum"];
         }
+        $list["two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["two_net"],"net");
     }
 
     //顯示提成表的表格內容
@@ -372,7 +374,7 @@ class BonusMonthForm extends CFormModel
     //获取td对应的键名
     protected function getDataAllKeyStr(){
         $bodyKey = array(
-            "city_name","new_sum","num_update_add","num_growth","one_service","two_net",
+            "city_name","new_sum","num_update_add","num_growth","one_service","two_net_rate",
             "comStopRate","city_employee_name","city_employee_dept","city_num_new","city_update_add",
             "city_one_service"
         );
@@ -400,11 +402,13 @@ class BonusMonthForm extends CFormModel
         $clickTdList = $this->getClickTdList();
         $html="";
         if(!empty($data)){
-            $allRow = [];//总计(所有地区)
+            $allRow = ["two_net"=>0];//总计(所有地区)
             foreach ($data as $regionList){
-                $regionRow = [];//地区汇总
+                $regionRow = ["two_net"=>0];//地区汇总
                 foreach ($regionList["list"] as $cityList){
                     $this->resetTdRow($cityList);
+                    $regionRow["two_net"]+=$cityList["two_net"];
+                    $allRow["two_net"]+=$cityList["two_net"];
                     $html.="<tr>";
                     foreach ($bodyKey as $keyStr){
                         if(!key_exists($keyStr,$regionRow)){
@@ -420,7 +424,7 @@ class BonusMonthForm extends CFormModel
                         }
                         $text = ComparisonForm::showNum($text);
                         $this->downJsonText["excel"][$regionList['region']]['list'][$cityList['city']][$keyStr]=$text;
-                        $class="";
+                        $class = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                         $title="";
                         if(key_exists($keyStr,$clickTdList)){
                             $class.=" td_detail";
@@ -463,7 +467,7 @@ class BonusMonthForm extends CFormModel
                     $text = ComparisonForm::showNum($text);
                     //$inputHide = TbHtml::hiddenField("excel[MO][{$keyStr}]",$text);
                     $this->downJsonText["excel"]['MO'][$keyStr]=$text;
-                    $class="";
+                    $class = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                     $title="";
                     if(key_exists($keyStr,$clickTdList)){
                         $class.=" td_detail";
@@ -484,7 +488,8 @@ class BonusMonthForm extends CFormModel
         $html="<tr class='tr-end click-tr'>";
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
-            $tdClass = "";
+            //$tdClass = "";
+            $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
             $text = ComparisonForm::showNum($text);
             $this->downJsonText["excel"][$data['city']]["count"][]=$text;
             $html.="<td class='tr-end click-tr {$tdClass}' style='font-weight: bold'><span>{$text}</span></td>";
