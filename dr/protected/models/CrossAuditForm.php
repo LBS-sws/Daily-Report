@@ -27,6 +27,12 @@ class CrossAuditForm extends CrossApplyForm
             $this->old_city = $row["old_city"];
             $this->cross_type = $row['cross_type'];
             $this->lcu = $row["lcu"];
+            $this->month_amt = $row['month_amt'];
+            $this->rate_num = floatval($row['rate_num']);
+            $this->cross_amt = $row['cross_amt'];
+            $this->qualification_city = $row['qualification_city'];
+            $this->qualification_ratio = ($row['qualification_ratio']===""||$row['qualification_ratio']===null)?null:floatval($row['qualification_ratio']);
+            $this->qualification_amt = $row['qualification_amt'];
             $this->resetContractNo(true);
         }else{
             $this->addError($attribute, "交叉派单不存在，请刷新重试");
@@ -60,6 +66,10 @@ class CrossAuditForm extends CrossApplyForm
             $this->old_month_amt = $row["old_month_amt"];
             $this->u_update_user = $row["u_update_user"];
             $this->u_update_date = $row["u_update_date"];
+            $this->cross_amt = $row['cross_amt'];
+            $this->qualification_city = $row['qualification_city'];
+            $this->qualification_ratio = floatval($row['qualification_ratio']);
+            $this->qualification_amt = $row['qualification_amt'];
             $this->resetContractNo();
             return true;
 		}else{
@@ -91,6 +101,7 @@ class CrossAuditForm extends CrossApplyForm
                 $sql = "update swo_cross set 
 					status_type = 2,
 					reject_note = :reject_note ,
+					audit_date = :audit_date,
 					luu = :luu
 					where id = :id";
 				break;
@@ -146,8 +157,6 @@ class CrossAuditForm extends CrossApplyForm
             $title.="已拒绝";
             $message.="<p style='color:red;font-weight: bold'>拒绝原因：".$this->reject_note."</p>";
         }
-        $rate_amt = ($this->month_amt*$this->rate_num)/100;
-        $rate_amt = number_format($rate_amt,2,'.','');
         $message.="<p>合约编号：".$serviceModel->contract_no."</p>";
         $message.="<p>客户编号及名称：".$serviceModel->company_name."</p>";
         $message.="<p>客户类别：".$serviceModel->cust_type."</p>";
@@ -156,7 +165,7 @@ class CrossAuditForm extends CrossApplyForm
         $message.="<p>承接城市：".General::getCityName($this->cross_city)."</p>";
         $message.="<p>月金额：".$this->month_amt."</p>";
         $message.="<p>比例：".$this->rate_num."%"."</p>";
-        $message.="<p>比例后金额：".$rate_amt."</p>";
+        $message.="<p>比例后金额：".$this->cross_amt."</p>";
         $message.="<p>备注：".$this->remark."</p>";
         $message.="<p>申请时间：".$this->apply_date."</p>";
         $emailModel = new Email($title,$message,$title);
@@ -165,8 +174,6 @@ class CrossAuditForm extends CrossApplyForm
     }
 
     private function sendCurl($serviceModel){
-        $rate_amt = ($this->month_amt*$this->rate_num)/100;
-        $rate_amt = is_numeric($rate_amt)?round($rate_amt,2):0;
         $data=array(
             "lbs_id"=>$this->id,//唯一标识
             //"customer_code"=>$serviceModel->customer_code."-{$this->old_city}",//客户编号
@@ -174,13 +181,16 @@ class CrossAuditForm extends CrossApplyForm
             "contract_number"=>$this->contract_no,//合约编号
             "audit_ratio"=>$this->rate_num,//审核比例
             "send_money"=>$this->month_amt,//发包方金额
-            "accept_money"=>$rate_amt,//承接方金额
+            "accept_money"=>$this->cross_amt,//承接方金额
             "send_contract_id"=>$this->old_city,//发包方（城市代号：ZY）
             "accept_contract_id"=>$this->cross_city,//承接方（城市代号：ZY）
             "audit_user_name"=>self::getEmployeeStrForUsername(Yii::app()->user->id),//审核人名称+编号如：400002_沈超
             "audit_date"=>$this->audit_date,//审核日期
             "contract_id"=>$this->u_system_id,//u_system_id
-            "cross_type"=>$this->cross_type,//类型：4:长约 3：短约 2：资质借用
+            "contract_type"=>$this->cross_type,//类型：4:长约 3：短约 2：资质借用
+            "qualification_audit_ratio"=>$this->qualification_ratio,//资质方比例
+            "qualification_contract_id"=>$this->qualification_city,//资质方
+            "qualification_money"=>$this->qualification_amt,//资质方金额
         );
         SystemU::sendUForCross($data);
     }

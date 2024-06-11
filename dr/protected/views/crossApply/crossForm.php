@@ -55,19 +55,45 @@
             </div>
         </div>
         <div class="form-group">
-            <?php echo $form->labelEx($model,'cross_type',array('class'=>"col-lg-2 control-label")); ?>
-            <div class="col-lg-3">
-                <?php echo $form->dropDownList($model, 'cross_type',CrossApplyForm::getCrossTypeList(),
-                    array('empty'=>'','readonly'=>$model->readonly())
-                ); ?>
-            </div>
-        </div>
-        <div class="form-group">
             <?php echo $form->labelEx($model,'month_amt',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
                 <?php echo $form->textField($model, 'month_amt',
                     array('readonly'=>$model->readonly(),'id'=>'cross_month_amt','prepend'=>"<span class='fa fa-cny'></span>")
                 ); ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $form->labelEx($model,'cross_type',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php echo $form->dropDownList($model, 'cross_type',CrossApplyForm::getCrossTypeList(),
+                    array('empty'=>'','readonly'=>$model->readonly(),'id'=>'cross_type')
+                ); ?>
+            </div>
+        </div>
+        <div class="qualification-div" style="<?php if(!in_array($model->cross_type,array('6','7','8'))){ echo 'display: none';} ?>">
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'qualification_city',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
+                    <?php echo $form->dropDownList($model, 'qualification_city',CrossApplyForm::getCityList(),
+                        array('empty'=>'','id'=>'qualification_city','readonly'=>$model->readonly())
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'qualification_ratio',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
+                    <?php echo $form->textField($model, 'qualification_ratio',
+                        array('readonly'=>$model->readonly(),'id'=>'qualification_ratio','append'=>"%")
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'qualification_amt',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
+                    <?php echo $form->textField($model, 'qualification_amt',
+                        array('id'=>'qualification_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")
+                    ); ?>
+                </div>
             </div>
         </div>
         <div class="form-group">
@@ -81,11 +107,9 @@
         <div class="form-group">
             <?php echo Tbhtml::label(Yii::t("service","Rate For Amt"),'',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
-                <?php
-                $rate_amt = $model->month_amt*$model->rate_num;
-                $rate_amt = is_numeric($rate_amt)?($rate_amt/100):0;
-                echo Tbhtml::textField('rate_amt',$rate_amt,array('id'=>'cross_rate_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>"));
-                ?>
+                <?php echo $form->textField($model, 'cross_amt',
+                    array('id'=>'cross_rate_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")
+                ); ?>
             </div>
         </div>
         <div class="form-group">
@@ -140,17 +164,37 @@
 <?php
 if($model->status_type==2){
     $js="
-	$('#cross_rate_num,#cross_month_amt').on('change keyup',function(){
+	$('#cross_rate_num,#cross_month_amt,#qualification_ratio').on('change keyup',function(){
+	    var qualification_ratio= $('#qualification_ratio').val();
 	    var rate_num= $('#cross_rate_num').val();
 	    var month_amt= $('#cross_month_amt').val();
 	    var rate_amt= 0;
+	    if(qualification_ratio!=''&&month_amt!=''){
+	        $('#qualification_amt').val(month_amt*(qualification_ratio/100));
+	    }else{
+	        $('#qualification_amt').val('');
+	    }
 	    if(rate_num!=''&&month_amt!=''){
+	        qualification_ratio = qualification_ratio==''?0:qualification_ratio;
+	        month_amt = month_amt*((100-qualification_ratio)/100);
 	        rate_amt = month_amt*(rate_num/100);
 	        rate_amt = rate_amt.toFixed(2);
 	        $('#cross_rate_amt').val(rate_amt);
 	    }else{
 	        $('#cross_rate_amt').val('');
 	    }
+	});
+	
+	$('#cross_type').change(function(){
+	    var cross_type = $(this).val();
+	    if(['6','7','8'].indexOf(cross_type)>=0){
+	        $('.qualification-div').slideDown(100);
+	    }else{
+	        $('#qualification_ratio').val('');
+	        $('#qualification_amt').val('');
+	        $('.qualification-div').slideUp(100);
+	    }
+	    $('#cross_rate_num').trigger('change');
 	});
 	";
     Yii::app()->clientScript->registerScript('crossDialog',$js,CClientScript::POS_READY);

@@ -58,6 +58,10 @@ class CrossSearchForm extends CrossApplyForm
             $this->old_month_amt = $row["old_month_amt"];
             $this->u_update_user = $row["u_update_user"];
             $this->u_update_date = $row["u_update_date"];
+            $this->cross_amt = $row['cross_amt'];
+            $this->qualification_city = $row['qualification_city'];
+            $this->qualification_ratio = floatval($row['qualification_ratio']);
+            $this->qualification_amt = $row['qualification_amt'];
             return true;
 		}else{
 		    return false;

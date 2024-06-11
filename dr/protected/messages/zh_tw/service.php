@@ -191,5 +191,13 @@ return array(
     'rejected U System'=>'U系統已拒絕',
     'U audit date'=>'U系統審核時間',
     'U audit user'=>'U系統審核賬號',
+
+    'Qualification city'=>'資質方',
+    'Qualification ratio'=>'資質方比例',
+    'Qualification Amt'=>'資質方金額',
+    'more contract - short'=>'資質借用短約',
+    'more contract - long'=>'資質借用長約',
+    'more contract - holdco'=>'資質借用-Holdco與收購',
+    'holdco contract'=>'Holdco與收購',
 );
 ?>

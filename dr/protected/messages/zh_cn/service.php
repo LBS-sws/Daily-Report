@@ -193,5 +193,13 @@ return array(
     'rejected U System'=>'U系统已拒绝',
     'U audit date'=>'U系统审核时间',
     'U audit user'=>'U系统审核账号',
+
+    'Qualification city'=>'资质方',
+    'Qualification ratio'=>'资质方比例',
+    'Qualification Amt'=>'资质方金额',
+    'more contract - short'=>'资质借用短约',
+    'more contract - long'=>'资质借用长约',
+    'more contract - holdco'=>'资质借用-Holdco与收购',
+    'holdco contract'=>'Holdco与收购',
 );
 ?>

@@ -13,6 +13,10 @@ class CrossApplyForm extends CFormModel
 	public $rate_num;
 	public $old_city;
 	public $cross_city;
+	public $cross_amt;
+	public $qualification_ratio;
+	public $qualification_city;
+	public $qualification_amt;
 	public $status_type;
 	public $reject_note;
 	public $remark;
@@ -40,6 +44,7 @@ class CrossApplyForm extends CFormModel
         $list["month_amt"] = Yii::t('service','Monthly');
         $list["rate_num"] = Yii::t('service','Rate number');
         $list["cross_city"] = Yii::t('service','Cross city');
+        $list["cross_amt"] = Yii::t('service','Cross city');
         $list["reject_note"] = Yii::t('service','reject note');
         $list["remark"] = Yii::t('service','Remarks');
         $list["status_type"] = Yii::t('service','status type');
@@ -49,6 +54,9 @@ class CrossApplyForm extends CFormModel
         $list["cross_type"] = Yii::t('service','Cross type');
         $list["u_update_date"] = Yii::t('service','U audit date');
         $list["u_update_user"] = Yii::t('service','U audit user');
+        $list["qualification_ratio"] = Yii::t('service','Qualification ratio');
+        $list["qualification_city"] = Yii::t('service','Qualification city');
+        $list["qualification_amt"] = Yii::t('service','Qualification Amt');
 
 		return $list;
 	}
@@ -60,14 +68,44 @@ class CrossApplyForm extends CFormModel
 	{
 		return array(
             array('id,table_type,service_id,contract_no,apply_date,month_amt,rate_num,old_city,cross_type,
-            cross_city,status_type,reject_note,remark,audit_date,audit_user,luu','safe'),
+            cross_city,status_type,reject_note,remark,audit_date,audit_user,luu,qualification_ratio,
+            qualification_city,qualification_amt,cross_amt','safe'),
 			array('service_id,apply_date,cross_type,cross_city','required'),
             array('month_amt','numerical','allowEmpty'=>false),
             array('rate_num','numerical','allowEmpty'=>false,'min'=>0,'max'=>100),
             array('service_id','validateServiceID'),
             array('cross_city','validateCrossCity'),
+            array('cross_type','validateCrossType'),
 		);
 	}
+
+    public function validateCrossType($attribute, $params) {
+	    $list = self::getCrossTypeList();
+	    $this->cross_type="".$this->cross_type;
+	    if(!key_exists($this->cross_type,$list)){
+            $this->addError($attribute, "业务场景不存在，请刷新重试");
+            return false;
+        }else{
+	        if(in_array($this->cross_type,array('6','7','8'))){
+                if($this->qualification_city===""){
+                    $this->addError($attribute, "资质方不能为空");
+                }
+	            if($this->qualification_ratio===""){
+                    $this->addError($attribute, "资质方比例不能为空");
+                }
+	            $this->qualification_amt=$this->month_amt*($this->qualification_ratio/100);
+                $this->qualification_amt = round($this->qualification_amt,2);
+                $this->cross_amt=$this->month_amt*((100-$this->qualification_ratio)/100)*($this->rate_num/100);
+                $this->cross_amt = round($this->cross_amt,2);
+            }else{
+                $this->qualification_ratio=null;
+                $this->qualification_city=null;
+                $this->qualification_amt=0;
+                $this->cross_amt=$this->month_amt*($this->rate_num/100);
+                $this->cross_amt = round($this->cross_amt,2);
+            }
+        }
+    }
 
     public function validateCrossCity($attribute, $params) {
         if(!empty($this->cross_city)){
@@ -127,6 +165,10 @@ class CrossApplyForm extends CFormModel
             $this->old_month_amt = $row["old_month_amt"];
             $this->u_update_user = $row["u_update_user"];
             $this->u_update_date = $row["u_update_date"];
+            $this->cross_amt = $row['cross_amt'];
+            $this->qualification_city = $row['qualification_city'];
+            $this->qualification_ratio = floatval($row['qualification_ratio']);
+            $this->qualification_amt = $row['qualification_amt'];
             $this->resetContractNo();
             return true;
 		}else{
@@ -171,9 +213,13 @@ class CrossApplyForm extends CFormModel
 
     public static function getCrossTypeList(){
         return array(
-            2=>Yii::t("service","more contract"),//资质借用
-            3=>Yii::t("service","short contract"),//短约
-            4=>Yii::t("service","long contract"),//长约
+            "3"=>Yii::t("service","short contract"),//短约
+            "2"=>Yii::t("service","long contract"),//长约
+            "5"=>Yii::t("service","more contract"),//资质借用
+            "7"=>Yii::t("service","more contract - short"),//资质借用短约
+            "6"=>Yii::t("service","more contract - long"),//资质借用长约
+            "4"=>Yii::t("service","holdco contract"),//Holdco与收购
+            "8"=>Yii::t("service","more contract - holdco"),//资质借用-Holdco与收购
         );
     }
 
@@ -212,8 +258,8 @@ class CrossApplyForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_cross(
-						service_id, contract_no, apply_date, month_amt, rate_num, old_city, cross_city, cross_type, old_month_amt, remark, lcu, lcd) values (
-						:service_id, :contract_no, :apply_date, :month_amt, :rate_num, :old_city, :cross_city, :cross_type, :old_month_amt, :remark, :lcu, :lcd)";
+						service_id, contract_no, apply_date, month_amt, rate_num, old_city, cross_city, cross_type, old_month_amt, remark, cross_amt, qualification_ratio, qualification_city, qualification_amt, lcu, lcd) values (
+						:service_id, :contract_no, :apply_date, :month_amt, :rate_num, :old_city, :cross_city, :cross_type, :old_month_amt, :remark, :cross_amt, :qualification_ratio, :qualification_city, :qualification_amt, :lcu, :lcd)";
 				break;
 			case 'edit':
 				$sql = "update swo_cross set 
@@ -223,6 +269,10 @@ class CrossApplyForm extends CFormModel
 					cross_city = :cross_city,
 					cross_type = :cross_type,
 					old_month_amt = :old_month_amt,
+					cross_amt = :cross_amt,
+					qualification_ratio = :qualification_ratio,
+					qualification_city = :qualification_city,
+					qualification_amt = :qualification_amt,
 					status_type = 1,
 					reject_note = NULL ,
 					remark = :remark ,
@@ -256,6 +306,14 @@ class CrossApplyForm extends CFormModel
             $command->bindParam(':cross_type',$this->cross_type,PDO::PARAM_STR);
         if (strpos($sql,':old_month_amt')!==false)
             $command->bindParam(':old_month_amt',$this->old_month_amt,PDO::PARAM_STR);
+        if (strpos($sql,':cross_amt')!==false)
+            $command->bindParam(':cross_amt',$this->cross_amt,PDO::PARAM_STR);
+        if (strpos($sql,':qualification_ratio')!==false)
+            $command->bindParam(':qualification_ratio',$this->qualification_ratio,PDO::PARAM_STR);
+        if (strpos($sql,':qualification_city')!==false)
+            $command->bindParam(':qualification_city',$this->qualification_city,PDO::PARAM_STR);
+        if (strpos($sql,':qualification_amt')!==false)
+            $command->bindParam(':qualification_amt',$this->qualification_amt,PDO::PARAM_STR);
 
 		if (strpos($sql,':lcu')!==false)
 			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
@@ -287,8 +345,7 @@ class CrossApplyForm extends CFormModel
             $serviceModel->retrieveData($this->service_id);
         }
         $title = "交叉派单 - 待审核";
-        $rate_amt = ($this->month_amt*$this->rate_num)/100;
-        $rate_amt = number_format($rate_amt,2,'.','');
+        //$rate_amt = number_format($rate_amt,2,'.','');
         $message="<p>合约编号：".$serviceModel->contract_no."</p>";
         $message.="<p>客户编号及名称：".$serviceModel->company_name."</p>";
         $message.="<p>客户类别：".$serviceModel->cust_type."</p>";
@@ -297,7 +354,7 @@ class CrossApplyForm extends CFormModel
         $message.="<p>承接城市：".General::getCityName($this->cross_city)."</p>";
         $message.="<p>月金额：".$this->month_amt."</p>";
         $message.="<p>比例：".$this->rate_num."%"."</p>";
-        $message.="<p>比例后金额：".$rate_amt."</p>";
+        $message.="<p>比例后金额：".$this->cross_amt."</p>";
         $message.="<p>备注：".$this->remark."</p>";
         $message.="<p>申请时间：".$this->apply_date."</p>";
         $emailModel = new Email($title,$message,$title);
