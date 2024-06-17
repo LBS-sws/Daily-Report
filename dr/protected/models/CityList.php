@@ -16,22 +16,25 @@ class CityList extends CListPageModel
 			'incharge'=>Yii::t('code','In Charge'),
 			'ka_bool'=>Yii::t('code','city type'),
             'SARANK'=>Yii::t('code','rank for sales'),
+            'JD_city'=>Yii::t('code','JD City'),
 		);
 	}
 	
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
-		$sql1 = "select a.*, b.name as region_name, c.disp_name as incharge,f.field_value as SARANK  
+		$sql1 = "select a.*, b.name as region_name, c.disp_name as incharge,f.field_value as SARANK,g.field_value as JD_city  
 				from security$suffix.sec_city a left outer join security$suffix.sec_city b on a.region=b.code 
 					left outer join security$suffix.sec_user c on a.incharge= c.username 
 					left outer join security$suffix.sec_city_info f on a.code= f.code and f.field_id='SARANK' 
+					left outer join security$suffix.sec_city_info g on a.code= g.code and g.field_id='JD_city' 
 				where 1=1 
 			";
 		$sql2 = "select count(a.code)
 				from security$suffix.sec_city a left outer join security$suffix.sec_city b on a.region=b.code 
 					left outer join security$suffix.sec_user c on a.incharge= c.username 
 					left outer join security$suffix.sec_city_info f on a.code= f.code and f.field_id='SARANK'
+					left outer join security$suffix.sec_city_info g on a.code= g.code and g.field_id='JD_city' 
 				where 1=1 
 			";
 		$clause = "";
@@ -91,6 +94,7 @@ class CityList extends CListPageModel
 						'name'=>$record['name'],
 						'region_name'=>$record['region_name'],
 						'incharge'=>$record['incharge'],
+						'JD_city'=>$record['JD_city'],
 						'SARANK'=>$record['SARANK']==1?Yii::t("misc","On"):Yii::t("misc","Off"),
 						'ka_bool'=>self::getCityTypeList($record['ka_bool'],true),
 					);

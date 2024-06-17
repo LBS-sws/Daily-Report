@@ -30,4 +30,9 @@
 			;
 		?>
 	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('JD_city').$this->drawOrderArrow('g.field_value'),'#',$this->createOrderLink('code-list','g.field_value'))
+			;
+		?>
+	</th>
 </tr>

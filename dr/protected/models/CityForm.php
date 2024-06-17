@@ -11,6 +11,8 @@ class CityForm extends CFormModel
 	public $currency;
 	public $SARANK;//销售系统排行榜
 	public $DRRANK;//日报表系统排行榜
+	public $JD_city;//金蝶组织编号
+    //public $BS_city;//北森组织编号
 
     protected $dynamic_fields = array(
         //货币
@@ -19,6 +21,10 @@ class CityForm extends CFormModel
         'SARANK'=>array("type"=>"list","func"=>array("CityForm","getRankList"),"param"=>array()),
         //日报表系统排行榜
         'DRRANK'=>array("type"=>"list","func"=>array("CityForm","getRankList"),"param"=>array()),
+        //金蝶系统编号
+        'JD_city'=>array("type"=>"text"),
+        //北森组织编号
+        //'BS_city'=>array("type"=>"text"),
     );
 	
 	/**
@@ -37,6 +43,8 @@ class CityForm extends CFormModel
 			'ka_bool'=>Yii::t('code','city type'),
 			'SARANK'=>Yii::t('code','rank for sales'),
 			'DRRANK'=>Yii::t('code','rank for dr'),
+			'JD_city'=>Yii::t('code','JD City'),
+			'BS_city'=>Yii::t('code','BS City'),
 		);
 	}
 

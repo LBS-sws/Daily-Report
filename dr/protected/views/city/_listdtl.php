@@ -6,4 +6,5 @@
 	<td><?php echo $this->record['region_name']; ?></td>
 	<td><?php echo $this->record['incharge']; ?></td>
 	<td><?php echo $this->record['SARANK']; ?></td>
+	<td><?php echo $this->record['JD_city']; ?></td>
 </tr>

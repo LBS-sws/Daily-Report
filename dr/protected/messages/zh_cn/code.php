@@ -114,5 +114,7 @@ return array(
 
     'rank for sales'=>'地区排行榜(销售系统)',
     'rank for dr'=>'总经理排行榜(日报表系统)',
+
+    'JD City'=>'金蝶组织编号',
 );
 ?>
