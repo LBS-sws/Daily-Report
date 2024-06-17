@@ -179,7 +179,7 @@ class CrossAuditForm extends CrossApplyForm
             //"customer_code"=>$serviceModel->customer_code."-{$this->old_city}",//客户编号
             //"customer_name"=>$serviceModel->customer_name,//客户名称
             "contract_number"=>$this->contract_no,//合约编号
-            "audit_ratio"=>$this->rate_num,//审核比例
+            "accept_audit_ratio"=>$this->rate_num,//审核比例
             "send_money"=>$this->month_amt,//发包方金额
             "accept_money"=>$this->cross_amt,//承接方金额
             "send_contract_id"=>$this->old_city,//发包方（城市代号：ZY）
