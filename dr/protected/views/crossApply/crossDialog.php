@@ -8,10 +8,13 @@
 					'footer'=>$ftrbtn,
 					'show'=>false,
 				));
+$modelForm = isset($modelForm)?$modelForm:"ServiceForm";
+$table_type = $modelForm=="ServiceForm"?0:1;
 ?>
 
 <div class="form-group">
     <?php echo Tbhtml::hiddenField('CrossApply[service_id]','',array('id'=>'cross_service_id')); ?>
+    <?php echo Tbhtml::hiddenField('CrossApply[table_type]',$table_type); ?>
     <?php echo Tbhtml::label(Yii::t("service","Contract No"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-7">
         <?php echo Tbhtml::textField('CrossApply[contract_no]','',array('id'=>'cross_contract_no','readonly'=>true)); ?>
@@ -85,10 +88,10 @@
     $nowDate = date_format(date_create(),"Y/m/d");
 	$js="
 	$('#crossDialog').on('show.bs.modal', function (event) {
-	    var month_amt = $('#ServiceForm_amt_paid').val();
-	    //month_amt = $('#ServiceForm_paid_type').val()=='M'?month_amt:(month_amt/12);
-	    $('#cross_service_id').val($('#ServiceForm_id').val());
-	    $('#cross_contract_no').val($('#ServiceForm_contract_no').val());
+	    var month_amt = $('#{$modelForm}_amt_paid').val();
+	    //month_amt = $('#{$modelForm}_paid_type').val()=='M'?month_amt:(month_amt/12);
+	    $('#cross_service_id').val($('#{$modelForm}_id').val());
+	    $('#cross_contract_no').val($('#{$modelForm}_contract_no').val());
 	    $('#cross_apply_date').val('{$nowDate}');
 	    $('#cross_month_amt').val(month_amt);
 	});

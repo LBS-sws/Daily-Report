@@ -1,3 +1,6 @@
+<?php
+$table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_type);
+?>
 
 <!-- Nav tabs -->
 <ul class="nav nav-tabs" role="tablist">
@@ -5,7 +8,7 @@
         <a href="#cross" aria-controls="cross" role="tab" data-toggle="tab"><?php echo Yii::t("app","Cross Apply");?></a>
     </li>
     <li role="presentation">
-        <a href="#service" aria-controls="service" role="tab" data-toggle="tab"><?php echo Yii::t("app","Customer Service");?></a>
+        <a href="#service" aria-controls="service" role="tab" data-toggle="tab"><?php echo $table_type_name;?></a>
     </li>
 </ul>
 
@@ -24,6 +27,15 @@
                 </div>
             </div>
         <?php endif ?>
+        <div class="form-group">
+            <?php echo $form->labelEx($model,'table_type',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php echo $form->hiddenField($model, 'status_type'); ?>
+                <?php
+                echo TbHtml::textField("table_type",$table_type_name,array('readonly'=>true));
+                 ?>
+            </div>
+        </div>
         <div class="form-group">
             <?php echo $form->labelEx($model,'contract_no',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">

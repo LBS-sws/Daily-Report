@@ -94,7 +94,7 @@ $serviceModel->nature_type_two=GetNameToId::getNatureTwoNameForId($serviceModel-
 <div class="form-group">
     <?php echo Tbhtml::label($serviceModel->getAttributeLabel('need_install'),'',array('class'=>"col-lg-2 control-label")); ?>
     <div class="col-lg-2">
-        <?php echo Tbhtml::textField('service[need_install]',GetNameToId::getNeedInstallForId($serviceModel->need_install),array('readonly'=>true,'prepend'=>'<span class="fa fa-cny"></span>')); ?>
+        <?php echo Tbhtml::textField('service[need_install]',GetNameToId::getNeedInstallForId($serviceModel->need_install),array('readonly'=>true)); ?>
     </div>
 </div>
 <div class="form-group">

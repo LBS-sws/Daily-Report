@@ -1,6 +1,11 @@
 <tr>
 	<th></th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('table_type').$this->drawOrderArrow('a.table_type'),'#',$this->createOrderLink('crossSearch-list','a.table_type'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('contract_no').$this->drawOrderArrow('a.contract_no'),'#',$this->createOrderLink('crossSearch-list','a.contract_no'))
 			;
 		?>

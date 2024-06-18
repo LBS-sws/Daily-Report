@@ -10,6 +10,7 @@ class CrossApplyList extends CListPageModel
 	public function attributeLabels()
 	{
 		return array(
+			'table_type'=>Yii::t('summary','menu name'),
 			'contract_no'=>Yii::t('service','Contract No'),
 			'apply_date'=>Yii::t('service','Apply date'),
 			'month_amt'=>Yii::t('service','Monthly'),
@@ -85,6 +86,7 @@ class CrossApplyList extends CListPageModel
 						'old_city'=>$record['old_city_name'],
 						'cross_city'=>$record['cross_city_name'],
 						'status_type'=>$record['status_type'],
+						'table_type'=>CrossApplyForm::getCrossTableTypeNameForKey($record["table_type"]),
 						'status_str'=>self::getStatusStrForStatusType($record['status_type']),
 						'color'=>self::getColorForStatusType($record['status_type']),
                     );

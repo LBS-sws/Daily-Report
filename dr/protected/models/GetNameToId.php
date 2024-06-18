@@ -198,6 +198,7 @@ class GetNameToId{
     //获取需安装名字
     public static function getNeedInstallForId($id){
         $list = array(
+            'N'=>Yii::t('misc','No'),
             ''=>Yii::t('misc','No'),
             'Y'=>Yii::t('misc','Yes')
         );

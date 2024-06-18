@@ -57,6 +57,7 @@ class CrossApplyForm extends CFormModel
         $list["qualification_ratio"] = Yii::t('service','Qualification ratio');
         $list["qualification_city"] = Yii::t('service','Qualification city');
         $list["qualification_amt"] = Yii::t('service','Qualification Amt');
+        $list["table_type"] = Yii::t('summary','menu name');
 
 		return $list;
 	}
@@ -73,11 +74,21 @@ class CrossApplyForm extends CFormModel
 			array('service_id,apply_date,cross_type,cross_city','required'),
             array('month_amt','numerical','allowEmpty'=>false),
             array('rate_num','numerical','allowEmpty'=>false,'min'=>0,'max'=>100),
+            array('table_type','validateTableType'),
             array('service_id','validateServiceID'),
             array('cross_city','validateCrossCity'),
             array('cross_type','validateCrossType'),
 		);
 	}
+
+    public function validateTableType($attribute, $params) {
+	    $this->table_type = is_numeric($this->table_type)?intval($this->table_type):0;
+        $list = self::getCrossTableTypeList();
+	    if(!key_exists("{$this->table_type}",$list)){
+            $this->addError($attribute, "菜单名称异常，请刷新重试");
+            return false;
+        }
+    }
 
     public function validateCrossType($attribute, $params) {
 	    $list = self::getCrossTypeList();
@@ -122,7 +133,7 @@ class CrossApplyForm extends CFormModel
             $tableNameOne="swo_service";
             $tableNameTwo="swo_service_contract_no";
         }else{
-            $tableNameOne="swo_service";
+            $tableNameOne="swo_service_ka";
             $tableNameTwo="swo_service_ka_no";
         }
         $city_allow = Yii::app()->user->city_allow();
@@ -136,6 +147,22 @@ class CrossApplyForm extends CFormModel
         }else{
             $this->addError($attribute, "合约编号不存在，无法交叉派单");
             return false;
+        }
+    }
+
+    public static function getCrossTableTypeList(){
+	    return array(
+	        "0"=>Yii::t("app","Customer Service"),
+	        "1"=>Yii::t("app","Customer Service KA"),
+        );
+    }
+
+    public static function getCrossTableTypeNameForKey($key){
+        $list = self::getCrossTableTypeList();
+        if(key_exists("{$key}",$list)){
+            return $list[$key];
+        }else{
+            return $key;
         }
     }
 
@@ -258,8 +285,8 @@ class CrossApplyForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_cross(
-						service_id, contract_no, apply_date, month_amt, rate_num, old_city, cross_city, cross_type, old_month_amt, remark, cross_amt, qualification_ratio, qualification_city, qualification_amt, lcu, lcd) values (
-						:service_id, :contract_no, :apply_date, :month_amt, :rate_num, :old_city, :cross_city, :cross_type, :old_month_amt, :remark, :cross_amt, :qualification_ratio, :qualification_city, :qualification_amt, :lcu, :lcd)";
+						service_id,table_type, contract_no, apply_date, month_amt, rate_num, old_city, cross_city, cross_type, old_month_amt, remark, cross_amt, qualification_ratio, qualification_city, qualification_amt, lcu, lcd) values (
+						:service_id,:table_type, :contract_no, :apply_date, :month_amt, :rate_num, :old_city, :cross_city, :cross_type, :old_month_amt, :remark, :cross_amt, :qualification_ratio, :qualification_city, :qualification_amt, :lcu, :lcd)";
 				break;
 			case 'edit':
 				$sql = "update swo_cross set 
@@ -286,6 +313,8 @@ class CrossApplyForm extends CFormModel
 		$command=$connection->createCommand($sql);
 		if (strpos($sql,':id')!==false)
 			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
+		if (strpos($sql,':table_type')!==false)
+			$command->bindParam(':table_type',$this->table_type,PDO::PARAM_INT);
 		if (strpos($sql,':service_id')!==false)
 			$command->bindParam(':service_id',$this->service_id,PDO::PARAM_INT);
         if (strpos($sql,':contract_no')!==false)

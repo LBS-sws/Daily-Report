@@ -70,6 +70,13 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 	</div>
             <?php if ($model->scenario!='new'): ?>
                 <div class="btn-group pull-right" role="group">
+                    <?php
+                    if (Yii::app()->user->validRWFunction('CD01')&&!empty($model->contract_no)&&$model->status=="N"){ //交叉派单
+                        echo TbHtml::button('<span class="fa fa-superpowers"></span> '.Yii::t('app','Cross dispatch'), array(
+                                'data-toggle'=>'modal','data-target'=>'#crossDialog',)
+                        );
+                    }
+                    ?>
                     <?php echo TbHtml::button('<span class="fa fa-list"></span> '.Yii::t('service','Flow Info'), array(
                             'data-toggle'=>'modal','data-target'=>'#flowinfodialog',)
                     );
@@ -603,7 +610,6 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 		</div>
 	</div>
 </section>
-
 <?php
 	$buttons = array(
 			TbHtml::button(Yii::t('service','New Service'),
@@ -670,6 +676,12 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 													));
 ?>
 
+
+<?php
+if (Yii::app()->user->validRWFunction('CD01')&&$model->status=="N"){ //交叉派单
+    $this->renderPartial('//crossApply/crossDialog',array("modelForm"=>"ServiceKAForm"));
+}
+?>
 
 <?php
 Script::genFileUpload($model,$form->id,'SERVICEKA');

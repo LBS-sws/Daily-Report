@@ -93,9 +93,10 @@ class CrossApplyController extends Controller
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('crossApply/edit',array('index'=>$model->id)));
             } else {
+                $url = $model->table_type==0?'service/edit':'serviceka/edit';
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $this->redirect(Yii::app()->createUrl('service/edit',array('index'=>$model->service_id)));
+                $this->redirect(Yii::app()->createUrl($url,array('index'=>$model->service_id)));
             }
         }
 	}
