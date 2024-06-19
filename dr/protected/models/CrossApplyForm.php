@@ -42,9 +42,9 @@ class CrossApplyForm extends CFormModel
         $list["contract_no"] = Yii::t('service','Contract No');
         $list["apply_date"] = Yii::t('service','Apply date');
         $list["month_amt"] = Yii::t('service','Monthly');
-        $list["rate_num"] = Yii::t('service','Rate number');
+        $list["rate_num"] = Yii::t('service','accept rate');
         $list["cross_city"] = Yii::t('service','Cross city');
-        $list["cross_amt"] = Yii::t('service','Cross city');
+        $list["cross_amt"] = Yii::t('service','accept amt');
         $list["reject_note"] = Yii::t('service','reject note');
         $list["remark"] = Yii::t('service','Remarks');
         $list["status_type"] = Yii::t('service','status type');

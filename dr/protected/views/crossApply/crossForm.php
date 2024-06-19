@@ -59,14 +59,6 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
             </div>
         </div>
         <div class="form-group">
-            <?php echo $form->labelEx($model,'cross_city',array('class'=>"col-lg-2 control-label")); ?>
-            <div class="col-lg-3">
-                <?php echo $form->dropDownList($model, 'cross_city',CrossApplyForm::getCityList(),
-                    array('empty'=>'','id'=>'cross_cross_city','readonly'=>$model->readonly())
-                ); ?>
-            </div>
-        </div>
-        <div class="form-group">
             <?php echo $form->labelEx($model,'month_amt',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
                 <?php echo $form->textField($model, 'month_amt',
@@ -109,6 +101,14 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
             </div>
         </div>
         <div class="form-group">
+            <?php echo $form->labelEx($model,'cross_city',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php echo $form->dropDownList($model, 'cross_city',CrossApplyForm::getCityList(),
+                    array('empty'=>'','id'=>'cross_cross_city','readonly'=>$model->readonly())
+                ); ?>
+            </div>
+        </div>
+        <div class="form-group">
             <?php echo $form->labelEx($model,'rate_num',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
                 <?php echo $form->textField($model, 'rate_num',
@@ -117,7 +117,7 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
             </div>
         </div>
         <div class="form-group">
-            <?php echo Tbhtml::label(Yii::t("service","Rate For Amt"),'',array('class'=>"col-lg-2 control-label")); ?>
+            <?php echo $form->labelEx($model,'cross_amt',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
                 <?php echo $form->textField($model, 'cross_amt',
                     array('id'=>'cross_rate_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")

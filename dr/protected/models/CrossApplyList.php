@@ -14,8 +14,8 @@ class CrossApplyList extends CListPageModel
 			'contract_no'=>Yii::t('service','Contract No'),
 			'apply_date'=>Yii::t('service','Apply date'),
 			'month_amt'=>Yii::t('service','Monthly'),
-			'rate_num'=>Yii::t('service','Rate number'),
-			'rate_amt'=>Yii::t('service','Rate For Amt'),
+			'rate_num'=>Yii::t('service','accept rate'),
+			'rate_amt'=>Yii::t('service','accept amt'),
 			'old_city'=>Yii::t('service','City'),
 			'cross_city'=>Yii::t('service','Cross city'),
 			'status_type'=>Yii::t('service','status type'),
@@ -26,7 +26,7 @@ class CrossApplyList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
         $uid = Yii::app()->user->id;
-		$sql1 = "select a.*,(a.rate_num*a.month_amt)/100 as rate_amt,
+		$sql1 = "select a.*,
                   b.name as old_city_name,f.name as cross_city_name 
 				from swo_cross a
 				LEFT JOIN security{$suffix}.sec_city b ON a.old_city=b.code
@@ -82,7 +82,7 @@ class CrossApplyList extends CListPageModel
 						'apply_date'=>General::toDate($record['apply_date']),
 						'month_amt'=>$record['month_amt'],
 						'rate_num'=>$record['rate_num']."%",
-						'rate_amt'=>number_format($record['rate_amt'],2,'.',''),
+						'rate_amt'=>$record['cross_amt'],
 						'old_city'=>$record['old_city_name'],
 						'cross_city'=>$record['cross_city_name'],
 						'status_type'=>$record['status_type'],

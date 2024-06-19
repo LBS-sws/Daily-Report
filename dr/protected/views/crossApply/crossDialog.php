@@ -27,15 +27,15 @@ $table_type = $modelForm=="ServiceForm"?0:1;
     </div>
 </div>
 <div class="form-group">
-    <?php echo Tbhtml::label(Yii::t("service","Cross type"),'',array('class'=>"col-lg-3 control-label")); ?>
-    <div class="col-lg-5">
-        <?php echo Tbhtml::dropDownList('CrossApply[cross_type]','',CrossApplyForm::getCrossTypeList(),array('empty'=>'',"id"=>"cross_type")); ?>
-    </div>
-</div>
-<div class="form-group">
     <?php echo Tbhtml::label(Yii::t("service","Monthly"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
         <?php echo Tbhtml::textField('CrossApply[month_amt]','',array('id'=>'cross_month_amt','prepend'=>"<span class='fa fa-cny'></span>")); ?>
+    </div>
+</div>
+<div class="form-group">
+    <?php echo Tbhtml::label(Yii::t("service","Cross type"),'',array('class'=>"col-lg-3 control-label")); ?>
+    <div class="col-lg-5">
+        <?php echo Tbhtml::dropDownList('CrossApply[cross_type]','',CrossApplyForm::getCrossTypeList(),array('empty'=>'',"id"=>"cross_type")); ?>
     </div>
 </div>
 <div class="qualification-div" style="display: none">
@@ -65,13 +65,13 @@ $table_type = $modelForm=="ServiceForm"?0:1;
     </div>
 </div>
 <div class="form-group">
-    <?php echo Tbhtml::label(Yii::t("service","Rate number"),'',array('class'=>"col-lg-3 control-label")); ?>
+    <?php echo Tbhtml::label(Yii::t("service","accept rate"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
         <?php echo Tbhtml::numberField('CrossApply[rate_num]','',array('id'=>'cross_rate_num','min'=>0,'max'=>100,'append'=>"%")); ?>
     </div>
 </div>
 <div class="form-group">
-    <?php echo Tbhtml::label(Yii::t("service","Rate For Amt"),'',array('class'=>"col-lg-3 control-label")); ?>
+    <?php echo Tbhtml::label(Yii::t("service","accept amt"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
         <?php echo Tbhtml::textField('CrossApply[rate_amt]','',array('id'=>'cross_rate_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")); ?>
     </div>

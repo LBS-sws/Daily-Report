@@ -201,5 +201,8 @@ return array(
     'more contract - long'=>'资质借用长约',
     'more contract - holdco'=>'资质借用-Holdco与收购',
     'holdco contract'=>'Holdco与收购',
+
+    'accept rate'=>'承接比例',
+    'accept amt'=>'承接方金额',
 );
 ?>

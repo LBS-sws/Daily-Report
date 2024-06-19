@@ -199,5 +199,8 @@ return array(
     'more contract - long'=>'資質借用長約',
     'more contract - holdco'=>'資質借用-Holdco與收購',
     'holdco contract'=>'Holdco與收購',
+
+    'accept rate'=>'承接比例',
+    'accept amt'=>'承接方金額',
 );
 ?>
