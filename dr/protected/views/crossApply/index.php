@@ -32,6 +32,7 @@ $this->pageTitle=Yii::app()->name . ' - CrossApply';
 				'height'=>'600',
 				'search'=>array(
 							'contract_no',
+							'company_name',
 							'apply_date',
 							'old_city',
 							'cross_city'
@@ -44,6 +45,8 @@ $this->pageTitle=Yii::app()->name . ' - CrossApply';
 	echo $form->hiddenField($model,'totalRow');
 	echo $form->hiddenField($model,'orderField');
 	echo $form->hiddenField($model,'orderType');
+
+	echo TbHtml::button("aa",array("submit"=>"#","class"=>"hide"));
 ?>
 <?php $this->endWidget(); ?>
 

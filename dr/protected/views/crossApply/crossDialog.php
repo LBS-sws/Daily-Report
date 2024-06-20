@@ -58,22 +58,24 @@ $table_type = $modelForm=="ServiceForm"?0:1;
         </div>
     </div>
 </div>
-<div class="form-group">
-    <?php echo Tbhtml::label(Yii::t("service","Cross city"),'',array('class'=>"col-lg-3 control-label")); ?>
-    <div class="col-lg-5">
-        <?php echo Tbhtml::dropDownList('CrossApply[cross_city]','',CrossApplyForm::getCityList(),array('id'=>'cross_cross_city','empty'=>'')); ?>
+<div class="accept-div">
+    <div class="form-group">
+        <?php echo Tbhtml::label(Yii::t("service","Cross city"),'',array('class'=>"col-lg-3 control-label")); ?>
+        <div class="col-lg-5">
+            <?php echo Tbhtml::dropDownList('CrossApply[cross_city]','',CrossApplyForm::getCityList(),array('id'=>'cross_cross_city','empty'=>'')); ?>
+        </div>
     </div>
-</div>
-<div class="form-group">
-    <?php echo Tbhtml::label(Yii::t("service","accept rate"),'',array('class'=>"col-lg-3 control-label")); ?>
-    <div class="col-lg-5">
-        <?php echo Tbhtml::numberField('CrossApply[rate_num]','',array('id'=>'cross_rate_num','min'=>0,'max'=>100,'append'=>"%")); ?>
+    <div class="form-group">
+        <?php echo Tbhtml::label(Yii::t("service","accept rate"),'',array('class'=>"col-lg-3 control-label")); ?>
+        <div class="col-lg-5">
+            <?php echo Tbhtml::numberField('CrossApply[rate_num]','',array('id'=>'cross_rate_num','min'=>0,'max'=>100,'append'=>"%")); ?>
+        </div>
     </div>
-</div>
-<div class="form-group">
-    <?php echo Tbhtml::label(Yii::t("service","accept amt"),'',array('class'=>"col-lg-3 control-label")); ?>
-    <div class="col-lg-5">
-        <?php echo Tbhtml::textField('CrossApply[rate_amt]','',array('id'=>'cross_rate_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")); ?>
+    <div class="form-group">
+        <?php echo Tbhtml::label(Yii::t("service","accept amt"),'',array('class'=>"col-lg-3 control-label")); ?>
+        <div class="col-lg-5">
+            <?php echo Tbhtml::textField('CrossApply[rate_amt]','',array('id'=>'cross_rate_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")); ?>
+        </div>
     </div>
 </div>
 <div class="form-group">
@@ -118,13 +120,18 @@ $table_type = $modelForm=="ServiceForm"?0:1;
 	
 	$('#cross_type').change(function(){
 	    var cross_type = $(this).val();
-	    if(['6','7','8'].indexOf(cross_type)>=0){
+	    if(['5','6','7','8'].indexOf(cross_type)>=0){
 	        $('.qualification-div').slideDown(100);
 	    }else{
 	        $('#qualification_ratio').val('');
 	        $('#qualification_amt').val('');
 	        $('.qualification-div').slideUp(100);
 	    }
+        if(cross_type=='5'){
+            $('.accept-div').slideUp(100);
+        }else{
+	        $('.accept-div').slideDown(100);
+        }
 	    $('#cross_rate_num').trigger('change');
 	});
 	";

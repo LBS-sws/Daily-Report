@@ -71,13 +71,12 @@ class CrossApplyForm extends CFormModel
             array('id,table_type,service_id,contract_no,apply_date,month_amt,rate_num,old_city,cross_type,
             cross_city,status_type,reject_note,remark,audit_date,audit_user,luu,qualification_ratio,
             qualification_city,qualification_amt,cross_amt','safe'),
-			array('service_id,apply_date,cross_type,cross_city','required'),
+			array('service_id,apply_date,cross_type','required'),
             array('month_amt','numerical','allowEmpty'=>false),
-            array('rate_num','numerical','allowEmpty'=>false,'min'=>0,'max'=>100),
             array('table_type','validateTableType'),
             array('service_id','validateServiceID'),
-            array('cross_city','validateCrossCity'),
             array('cross_type','validateCrossType'),
+            array('cross_city','validateCrossCity'),
 		);
 	}
 
@@ -97,7 +96,7 @@ class CrossApplyForm extends CFormModel
             $this->addError($attribute, "业务场景不存在，请刷新重试");
             return false;
         }else{
-	        if(in_array($this->cross_type,array('6','7','8'))){
+	        if(in_array($this->cross_type,array('5','6','7','8'))){
                 if($this->qualification_city===""){
                     $this->addError($attribute, "资质方不能为空");
                 }
@@ -111,18 +110,31 @@ class CrossApplyForm extends CFormModel
             }else{
                 $this->qualification_ratio=null;
                 $this->qualification_city=null;
-                $this->qualification_amt=0;
+                $this->qualification_amt=null;
                 $this->cross_amt=$this->month_amt*($this->rate_num/100);
                 $this->cross_amt = round($this->cross_amt,2);
+            }
+            if($this->cross_type==5){//资质借用
+                $this->cross_city=null;
+                $this->cross_amt=null;
+                $this->rate_num=null;
             }
         }
     }
 
     public function validateCrossCity($attribute, $params) {
-        if(!empty($this->cross_city)){
-            if($this->cross_city==$this->old_city){
+        if($this->cross_type==5){//资质借用
+            if($this->qualification_city==$this->old_city){
+                $this->addError($attribute, "资质方不能与合约城市一致");
+            }
+        }else{
+            if($this->rate_num===""){
+                $this->addError($attribute, "承接比例不能为空");
+            }
+            if($this->cross_city===""){
+                $this->addError($attribute, "承接城市不能为空");
+            }elseif($this->cross_city==$this->old_city){
                 $this->addError($attribute, "承接城市不能与合约城市一致");
-                return false;
             }
         }
     }

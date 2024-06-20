@@ -10,7 +10,7 @@ class CrossAuditForm extends CrossApplyForm
 		return array(
             array('id,table_type,service_id,contract_no,apply_date,month_amt,rate_num,old_city,
             cross_city,cross_type,status_type,reject_note,remark,audit_date,audit_user','safe'),
-			array('service_id,apply_date,month_amt,rate_num,cross_city,cross_type','required'),
+			array('service_id,apply_date,month_amt,cross_type','required'),
 			array('reject_note','required',"on"=>array("reject")),
 			array('id','validateID'),
 		);
@@ -19,7 +19,7 @@ class CrossAuditForm extends CrossApplyForm
     public function validateID($attribute, $params) {
         $index = is_numeric($this->id)?$this->id:0;
         $city_allow = Yii::app()->user->city_allow();
-        $sql = "select * from swo_cross where id='".$index."' and status_type=1 and cross_city in ({$city_allow})";
+        $sql = "select * from swo_cross where id='".$index."' and status_type=1 and (cross_city in ({$city_allow})  or (cross_type=5 and qualification_city in ({$city_allow})))";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if($row){
             $this->table_type = $row["table_type"];
@@ -44,7 +44,7 @@ class CrossAuditForm extends CrossApplyForm
 	{
 		$suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
-		$sql = "select * from swo_cross where id='".$index."' and cross_city in ({$city_allow})";
+		$sql = "select * from swo_cross where id='".$index."' and (cross_city in ({$city_allow})  or (cross_type=5 and qualification_city in ({$city_allow})))";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		if ($row!==false) {
 			$this->id = $row['id'];
@@ -179,15 +179,15 @@ class CrossAuditForm extends CrossApplyForm
             //"customer_code"=>$serviceModel->customer_code."-{$this->old_city}",//客户编号
             //"customer_name"=>$serviceModel->customer_name,//客户名称
             "contract_number"=>$this->contract_no,//合约编号
-            "accept_audit_ratio"=>$this->rate_num,//审核比例
             "send_money"=>$this->month_amt,//发包方金额
-            "accept_money"=>$this->cross_amt,//承接方金额
             "send_contract_id"=>$this->old_city,//发包方（城市代号：ZY）
-            "accept_contract_id"=>$this->cross_city,//承接方（城市代号：ZY）
             "audit_user_name"=>self::getEmployeeStrForUsername(Yii::app()->user->id),//审核人名称+编号如：400002_沈超
             "audit_date"=>$this->audit_date,//审核日期
             "contract_id"=>$this->u_system_id,//u_system_id
             "contract_type"=>$this->cross_type,//类型：4:长约 3：短约 2：资质借用
+            "accept_audit_ratio"=>$this->rate_num,//审核比例
+            "accept_money"=>$this->cross_amt,//承接方金额
+            "accept_contract_id"=>$this->cross_city,//承接方（城市代号：ZY）
             "qualification_audit_ratio"=>$this->qualification_ratio,//资质方比例
             "qualification_contract_id"=>$this->qualification_city,//资质方
             "qualification_money"=>$this->qualification_amt,//资质方金额

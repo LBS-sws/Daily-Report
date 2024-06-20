@@ -202,5 +202,7 @@ return array(
 
     'accept rate'=>'承接比例',
     'accept amt'=>'承接方金額',
+
+    'Customer name'=>'客戶名稱',
 );
 ?>

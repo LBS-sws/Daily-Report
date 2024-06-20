@@ -23,27 +23,30 @@ $this->pageTitle=Yii::app()->name . ' - CrossSearch';
 </section>
 
 <section class="content">
-	<?php $this->widget('ext.layout.ListPageWidget', array(
-			'title'=>Yii::t('app','Cross Apply'),
-			'model'=>$model,
-				'viewhdr'=>'//crossSearch/_listhdr',
-				'viewdtl'=>'//crossSearch/_listdtl',
-				'gridsize'=>'24',
-				'height'=>'600',
-				'search'=>array(
-							'contract_no',
-							'apply_date',
-							'old_city',
-							'cross_city'
-						),
-		));
-	?>
+    <?php $this->widget('ext.layout.ListPageWidget', array(
+        'title'=>Yii::t('app','Cross Apply'),
+        'model'=>$model,
+        'viewhdr'=>'//crossSearch/_listhdr',
+        'viewdtl'=>'//crossSearch/_listdtl',
+        'gridsize'=>'24',
+        'height'=>'600',
+        'search'=>array(
+            'contract_no',
+            'company_name',
+            'apply_date',
+            'old_city',
+            'cross_city'
+        ),
+    ));
+    ?>
 </section>
 <?php
 	echo $form->hiddenField($model,'pageNum');
 	echo $form->hiddenField($model,'totalRow');
 	echo $form->hiddenField($model,'orderField');
 	echo $form->hiddenField($model,'orderType');
+
+echo TbHtml::button("aa",array("submit"=>"#","class"=>"hide"));
 ?>
 <?php $this->endWidget(); ?>
 

@@ -74,7 +74,7 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
                 ); ?>
             </div>
         </div>
-        <div class="qualification-div" style="<?php if(!in_array($model->cross_type,array('6','7','8'))){ echo 'display: none';} ?>">
+        <div class="qualification-div" style="<?php if(!in_array($model->cross_type,array('5','6','7','8'))){ echo 'display: none';} ?>">
             <div class="form-group">
                 <?php echo $form->labelEx($model,'qualification_city',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
@@ -100,28 +100,30 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
                 </div>
             </div>
         </div>
-        <div class="form-group">
-            <?php echo $form->labelEx($model,'cross_city',array('class'=>"col-lg-2 control-label")); ?>
-            <div class="col-lg-3">
-                <?php echo $form->dropDownList($model, 'cross_city',CrossApplyForm::getCityList(),
-                    array('empty'=>'','id'=>'cross_cross_city','readonly'=>$model->readonly())
-                ); ?>
+        <div class="accept-div" style="<?php if($model->cross_type==5){ echo 'display: none';} ?>">
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'cross_city',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
+                    <?php echo $form->dropDownList($model, 'cross_city',CrossApplyForm::getCityList(),
+                        array('empty'=>'','id'=>'cross_cross_city','readonly'=>$model->readonly())
+                    ); ?>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <?php echo $form->labelEx($model,'rate_num',array('class'=>"col-lg-2 control-label")); ?>
-            <div class="col-lg-3">
-                <?php echo $form->textField($model, 'rate_num',
-                    array('readonly'=>$model->readonly(),'id'=>'cross_rate_num','append'=>"%")
-                ); ?>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'rate_num',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
+                    <?php echo $form->textField($model, 'rate_num',
+                        array('readonly'=>$model->readonly(),'id'=>'cross_rate_num','append'=>"%")
+                    ); ?>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <?php echo $form->labelEx($model,'cross_amt',array('class'=>"col-lg-2 control-label")); ?>
-            <div class="col-lg-3">
-                <?php echo $form->textField($model, 'cross_amt',
-                    array('id'=>'cross_rate_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")
-                ); ?>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'cross_amt',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
+                    <?php echo $form->textField($model, 'cross_amt',
+                        array('id'=>'cross_rate_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")
+                    ); ?>
+                </div>
             </div>
         </div>
         <div class="form-group">
@@ -199,13 +201,18 @@ if($model->status_type==2){
 	
 	$('#cross_type').change(function(){
 	    var cross_type = $(this).val();
-	    if(['6','7','8'].indexOf(cross_type)>=0){
+	    if(['5','6','7','8'].indexOf(cross_type)>=0){
 	        $('.qualification-div').slideDown(100);
 	    }else{
 	        $('#qualification_ratio').val('');
 	        $('#qualification_amt').val('');
 	        $('.qualification-div').slideUp(100);
 	    }
+        if(cross_type=='5'){
+            $('.accept-div').slideUp(100);
+        }else{
+	        $('.accept-div').slideDown(100);
+        }
 	    $('#cross_rate_num').trigger('change');
 	});
 	";

@@ -31,11 +31,12 @@ $this->pageTitle=Yii::app()->name . ' - CrossAudit';
 				'gridsize'=>'24',
 				'height'=>'600',
 				'search'=>array(
-							'contract_no',
-							'apply_date',
-							'old_city',
-							'cross_city'
-						),
+                    'contract_no',
+                    'company_name',
+                    'apply_date',
+                    'old_city',
+                    'cross_city'
+                ),
 		));
 	?>
 </section>
@@ -44,6 +45,8 @@ $this->pageTitle=Yii::app()->name . ' - CrossAudit';
 	echo $form->hiddenField($model,'totalRow');
 	echo $form->hiddenField($model,'orderField');
 	echo $form->hiddenField($model,'orderType');
+
+echo TbHtml::button("aa",array("submit"=>"#","class"=>"hide"));
 ?>
 <?php $this->endWidget(); ?>
 

@@ -19,7 +19,7 @@ class CrossSearchForm extends CrossApplyForm
     public function validateID($attribute, $params) {
         $index = is_numeric($this->id)?$this->id:0;
         $city_allow = Yii::app()->user->city_allow();
-        $sql = "select * from swo_cross where id='".$index."' and status_type in (3,5,6) and (cross_city in ({$city_allow}) or old_city in ({$city_allow}))";
+        $sql = "select * from swo_cross where id='".$index."' and status_type in (3,5,6) and (cross_city in ({$city_allow}) or old_city in ({$city_allow}) or (cross_type=5 and qualification_city in ({$city_allow})))";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if($row){
             $this->table_type = $row["table_type"];
@@ -36,7 +36,7 @@ class CrossSearchForm extends CrossApplyForm
 	{
 		$suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
-		$sql = "select * from swo_cross where id='".$index."' and (cross_city in ({$city_allow}) or old_city in ({$city_allow}))";
+		$sql = "select * from swo_cross where id='".$index."' and (cross_city in ({$city_allow}) or old_city in ({$city_allow}) or (cross_type=5 and qualification_city in ({$city_allow})))";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		if ($row!==false) {
 			$this->id = $row['id'];

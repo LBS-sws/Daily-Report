@@ -19,6 +19,11 @@ class CrossApplyList extends CListPageModel
 			'old_city'=>Yii::t('service','City'),
 			'cross_city'=>Yii::t('service','Cross city'),
 			'status_type'=>Yii::t('service','status type'),
+
+			'cross_type'=>Yii::t('service','Cross type'),
+            'company_name'=>Yii::t('service','Customer name'),
+            'qualification_ratio'=>Yii::t('service','Qualification ratio'),
+            'qualification_city'=>Yii::t('service','Qualification city'),
 		);
 	}
 	
@@ -55,6 +60,10 @@ class CrossApplyList extends CListPageModel
 				case 'cross_city':
 					$clause .= General::getSqlConditionClause('f.name',$svalue);
 					break;
+				case 'company_name':
+					$companySql = self::searchCompanySql($svalue);
+                    $clause .= "and ({$companySql}) ";
+					break;
 			}
 		}
 		
@@ -76,20 +85,24 @@ class CrossApplyList extends CListPageModel
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
-					$this->attr[] = array(
-						'id'=>$record['id'],
-						'contract_no'=>$record['contract_no'],
-						'apply_date'=>General::toDate($record['apply_date']),
-						'month_amt'=>$record['month_amt'],
-						'rate_num'=>$record['rate_num']."%",
-						'rate_amt'=>$record['cross_amt'],
-						'old_city'=>$record['old_city_name'],
-						'cross_city'=>$record['cross_city_name'],
-						'status_type'=>$record['status_type'],
-						'table_type'=>CrossApplyForm::getCrossTableTypeNameForKey($record["table_type"]),
-						'status_str'=>self::getStatusStrForStatusType($record['status_type']),
-						'color'=>self::getColorForStatusType($record['status_type']),
-                    );
+			    $companyName = self::getCompanyNameToCrossList($record);
+                $this->attr[] = array(
+                    'id'=>$record['id'],
+                    'contract_no'=>$record['contract_no'],
+                    'apply_date'=>General::toDate($record['apply_date']),
+                    'month_amt'=>floatval($record['month_amt']),
+                    'rate_num'=>$record['rate_num']===null?"":floatval($record['rate_num'])."%",
+                    'old_city'=>$record['old_city_name'],
+                    'cross_city'=>$record['cross_city_name'],
+                    'qualification_city'=>empty($record['qualification_city'])?"":General::getCityName($record['qualification_city']),
+                    'qualification_ratio'=>$record['qualification_ratio']===null?"":floatval($record['qualification_ratio'])."%",
+                    'status_type'=>$record['status_type'],
+                    'company_name'=>$companyName,
+                    'table_type'=>CrossApplyForm::getCrossTableTypeNameForKey($record["table_type"]),
+                    'cross_type_name'=>CrossApplyForm::getCrossTypeStrToKey($record["cross_type"]),
+                    'status_str'=>self::getStatusStrForStatusType($record['status_type']),
+                    'color'=>self::getColorForStatusType($record['status_type']),
+                );
 			}
 		}
 		$session = Yii::app()->session;
@@ -127,6 +140,70 @@ class CrossApplyList extends CListPageModel
             return $list[$statusType];
         }else{
             return $statusType;
+        }
+    }
+
+    public static function getCompanyNameToCrossList($record){
+        if($record["table_type"]==0){
+            $tableNameOne="swo_service";
+        }else{
+            $tableNameOne="swo_service_ka";
+        }
+        $row = Yii::app()->db->createCommand()->select("a.company_id,b.code,b.name")->from("{$tableNameOne} a")
+            ->leftJoin("swo_company b","a.company_id=b.id")
+            ->where("a.id=:id",array(":id"=>$record["service_id"]))->queryRow();
+        if($row){
+            return $row["name"];
+        }else{
+            return "";
+        }
+    }
+
+    public static function searchCompanySql($svalue){
+        $companyRows = Yii::app()->db->createCommand()->select("id")->from("swo_company")
+            ->where("name like '%{$svalue}%'")->queryAll();
+        $companyId=array();
+        if($companyRows){
+            foreach ($companyRows as $companyRow){
+                $companyId[]=$companyRow["id"];
+            }
+        }
+        if(empty($companyId)){
+            return "(1=2)";//没有查到公司名称
+        }else{
+            $serviceSql = "";
+            $companyId = implode(",",$companyId);
+            $oneRows = Yii::app()->db->createCommand()->select("a.id")->from("swo_service a")
+                ->where("a.company_id in ({$companyId})")->queryAll();
+            if($oneRows){
+                $oneID = array();
+                foreach ($oneRows as $oneRow){
+                    $oneID[]=$oneRow["id"];
+                }
+                $oneID = implode(",",$oneID);
+                $serviceSql = "a.table_type=0 and a.service_id in ({$oneID})";
+            }
+
+            $twoRows = Yii::app()->db->createCommand()->select("a.id")->from("swo_service_ka a")
+                ->where("a.company_id in ({$companyId})")->queryAll();
+            if($twoRows){
+                $twoID = array();
+                foreach ($twoRows as $twoRow){
+                    $twoID[]=$twoRow["id"];
+                }
+                $twoID = implode(",",$twoID);
+                if(empty($serviceSql)){
+                    $serviceSql = "a.table_type=1 and a.service_id in ({$twoID})";
+                }else{
+                    $serviceSql = "({$serviceSql}) or (a.table_type=1 and a.service_id in ({$twoID}))";
+                }
+            }
+
+            if(empty($serviceSql)){
+                return "(1=2)";//没有查到合约
+            }else{
+                return $serviceSql;
+            }
         }
     }
 }
