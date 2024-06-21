@@ -491,6 +491,49 @@ class SystemU {
         return $rtn;
     }
 
+    //今月(IA、IB)服务数目
+    public static function countIAIB($year, $month,$printBool=false) {
+        $rtn = array('message'=>'', 'data'=>array());
+        $key = self::generate_key();
+        $root = Yii::app()->params['uCurlRootURL'];
+        $url = $root.'/api/lbs.CountIAIB/index';
+        $data = array(
+            "key"=>$key,
+            "year"=>$year,
+            "month"=>$month
+        );
+        $data_string = json_encode($data);
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type:application/json',
+            'Content-Length:'.strlen($data_string),
+        ));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $out = curl_exec($ch);
+        if($printBool){//测试专用
+            self::printCurl($url,$data,$out,$curlStartDate);
+        }
+        if ($out===false) {
+            $rtn['message'] = curl_error($ch);
+        } else {
+            $json = json_decode($out, true);
+            if(isset($json["code"])&&$json["code"]==200){
+                $rtn['data'] = $json["data"];
+                $rtn['message'] = self::getJsonError(json_last_error());
+            }else{
+                $rtn['data'] = array();
+                $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+            }
+        }
+        return $rtn;
+    }
+
     //老版查询，暂时不使用
     public static function getActualAmount($year, $month,$printBool=false) {
         $rtn = array('message'=>'', 'data'=>array());

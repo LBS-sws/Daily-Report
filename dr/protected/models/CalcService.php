@@ -611,8 +611,9 @@ class CalcService extends Calculation {
 	}
 
 	public static function countActualIAIB($year, $month) {
+		/*
+		老版U系统已经停止使用
 		$rs = array();
-		
 		$key = Yii::app()->params['unitedKey'];
 		$root = Yii::app()->params['unitedRootURL'];
 		$url = $root.'/remote/countIAIB.php';
@@ -636,10 +637,12 @@ class CalcService extends Calculation {
 			$json = json_decode($out);
 			$rs = json_decode($out, true);
 		}
+		*/
 		
 		$rtn = array();
-		if (!empty($rs)) {
-			foreach ($rs as $item) {
+        $rs = SystemU::countIAIB($year,$month);
+		if (!empty($rs["data"])) {
+			foreach ($rs["data"] as $item) {
 				$rtn[$item['city']] = $item['count'];
 			}
 		}

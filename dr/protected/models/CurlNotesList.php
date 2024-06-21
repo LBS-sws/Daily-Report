@@ -133,6 +133,7 @@ class CurlNotesList extends CListPageModel
         $list = array(
             "Office"=>"办事处",
             "ServiceOne"=>"服务合约",
+            "ServiceFull"=>"批量修改",
             "Company"=>"客户公司",
             "Complaint"=>"跟进单",
             "Cross"=>"交叉派单",
@@ -359,6 +360,8 @@ class CurlNotesList extends CListPageModel
             "getTechnicianDetail"=>array("args"=>array("start"=>"2023-01-01","end"=>"2024-02-01","city"=>"'{$city}'")),
             //获取技术员的创新金额、夜单金额、服务金额
             "getTechnicianSNC"=>array("args"=>array("year"=>"2023","month"=>"2","city"=>"'{$city}'")),
+            //获取IAIB总数/remote/countlAlB.php
+            "countIAIB"=>array("args"=>array("year"=>"2024","month"=>"5")),
         );
         if(key_exists($type,$list)){
             $params=array();
