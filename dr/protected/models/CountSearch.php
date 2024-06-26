@@ -55,6 +55,7 @@ class CountSearch extends SearchForCurlU {
                     $list[$city]=array(
                         "num_pause"=>0,//暫停金額（年金額）
                         "num_stop"=>0,//停單金額（年金額）
+                        "num_stop_none"=>0,//停單金額（年金額）(本条终止的前一条、后一条没有暂停、终止)
                         "num_month"=>0,//停單金額（月金額）
                     );
                 }
@@ -71,6 +72,15 @@ class CountSearch extends SearchForCurlU {
                 }else{
                     $money = round($row["sum_money"],2);
                     if($row["status"]=="T"){
+                        $prevRow= Yii::app()->db->createCommand()
+                            ->select("status")->from("swo_service_contract_no")
+                            ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["id"]}' and status_dt<='{$row['status_dt']}'")
+                            ->order("status_dt desc")
+                            ->queryRow();//查詢本条的前面一條數據
+                        if($prevRow===false||!in_array($prevRow["status"],array("S","T"))){
+                            $list[$city]["num_stop_none"]+=$money;
+                        }
                         $list[$city]["num_stop"]+=$money;
                         $list[$city]["num_month"]+= empty($row["num_month"])?0:round($row["num_month"],2);
                     }else{
@@ -92,6 +102,7 @@ class CountSearch extends SearchForCurlU {
                         $list[$row["city"]]=array(
                             "num_pause"=>0,//暫停金額（年金額）
                             "num_stop"=>0,//停單金額（年金額）
+                            "num_stop_none"=>0,//停單金額（年金額）(本条终止的前一条、后一条没有暂停、终止)
                             "num_month"=>0,//停單金額（月金額）
                         );
                     }
@@ -128,6 +139,7 @@ class CountSearch extends SearchForCurlU {
                         $list[$city]=array(
                             "num_pause"=>0,//暫停金額（年金額）
                             "num_stop"=>0,//停單金額（年金額）
+                            "num_stop_none"=>0,//停單金額（年金額）(本条终止的前一条、后一条没有暂停、终止)
                             "num_month"=>0,//停單金額（月金額）
                         );
                     }
@@ -144,6 +156,15 @@ class CountSearch extends SearchForCurlU {
                     }else{
                         $money = round($row["sum_money"],2);
                         if($row["status"]=="T"){
+                            $prevRow= Yii::app()->db->createCommand()
+                                ->select("status")->from("swo_service_ka_no")
+                                ->where("contract_no='{$row["contract_no"]}' and 
+                                id!='{$row["id"]}' and status_dt<='{$row['status_dt']}'")
+                                ->order("status_dt desc")
+                                ->queryRow();//查詢本条的前面一條數據
+                            if($prevRow===false||!in_array($prevRow["status"],array("S","T"))){
+                                $list[$city]["num_stop_none"]+=$money;
+                            }
                             $list[$city]["num_stop"]+=$money;
                             $list[$city]["num_month"]+= empty($row["num_month"])?0:round($row["num_month"],2);
                         }else{

@@ -483,6 +483,7 @@ class MyExcel {
 
 	protected function outLine($data, $definition) {
 		$col = 0;
+		$tr_color=key_exists("tr_color",$data)?$data["tr_color"]:"";
 		foreach ($definition as $key=>$def)  {
 			$text = $data[$key];
 			$align = ($def['align']=='C' ? PHPExcel_Style_Alignment::HORIZONTAL_CENTER :
@@ -497,6 +498,18 @@ class MyExcel {
 				->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
 			$col++;
 		}
+		if(!empty($tr_color)){
+		    $endStr = $this->getColumn($col);
+            $cells = "A{$this->current_row}:{$endStr}{$this->current_row}";
+            $this->objPHPExcel->getActiveSheet()->getStyle($cells)
+                ->applyFromArray(array(
+                    'font'=>array(
+                        'color'=>array(
+                            'argb'=>$tr_color,
+                        ),
+                    )
+                ));
+        }
 		$this->current_row++;
 	}
 

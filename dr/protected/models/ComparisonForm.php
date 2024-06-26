@@ -174,10 +174,16 @@ class ComparisonForm extends CFormModel
         $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
         $lastMonthStartDate = ($this->comparison_year-1)."/".date("m/d",strtotime($monthStartDate));
         $lastMonthEndDate = ($this->comparison_year-1)."/".date("m/d",strtotime($monthEndDate));
+        $allMonthStartDate = date("Y/m/01",strtotime($this->start_date));
+        $allMonthEndDate = date("Y/m/t",strtotime($this->end_date));
         //获取U系统的服务单数据
         $uServiceMoney = CountSearch::getUServiceMoney($startDate,$endDate,$city_allow);
         //获取U系统的服务单数据(上月)
         $uServiceMoneyLast = CountSearch::getUServiceMoney($monthStartDate,$monthEndDate,$city_allow);
+        //获取U系统的服务单数据(上月)(整月)
+        $uServiceMoneyAllLast = CountSearch::getUServiceMoney($allMonthStartDate,$allMonthEndDate,$city_allow);
+        //获取U系统的產品数据(上月)(整月)
+        $monthUInvAllMoney = CountSearch::getUInvMoney($allMonthStartDate,$allMonthEndDate,$city_allow);
         //获取U系统的產品数据
         $uInvMoney = CountSearch::getUInvMoney($startDate,$endDate,$city_allow);
         //获取U系统的產品数据(上一年)
@@ -233,10 +239,14 @@ class ComparisonForm extends CFormModel
             //上月生意额
             $defMoreList["last_u_actual"]+=key_exists($city,$uServiceMoneyLast)?$uServiceMoneyLast[$city]:0;
             $defMoreList["last_u_actual"]+=key_exists($city,$monthUInvMoney)?$monthUInvMoney[$city]["sum_money"]:0;
+            //上月生意额(整月)
+            $defMoreList["last_u_all"]+=key_exists($city,$uServiceMoneyAllLast)?$uServiceMoneyAllLast[$city]:0;
+            $defMoreList["last_u_all"]+=key_exists($city,$monthUInvAllMoney)?$monthUInvAllMoney[$city]["sum_money"]:0;
             //暂停、停止
             if(key_exists($city,$serviceForST)){
                 $defMoreList["stop_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop"]:0;
                 $defMoreList["pause_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_pause"]:0;
+                $defMoreList["stop_sum_none"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop_none"]:0;
                 $defMoreList["stopSumOnly"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_month"]:0;
             }
             if(key_exists($city,$lastServiceForST)){
@@ -319,6 +329,7 @@ class ComparisonForm extends CFormModel
             "city"=>$city,
             "city_name"=>$city_name,
             "last_u_actual"=>0,//服务生意额(上月)
+            "last_u_all"=>0,//服务生意额(上月)(整月)
             "u_actual_money"=>0,//服务生意额
             "u_sum_last"=>0,//U系统金额(上一年)
             "u_sum"=>0,//U系统金额
@@ -339,6 +350,7 @@ class ComparisonForm extends CFormModel
 
             "stop_sum_last"=>0,//终止（上一年）
             "stop_sum"=>0,//终止
+            "stop_sum_none"=>0,//终止(本条终止的前一条、后一条没有暂停、终止)
             "stop_rate"=>0,//终止对比比例
 
             "resume_sum_last"=>0,//恢复（上一年）
@@ -371,9 +383,9 @@ class ComparisonForm extends CFormModel
             $list["monthStopRate"] = $list["new_sum_n"]+$list["new_month_n"]+round($list["stop_sum"]/12,2);
             $list["monthStopRate"] = $this->comparisonRate($list["monthStopRate"],$list["last_u_actual"]);
 
-            $list["comStopRate"] = $list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
+            $list["comStopRate"] = $list["stop_sum_none"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
             $list["comStopRate"]/= 12;//
-            $lastSum = $list["new_month_n"]+$list["last_u_actual"];
+            $lastSum = $list["new_month_n"]+$list["last_u_all"];
             $list["comStopRate"] = $this->comparisonRate($list["comStopRate"],$lastSum);
         }
         $list["net_sum"]=0;

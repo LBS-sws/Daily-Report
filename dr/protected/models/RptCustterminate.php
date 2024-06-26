@@ -85,8 +85,22 @@ class RptCustterminate extends ReportData2 {
 						$address = $rec['address'];
 					}
 				}
-
-				$temp = array();
+                $temp = array();
+                $contractRow= Yii::app()->db->createCommand()
+                    ->select("id,contract_no,status_dt")->from("swo_service_contract_no")
+                    ->where("service_id='{$row["id"]}'")
+                    ->queryRow();
+				if($contractRow){
+                    $prevRow= Yii::app()->db->createCommand()
+                        ->select("status")->from("swo_service_contract_no")
+                        ->where("contract_no='{$contractRow["contract_no"]}' and 
+                        id!='{$contractRow["id"]}' and status_dt<='{$contractRow['status_dt']}'")
+                        ->order("status_dt desc")
+                        ->queryRow();//查詢本条的前面一條數據
+                    if($prevRow&&in_array($prevRow["status"],array("S","T"))){
+                        $temp["tr_color"] = "ff0000";
+                    }
+                }
                 $temp['city_name'] = General::getCityName($row["city"]);
 				$temp['type'] = $row['customer_type'];
 				$temp['status_dt'] = General::toDate($row['status_dt']);
