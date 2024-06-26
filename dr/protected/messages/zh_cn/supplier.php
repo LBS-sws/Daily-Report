@@ -38,5 +38,9 @@ return array(
     'Company Details'=>'基本资料',
     'Transaction Record'=>'付款记录',
 
+    'JD System Curl' => '金蝶同步相关数据',
+    'jd supplier id' => '金蝶供应商id',
+    'jd customer id' => '金蝶客户id',
+
 );
 ?>

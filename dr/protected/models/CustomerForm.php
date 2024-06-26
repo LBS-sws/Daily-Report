@@ -16,10 +16,15 @@ class CustomerForm extends CFormModel
 	public $group_id;
 	public $group_name;
 	public $status;
+	public $city;
 	public $email;
 
 	public $service = array();
-	
+
+    public $jd_set = array();
+    public static $jd_set_list=array(
+        array("field_id"=>"jd_customer_id","field_type"=>"text","field_name"=>"jd customer id"),
+    );
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -49,7 +54,7 @@ class CustomerForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, full_name, cont_name, cont_phone, address, tax_reg_no, group_id, group_name, status,email','safe'),
+			array('id, jd_set, full_name, cont_name, cont_phone, address, tax_reg_no, group_id, group_name, status,email','safe'),
 			array('name, code','required'),
 /*
 			array('code','unique','allowEmpty'=>true,
@@ -58,13 +63,30 @@ class CustomerForm extends CFormModel
 					'className'=>'Customer',
 				),
 */
+			array('id','validateID'),
 			array('code','validateCode'),
 		);
 	}
 
+	public function validateID($attribute, $params) {
+	    if($this->scenario!="new"){
+            $index = $this->id;
+            $city = Yii::app()->user->city_allow();
+            $sql = "select city from swo_company where id='{$index}' and city in ($city)";
+            $row = Yii::app()->db->createCommand($sql)->queryRow();
+            if($row){
+                $this->city = $row["city"];
+            }else{
+                $this->addError($attribute, "数据异常，请刷新重试");
+            }
+        }else{
+            $this->city = Yii::app()->user->city();
+        }
+    }
+
 	public function validateCode($attribute, $params) {
 		$code = $this->$attribute;
-		$city = Yii::app()->user->city();
+		$city = $this->city;
 		if (!empty($code)) {
 			switch ($this->scenario) {
 				case 'new':
@@ -93,6 +115,7 @@ class CustomerForm extends CFormModel
 			{
 				$this->id = $row['id'];
 				$this->code = $row['code'];
+				$this->city = $row['city'];
 				$this->name = $row['name'];
 				$this->full_name = $row['full_name'];
 				$this->cont_name = $row['cont_name'];
@@ -103,6 +126,18 @@ class CustomerForm extends CFormModel
 				$this->group_name = $row['group_name'];
 				$this->status = $row['status'];
                 $this->email = $row['email'];
+
+                $setRows = Yii::app()->db->createCommand()->select("field_id,field_value")
+                    ->from("swo_send_set_jd")->where("table_id=:table_id and set_type='customer'",array(":table_id"=>$index))->queryAll();
+                $setList = array();
+                foreach ($setRows as $setRow){
+                    $setList[$setRow["field_id"]] = $setRow["field_value"];
+                }
+                $this->jd_set=array();
+                foreach (self::$jd_set_list as $item){
+                    $fieldValue = key_exists($item["field_id"],$setList)?$setList[$item["field_id"]]:null;
+                    $this->jd_set[$item["field_id"]] = $fieldValue;
+                }
 				break;
 			}
 		}
@@ -116,13 +151,80 @@ class CustomerForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveCustomer($connection);
+            //保存金蝶要求的字段
+            $this->saveJDSetInfo($connection);
+            //客户资料保存后需要发消息给金蝶系统
+            $curlModel = new CurlForCustomer();
+            $rtn = $curlModel->sendJDCurlForCustomer($this);
+            $curlModel->saveTableForArr();
 			$transaction->commit();
 		}
 		catch(Exception $e) {
+		    var_dump($e);
 			$transaction->rollback();
 			throw new CHttpException(404,'Cannot update.');
 		}
 	}
+
+	//发送所有客户资料到金蝶系统
+    public function sendAllCustomerToJD($city=""){
+	    $data = array();
+        $curlModel = new CurlForCustomer();
+        $whereSql="";
+        if(!empty($city)){
+            $cityList = explode(",",$city);
+            $whereSql= "and city in('".implode("','",$cityList)."')";
+        }
+        $sql = "select * from swo_company where id>0 {$whereSql}";
+        $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $this->id = $row['id'];
+                $this->code = $row['code'];
+                $this->city = $row['city'];
+                $this->name = $row['name'];
+                $this->full_name = $row['full_name'];
+                $this->cont_name = $row['cont_name'];
+                $this->cont_phone = $row['cont_phone'];
+                $this->address = $row['address'];
+                $this->tax_reg_no = $row['tax_reg_no'];
+                $this->group_id = $row['group_id'];
+                $this->group_name = $row['group_name'];
+                $this->status = $row['status'];
+                $this->email = $row['email'];
+                $data[] = $curlModel->getDataForCustomerModel($this);
+            }
+            $curlModel->sendJDCurlForCustomerData($data);
+            $curlModel->saveTableForArr();
+            echo "send success";
+        }else{
+            echo "data is null";
+        }
+    }
+
+
+    //保存金蝶要求的字段
+    protected function saveJDSetInfo(&$connection) {
+        foreach (self::$jd_set_list as $list){
+            $field_value = key_exists($list["field_id"],$this->jd_set)?$this->jd_set[$list["field_id"]]:null;
+            $rs = Yii::app()->db->createCommand()->select("id,field_id")->from("swo_send_set_jd")
+                ->where("set_type ='customer' and table_id=:table_id and field_id=:field_id",array(
+                    ':field_id'=>$list["field_id"],':table_id'=>$this->id,
+                ))->queryRow();
+            if($rs){
+                $connection->createCommand()->update('swo_send_set_jd',array(
+                    "field_value"=>$field_value,
+                ),"id=:id",array(':id'=>$rs["id"]));
+            }else{
+                $connection->createCommand()->insert('swo_send_set_jd',array(
+                    "table_id"=>$this->id,
+                    "set_type"=>'customer',
+                    "field_id"=>$list["field_id"],
+                    "field_value"=>$field_value,
+                ));
+            }
+        }
+    }
 
 	protected function saveCustomer(&$connection)
 	{
@@ -185,7 +287,7 @@ class CustomerForm extends CFormModel
 		if (strpos($sql,':address')!==false)
 			$command->bindParam(':address',$this->address,PDO::PARAM_STR);
 		if (strpos($sql,':city')!==false)
-			$command->bindParam(':city',$city,PDO::PARAM_STR);
+			$command->bindParam(':city',$this->city,PDO::PARAM_STR);
 		if (strpos($sql,':group_id')!==false)
 			$command->bindParam(':group_id',$this->group_id,PDO::PARAM_STR);
 		if (strpos($sql,':group_name')!==false)

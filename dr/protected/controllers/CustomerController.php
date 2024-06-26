@@ -30,7 +30,7 @@ class CustomerController extends Controller
 			),
 */
 			array('allow', 
-				'actions'=>array('new','edit','delete','save'),
+				'actions'=>array('new','edit','delete','save','sendAllToJD'),
 				'expression'=>array('CustomerController','allowReadWrite'),
 			),
 			array('allow', 
@@ -43,7 +43,14 @@ class CustomerController extends Controller
 		);
 	}
 
-	public function actionIndex($pageNum=0) 
+	public function actionSendAllToJD($city="")
+	{
+		$model = new CustomerForm();
+        $model->sendAllCustomerToJD($city);
+        Yii::app()->end();
+	}
+
+	public function actionIndex($pageNum=0)
 	{
 		$model = new CustomerList;
 		if (isset($_POST['CustomerList'])) {
