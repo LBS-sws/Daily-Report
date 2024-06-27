@@ -189,10 +189,10 @@ return array(
     'short contract'=>'短约',
     'more contract'=>'资质借用',
 
-    'pending U System'=>'待U系统确认',
-    'rejected U System'=>'U系统已拒绝',
-    'U audit date'=>'U系统审核时间',
-    'U audit user'=>'U系统审核账号',
+    'pending U System'=>'待派单系统确认',
+    'rejected U System'=>'派单系统已拒绝',
+    'U audit date'=>'派单系统审核时间',
+    'U audit user'=>'派单系统审核账号',
 
     'Qualification city'=>'资质方',
     'Qualification ratio'=>'资质方比例',
@@ -206,5 +206,6 @@ return array(
     'accept amt'=>'承接方金额',
 
     'Customer name'=>'客户名称',
+    'Approved'=>'已审批',
 );
 ?>

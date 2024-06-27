@@ -100,7 +100,7 @@ class CrossApplyList extends CListPageModel
                     'company_name'=>$companyName,
                     'table_type'=>CrossApplyForm::getCrossTableTypeNameForKey($record["table_type"]),
                     'cross_type_name'=>CrossApplyForm::getCrossTypeStrToKey($record["cross_type"]),
-                    'status_str'=>self::getStatusStrForStatusType($record['status_type']),
+                    'status_str'=>self::getStatusStrForStatusType($record),
                     'color'=>self::getColorForStatusType($record['status_type']),
                 );
 			}
@@ -127,8 +127,11 @@ class CrossApplyList extends CListPageModel
         }
     }
 
-    public static function getStatusStrForStatusType($statusType){
-        $statusType="".$statusType;
+    public static function getStatusStrForStatusType($row){
+        if($row['status_type']==5&&$row['cross_num']>=2){//两次以上的交叉派单显示已审批
+            return Yii::t("service","Approved");//已审批
+        }
+        $statusType="".$row['status_type'];
         $list = array(
             1=>Yii::t("service","pending review"),//待审核
             2=>Yii::t("service","rejected"),//已拒绝

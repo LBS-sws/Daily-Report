@@ -8,6 +8,9 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 'htmlOptions'=>array('enctype' => 'multipart/form-data'),
 )); ?>
+<style>
+    select[readonly]{ pointer-events: none;}
+</style>
 
 <section class="content-header">
 	<h1>
@@ -679,7 +682,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 
 <?php
 if (Yii::app()->user->validRWFunction('CD01')&&$model->status=="N"){ //交叉派单
-    $this->renderPartial('//crossApply/crossDialog');
+    $this->renderPartial('//crossApply/crossDialog',array("model"=>$model));
 }
 ?>
 <?php

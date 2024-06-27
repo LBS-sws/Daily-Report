@@ -24,6 +24,7 @@ class CrossAuditForm extends CrossApplyForm
         if($row){
             $this->table_type = $row["table_type"];
             $this->service_id = $row["service_id"];
+            $this->cross_num = $row['cross_num'];
             $this->old_city = $row["old_city"];
             $this->cross_type = $row['cross_type'];
             $this->lcu = $row["lcu"];
@@ -49,6 +50,7 @@ class CrossAuditForm extends CrossApplyForm
 		if ($row!==false) {
 			$this->id = $row['id'];
 			$this->table_type = $row['table_type'];
+            $this->cross_num = $row['cross_num'];
 			$this->service_id = $row['service_id'];
 			$this->contract_no = $row['contract_no'];
 			$this->apply_date = General::toDate($row['apply_date']);

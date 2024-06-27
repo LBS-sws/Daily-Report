@@ -8,8 +8,10 @@
 					'footer'=>$ftrbtn,
 					'show'=>false,
 				));
-$modelForm = isset($modelForm)?$modelForm:"ServiceForm";
+$modelForm = get_class($model);
 $table_type = $modelForm=="ServiceForm"?0:1;
+
+$endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->id);
 ?>
 
 <div class="form-group">
@@ -35,14 +37,14 @@ $table_type = $modelForm=="ServiceForm"?0:1;
 <div class="form-group">
     <?php echo Tbhtml::label(Yii::t("service","Cross type"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
-        <?php echo Tbhtml::dropDownList('CrossApply[cross_type]','',CrossApplyForm::getCrossTypeList(),array('empty'=>'',"id"=>"cross_type")); ?>
+        <?php echo Tbhtml::dropDownList('CrossApply[cross_type]','',CrossApplyForm::getCrossTypeList(),array('empty'=>'',"id"=>"cross_type",'data-type'=>$endCrossList?$endCrossList["cross_type"]:"")); ?>
     </div>
 </div>
 <div class="qualification-div" style="display: none">
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","Qualification city"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
-            <?php echo Tbhtml::dropDownList('CrossApply[qualification_city]','',CrossApplyForm::getCityList(),array('id'=>'qualification_city','empty'=>'')); ?>
+            <?php echo Tbhtml::dropDownList('CrossApply[qualification_city]','',CrossApplyForm::getCityList(),array('id'=>'qualification_city','empty'=>'','data-city'=>$endCrossList?$endCrossList["qualification_city"]:"")); ?>
         </div>
     </div>
     <div class="form-group">
@@ -62,7 +64,7 @@ $table_type = $modelForm=="ServiceForm"?0:1;
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","Cross city"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
-            <?php echo Tbhtml::dropDownList('CrossApply[cross_city]','',CrossApplyForm::getCityList(),array('id'=>'cross_cross_city','empty'=>'')); ?>
+            <?php echo Tbhtml::dropDownList('CrossApply[cross_city]','',CrossApplyForm::getCityList(),array('id'=>'cross_cross_city','empty'=>'','data-city'=>$endCrossList?$endCrossList["cross_city"]:"")); ?>
         </div>
     </div>
     <div class="form-group">
@@ -96,6 +98,18 @@ $table_type = $modelForm=="ServiceForm"?0:1;
 	    $('#cross_contract_no').val($('#{$modelForm}_contract_no').val());
 	    $('#cross_apply_date').val('{$nowDate}');
 	    $('#cross_month_amt').val(month_amt);
+	    var pre_cross_city=$('#cross_cross_city').data('city');
+	    var pre_qualification_city=$('#qualification_city').data('city');
+	    var pre_cross_type=$('#cross_type').data('type');
+	    if(pre_cross_city!=''&&pre_cross_city!=undefined){
+	        $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_cross_city);
+	    }
+	    if(pre_qualification_city!=''&&pre_qualification_city!=undefined){
+	        $('#qualification_city').val(pre_qualification_city);
+	    }
+	    if(pre_cross_type!=''&&pre_cross_type!=undefined){
+	        $('#cross_type').val(pre_cross_type).trigger('change');
+	    }
 	});
 	$('#cross_rate_num,#cross_month_amt,#qualification_ratio').on('change keyup',function(){
 	    var qualification_ratio= $('#qualification_ratio').val();

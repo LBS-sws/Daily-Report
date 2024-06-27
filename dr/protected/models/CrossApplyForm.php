@@ -5,6 +5,7 @@ class CrossApplyForm extends CFormModel
 	/* User Fields */
 	public $id;
 	public $table_type=0;
+	public $cross_num=0;
 	public $service_id;
 	public $u_system_id;
 	public $contract_no;
@@ -68,7 +69,7 @@ class CrossApplyForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('id,table_type,service_id,contract_no,apply_date,month_amt,rate_num,old_city,cross_type,
+            array('id,table_type,cross_num,service_id,contract_no,apply_date,month_amt,rate_num,old_city,cross_type,
             cross_city,status_type,reject_note,remark,audit_date,audit_user,luu,qualification_ratio,
             qualification_city,qualification_amt,cross_amt','safe'),
 			array('service_id,apply_date,cross_type','required'),
@@ -96,6 +97,14 @@ class CrossApplyForm extends CFormModel
             $this->addError($attribute, "业务场景不存在，请刷新重试");
             return false;
         }else{
+            $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($this->table_type,$this->service_id);
+            if($endCrossList){
+                $this->cross_city = $endCrossList["cross_city"];
+                if($this->cross_type!=$endCrossList["cross_type"]){
+                    $this->addError($attribute, "业务场景与上一次不一致");
+                    return false;
+                }
+            }
 	        if(in_array($this->cross_type,array('5','6','7','8'))){
                 if($this->qualification_city===""){
                     $this->addError($attribute, "资质方不能为空");
@@ -178,6 +187,15 @@ class CrossApplyForm extends CFormModel
         }
     }
 
+    public static function getEndCrossListForTypeAndId($table_type,$service_id){
+        $row = Yii::app()->db->createCommand()->select("*")
+            ->from("swo_cross")
+            ->where("table_type=:table_type and service_id=:service_id",array(
+                ":service_id"=>$service_id,":table_type"=>$table_type
+            ))->order("id desc")->queryRow();
+        return $row;
+    }
+
 	public function retrieveData($index)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
@@ -187,6 +205,7 @@ class CrossApplyForm extends CFormModel
 		if ($row!==false) {
 			$this->id = $row['id'];
 			$this->table_type = $row['table_type'];
+			$this->cross_num = $row['cross_num'];
 			$this->service_id = $row['service_id'];
 			$this->contract_no = $row['contract_no'];
 			$this->apply_date = General::toDate($row['apply_date']);

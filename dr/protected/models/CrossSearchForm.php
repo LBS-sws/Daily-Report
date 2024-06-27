@@ -23,6 +23,7 @@ class CrossSearchForm extends CrossApplyForm
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if($row){
             $this->table_type = $row["table_type"];
+            $this->cross_num = $row['cross_num'];
             $this->service_id = $row["service_id"];
             $this->old_city = $row["old_city"];
             $this->lcu = $row["lcu"];
@@ -41,6 +42,7 @@ class CrossSearchForm extends CrossApplyForm
 		if ($row!==false) {
 			$this->id = $row['id'];
 			$this->table_type = $row['table_type'];
+            $this->cross_num = $row['cross_num'];
 			$this->service_id = $row['service_id'];
 			$this->contract_no = $row['contract_no'];
 			$this->apply_date = General::toDate($row['apply_date']);

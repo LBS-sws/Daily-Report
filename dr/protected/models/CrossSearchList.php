@@ -101,7 +101,7 @@ class CrossSearchList extends CListPageModel
                     'company_name'=>$companyName,
                     'table_type'=>CrossApplyForm::getCrossTableTypeNameForKey($record["table_type"]),
                     'cross_type_name'=>CrossApplyForm::getCrossTypeStrToKey($record["cross_type"]),
-                    'status_str'=>CrossApplyList::getStatusStrForStatusType($record['status_type']),
+                    'status_str'=>CrossApplyList::getStatusStrForStatusType($record),
                     'color'=>CrossApplyList::getColorForStatusType($record['status_type']),
                 );
 			}

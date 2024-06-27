@@ -30,6 +30,7 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
         <div class="form-group">
             <?php echo $form->labelEx($model,'table_type',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
+                <?php echo $form->hiddenField($model, 'cross_num'); ?>
                 <?php echo $form->hiddenField($model, 'status_type'); ?>
                 <?php
                 echo TbHtml::textField("table_type",$table_type_name,array('readonly'=>true));
@@ -46,7 +47,7 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
             <?php echo Tbhtml::label(Yii::t("service","status type"),'',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-2">
                 <?php
-                echo Tbhtml::textField('status_type',CrossApplyList::getStatusStrForStatusType($model->status_type),array('readonly'=>true));
+                echo Tbhtml::textField('status_type',CrossApplyList::getStatusStrForStatusType($model),array('readonly'=>true));
                 ?>
             </div>
         </div>

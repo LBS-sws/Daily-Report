@@ -187,10 +187,10 @@ return array(
     'short contract'=>'短約',
     'more contract'=>'資質借用',
 
-    'pending U System'=>'待U系統確認',
-    'rejected U System'=>'U系統已拒絕',
-    'U audit date'=>'U系統審核時間',
-    'U audit user'=>'U系統審核賬號',
+    'pending U System'=>'待派單系統確認',
+    'rejected U System'=>'派單系統已拒絕',
+    'U audit date'=>'派單系統審核時間',
+    'U audit user'=>'派單系統審核賬號',
 
     'Qualification city'=>'資質方',
     'Qualification ratio'=>'資質方比例',
@@ -204,5 +204,6 @@ return array(
     'accept amt'=>'承接方金額',
 
     'Customer name'=>'客戶名稱',
+    'Approved'=>'已審批',
 );
 ?>
