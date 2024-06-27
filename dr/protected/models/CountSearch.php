@@ -110,6 +110,7 @@ class CountSearch extends SearchForCurlU {
                     if($row["status"]=="S"){ //暫停
                         $list[$row["city"]]["num_pause"]+= $money;
                     }else{
+                        $list[$row["city"]]["num_stop_none"]+=$money;
                         $list[$row["city"]]["num_stop"]+= $money;
                         $list[$row["city"]]["num_month"]+= empty($row["num_month"])?0:round($row["num_month"],2);
                     }

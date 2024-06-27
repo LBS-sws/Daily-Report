@@ -175,7 +175,9 @@ class ComparisonForm extends CFormModel
         $lastMonthStartDate = ($this->comparison_year-1)."/".date("m/d",strtotime($monthStartDate));
         $lastMonthEndDate = ($this->comparison_year-1)."/".date("m/d",strtotime($monthEndDate));
         $allMonthStartDate = date("Y/m/01",strtotime($this->start_date));
-        $allMonthEndDate = date("Y/m/t",strtotime($this->end_date));
+        $allMonthStartDate = date("Y/m/01",strtotime($allMonthStartDate." - 1 months"));
+        $allMonthEndDate = date("Y/m/01",strtotime($this->end_date));
+        $allMonthEndDate = date("Y/m/t",strtotime($allMonthEndDate." - 1 months"));
         //获取U系统的服务单数据
         $uServiceMoney = CountSearch::getUServiceMoney($startDate,$endDate,$city_allow);
         //获取U系统的服务单数据(上月)
@@ -384,7 +386,7 @@ class ComparisonForm extends CFormModel
             $list["monthStopRate"] = $this->comparisonRate($list["monthStopRate"],$list["last_u_actual"]);
 
             $list["comStopRate"] = $list["stop_sum_none"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
-            $list["comStopRate"]/= 12;//
+            $list["comStopRate"]/= 12;//stop_sum_none,last_u_all
             $lastSum = $list["new_month_n"]+$list["last_u_all"];
             $list["comStopRate"] = $this->comparisonRate($list["comStopRate"],$lastSum);
         }
@@ -814,7 +816,8 @@ class ComparisonForm extends CFormModel
                         $regionRow["stopSumOnly"]+=$cityList["stopSumOnly"];
                         $allRow["stopSumOnly"]+=$cityList["stopSumOnly"];
                         $this->resetTdRow($cityList);
-                        $html.="<tr>";
+                        //stop_sum_none,last_u_all
+                        $html.="<tr data-stopSumNone='{$cityList['stop_sum_none']}' data-lastUAll='{$cityList['last_u_all']}'>";
                         foreach ($bodyKey as $keyStr){
                             if(!key_exists($keyStr,$regionRow)){
                                 $regionRow[$keyStr]=0;
