@@ -606,6 +606,11 @@ class ComparisonForm extends CFormModel
                 "colspan"=>$colspan
             );//目标完成度 (minimum case)
         }
+        $topList[]=array("name"=>Yii::t("summary","stop sum none"),"background"=>"#fcd5b4",
+            "colspan"=>array(
+                array("name"=>$this->comparison_year),//查询年份
+            )
+        );//计算停单率的终止金额
 
         return $topList;
     }
@@ -736,6 +741,7 @@ class ComparisonForm extends CFormModel
                 $bodyKey[]="three_net_rate";
             }
         }
+        $bodyKey[]="stop_sum_none";
         return $bodyKey;
     }
     //將城市数据寫入表格(澳门)
