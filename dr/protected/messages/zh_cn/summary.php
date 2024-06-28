@@ -272,5 +272,6 @@ return array(
     'Update(for add)'=>'更改服务（只含新增）',
 
     'KA Technician'=>'KA技术服务',
+    'stop sum none'=>'计算停单率的终止金额',
 );
 ?>
