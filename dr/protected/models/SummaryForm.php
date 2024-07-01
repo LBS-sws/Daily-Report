@@ -171,6 +171,9 @@ class SummaryForm extends CFormModel
 
     protected function resetTdRow(&$list,$bool=false){
 	    $newSum = $list["num_new"]+$list["u_invoice_sum"];//所有新增总金额
+        if(!$bool){
+            $list["num_stop_show"] = $list["num_stop"]-$list["num_stop_none"];
+        }
         $list["num_growth"] = 0;
 	    $list["num_growth"]+=$list["num_new"];
 	    $list["num_growth"]+=$list["u_invoice_sum"];
@@ -242,6 +245,7 @@ class SummaryForm extends CFormModel
                     array("name"=>Yii::t("summary","Suspended service")),//暂停服务
                     array("name"=>Yii::t("summary","Amendment service")),//更改服务
                     array("name"=>Yii::t("summary","Net growth")),//净增长
+                    array("name"=>Yii::t("summary","num stop show")),//暂停后终止服务金额
                 )
             ),//签单情况
             array("name"=>Yii::t("summary","New customer(service)"),"background"=>"#fcd5b4",
@@ -353,9 +357,9 @@ class SummaryForm extends CFormModel
         for($i=0;$i<$this->th_sum;$i++){
             if(in_array($i,array(2,9,5,6,7,8))){
                 $width=75;
-            }elseif($i==10){
+            }elseif($i==11){
                 $width=110;
-            }elseif(in_array($i,array(1,3,13,15))){
+            }elseif(in_array($i,array(1,3,14,16))){
                 $width=90;
             }else{
                 $width=83;
@@ -385,7 +389,7 @@ class SummaryForm extends CFormModel
     private function getDataAllKeyStr(){
         $bodyKey = array(
             "city_name","u_actual_money","num_new","u_invoice_sum","last_month_sum","num_stop","num_restore","num_pause","num_update",
-            "num_growth","num_long","num_short","one_service","num_cate","num_not_cate","u_num_cate","u_num_not_cate"
+            "num_growth","num_stop_show","num_long","num_short","one_service","num_cate","num_not_cate","u_num_cate","u_num_not_cate"
         );
         $bodyKey[]="last_one_service";
         $bodyKey[]="last_u_invoice_sum";

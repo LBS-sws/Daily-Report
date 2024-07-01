@@ -60,6 +60,7 @@ class RptSummarySC extends ReportData2 {
             $defMoreList["u_invoice_sum"]+=$defMoreList["u_invoice_num"];
             $defMoreList["num_pause"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_pause"]:0;
             $defMoreList["num_stop"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop"]:0;
+            $defMoreList["num_stop_none"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop_none"]:0;
             $defMoreList["num_restore"]+=key_exists($city,$serviceForR)?$serviceForR[$city]:0;
             $defMoreList["num_update"]+=key_exists($city,$serviceForA)?$serviceForA[$city]:0;
             if(key_exists($city,$serviceDetailForAdd)){
@@ -135,6 +136,8 @@ class RptSummarySC extends ReportData2 {
             "num_pause"=>0,//暂停服务
             "num_update"=>0,//更改服务
             "num_growth"=>0,//净增长
+            "num_stop_none"=>0,//正常终止服务金额
+            "num_stop_show"=>0,//暂停后终止服务金额
             "num_long"=>0,//长约（>=12月）
             "num_short"=>0,//短约
             "one_service"=>0,//一次性服務

@@ -273,5 +273,6 @@ return array(
 
     'KA Technician'=>'KA技術服務',
     'stop sum none'=>'計算停單率的終止金額',
+    'num stop show'=>'暫停後終止服務金額',
 );
 ?>
