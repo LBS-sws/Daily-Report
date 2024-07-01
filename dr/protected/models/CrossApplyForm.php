@@ -278,6 +278,7 @@ class CrossApplyForm extends CFormModel
             "6"=>Yii::t("service","more contract - long"),//资质借用长约
             "4"=>Yii::t("service","holdco contract"),//Holdco与收购
             "8"=>Yii::t("service","more contract - holdco"),//资质借用-Holdco与收购
+            "10"=>Yii::t("service","Internal dispatch"),//内部派单
         );
     }
 
