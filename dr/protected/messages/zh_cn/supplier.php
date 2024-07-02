@@ -41,6 +41,8 @@ return array(
     'JD System Curl' => '金蝶同步相关数据',
     'jd supplier id' => '金蝶供应商id',
     'jd customer id' => '金蝶客户id',
+    'jd condition code' => '金蝶付款条件编码',
+    'jd condition name' => '金蝶付款条件名称',
 
 );
 ?>

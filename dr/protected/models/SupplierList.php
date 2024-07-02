@@ -35,12 +35,14 @@ class SupplierList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
 		$sql1 = "select a.*, b.name as city_name 
-				from swo_supplier a, security$suffix.sec_city b
-				where a.city=b.code and a.city in ($city)
+				from swo_supplier a
+				LEFT JOIN security$suffix.sec_city b ON a.city=b.code
+				where (a.city in ($city) or a.local_bool=0) 
 			";
 		$sql2 = "select count(a.id)
-				from swo_supplier a, security$suffix.sec_city b
-				where a.city=b.code and a.city in ($city) 
+				from swo_supplier a
+				LEFT JOIN security$suffix.sec_city b ON a.city=b.code
+				where (a.city in ($city) or a.local_bool=0) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

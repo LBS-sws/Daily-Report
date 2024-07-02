@@ -58,6 +58,8 @@ class SupplierForm extends CListPageModel
 
     public $jd_set = array();
     public static $jd_set_list=array(
+        array("field_id"=>"jd_condition_code","field_type"=>"text","field_name"=>"jd condition code"),
+        array("field_id"=>"jd_condition_name","field_type"=>"text","field_name"=>"jd condition name"),
         array("field_id"=>"jd_supplier_id","field_type"=>"text","field_name"=>"jd supplier id"),
     );
 	/**
@@ -119,12 +121,12 @@ class SupplierForm extends CListPageModel
 		if (!empty($code)) {
 			switch ($this->scenario) {
 				case 'new':
-					if (Supplier::model()->exists('code=? and city=?',array($code,$city))) {
+					if (Supplier::model()->exists('code=? and (city=? or local_bool=0)',array($code,$city))) {
 						$this->addError($attribute, Yii::t('supplier','Code')." '".$code."' ".Yii::t('app','already used'));
 					}
 					break;
 				case 'edit':
-					if (Supplier::model()->exists('code=? and city=? and id<>?',array($code,$city,$this->id))) {
+					if (Supplier::model()->exists('code=? and (city=? or local_bool=0) and id<>?',array($code,$city,$this->id))) {
 						$this->addError($attribute, Yii::t('supplier','Code')." '".$code."' ".Yii::t('app','already used'));
 					}
 					break;
@@ -137,7 +139,7 @@ class SupplierForm extends CListPageModel
         $suffix = Yii::app()->params['envSuffix'];
         $user = Yii::app()->user->id;
 		$city = Yii::app()->user->city_allow();
-		$sql = "select * from swo_supplier where id=".$index." and city in ($city)";
+		$sql = "select * from swo_supplier where id=".$index." and (city in ($city) or local_bool=0)";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0)
 		{
