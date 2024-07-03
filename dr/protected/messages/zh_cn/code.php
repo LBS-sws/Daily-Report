@@ -116,5 +116,6 @@ return array(
     'rank for dr'=>'总经理排行榜(日报表系统)',
 
     'JD City'=>'金蝶组织编号',
+    'operation month'=>'营业报告(营运系统)',
 );
 ?>
