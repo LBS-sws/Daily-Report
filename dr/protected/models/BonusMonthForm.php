@@ -122,6 +122,7 @@ class BonusMonthForm extends CFormModel
             if(key_exists($city,$serviceForST)){
                 $defMoreList["stop_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop"]:0;
                 $defMoreList["pause_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_pause"]:0;
+                $defMoreList["stop_sum_none"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop_none"]:0;
                 //$defMoreList["stopSumOnly"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_month"]:0;
             }
             //恢复
@@ -178,6 +179,7 @@ class BonusMonthForm extends CFormModel
             "u_sum"=>0,//U系统金额
             "new_sum_n"=>0,//一次性服务+新增（产品）
             "stop_sum"=>0,//终止
+            "stop_sum_none"=>0,//终止(本条终止的前一条、后一条没有暂停、终止)
             "resume_sum"=>0,//恢复
             "pause_sum"=>0,//暂停
             "amend_sum"=>0,//更改
@@ -202,7 +204,7 @@ class BonusMonthForm extends CFormModel
                 }
             }
 
-            $list["comStopRate"] = $list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
+            $list["comStopRate"] = $list["stop_sum_none"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
             $list["comStopRate"]/= 12;//
             $lastSum = $list["new_month_n"]+$list["last_u_actual"];
             $list["comStopRate"] = ComparisonForm::comparisonRate($list["comStopRate"],$lastSum);
