@@ -2,12 +2,12 @@
 <?php
 if($model->table_type==0){
     $serviceModel = new ServiceForm("view");
-    $serviceModel->retrieveData($model->service_id);
+    $serviceModel->retrieveData($model->service_id,false);
     $serviceModel->cust_type=GetNameToId::getCustOneNameForId($serviceModel->cust_type);
     $serviceModel->cust_type_name=GetNameToId::getCustTwoNameForId($serviceModel->cust_type_name);
 }else{
     $serviceModel = new ServiceKAForm("view");
-    $serviceModel->retrieveData($model->service_id);
+    $serviceModel->retrieveData($model->service_id,false);
 }
 $serviceModel->amt_paid=$model->old_month_amt;
 $serviceModel->nature_type=GetNameToId::getNatureOneNameForId($serviceModel->nature_type);

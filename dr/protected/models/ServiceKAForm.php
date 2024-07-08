@@ -121,14 +121,17 @@ class ServiceKAForm extends ServiceForm
         }
     }
 
-	public function retrieveData($index)
+	public function retrieveData($index,$bool=true)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
 		$sql = "select a.*,f.code as com_code,f.name as com_name, docman$suffix.countdoc('SERVICEKA',a.id) as no_of_attm,b.contract_no from swo_service_ka a
         left outer join swo_service_ka_no b on a.id=b.service_id 
         left outer join swo_company f on a.company_id=f.id 
-        where a.id=$index and a.city in ($city)";
+        where a.id=$index";
+        if($bool){
+            $sql.=" and a.city in ($city)";
+        }
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 //		print_r('<pre>');
 //        print_r($rows);
