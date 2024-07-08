@@ -385,7 +385,6 @@ class UServiceForm extends CFormModel
 
     public static function getConditionList(){
         return array(
-            ""=>Yii::t("summary","-- all --"),
             1=>Yii::t("summary","Technician level"),
             2=>Yii::t("summary","Technical supervisor"),
             3=>Yii::t("summary","Other personnel"),

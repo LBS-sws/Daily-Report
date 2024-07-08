@@ -7,7 +7,12 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 )); ?>
-
+<style>
+    .select2-container.select2-container-disabled .select2-choice {
+        background-color: #ddd;
+        border-color: #a8a8a8;
+    }
+</style>
 <section class="content-header">
 	<h1>
 		<strong><?php echo Yii::t('app','U Service Amount'); ?></strong>
@@ -119,10 +124,11 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'condition',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-5">
+                <div class="col-sm-9">
                     <?php echo $form->dropDownList($model, 'condition',UServiceForm::getConditionList(),
-                        array('readonly'=>false)
-                    ); ?>
+                        array('class'=>'select2 de_class','multiple'=>'multiple','de_type'=>'select2','id'=>'condition')
+                    );
+                    ?>
                 </div>
             </div>
             <div class="form-group">
@@ -161,6 +167,13 @@ $js = Script::genLookupSelectText();
 Yii::app()->clientScript->registerScript('lookupSelect',$js,CClientScript::POS_READY);
 
 
+switch(Yii::app()->language) {
+    case 'zh_cn': $lang = 'zh-CN'; break;
+    case 'zh_tw': $lang = 'zh-TW'; break;
+    default: $lang = Yii::app()->language;
+}
+$disabled = 'false';
+
 $js="
     $('#year_one,#year_two').change(function(){
         var year = $(this).val();
@@ -172,6 +185,20 @@ $js="
         $('#search_div').children('div').hide();
         $('#search_div').children('div[data-id='+id+']').show();
     });
+$('#condition').select2({
+	tags: false,
+	multiple: true,
+	maximumInputLength: 0,
+	maximumSelectionLength: 10,
+	allowClear: true,
+	language: '$lang',
+	disabled: $disabled,
+	templateSelection: formatState
+});
+function formatState(state) {
+	var rtn = $('<span style=\"color:black\">'+state.text+'</span>');
+	return rtn;
+}
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDatePicker(array(

@@ -69,7 +69,7 @@ class UServiceController extends Controller
             $i = ceil($model->search_month/3);//向上取整
             $model->search_quarter = 3*$i-2;
             $model->city = null;
-            $model->condition = 1;
+            $model->condition = array(1,2,3,4);
             $model->seniority_min = 3;
         }
 		$this->render('index',array('model'=>$model));

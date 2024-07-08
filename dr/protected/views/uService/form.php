@@ -9,6 +9,10 @@ $this->pageTitle=Yii::app()->name . ' - UService Form';
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 )); ?>
 <style>
+    .select2-container.select2-container-disabled .select2-choice {
+        background-color: #ddd;
+        border-color: #a8a8a8;
+    }
     .click-th,.click-tr{ cursor: pointer;}
     .click-tr>.fa:before{ content: "\f062";}
     .click-tr.show-tr>.fa:before{ content: "\f063";}
@@ -131,10 +135,11 @@ $this->pageTitle=Yii::app()->name . ' - UService Form';
                         </div>
                         <div class="form-group">
                             <?php echo $form->labelEx($model,'condition',array('class'=>"col-sm-2 control-label")); ?>
-                            <div class="col-sm-5">
+                            <div class="col-sm-9">
                                 <?php echo $form->dropDownList($model, 'condition',UServiceForm::getConditionList(),
-                                    array('readonly'=>true)
-                                ); ?>
+                                    array('class'=>'select2 de_class','multiple'=>'multiple','de_type'=>'select2','id'=>'condition')
+                                );
+                                ?>
                             </div>
                         </div>
                         <div class="form-group">
@@ -183,7 +188,27 @@ $this->pageTitle=Yii::app()->name . ' - UService Form';
 
 
 <?php
+switch(Yii::app()->language) {
+    case 'zh_cn': $lang = 'zh-CN'; break;
+    case 'zh_tw': $lang = 'zh-TW'; break;
+    default: $lang = Yii::app()->language;
+}
+$disabled = 'true';
 $js="
+$('#condition').select2({
+	tags: false,
+	multiple: true,
+	maximumInputLength: 0,
+	maximumSelectionLength: 10,
+	allowClear: true,
+	language: '$lang',
+	disabled: $disabled,
+	templateSelection: formatState
+});
+function formatState(state) {
+	var rtn = $('<span style=\"color:black\">'+state.text+'</span>');
+	return rtn;
+}
     $('.click-th').click(function(){
         var contNum = 0;
         var startNum=contNum;

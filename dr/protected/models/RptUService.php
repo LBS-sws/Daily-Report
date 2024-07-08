@@ -33,7 +33,8 @@ class RptUService extends ReportData2 {
         $UStaffCodeList = array_column($rows,"staff");
         $userList = $this->getUserList($UStaffCodeList,$endDay);
         $cityList = self::getCityList($city_allow);
-        $conditionList = empty($this->condition)?array(1,2,3):array($this->condition);
+        $conditionList = empty($this->condition)?array(1,2,3,4):$this->condition;
+        $conditionList = is_array($conditionList)?$conditionList:array($conditionList);
 		foreach ($rows as $item){//由于数据太多，尝试优化
             $staff_code = isset($item["staff"])?$item["staff"]:"none";
             $u_city = isset($item["city_code"])?$item["city_code"]:"none";
