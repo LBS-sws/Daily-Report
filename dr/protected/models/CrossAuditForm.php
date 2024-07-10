@@ -39,6 +39,7 @@ class CrossAuditForm extends CrossApplyForm
             $this->addError($attribute, "交叉派单不存在，请刷新重试");
             return false;
         }
+        return true;
     }
 
 	public function retrieveData($index)
@@ -138,6 +139,10 @@ class CrossAuditForm extends CrossApplyForm
 		if(in_array($this->getScenario(),array("audit","reject"))){
 		    $this->sendEmail();
         }
+
+		if($this->getScenario()=="audit"){
+            $this->sendCurl();
+        }
 		return true;
 	}
 
@@ -154,7 +159,6 @@ class CrossAuditForm extends CrossApplyForm
         $message="";
         if($this->getScenario()=="audit"){
             $title.="审核通过";
-            $this->sendCurl($serviceModel);
         }elseif ($this->getScenario()=="reject"){
             $title.="已拒绝";
             $message.="<p style='color:red;font-weight: bold'>拒绝原因：".$this->reject_note."</p>";
@@ -175,7 +179,12 @@ class CrossAuditForm extends CrossApplyForm
         $emailModel->sent();
     }
 
-    private function sendCurl($serviceModel){
+    private function sendCurl(){
+        $data=array("data"=>$this->getCurlData());
+        SystemU::sendUForCross($data);
+    }
+
+    protected function getCurlData(){
         $data=array(
             "lbs_id"=>$this->id,//唯一标识
             //"customer_code"=>$serviceModel->customer_code."-{$this->old_city}",//客户编号
@@ -194,7 +203,7 @@ class CrossAuditForm extends CrossApplyForm
             "qualification_contract_id"=>$this->qualification_city,//资质方
             "qualification_money"=>$this->qualification_amt,//资质方金额
         );
-        SystemU::sendUForCross($data);
+        return $data;
     }
 
     public static function getEmployeeStrForUsername($username){
@@ -211,5 +220,34 @@ class CrossAuditForm extends CrossApplyForm
 
 	public function readonly(){
         return true;
+    }
+
+    public function auditFull(){
+	    $idList = key_exists("attrStr",$_POST)?$_POST["attrStr"]:"";
+        $idList = explode(",",$idList);
+        $uid = Yii::app()->user->id;
+        $auditDate = date_format(date_create(),"Y/m/d H:i:s");
+	    if(!empty($idList)){
+	        $curlData = array();
+	        foreach ($idList as $id){
+	            $this->id = $id;
+	            $this->clearErrors();
+                if ($this->validateID("id","")) {
+                    Yii::app()->db->createCommand()->update("swo_cross",array(
+                        "audit_user"=>$uid,
+                        "audit_date"=>$auditDate,
+                        "status_type"=>3,
+                        "luu"=>$uid,
+                    ),"id=:id",array(":id"=>$this->id));
+                    $this->sendEmail();//发送邮件
+                    $curlData[]=$this->getCurlData();
+                }
+            }
+
+            if(!empty($curlData)){//发送curl
+                $data=array("data"=>$curlData);
+                SystemU::sendUForCross($data);
+            }
+        }
     }
 }

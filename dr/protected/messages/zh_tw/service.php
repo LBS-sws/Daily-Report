@@ -206,5 +206,6 @@ return array(
     'Customer name'=>'客戶名稱',
     'Approved'=>'已審批',
     'Internal dispatch'=>'內部派單',
+    'Audit Full'=>'批量審核',
 );
 ?>

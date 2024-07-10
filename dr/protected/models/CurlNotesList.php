@@ -137,6 +137,7 @@ class CurlNotesList extends CListPageModel
             "Company"=>"客户公司",
             "Complaint"=>"跟进单",
             "Cross"=>"交叉派单",
+            "CrossFull"=>"批量交叉派单",
         );
         if($bool){
             if(key_exists($key,$list)){

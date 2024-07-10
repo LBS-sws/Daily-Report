@@ -88,6 +88,7 @@ class CrossApplyForm extends CFormModel
             $this->addError($attribute, "菜单名称异常，请刷新重试");
             return false;
         }
+        return true;
     }
 
     public function validateCrossType($attribute, $params) {
@@ -129,6 +130,7 @@ class CrossApplyForm extends CFormModel
                 $this->rate_num=null;
             }
         }
+        return true;
     }
 
     public function validateCrossCity($attribute, $params) {
@@ -146,6 +148,7 @@ class CrossApplyForm extends CFormModel
                 $this->addError($attribute, "承接城市不能与合约城市一致");
             }
         }
+        return true;
     }
 
     public function validateServiceID($attribute, $params) {
@@ -169,6 +172,7 @@ class CrossApplyForm extends CFormModel
             $this->addError($attribute, "合约编号不存在，无法交叉派单");
             return false;
         }
+        return true;
     }
 
     public static function getCrossTableTypeList(){
@@ -252,7 +256,9 @@ class CrossApplyForm extends CFormModel
             if($bool){
                 $this->old_month_amt = $row["amt_paid"];
             }
+            return true;
         }
+        return false;
     }
 
     public static function getCityList(){
@@ -425,5 +431,105 @@ class CrossApplyForm extends CFormModel
 
 	public function readonly(){
         return $this->getScenario()=="view"||$this->status_type!=2;
+    }
+
+
+    public function getServiceList($table_type,$service_id){
+        if($table_type==0){
+            $tableNameOne="swo_service";
+            $tableNameTwo="swo_service_contract_no";
+        }else{
+            $tableNameOne="swo_service_ka";
+            $tableNameTwo="swo_service_ka_no";
+        }
+        $row = Yii::app()->db->createCommand()
+            ->select("a.*,b.contract_no,f.code as company_code,f.name as company_name")
+            ->from("{$tableNameOne} a")
+            ->leftJoin("{$tableNameTwo} b","a.id=b.service_id")
+            ->leftJoin("swo_company f","a.company_id=f.id")
+            ->where("a.id=:id",array(":id"=>$service_id))->queryRow();
+        return $row?$row:array();
+    }
+
+    public function validateFull(){
+        $attrStr = key_exists("attrStr",$_POST['CrossApply'])?$_POST['CrossApply']["attrStr"]:"";
+        $attrList = explode(",",$attrStr);
+        $list=array();
+        if(!empty($attrList)){
+            foreach ($attrList as $id){
+                $this->service_id = $id;
+                $row = $this->getServiceList($this->table_type,$id);
+                if(empty($row)){
+                    continue;
+                }
+                $endCross = $this->getEndCrossListForTypeAndId($this->table_type,$id);
+                $row["error"] = "";
+                if($endCross){
+                    if($this->cross_type!=$endCross["cross_type"]){
+                        $row["error"] = "业务场景不一致";
+                    }elseif (!empty($endCross["cross_city"])&&$this->cross_city!=$endCross["cross_city"]){
+                        $row["error"] = "承接城市不一致";
+                    }elseif (!empty($endCross["qualification_city"])&&$this->qualification_city!=$endCross["qualification_city"]){
+                        $row["error"] = "资质方不一致";
+                    }
+                }
+                $list[]=$row;
+            }
+        }
+	    return $list;
+    }
+
+    public function saveCrossFull($list){
+        $return = array("success"=>0,"error"=>0);
+        if(!empty($list)) {
+            $this->setScenario("new");
+            foreach ($list as $row) {
+                if(empty($row["error"])){
+                    $this->service_id = $row["id"];
+                    $this->contract_no = $row["contract_no"];
+                    $this->old_city = $row["city"];
+                    $this->old_month_amt = $row["amt_paid"];
+                    $this->month_amt = $row["amt_paid"];
+                    $this->validateCrossType("id","");
+                    $this->saveData();
+                    $return["success"]++;
+                }else{
+                    $return["error"]++;
+                }
+            }
+        }
+        return $return;
+    }
+
+    public function getCrossFullHtml($list){
+        $html="";
+        if(!empty($list)){
+            $cross_type_name = CrossApplyForm::getCrossTypeStrToKey($this->cross_type);
+            $qualification_city_name = General::getCityName($this->qualification_city);
+            $qualification_rate = empty($this->qualification_ratio)?"":"{$this->qualification_ratio}%";
+            $cross_city_name = General::getCityName($this->cross_city);
+            $cross_rate = empty($this->rate_num)?"":"{$this->rate_num}%";
+            foreach ($list as $row){
+                if(empty($row["error"])){
+                    $error="正常";
+                    $html.="<tr class='text-success'>";
+                }else{
+                    $error=$row["error"];
+                    $html.="<tr class='text-danger'>";
+                }
+                $html.="<td>".General::getCityName($row["city"])."</td>";
+                $html.="<td>".$row["company_name"].$row["company_code"]."</td>";
+                $html.="<td>".$this->apply_date."</td>";
+                $html.="<td>".$row["amt_paid"]."</td>";
+                $html.="<td>".$cross_type_name."</td>";
+                $html.="<td>".$qualification_city_name."</td>";
+                $html.="<td>".$qualification_rate."</td>";
+                $html.="<td>".$cross_city_name."</td>";
+                $html.="<td>".$cross_rate."</td>";
+                $html.="<td>".$error."</td>";
+                $html.="</tr>";
+            }
+        }
+        return $html;
     }
 }

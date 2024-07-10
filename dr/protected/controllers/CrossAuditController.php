@@ -24,7 +24,7 @@ class CrossAuditController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('audit','edit','reject'),
+				'actions'=>array('audit','edit','reject','auditFull'),
 				'expression'=>array('CrossAuditController','allowReadWrite'),
 			),
 			array('allow', 
@@ -71,6 +71,13 @@ class CrossAuditController extends Controller
 			}
 		}
 	}
+
+	public function actionAuditFull(){
+        $model = new CrossAuditForm("audit");
+        $model->auditFull();
+        Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Request Approved'));
+        $this->redirect(Yii::app()->createUrl('crossAudit/index'));
+    }
 
 	public function actionAudit()
 	{

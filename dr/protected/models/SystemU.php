@@ -577,7 +577,8 @@ class SystemU {
         $rtn = array('message'=>'', 'code'=>400);
         $key = self::generate_key();
         $root = Yii::app()->params['uCurlRootURL'];
-        $url = $root.'/index.php/api/lbs.CrossAudit/getAuditInfo';
+        //$url = $root.'/index.php/api/lbs.CrossAudit/getAuditInfo';//单条记录
+        $url = $root.'/index.php/api/lbs.CrossAudit/getAuditInfo';//N条记录
         $data["key"] = $key;
         $data_string = json_encode($data);
 

@@ -1,4 +1,13 @@
 <tr class='clickable-row' data-href='<?php echo $this->getLink('A13', 'serviceKA/edit', 'serviceKA/view', array('index'=>$this->record['id']));?>'>
+    <?php if (Yii::app()->user->validRWFunction('CD01')): ?>
+        <!--交叉派单-->
+        <td class="che">
+            <?php if ($this->record['cross_bool']): ?>
+                <input value="<?php echo $this->record['id']; ?>"  type="checkbox" class="checkOne">
+            <?php endif ?>
+        </td>
+    <?php endif ?>
+
 	<td><?php echo $this->drawEditButton('A13', 'serviceKA/edit', 'serviceKA/view', array('index'=>$this->record['id']));?></td>
 <?php if (!Yii::app()->user->isSingleCity()) : ?>
 	<td><?php echo $this->record['city_name']; ?></td>

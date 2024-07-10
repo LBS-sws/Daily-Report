@@ -32,6 +32,17 @@ $this->pageTitle=Yii::app()->name . ' - Service';
 				); 
 		?>
 	</div>
+
+            <?php if (Yii::app()->user->validRWFunction('CD01')): ?>
+                <div class="btn-group pull-right" role="group">
+                    <?php
+                    //交叉派单
+                    echo TbHtml::button('<span class="fa fa-superpowers"></span> '.Yii::t('app','Cross dispatch'), array(
+                            'id'=>'crossFullBtn')
+                    );
+                    ?>
+                </div>
+            <?php endif ?>
 	</div></div>
 	
 	<div class="box">
@@ -165,3 +176,9 @@ Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY
 ?>
 
 <?php $this->endWidget(); ?>
+
+<?php
+if (Yii::app()->user->validRWFunction('CD01')){ //交叉派单
+    $this->renderPartial('//crossApply/crossFull',array("model"=>$model));
+}
+?>

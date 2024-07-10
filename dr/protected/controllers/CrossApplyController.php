@@ -24,12 +24,16 @@ class CrossApplyController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('newSave','edit','delete','save'),
+				'actions'=>array('newSave','newFull','edit','delete','save'),
 				'expression'=>array('CrossApplyController','allowReadWrite'),
 			),
 			array('allow', 
 				'actions'=>array('index','view'),
 				'expression'=>array('CrossApplyController','allowReadOnly'),
+			),
+			array('allow',
+				'actions'=>array('ajaxCross'),
+				'expression'=>array('CrossApplyController','allowAll'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -100,6 +104,32 @@ class CrossApplyController extends Controller
             }
         }
 	}
+
+    //详情列表的異步請求
+    public function actionAjaxCross(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $model = new CrossApplyForm();
+            $model->attributes = $_POST['CrossApply'];
+            $list=$model->validateFull();
+            $html = $model->getCrossFullHtml($list);
+            echo CJSON::encode(array('status'=>1,'html'=>$html));//Yii 的方法将数组处理成json数据
+        }else{
+            $this->redirect(Yii::app()->createUrl('RankingMonth/index'));
+        }
+    }
+
+	public function actionNewFull()
+	{
+		$model = new CrossApplyForm('new');
+        if (isset($_POST['CrossApply'])) {
+            $model->attributes = $_POST['CrossApply'];
+            $list=$model->validateFull();
+            $rtn = $model->saveCrossFull($list);
+            $url = $model->table_type==0?'service/index':'serviceka/index';
+            Dialog::message(Yii::t('dialog','Information'),"批量交叉派单成功。成功数量：".$rtn["success"]);
+            $this->redirect(Yii::app()->createUrl($url));
+        }
+	}
 	
 	public function actionEdit($index)
 	{
@@ -134,5 +164,9 @@ class CrossApplyController extends Controller
 	
 	public static function allowReadOnly() {
 		return Yii::app()->user->validFunction('CD01');
+	}
+
+	public static function allowAll() {
+		return true;
 	}
 }

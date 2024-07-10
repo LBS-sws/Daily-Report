@@ -103,6 +103,7 @@ class CrossAuditList extends CListPageModel
                     'cross_type_name'=>CrossApplyForm::getCrossTypeStrToKey($record["cross_type"]),
                     'status_str'=>CrossApplyList::getStatusStrForStatusType($record),
                     'color'=>CrossApplyList::getColorForStatusType($record['status_type']),
+                    'cross_bool'=>$record["status_type"]==1,
                 );
 			}
 		}

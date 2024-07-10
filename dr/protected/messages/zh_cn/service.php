@@ -208,5 +208,6 @@ return array(
     'Customer name'=>'客户名称',
     'Approved'=>'已审批',
     'Internal dispatch'=>'内部派单',
+    'Audit Full'=>'批量审核',
 );
 ?>

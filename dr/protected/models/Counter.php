@@ -63,7 +63,7 @@ class Counter {
 
 	public static function countCrossAudit() {
         $city_allow = Yii::app()->user->city_allow();
-        $sql = "select count(id) from swo_cross where status_type=1 and cross_city in ({$city_allow})";
+        $sql = "select count(id) from swo_cross where status_type=1 and (cross_city in ({$city_allow}) or (cross_type=5 and qualification_city in ({$city_allow})))";
         $rtn = Yii::app()->db->createCommand($sql)->queryScalar();
 
 		return $rtn;

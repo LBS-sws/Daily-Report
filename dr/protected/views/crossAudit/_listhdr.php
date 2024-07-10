@@ -1,4 +1,5 @@
 <tr>
+    <th>  <input name="Fruit"  type="checkbox"  id="all"></th>
 	<th></th>
     <th>
         <?php echo TbHtml::link($this->getLabelName('old_city').$this->drawOrderArrow('b.name'),'#',$this->createOrderLink('crossAudit-list','b.name'))

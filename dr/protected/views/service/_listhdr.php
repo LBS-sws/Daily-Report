@@ -1,4 +1,9 @@
 <tr>
+    <?php if (Yii::app()->user->validRWFunction('CD01')): ?>
+        <!--交叉派单-->
+        <th>  <input name="Fruit"  type="checkbox"  id="all"></th>
+    <?php endif ?>
+
 	<th></th>
 <?php if (!Yii::app()->user->isSingleCity()) : ?>
 	<th>

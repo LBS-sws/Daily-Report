@@ -148,6 +148,8 @@ class ServiceKAList extends CListPageModel
 					'city_name'=>$record['city_name'],
 					'office_name'=>GetNameToId::getOfficeNameForID($record['office_id']),
 					'no_of_attm'=>$record['no_of_attm'],
+
+                    'cross_bool'=>$record['status']=="N",
 				);
 			}
 		}
