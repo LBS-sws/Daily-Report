@@ -111,17 +111,25 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	        $('#cross_type').val(pre_cross_type).trigger('change');
 	    }
 	});
-	$('#cross_rate_num,#cross_month_amt,#qualification_ratio').on('change keyup',function(){
+	$('#cross_rate_num,#cross_month_amt,#qualification_ratio').on('change',function(){
 	    var qualification_ratio= $('#qualification_ratio').val();
 	    var rate_num= $('#cross_rate_num').val();
 	    var month_amt= $('#cross_month_amt').val();
 	    var rate_amt= 0;
 	    if(qualification_ratio!=''&&month_amt!=''){
-	        $('#qualification_amt').val(month_amt*(qualification_ratio/100));
+            qualification_ratio = parseFloat(qualification_ratio).toFixed(2);
+            qualification_ratio = parseFloat(qualification_ratio);
+            $('#qualification_ratio').val(qualification_ratio);
+            var qualification_amt = month_amt*(qualification_ratio/100);
+	        qualification_amt = qualification_amt.toFixed(2);
+	        $('#qualification_amt').val(qualification_amt);
 	    }else{
 	        $('#qualification_amt').val('');
 	    }
 	    if(rate_num!=''&&month_amt!=''){
+            rate_num = parseFloat(rate_num).toFixed(2);
+            rate_num = parseFloat(rate_num);
+            $('#cross_rate_num').val(rate_num);
 	        qualification_ratio = qualification_ratio==''?0:qualification_ratio;
 	        month_amt = month_amt*((100-qualification_ratio)/100);
 	        rate_amt = month_amt*(rate_num/100);

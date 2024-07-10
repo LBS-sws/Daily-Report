@@ -464,6 +464,9 @@ class CrossApplyForm extends CFormModel
                 }
                 $endCross = $this->getEndCrossListForTypeAndId($this->table_type,$id);
                 $row["error"] = "";
+                if(empty($row["contract_no"])){
+                    $row["error"] = "合约编号不能为空";
+                }
                 if($endCross){
                     if($this->cross_type!=$endCross["cross_type"]){
                         $row["error"] = "业务场景不一致";
@@ -506,9 +509,9 @@ class CrossApplyForm extends CFormModel
         if(!empty($list)){
             $cross_type_name = CrossApplyForm::getCrossTypeStrToKey($this->cross_type);
             $qualification_city_name = General::getCityName($this->qualification_city);
-            $qualification_rate = empty($this->qualification_ratio)?"":"{$this->qualification_ratio}%";
+            $qualification_rate = empty($this->qualification_ratio)?"":round($this->qualification_ratio,2)."%";
             $cross_city_name = General::getCityName($this->cross_city);
-            $cross_rate = empty($this->rate_num)?"":"{$this->rate_num}%";
+            $cross_rate = empty($this->rate_num)?"":round($this->rate_num,2)."%";
             foreach ($list as $row){
                 if(empty($row["error"])){
                     $error="正常";

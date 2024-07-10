@@ -105,6 +105,15 @@ $('body').on('click','#all',function() {
 	$('.che').children('input[type=checkbox]').prop('checked',val);
 });
 
+$('#qualification_ratio,#cross_rate_num').on('change',function(){
+    var num_str = $(this).val();
+    if(num_str!=''){
+        var num = parseFloat(num_str).toFixed(2);
+        num = parseFloat(num);
+        $(this).val(num);
+    }
+});
+
 $('#crossFullOk').on('click',function(){
     var list = [];
     var confirmHtml='';
