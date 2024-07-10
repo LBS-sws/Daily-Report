@@ -186,7 +186,7 @@ class NatureForm extends CFormModel
                 if (strpos($sql,':nature_id')!==false)
                     $command->bindParam(':nature_id',$this->id,PDO::PARAM_INT);
                 if (strpos($sql,':rpt_u')!==false){
-                    $row['rpt_u'] =empty($row['rpt_u'])?null:$row['rpt_u'];
+                    $row['rpt_u'] =$row['rpt_u']===""?null:$row['rpt_u'];
                     $command->bindParam(':rpt_u',$row['rpt_u'],PDO::PARAM_INT);
                 }
                 if (strpos($sql,':score_bool')!==false)
