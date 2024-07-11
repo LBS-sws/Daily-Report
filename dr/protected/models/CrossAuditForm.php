@@ -180,7 +180,7 @@ class CrossAuditForm extends CrossApplyForm
     }
 
     private function sendCurl(){
-        $data=array("data"=>$this->getCurlData());
+        $data=array("data"=>array($this->getCurlData()));
         SystemU::sendUForCross($data);
     }
 
