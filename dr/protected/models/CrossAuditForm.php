@@ -27,6 +27,7 @@ class CrossAuditForm extends CrossApplyForm
             $this->cross_num = $row['cross_num'];
             $this->old_city = $row["old_city"];
             $this->cross_type = $row['cross_type'];
+            $this->cross_city = $row['cross_city'];
             $this->lcu = $row["lcu"];
             $this->month_amt = $row['month_amt'];
             $this->rate_num = floatval($row['rate_num']);
@@ -227,6 +228,7 @@ class CrossAuditForm extends CrossApplyForm
         $idList = explode(",",$idList);
         $uid = Yii::app()->user->id;
         $auditDate = date_format(date_create(),"Y/m/d H:i:s");
+        $this->audit_date = $auditDate;
 	    if(!empty($idList)){
 	        $curlData = array();
 	        foreach ($idList as $id){
