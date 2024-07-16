@@ -442,7 +442,7 @@ class SupplierForm extends CListPageModel
 		$sql = '';
 		switch ($this->scenario) {
 			case 'delete':
-				$sql = "delete from swo_supplier where id = :id and city = :city";
+				$sql = "delete from swo_supplier where id = :id";
 				break;
 			case 'new':
 				$sql = "insert into swo_supplier(
@@ -465,7 +465,7 @@ class SupplierForm extends CListPageModel
 							bank = :bank,
 							acct_no = :acct_no,
 							luu = :luu 
-						where id = :id and city = :city
+						where id = :id
 						";
 				break;
 		}

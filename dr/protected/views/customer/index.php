@@ -37,6 +37,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer';
 	</div></div>
 	<?php 
 		$search = array(
+						'city_name',
 						'code',
 						'name',
 						'full_name',

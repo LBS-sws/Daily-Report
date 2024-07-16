@@ -67,12 +67,12 @@ class CurlForCustomer extends CurlForJD{
             "enable"=>$model->status==2?0:1,//使用状态 [0:禁用, 1:可用]
             "simplename"=>$model->full_name,//简称
 
-            "bizfunction"=>"",//业务职能 [1:销售, 2:结算, 3:付款, 4:收货]
-            "type"=>"",//伙伴类型 [1:法人企业, 2:非法人企业, 3:非企业单位, 4:个人, 5:个体户]
+            "bizfunction"=>"1,2,3,4",//业务职能 [1:销售, 2:结算, 3:付款, 4:收货]
+            "type"=>"1",//伙伴类型 [1:法人企业, 2:非法人企业, 3:非企业单位, 4:个人, 5:个体户]
 
-            "createorg_number"=>self::getJDCityCodeForCity($model->city),//创建组织.编码
-            "internal_company_number"=>"",//内部业务单元.编码
-            "societycreditcode"=>"",//统一社会信用代码
+            "createorg_number"=>"LBSGL",//创建组织.编码
+            //"internal_company_number"=>"",//内部业务单元.编码
+            //"societycreditcode"=>"",//统一社会信用代码
             "tx_register_no"=>$model->tax_reg_no,//纳税人识别号
             "linkman"=>$model->cont_name,//联系人
             "bizpartner_phone"=>$model->cont_phone,//联系电话
@@ -80,11 +80,12 @@ class CurlForCustomer extends CurlForJD{
             "address"=>$model->address,//电子邮箱(金蝶接口未有)
             "group_code"=>$model->group_id,//集团编号(金蝶接口未有)
             "group_name"=>$model->group_name,//集团名称(金蝶接口未有)
-
+            /*
             "entry_groupstandard"=>array(//分类标准
                 "groupid_number"=>"",//分类.编码
                 "standardid_number"=>"",//分类标准.编码
             ),//分类标准
+            */
         );
         return $curlData;
     }

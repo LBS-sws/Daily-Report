@@ -231,7 +231,7 @@ class CustomerForm extends CFormModel
 		$sql = '';
 		switch ($this->scenario) {
 			case 'delete':
-				$sql = "delete from swo_company where id = :id and city = :city";
+				$sql = "delete from swo_company where id = :id";
 				$this->delHistorySave();
 				break;
 			case 'new':
@@ -259,7 +259,7 @@ class CustomerForm extends CFormModel
 							group_name = :group_name,
 							status = :status,
 							luu = :luu 
-						where id = :id and city = :city
+						where id = :id
 						";
 				break;
 		}
