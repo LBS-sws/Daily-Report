@@ -135,6 +135,7 @@ class CurlNotesList extends CListPageModel
             "ServiceOne"=>"服务合约",
             "ServiceFull"=>"批量修改",
             "Company"=>"客户公司",
+            "CompanyFull"=>"批量客户公司",
             "Complaint"=>"跟进单",
             "Cross"=>"交叉派单",
             "CrossFull"=>"批量交叉派单",
