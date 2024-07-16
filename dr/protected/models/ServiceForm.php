@@ -73,6 +73,7 @@ class ServiceForm extends CFormModel
     public $commission;
     public $other_commission;
     public $tracking;
+    public $u_system_id;
 
 	public $files;
 
@@ -171,6 +172,7 @@ class ServiceForm extends CFormModel
             'lcd'=>Yii::t('service','lcd'),
             'lud'=>Yii::t('service','lud'),
             'office_id'=>"归属",
+            'u_system_id'=>"U系统id",
 		);
 	}
 
@@ -200,7 +202,7 @@ class ServiceForm extends CFormModel
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
 */
-			array('id, office_id, tracking,technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, nature_type_two, cust_type, prepay_month,prepay_start,contract_no
+			array('id, u_system_id,office_id, tracking,technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, nature_type_two, cust_type, prepay_month,prepay_start,contract_no
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
 				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm, company_id','safe'),
@@ -218,8 +220,18 @@ class ServiceForm extends CFormModel
             array('id','validateID'),
             array('id','validateAutoFinish'),
             array('status_dt','validateVisitDt','on'=>array('new')),
+            array('u_system_id','validateUSystem','on'=>array('new')),
 		);
 	}
+
+    //U系统id
+    public function validateUSystem($attribute, $params) {
+        if($this->status=="N"){
+            if(empty($this->u_system_id)){
+                $this->addError($attribute, "U系统id 不能为空");
+            }
+        }
+    }
 
     //驗證该服务是否已经参加销售提成计算
     public function validateID($attribute, $params) {
@@ -410,6 +422,7 @@ class ServiceForm extends CFormModel
                 $this->lcu = $row['lcu'];
                 $this->luu = $row['luu'];
                 $this->office_id = $row['office_id'];
+                $this->u_system_id = $row['u_system_id'];
 //                print_r('<pre>');
 //                print_r($this);exit();
 				break;
@@ -627,7 +640,7 @@ class ServiceForm extends CFormModel
 							b4_service, b4_paid_type, b4_amt_paid, 
 							ctrt_period, cont_info, first_dt, first_tech_id, first_tech, reason,tracking,
 							status, status_dt, remarks, remarks2, ctrt_end_dt,
-							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,office_id,
+							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,office_id,u_system_id,
 							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,prepay_month,prepay_start
 						) values (
 							:service_new_id,:company_id, :company_name, :product_id, :service, :nature_type, :two_nature_type, :cust_type, 
@@ -635,7 +648,7 @@ class ServiceForm extends CFormModel
 							:b4_service, :b4_paid_type, :b4_amt_paid, 
 							:ctrt_period, :cont_info, :first_dt, :first_tech_id, :first_tech, :reason,:tracking,
 							:status, :status_dt, :remarks, :remarks2, :ctrt_end_dt,
-							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, :cust_type_name,:pieces,:office_id,
+							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, :cust_type_name,:pieces,:office_id,:u_system_id,
 							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3,:prepay_month,:prepay_start
 						)";
 				$this->execSql($connection,$sql);
@@ -734,6 +747,10 @@ class ServiceForm extends CFormModel
 		if (strpos($sql,':office_id')!==false){
             $this->office_id = empty($this->office_id)?null:$this->office_id;
             $command->bindParam(':office_id',$this->office_id,PDO::PARAM_INT);
+        }
+		if (strpos($sql,':u_system_id')!==false){
+            $this->u_system_id = empty($this->u_system_id)?null:$this->u_system_id;
+            $command->bindParam(':u_system_id',$this->u_system_id,PDO::PARAM_INT);
         }
 		if (strpos($sql,':two_nature_type')!==false){
             $this->nature_type_two = empty($this->nature_type_two)?null:$this->nature_type_two;

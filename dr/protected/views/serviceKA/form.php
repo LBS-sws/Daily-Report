@@ -579,6 +579,16 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 					); ?>
 				</div>
 			</div>
+            <?php if ($model->status=='N'): ?>
+                <div class="form-group">
+                    <?php echo TbHtml::label("U系统id",'u_system_id',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'u_system_id',
+                            array('readonly'=>($model->scenario!='new'))
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif ?>
 
             <?php if ($model->scenario!='new'): ?>
                 <div class="form-group">
