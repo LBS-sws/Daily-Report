@@ -37,13 +37,13 @@ class CrossSearchList extends CListPageModel
 				from swo_cross a
 				LEFT JOIN security{$suffix}.sec_city b ON a.old_city=b.code
 				LEFT JOIN security{$suffix}.sec_city f ON a.cross_city=f.code
-				where (a.cross_city in ({$city_allow}) or a.old_city in ({$city_allow}) or (a.cross_type=5 and a.qualification_city in ({$city_allow}))) and a.status_type in (3,5,6) 
+				where (a.cross_city in ({$city_allow}) or a.old_city in ({$city_allow}) or (a.cross_type=5 and a.qualification_city in ({$city_allow}))) and a.status_type in (2,3,5,6) 
 			";
 		$sql2 = "select count(a.id)
 				from swo_cross a
 				LEFT JOIN security{$suffix}.sec_city b ON a.old_city=b.code
 				LEFT JOIN security{$suffix}.sec_city f ON a.cross_city=f.code
-				where (a.cross_city in ({$city_allow}) or a.old_city in ({$city_allow}) or (a.cross_type=5 and a.qualification_city in ({$city_allow})))  and a.status_type in (3,5,6) 
+				where (a.cross_city in ({$city_allow}) or a.old_city in ({$city_allow}) or (a.cross_type=5 and a.qualification_city in ({$city_allow})))  and a.status_type in (2,3,5,6) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

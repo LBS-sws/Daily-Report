@@ -194,7 +194,7 @@ class CrossApplyForm extends CFormModel
     public static function getEndCrossListForTypeAndId($table_type,$service_id){
         $row = Yii::app()->db->createCommand()->select("*")
             ->from("swo_cross")
-            ->where("table_type=:table_type and service_id=:service_id",array(
+            ->where("table_type=:table_type and service_id=:service_id and status_type not in (2,6)",array(
                 ":service_id"=>$service_id,":table_type"=>$table_type
             ))->order("id desc")->queryRow();
         return $row;
