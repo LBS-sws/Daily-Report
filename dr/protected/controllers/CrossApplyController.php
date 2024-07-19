@@ -125,7 +125,7 @@ class CrossApplyController extends Controller
             $model->attributes = $_POST['CrossApply'];
             $list=$model->validateFull();
             $rtn = $model->saveCrossFull($list);
-            $url = $model->table_type==0?'service/index':'serviceka/index';
+            $url = $model->table_type==0?'service/index':'serviceKA/index';
             Dialog::message(Yii::t('dialog','Information'),"批量交叉派单成功。成功数量：".$rtn["success"]);
             $this->redirect(Yii::app()->createUrl($url));
         }

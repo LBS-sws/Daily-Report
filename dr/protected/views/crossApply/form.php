@@ -47,6 +47,7 @@ $this->pageTitle=Yii::app()->name . ' - CrossApply Form';
 		<div class="box-body">
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
+            <?php echo $form->hiddenField($model, 'table_type'); ?>
 			<?php echo $form->hiddenField($model, 'service_id'); ?>
             <?php echo $form->hiddenField($model, 'status_type'); ?>
 
