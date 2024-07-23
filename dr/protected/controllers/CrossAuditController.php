@@ -24,7 +24,7 @@ class CrossAuditController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('audit','edit','reject','auditFull'),
+				'actions'=>array('audit','edit','reject','auditFull','rejectFull'),
 				'expression'=>array('CrossAuditController','allowReadWrite'),
 			),
 			array('allow', 
@@ -75,7 +75,19 @@ class CrossAuditController extends Controller
 	public function actionAuditFull(){
         $model = new CrossAuditForm("audit");
         $model->auditFull();
-        Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Request Approved'));
+        Dialog::message(Yii::t('dialog','Information'), "批量审核完成");
+        $this->redirect(Yii::app()->createUrl('crossAudit/index'));
+    }
+
+	public function actionRejectFull(){
+        $rejectNote = key_exists("reject_note",$_POST)?$_POST["reject_note"]:"";
+        $model = new CrossAuditForm("reject");
+        if(empty($rejectNote)){
+            Dialog::message(Yii::t('dialog','Validation Message'), "拒绝原因不能为空");
+        }else{
+            $model->rejectFull();
+            Dialog::message(Yii::t('dialog','Information'), "已批量拒绝");
+        }
         $this->redirect(Yii::app()->createUrl('crossAudit/index'));
     }
 

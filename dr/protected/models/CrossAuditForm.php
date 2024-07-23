@@ -252,4 +252,30 @@ class CrossAuditForm extends CrossApplyForm
             }
         }
     }
+
+    public function rejectFull(){
+        $rejectNote = key_exists("reject_note",$_POST)?$_POST["reject_note"]:"";
+	    $idList = key_exists("attrStr",$_POST)?$_POST["attrStr"]:"";
+        $idList = explode(",",$idList);
+        $uid = Yii::app()->user->id;
+        $auditDate = date_format(date_create(),"Y/m/d H:i:s");
+        $this->audit_date = $auditDate;
+        $this->reject_note = $rejectNote;
+	    if(!empty($idList)){
+	        foreach ($idList as $id){
+	            $this->id = $id;
+	            $this->clearErrors();
+                if ($this->validateID("id","")) {
+                    Yii::app()->db->createCommand()->update("swo_cross",array(
+                        "audit_user"=>$uid,
+                        "audit_date"=>$auditDate,
+                        "status_type"=>2,
+                        "reject_note"=>$this->reject_note,
+                        "luu"=>$uid,
+                    ),"id=:id",array(":id"=>$this->id));
+                    $this->sendEmail();//发送邮件
+                }
+            }
+        }
+    }
 }

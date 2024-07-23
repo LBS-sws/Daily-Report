@@ -207,5 +207,6 @@ return array(
     'Approved'=>'已審批',
     'Internal dispatch'=>'內部派單',
     'Audit Full'=>'批量審核',
+    'Deny Full'=>'批量拒絕',
 );
 ?>

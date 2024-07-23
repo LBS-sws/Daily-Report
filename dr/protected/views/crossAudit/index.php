@@ -27,10 +27,14 @@ $this->pageTitle=Yii::app()->name . ' - CrossAudit';
         <div class="box-body">
             <div class="btn-group" role="group">
                 <?php
-                if (Yii::app()->user->validRWFunction('CD02'))
+                if (Yii::app()->user->validRWFunction('CD02')){
                     echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('service','Audit Full'), array(
                             'submit'=>Yii::app()->createUrl('crossAudit/auditFull'))
                     );
+                    echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('service','Deny Full'), array(
+                            'data-toggle'=>'modal','data-target'=>'#denyDialog')
+                    );
+                }
                 ?>
             </div>
         </div>
@@ -61,6 +65,28 @@ $this->pageTitle=Yii::app()->name . ' - CrossAudit';
 	echo TbHtml::hiddenField("attrStr",'',array("id"=>"attrStr"));
 
 echo TbHtml::button("aa",array("submit"=>"#","class"=>"hide"));
+?>
+
+
+<?php
+$content="<div class=\"form-group\" style='display: block;'>";
+$content.=Tbhtml::label(Yii::t('service','reject note'),'reject_note',array('class'=>"control-label"));
+$content.="<span>：</span>";
+$content.=Tbhtml::textArea('reject_note', '',
+    array('readonly'=>false,'id'=>'reject_note','rows'=>4,"style"=>"display:block;width:100%;")
+);
+$content.="</div>";
+$this->widget('bootstrap.widgets.TbModal', array(
+    'id'=>'denyDialog',
+    'header'=>Yii::t('misc','Deny'),
+    'content'=>$content,
+    'footer'=>array(
+        TbHtml::button(Yii::t('dialog','OK'), array('color'=>TbHtml::BUTTON_COLOR_PRIMARY,'submit'=>Yii::app()->createUrl('crossAudit/rejectFull'))),
+        TbHtml::button(Yii::t('dialog','Cancel'), array('data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY)),
+    ),
+    'show'=>false,
+));
+
 ?>
 <?php $this->endWidget(); ?>
 
