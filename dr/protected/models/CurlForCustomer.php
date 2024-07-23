@@ -80,12 +80,10 @@ class CurlForCustomer extends CurlForJD{
             "address"=>$model->address,//电子邮箱(金蝶接口未有)
             "group_code"=>$model->group_id,//集团编号(金蝶接口未有)
             "group_name"=>$model->group_name,//集团名称(金蝶接口未有)
-            /*
             "entry_groupstandard"=>array(//分类标准
-                "groupid_number"=>"",//分类.编码
-                "standardid_number"=>"",//分类标准.编码
+                "groupid_number"=>"E",//分类.编码
+                "standardid_number"=>"JBFLBZ",//分类标准.编码
             ),//分类标准
-            */
         );
         return $curlData;
     }
