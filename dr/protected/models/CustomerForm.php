@@ -168,16 +168,27 @@ class CustomerForm extends CFormModel
 
 	//发送所有客户资料到金蝶系统
     public function sendAllCustomerToJD($city=""){
-	    $data = array();
-        $curlModel = new CurlForCustomer();
         $whereSql="";
         if(!empty($city)){
             $cityList = explode(",",$city);
             $whereSql= "and city in('".implode("','",$cityList)."')";
         }
-        $sql = "select * from swo_company where id>0 {$whereSql}";
-        $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        $pageMax = 100;//最大数量
+        $sqlCount = "select count(id) from swo_company where id>0 {$whereSql}";
+        $totalRow = Yii::app()->db->createCommand($sqlCount)->queryScalar();
+        if($totalRow>0){
+            $sql = "select * from swo_company where id>0 {$whereSql}";
+            $this->sendCustomerToJDPage($sql,$totalRow,$pageMax);
+        }
+    }
+
+    protected function sendCustomerToJDPage($sql,$totalRow,$pageMax,$page=0){
+        $startNum = $page*$pageMax;
+        $whereSql = $sql." ORDER BY id ASC LIMIT {$startNum},$pageMax";
+        $rows = Yii::app()->db->createCommand($whereSql)->queryAll();
         if($rows){
+            $data = array();
+            $curlModel = new CurlForCustomer();
             foreach ($rows as $row){
                 $this->id = $row['id'];
                 $this->code = $row['code'];
@@ -196,7 +207,11 @@ class CustomerForm extends CFormModel
             }
             $curlModel->sendJDCurlForCustomerData($data);
             $curlModel->saveTableForArr();
-            echo "send success";
+            $page++;
+            echo "send success。page:{$page}<br/>";
+            if($totalRow>$startNum){
+                $this->sendCustomerToJDPage($sql,$totalRow,$pageMax,$page);
+            }
         }else{
             echo "data is null";
         }
