@@ -305,9 +305,9 @@ class RptCustomerKA extends ReportData2 {
 	}
 
 	public function getReportName() {
-    	//$statusName = GetNameToId::getServiceStatusForKey($this->customerType);
+    	$statusName = GetNameToId::getServiceStatusForKey($this->customerType);
 		//$city_name = isset($this->criteria) ? ' - '.General::getCityNameForList($this->criteria->city) : '';
-		return Yii::t("report","KA customer report");
+		return $statusName;
 	}
 }
 ?>
