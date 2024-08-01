@@ -195,7 +195,17 @@ class ServiceIDForm extends CFormModel
             array('status_dt','validateVisitDt','on'=>array('new')),
             array('cust_type','validateCustType'),
             array('cust_type','validateServiceInfo'),
+            array('city','validateCity'),
         );
+    }
+    //验证城市
+    public function validateCity($attribute, $params) {
+        $city = empty($this->city)?Yii::app()->user->city():$this->city;
+        $city = "'{$city}'";
+        $city_allow = Yii::app()->user->city_allow();
+        if (strpos($city_allow,$city)===false) {
+            $this->addError($attribute, "城市异常:".$this->city);
+        }
     }
 
     public function validateServiceInfo($attribute, $params) {
@@ -569,7 +579,7 @@ class ServiceIDForm extends CFormModel
             var_dump(1);
             die();
         }
-        $city =Yii::app()->user->city(); 	//Yii::app()->user->city();
+        $city =$this->city; 	//Yii::app()->user->city();
         $uid = Yii::app()->user->id;
         switch ($this->scenario) {
             case 'delete':

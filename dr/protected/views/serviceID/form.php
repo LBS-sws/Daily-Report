@@ -83,6 +83,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
             <?php echo $form->hiddenField($model, 'id'); ?>
             <?php echo $form->hiddenField($model, 'scenario'); ?>
             <?php echo $form->hiddenField($model, 'status'); ?>
+            <?php echo $form->hiddenField($model, 'city',array("id"=>"search_city")); ?>
             <?php echo TbHtml::hiddenField("dtltemplate"); ?>
 
             <div class="form-group">
@@ -708,67 +709,6 @@ EOF;
     Yii::app()->clientScript->registerScript('addRow',$js,CClientScript::POS_READY);
 }
 ?>
-<?php
-$buttons = array(
-    TbHtml::button(Yii::t('service','New Service'),
-        array(
-            'name'=>'btnNew',
-            'id'=>'btnNew',
-            'class'=>'btn btn-block btnChangeAdd',
-            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"N"))
-        )),
-    TbHtml::button(Yii::t('service','Renew Service'),
-        array(
-            'name'=>'btnRenew',
-            'id'=>'btnRenew',
-            'class'=>'btn btn-block btnChangeAdd',
-            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"C"))
-        )),
-    TbHtml::button(Yii::t('service','Amend Service'),
-        array(
-            'name'=>'btnAmend',
-            'id'=>'btnAmend',
-            'class'=>'btn btn-block btnChangeAdd',
-            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"A"))
-        )),
-    TbHtml::button(Yii::t('service','Suspend Service'),
-        array(
-            'name'=>'btnSuspend',
-            'id'=>'btnSuspend',
-            'class'=>'btn btn-block btnChangeAdd',
-            'data-type'=>'S',
-            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"S"))
-        )),
-    TbHtml::button(Yii::t('service','Resume Service'),
-        array(
-            'name'=>'btnResume',
-            'id'=>'btnResume',
-            'class'=>'btn btn-block btnChangeAdd',
-            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"R"))
-        )),
-    TbHtml::button(Yii::t('service','Terminate Service'),
-        array(
-            'name'=>'btnTerminate',
-            'id'=>'btnTerminate',
-            'class'=>'btn btn-block btnChangeAdd',
-            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"T"))
-        )),
-);
-
-$content = "";
-foreach ($buttons as $button) {
-    $content .= "<div class=\"row\"><div class=\"col-sm-10\">$button</div></div>";
-}
-$this->widget('bootstrap.widgets.TbModal', array(
-    'id'=>'addrecdialog',
-    'header'=>Yii::t('service','Add Record'),
-    'content'=>$content,
-//					'footer'=>array(
-//						TbHtml::button(Yii::t('dialog','OK'), array('data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY)),
-//					),
-    'show'=>false,
-));
-?>
 
 <?php if ($model->scenario!='new'&&!empty($model->service_new_id)): ?>
     <?php $this->renderPartial('//serviceID/historydialog',array('model'=>$model)); ?>
@@ -851,14 +791,17 @@ function addMonth(d, m) {
 $('.btnChangeAdd').on('click',function(){
     var url = $(this).data('href');
     var id = $('#addrecdialog').data('id');
-    window.document.location = url+'&id='+id;
+    var city = $('#dialog_city').val();
+    window.document.location = url+'&id='+id+'&city='+city;
 });
 $('#btnAdd').on('click',function(){
     $('#addrecdialog').data('id','');
+    $('#dialog_city').val($('#search_city').val());
 	$('#addrecdialog').modal('show');
 });
 $('#btnCopy').on('click',function(){
     $('#addrecdialog').data('id','{$model->id}');
+    $('#dialog_city').val($('#search_city').val());
 	$('#addrecdialog').modal('show');
 });
 ";
@@ -924,3 +867,73 @@ Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_R
 <?php $this->endWidget(); ?>
 
 
+<?php
+$buttons = array(
+    TbHtml::button(Yii::t('service','New Service'),
+        array(
+            'name'=>'btnNew',
+            'id'=>'btnNew',
+            'class'=>'btn btn-block btnChangeAdd',
+            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"N"))
+        )),
+    TbHtml::button(Yii::t('service','Renew Service'),
+        array(
+            'name'=>'btnRenew',
+            'id'=>'btnRenew',
+            'class'=>'btn btn-block btnChangeAdd',
+            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"C"))
+        )),
+    TbHtml::button(Yii::t('service','Amend Service'),
+        array(
+            'name'=>'btnAmend',
+            'id'=>'btnAmend',
+            'class'=>'btn btn-block btnChangeAdd',
+            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"A"))
+        )),
+    TbHtml::button(Yii::t('service','Suspend Service'),
+        array(
+            'name'=>'btnSuspend',
+            'id'=>'btnSuspend',
+            'class'=>'btn btn-block btnChangeAdd',
+            'data-type'=>'S',
+            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"S"))
+        )),
+    TbHtml::button(Yii::t('service','Resume Service'),
+        array(
+            'name'=>'btnResume',
+            'id'=>'btnResume',
+            'class'=>'btn btn-block btnChangeAdd',
+            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"R"))
+        )),
+    TbHtml::button(Yii::t('service','Terminate Service'),
+        array(
+            'name'=>'btnTerminate',
+            'id'=>'btnTerminate',
+            'class'=>'btn btn-block btnChangeAdd',
+            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"T"))
+        )),
+);
+
+$content = '<div class="form-horizontal">';
+$content.= '<div class="form-group">';
+$content.= Tbhtml::label(Yii::t('misc','City'),'',array('class'=>"col-lg-4 control-label"));
+$content.= '<div class="col-lg-4">';
+$content.= Tbhtml::dropDownList("dialog_city", Yii::app()->user->city(),General::getCityListWithCityAllow(Yii::app()->user->city_allow()),
+    array('id'=>"dialog_city",'empty'=>'')
+);
+$content.= '</div></div>';
+$content.= '<div class="form-group">';
+foreach ($buttons as $button) {
+    $content .= "<div class=\"col-sm-10 col-sm-offset-1\">$button</div>";
+}
+$content.= '</div></div>';
+$this->widget('bootstrap.widgets.TbModal', array(
+    'id'=>'addrecdialog',
+    'header'=>Yii::t('service','Add Record'),
+    'content'=>$content,
+//					'footer'=>array(
+//						TbHtml::button(Yii::t('dialog','OK'), array('data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY)),
+//					),
+    'show'=>false,
+));
+?>

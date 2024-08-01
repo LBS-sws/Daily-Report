@@ -91,70 +91,6 @@ $this->pageTitle=Yii::app()->name . ' - Service';
 ?>
 
 <?php
-	$buttons = array(
-			TbHtml::button(Yii::t('service','New Service'), 
-				array(
-					'name'=>'btnNew',
-					'id'=>'btnNew',
-					'class'=>'btn btn-block',
-					'submit'=>Yii::app()->createUrl('service/new'), 
-					'data-dismiss'=>'modal',
-				)),
-			TbHtml::button(Yii::t('service','Renew Service'), 
-				array(
-					'name'=>'btnRenew',
-					'id'=>'btnRenew',
-					'class'=>'btn btn-block',
-					'submit'=>Yii::app()->createUrl('service/renew'), 
-					'data-dismiss'=>'modal',
-				)),
-			TbHtml::button(Yii::t('service','Amend Service'), 
-				array(
-					'name'=>'btnAmend',
-					'id'=>'btnAmend',
-					'class'=>'btn btn-block',
-					'submit'=>Yii::app()->createUrl('service/amend'), 
-					'data-dismiss'=>'modal',
-				)),
-			TbHtml::button(Yii::t('service','Suspend Service'), 
-				array(
-					'name'=>'btnSuspend',
-					'id'=>'btnSuspend',
-					'class'=>'btn btn-block',
-					'submit'=>Yii::app()->createUrl('service/suspend'), 
-					'data-dismiss'=>'modal',
-				)),
-			TbHtml::button(Yii::t('service','Resume Service'), 
-				array(
-					'name'=>'btnResume',
-					'id'=>'btnResume',
-					'class'=>'btn btn-block',
-					'submit'=>Yii::app()->createUrl('service/resume'), 
-					'data-dismiss'=>'modal',
-				)),
-			TbHtml::button(Yii::t('service','Terminate Service'), 
-				array(
-					'name'=>'btnTerminate',
-					'id'=>'btnTerminate',
-					'class'=>'btn btn-block',
-					'submit'=>Yii::app()->createUrl('service/terminate'), 
-					'data-dismiss'=>'modal',
-				)),
-		);
-	
-	$content = "";
-	foreach ($buttons as $button) {
-		$content .= "<div class=\"row\"><div class=\"col-sm-10\">$button</div></div>";
-	}
-	$this->widget('bootstrap.widgets.TbModal', array(
-					'id'=>'addrecdialog',
-					'header'=>Yii::t('misc','Add Record'),
-					'content'=>$content,
-//					'footer'=>array(
-//						TbHtml::button(Yii::t('dialog','OK'), array('data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY)),
-//					),
-					'show'=>false,
-				));
 				
 $url = Yii::app()->createUrl('service/index',array("pageNum"=>1));
 
@@ -178,6 +114,7 @@ Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY
 <?php $this->endWidget(); ?>
 
 <?php
+$this->renderPartial('//site/cityServiceBtn',array("actionStr"=>"service"));
 if (Yii::app()->user->validRWFunction('CD01')){ //交叉派单
     $this->renderPartial('//crossApply/crossFull',array("model"=>$model));
 }

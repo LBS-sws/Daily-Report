@@ -49,8 +49,8 @@ class LookupController extends Controller
 		echo TbHtml::listBox('lstlookup', '', $data, array('size'=>'15', 'multiple'=>true));
 	}
 
-	public function actionCompanyEx($search) {
-		$city = Yii::app()->user->city();
+	public function actionCompanyEx($search,$incity="") {
+		$city = empty($incity)?Yii::app()->user->city():$incity;
 		$result = array();
 		$searchx = str_replace("'","\'",$search);
 		$sql = "select id, code, name, cont_name, cont_phone, address from swo_company
@@ -141,9 +141,9 @@ class LookupController extends Controller
 		echo TbHtml::listBox('lstlookup', '', $data, array('size'=>'15',));
 	}
 
-	public function actionStaffEx($search,$kaSearch=0) {
+	public function actionStaffEx($search,$kaSearch=0,$incity="") {
         $suffix = Yii::app()->params['envSuffix'];
-		$city = Yii::app()->user->city();
+		$city = empty($incity)?Yii::app()->user->city():$incity;
 		$result = array();
 		$searchx = str_replace("'","\'",$search);
         $kaSql = "";

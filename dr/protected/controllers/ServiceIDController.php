@@ -83,8 +83,9 @@ class ServiceIDController extends Controller
 		}
 	}
 	
-	public function actionNew($type="N",$id="")
+	public function actionNew($type="N",$id="",$city="")
 	{
+        $city = empty($city)?Yii::app()->user->city():$city;
 		$model = new ServiceIDForm('new');
         if(!empty($id)){
             $model->service_new_id = $id;
@@ -94,6 +95,11 @@ class ServiceIDController extends Controller
             $model->status = $type;
         }
         $model->resetAttrLabel();
+        if($model->city!=$city){
+            $model->company_id=null;
+            $model->company_name=null;
+        }
+        $model->city=$city;
 		$this->render('form',array('model'=>$model));
 	}
 	

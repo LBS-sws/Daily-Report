@@ -195,6 +195,7 @@ class ServiceForm extends CFormModel
 			array('sign_dt, ctrt_end_dt, first_dt, equip_install_dt','safe'),
 			array('status_dt','safe'),
             array('id','validateID'),
+            array('city','validateCity'),
 		)
 		: array(
 /*
@@ -219,10 +220,21 @@ class ServiceForm extends CFormModel
 			),
             array('id','validateID'),
             array('id','validateAutoFinish'),
+            array('city','validateCity'),
             array('status_dt','validateVisitDt','on'=>array('new')),
-            array('u_system_id','validateUSystem','on'=>array('new')),
+            //array('u_system_id','validateUSystem','on'=>array('new')),
 		);
 	}
+
+    //验证城市
+    public function validateCity($attribute, $params) {
+        $city = empty($this->city)?Yii::app()->user->city():$this->city;
+        $city = "'{$city}'";
+        $city_allow = Yii::app()->user->city_allow();
+        if (strpos($city_allow,$city)===false) {
+            $this->addError($attribute, "城市异常:".$this->city);
+        }
+    }
 
     //U系统id
     public function validateUSystem($attribute, $params) {
@@ -834,7 +846,7 @@ class ServiceForm extends CFormModel
 		if (strpos($sql,':remarks2')!==false)
 			$command->bindParam(':remarks2',$this->remarks2,PDO::PARAM_STR);
 		if (strpos($sql,':city')!==false)
-			$command->bindParam(':city',$city,PDO::PARAM_STR);
+			$command->bindParam(':city',$this->city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)

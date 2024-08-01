@@ -93,8 +93,9 @@ class ServiceKAController extends Controller
 		}
 	}
 		
-	public function actionNew($index=0)
+	public function actionNew($city='',$index=0)
 	{
+        $city = empty($city)?Yii::app()->user->city():$city;
 		$model = new ServiceKAForm('new');
 		if ($index!==0 && $model->retrieveData($index)) {
 			$model->b4_product_id = 0;
@@ -115,6 +116,11 @@ class ServiceKAController extends Controller
 			$model->removeFileId['service'] = 0;
 			$model->no_of_attm['service'] = 0;
 		}
+        if($model->city!=$city){
+            $model->company_id=null;
+            $model->company_name=null;
+        }
+        $model->city=$city;
         $model->commission=null;
         $model->other_commission=null;
 		$model->status = 'N';
@@ -136,8 +142,9 @@ class ServiceKAController extends Controller
         }
 	}
 
-	public function actionRenew($index=0)
+	public function actionRenew($city='',$index=0)
 	{
+        $city = empty($city)?Yii::app()->user->city():$city;
 		$model = new ServiceKAForm('renew');
 		if ($index!==0 && $model->retrieveData($index)) {
 			$model->b4_product_id = 0;
@@ -163,6 +170,11 @@ class ServiceKAController extends Controller
 			$model->removeFileId['service'] = 0;
 			$model->no_of_attm['service'] = 0;
 		}
+        if($model->city!=$city){
+            $model->company_id=null;
+            $model->company_name=null;
+        }
+        $model->city=$city;
 		$model->status = 'C';
 		$model->status_desc = $model->getStatusDesc();
 		$model->status_dt = date('Y/m/d');
@@ -182,8 +194,9 @@ class ServiceKAController extends Controller
 		}
 	}
 	
-	public function actionAmend($index=0)
+	public function actionAmend($city='',$index=0)
 	{
+        $city = empty($city)?Yii::app()->user->city():$city;
 		$model = new ServiceKAForm('amend');
 		if ($index!==0 && $model->retrieveData($index)) {
 			$model->b4_product_id = $model->product_id;
@@ -209,6 +222,11 @@ class ServiceKAController extends Controller
 			$model->removeFileId['service'] = 0;
 			$model->no_of_attm['service'] = 0;
 		}
+        if($model->city!=$city){
+            $model->company_id=null;
+            $model->company_name=null;
+        }
+        $model->city=$city;
 		$model->status = 'A';
 		$model->status_desc = $model->getStatusDesc();
 		$model->status_dt = date('Y/m/d');
@@ -216,8 +234,9 @@ class ServiceKAController extends Controller
 		$this->render('form',array('model'=>$model,));
 	}
 	
-	public function actionResume($index=0)
+	public function actionResume($city='',$index=0)
 	{
+        $city = empty($city)?Yii::app()->user->city():$city;
 		$model = new ServiceKAForm('resume');
 		if ($index!==0 && $model->retrieveData($index)) {
 			$model->b4_product_id = 0;
@@ -243,6 +262,11 @@ class ServiceKAController extends Controller
 			$model->removeFileId['service'] = 0;
 			$model->no_of_attm['service'] = 0;
 		}
+        if($model->city!=$city){
+            $model->company_id=null;
+            $model->company_name=null;
+        }
+        $model->city=$city;
 		$model->status = 'R';
 		$model->status_desc = $model->getStatusDesc();
 		$model->status_dt = date('Y/m/d');
@@ -250,8 +274,9 @@ class ServiceKAController extends Controller
 		$this->render('form',array('model'=>$model,));
 	}
 
-	public function actionSuspend($index=0)
+	public function actionSuspend($city='',$index=0)
 	{
+        $city = empty($city)?Yii::app()->user->city():$city;
 		$model = new ServiceKAForm('suspend');
 		if ($index!==0 && $model->retrieveData($index)) {
 			$model->b4_product_id = 0;
@@ -276,6 +301,11 @@ class ServiceKAController extends Controller
 			$model->removeFileId['service'] = 0;
 			$model->no_of_attm['service'] = 0;
 		}
+        if($model->city!=$city){
+            $model->company_id=null;
+            $model->company_name=null;
+        }
+        $model->city=$city;
 		$model->status = 'S';
 		$model->status_desc = $model->getStatusDesc();
 		$model->status_dt = date('Y/m/d');
@@ -283,8 +313,9 @@ class ServiceKAController extends Controller
 		$this->render('form',array('model'=>$model,));
 	}
 
-	public function actionTerminate($index=0)
+	public function actionTerminate($city='',$index=0)
 	{
+        $city = empty($city)?Yii::app()->user->city():$city;
 		$model = new ServiceKAForm('terminate');
 		if ($index!==0 && $model->retrieveData($index)) {
 			$model->b4_product_id = 0;
@@ -309,6 +340,11 @@ class ServiceKAController extends Controller
 			$model->removeFileId['service'] = 0;
 			$model->no_of_attm['service'] = 0;
 		}
+        if($model->city!=$city){
+            $model->company_id=null;
+            $model->company_name=null;
+        }
+        $model->city=$city;
 		$model->status = 'T';
 		$model->status_desc = $model->getStatusDesc();
 		$model->status_dt = date('Y/m/d');

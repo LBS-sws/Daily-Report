@@ -108,7 +108,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 			<?php echo $form->hiddenField($model, 'status'); ?>
 			<?php echo $form->hiddenField($model, 'company_id'); ?>
 			<?php echo $form->hiddenField($model, 'backlink'); ?>
-			<?php echo $form->hiddenField($model, 'city'); ?>
+			<?php echo $form->hiddenField($model, 'city',array('id'=>'search_city')); ?>
 			<?php echo $form->hiddenField($model, 'commission'); ?>
 			<?php echo $form->hiddenField($model, 'other_commission'); ?>
 			<?php echo $form->hiddenField($model, 'lcu'); ?>
@@ -148,7 +148,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                 </div>
                 <?php echo $form->labelEx($model,'office_id',array('class'=>"col-sm-1 control-label")); ?>
                 <div class="col-sm-2">
-					<?php 
+					<?php
 					$this_city = empty($model->city)?Yii::app()->user->city():$model->city;
 					echo $form->dropDownList($model, 'office_id', GetNameToId::getOfficeNameListForCity($this_city), array('readonly'=>($model->getReadonly())));
 					?>
@@ -624,60 +624,6 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 	</div>
 </section>
 
-<?php
-	$buttons = array(
-			TbHtml::button(Yii::t('service','New Service'),
-				array(
-					'name'=>'btnNew',
-					'id'=>'btnNew',
-					'class'=>'btn btn-block',
-				)),
-			TbHtml::button(Yii::t('service','Renew Service'),
-				array(
-					'name'=>'btnRenew',
-					'id'=>'btnRenew',
-					'class'=>'btn btn-block',
-				)),
-			TbHtml::button(Yii::t('service','Amend Service'),
-				array(
-					'name'=>'btnAmend',
-					'id'=>'btnAmend',
-					'class'=>'btn btn-block',
-				)),
-			TbHtml::button(Yii::t('service','Suspend Service'),
-				array(
-					'name'=>'btnSuspend',
-					'id'=>'btnSuspend',
-					'class'=>'btn btn-block',
-				)),
-			TbHtml::button(Yii::t('service','Resume Service'),
-				array(
-					'name'=>'btnResume',
-					'id'=>'btnResume',
-					'class'=>'btn btn-block',
-				)),
-			TbHtml::button(Yii::t('service','Terminate Service'),
-				array(
-					'name'=>'btnTerminate',
-					'id'=>'btnTerminate',
-					'class'=>'btn btn-block',
-				)),
-		);
-
-	$content = "";
-	foreach ($buttons as $button) {
-		$content .= "<div class=\"row\"><div class=\"col-sm-10\">$button</div></div>";
-	}
-	$this->widget('bootstrap.widgets.TbModal', array(
-					'id'=>'addrecdialog',
-					'header'=>Yii::t('misc','Add Record'),
-					'content'=>$content,
-//					'footer'=>array(
-//						TbHtml::button(Yii::t('dialog','OK'), array('data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY)),
-//					),
-					'show'=>false,
-				));
-?>
 <?php $this->renderPartial('//site/sendemail'); ?>
 <?php $this->renderPartial('//service/historylist',array("model"=>$model)); ?>
 <?php $this->renderPartial('//site/removedialog'); ?>
@@ -783,89 +729,15 @@ function addMonth(d, m) {
 	return (result.getFullYear()+'/'+(result.getMonth()+1)+'/'+result.getDate());
 }
 
-$('#btnAdd').on('click',function() {
-	$('#copy_index').val(0);
-});
-
 $('#btnCopy').on('click',function() {
 	var id = $('#ServiceForm_id').val();
+	var city = $('#search_city').val();
 	$('#copy_index').val(id);
+	$('#dialog_city').val(city);
 	var tst = $('#copy_index').val();
 	$('#addrecdialog').modal('show');
 });
 
-$('#btnNew').on('click',function() {
-	$('#addrecdialog').modal('hide');
-	redirection('N');
-});
-
-$('#btnRenew').on('click',function() {
-	$('#addrecdialog').modal('hide');
-	redirection('C');
-});
-
-$('#btnAmend').on('click',function() {
-	$('#addrecdialog').modal('hide');
-	redirection('A');
-});
-
-$('#btnSuspend').on('click',function() {
-	$('#addrecdialog').modal('hide');
-	redirection('S');
-});
-
-$('#btnResume').on('click',function() {
-	$('#addrecdialog').modal('hide');
-	redirection('R');
-});
-
-$('#btnTerminate').on('click',function() {
-	$('#addrecdialog').modal('hide');
-	redirection('T');
-});
-
-function redirection(arg) {
-	var index = $('#copy_index').val();
-	var elm=$('#btnAdd');
-	switch (arg) {
-		case 'N':
-			if (index==0)
-				jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/new')."',{});
-			else
-				jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/new')."?index='+index,{});
-			break;
-		case 'A':
-			if (index==0)
-				jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/amend')."',{});
-			else
-				jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/amend')."?index='+index,{});
-			break;
-		case 'S':
-			if (index==0)
-				jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/suspend')."',{});
-			else
-				jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/suspend')."?index='+index,{});
-			break;
-		case 'R':
-			if (index==0)
-				jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/resume')."',{});
-			else
-				jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/resume')."?index='+index,{});
-			break;
-		case 'T':
-			if (index==0)
-				jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/terminate')."',{});
-			else
-				jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/terminate')."?index='+index,{});
-			break;
-		case 'C':
-			if (index==0)
-				jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/renew')."',{});
-			else
-				jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('service/renew')."?index='+index,{});
-			break;
-	}
-}
 ";
 Yii::app()->clientScript->registerScript('addRecord',$js,CClientScript::POS_READY);
 
@@ -951,5 +823,9 @@ Yii::app()->clientScript->registerScript('changeNatureType',$js,CClientScript::P
 ?>
 
 <?php $this->endWidget(); ?>
+
+<?php
+$this->renderPartial('//site/cityServiceBtn',array("actionStr"=>"service"));
+?>
 
 
