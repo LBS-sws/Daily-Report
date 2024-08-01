@@ -159,7 +159,7 @@ class RptStaff extends ReportData2 {
 			$model->setEmployeeList($row['id']);
 			$row['leave_days'] = $model->getVacationSum();//剩餘年假天數
 			$row['year_day'] = $model->getSumDay();//總年假天數
-			$row['education'] = $education[$row['education']];
+			$row['education'] = key_exists($row['education'],$education)?$education[$row['education']]:"";
 			return $row;
 		} else {
 			return array('year_day'=>'', 'education'=>'', 'leave_days'=>'', 'staff_type'=>'');
