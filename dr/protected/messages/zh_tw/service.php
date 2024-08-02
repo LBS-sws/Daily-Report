@@ -203,6 +203,7 @@ return array(
     'accept rate'=>'承接比例',
     'accept amt'=>'承接方金額',
 
+    'Customer code'=>'客戶編號',
     'Customer name'=>'客戶名稱',
     'Approved'=>'已審批',
     'Internal dispatch'=>'內部派單',

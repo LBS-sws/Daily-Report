@@ -79,5 +79,6 @@ return array(
     'Supplier report'=>'供應商資料報表',
     'service loss report'=>'合約丟失數據分析',
     'Re signing amount'=>'重簽金額（暫停或終止3個月後新增的單）',
+    'Cross report'=>'交叉派單報表',
 );
 ?>

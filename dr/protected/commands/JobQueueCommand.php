@@ -448,6 +448,7 @@ EOF;
 			case 'RptContractCom': $model = new RptContractCom(); break;
 			case 'RptSupplier': $model = new RptSupplier(); break;
 			case 'RptServiceLoss': $model = new RptServiceLoss(); break;
+            case 'RptCross': $model = new RptCross(); break;
 		}
 		return $model;
 	}

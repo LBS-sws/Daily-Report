@@ -62,6 +62,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('contractCom'),'expression'=>array('ReportController','allowContractCom')),
 			array('allow','actions'=>array('supplier'),'expression'=>array('ReportController','allowSupplier')),
 			array('allow','actions'=>array('serviceLoss'),'expression'=>array('ReportController','allowServiceLoss')),
+            array('allow','actions'=>array('cross'),'expression'=>array('ReportController','allowCross')),
 			array('allow',
 				'actions'=>array('generate'),
 				'expression'=>array('ReportController','allowReadOnly'),
@@ -650,6 +651,29 @@ class ReportController extends Controller
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
 
+// Report: Cross
+    protected static function allowCross() {
+        return Yii::app()->user->validFunction('B39');
+    }
+
+    public function actionCross() {
+        $this->function_id = "B39";
+        Yii::app()->session['active_func'] = $this->function_id;
+        $model = new ReportCrossForm();
+        if (isset($_POST['ReportCrossForm'])) {
+            $model->attributes = $_POST['ReportCrossForm'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            }
+            else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('cross',array('model'=>$model));
+    }
+
 // Report: serviceLoss
 	protected static function allowServiceLoss() {
 		return Yii::app()->user->validFunction('B38');
@@ -860,6 +884,7 @@ class ReportController extends Controller
 				if ($model->id=='uService') $this->genUService($model);
 				if ($model->id=='uServiceDetail') $this->genUServiceDetail($model);
 				if ($model->id=='supplier') $this->genSupplier($model);
+				//if ($model->id=='cross') $this->genCross($model);
 				if ($model->id=='serviceLoss') $this->genServiceLoss($model);
 				if ($model->id=='customerKA') $this->genCustomerKA($model);
 				//if ($model->id=='chain') $this->genChain($model);

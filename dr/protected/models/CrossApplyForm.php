@@ -434,7 +434,7 @@ class CrossApplyForm extends CFormModel
     }
 
 
-    public function getServiceList($table_type,$service_id){
+    public static function getServiceList($table_type,$service_id){
         if($table_type==0){
             $tableNameOne="swo_service";
             $tableNameTwo="swo_service_contract_no";

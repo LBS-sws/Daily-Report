@@ -91,6 +91,10 @@ return array(
 		'access'=>'B',
 		'icon'=>'fa-file-text-o',
 		'items'=>array(
+			'Cross report'=>array( //交叉派单报表
+				'access'=>'B39',
+				'url'=>'/report/cross',
+			),
 			'service loss report'=>array( //合约暂停或丢失
 				'access'=>'B38',
 				'url'=>'/report/serviceLoss',

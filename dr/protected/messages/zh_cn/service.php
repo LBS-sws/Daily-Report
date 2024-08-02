@@ -205,6 +205,7 @@ return array(
     'accept rate'=>'承接比例',
     'accept amt'=>'承接方金额',
 
+    'Customer code'=>'客户编号',
     'Customer name'=>'客户名称',
     'Approved'=>'已审批',
     'Internal dispatch'=>'内部派单',

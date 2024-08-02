@@ -110,6 +110,16 @@ class CrossApplyList extends CListPageModel
 		return true;
 	}
 
+    public static function getCrossStatusList(){
+        $list = array(
+            1=>Yii::t("service","pending review"),//待审核
+            2=>Yii::t("service","rejected"),//已拒绝
+            3=>Yii::t("service","pending U System"),//待U系统确认
+            5=>Yii::t("service","finish"),//已完成
+            6=>Yii::t("service","rejected U System"),//U系统已拒绝
+        );
+        return $list;
+    }
 
     public static function getColorForStatusType($statusType){
         $statusType="".$statusType;
