@@ -376,6 +376,7 @@ class ServiceKAForm extends ServiceForm
                             surplus_edit3 = :surplus_edit3, 
                             prepay_month = :prepay_month, 
                             prepay_start = :prepay_start,                  
+                            u_system_id = :u_system_id,                  
 							luu = :luu 
 						where id = :id 
 						";

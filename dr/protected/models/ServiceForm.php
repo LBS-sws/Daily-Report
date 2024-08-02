@@ -472,7 +472,7 @@ class ServiceForm extends CFormModel
     protected static function historyUpdateList($status){
         $list = array(
             'status_dt','contract_no','company_id','nature_type','nature_type_two',
-            'cust_type','cust_type_name','product_id','paid_type','amt_paid','office_id'
+            'cust_type','cust_type_name','product_id','paid_type','amt_paid','office_id','u_system_id'
         );
         switch ($status){
             case "N"://新增
@@ -723,6 +723,7 @@ class ServiceForm extends CFormModel
                             prepay_month = :prepay_month, 
                             prepay_start = :prepay_start,                  
                             office_id = :office_id,                  
+                            u_system_id = :u_system_id,                  
 							luu = :luu 
 						where id = :id 
 						";
