@@ -113,6 +113,8 @@ Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY
 <?php $this->endWidget(); ?>
 
 <?php
+echo TbHtml::button("",array("submit"=>"","class"=>"hide"));
+echo TbHtml::hiddenField("copy_index",0,array("id"=>"copy_index"));
 $this->renderPartial('//site/cityServiceBtn',array("actionStr"=>"serviceKA"));
 if (Yii::app()->user->validRWFunction('CD01')){ //交叉派单
     $this->renderPartial('//crossApply/crossFull',array("model"=>$model));

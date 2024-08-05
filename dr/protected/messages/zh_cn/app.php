@@ -193,5 +193,6 @@ return array(
     'service loss report'=>'合约丢失数据分析',
     'Bonus Month'=>'月度提成奖金表',
     'Cross report'=>'交叉派单报表',
+    'Cross Delete'=>'删除交叉派单',
 );
 ?>

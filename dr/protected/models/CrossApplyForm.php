@@ -467,6 +467,9 @@ class CrossApplyForm extends CFormModel
                 if(empty($row["contract_no"])){
                     $row["error"] = "合约编号不能为空";
                 }
+                if(empty($row["u_system_id"])){
+                    $row["error"] = "U系统ID不能为空";
+                }
                 if($endCross){
                     if($this->cross_type!=$endCross["cross_type"]){
                         $row["error"] = "业务场景不一致";

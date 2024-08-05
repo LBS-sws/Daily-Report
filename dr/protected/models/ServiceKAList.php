@@ -148,8 +148,7 @@ class ServiceKAList extends CListPageModel
 					'city_name'=>$record['city_name'],
 					'office_name'=>GetNameToId::getOfficeNameForID($record['office_id']),
 					'no_of_attm'=>$record['no_of_attm'],
-
-                    'cross_bool'=>$record['status']=="N",
+                    'cross_bool'=>$record['status']=="N"&&self::validateCross($record['id']),
 				);
 			}
 		}
@@ -157,5 +156,13 @@ class ServiceKAList extends CListPageModel
 		$session['serviceKA_01'] = $this->getCriteria();
 		return true;
 	}
+
+    //驗證该服务是否交叉派单
+    private function validateCross($service_id) {
+        $row = Yii::app()->db->createCommand()->select("id")->from("swo_cross")
+            ->where("table_type=1 and service_id=:id and status_type not in (2,6)",array(":id"=>$service_id))
+            ->queryRow();
+        return $row?false:true;//如果存在，则不允许批量交叉派单
+    }
 
 }

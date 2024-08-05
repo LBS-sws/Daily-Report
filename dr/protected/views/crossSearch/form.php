@@ -41,6 +41,14 @@ $this->pageTitle=Yii::app()->name . ' - CrossSearch Form';
             ?>
 <?php endif ?>
 	</div>
+            <?php if (Yii::app()->user->validFunction('CN30')): ?>
+            <div class="btn-group pull-right" role="group">
+                <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                        'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+                );
+                ?>
+            </div>
+            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -77,7 +85,11 @@ $this->widget('bootstrap.widgets.TbModal', array(
 
 ?>
 
+<?php $this->renderPartial('//site/removedialog'); ?>
 <?php
+$js = Script::genDeleteData(Yii::app()->createUrl('crossSearch/delete'));
+Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
+
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
 ?>

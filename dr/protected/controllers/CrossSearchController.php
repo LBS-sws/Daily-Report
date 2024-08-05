@@ -31,6 +31,10 @@ class CrossSearchController extends Controller
 				'actions'=>array('index','view'),
 				'expression'=>array('CrossSearchController','allowReadOnly'),
 			),
+			array('allow',
+				'actions'=>array('delete','deleteAll'),
+				'expression'=>array('CrossSearchController','allowDelete'),
+			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
@@ -69,6 +73,23 @@ class CrossSearchController extends Controller
 				Dialog::message(Yii::t('dialog','Validation Message'), $message);
 				$this->render('form',array('model'=>$model,));
 			}
+		}
+	}
+
+	public function actionDelete()
+	{
+		if (isset($_POST['CrossSearchForm'])) {
+			$model = new CrossSearchForm($_POST['CrossSearchForm']['scenario']);
+			$model->attributes = $_POST['CrossSearchForm'];
+            $model->setScenario("delete");
+			if($model->retrieveData($model->id)){
+                $model->saveData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+                $this->redirect(Yii::app()->createUrl('crossSearch/index'));
+            }else{
+                Dialog::message(Yii::t('dialog','Validation Message'), "数据异常,请刷新重试");
+                $this->redirect(Yii::app()->createUrl('crossSearch/edit',array("index"=>$model->id)));
+            }
 		}
 	}
 
@@ -116,5 +137,9 @@ class CrossSearchController extends Controller
 	
 	public static function allowReadOnly() {
 		return Yii::app()->user->validFunction('CD03');
+	}
+
+	public static function allowDelete() {
+		return Yii::app()->user->validFunction('CN30');
 	}
 }

@@ -191,5 +191,6 @@ return array(
     'service loss report'=>'合約丟失數據分析',
     'Bonus Month'=>'月度提成獎金表',
     'Cross report'=>'交叉派單報表',
+    'Cross Delete'=>'删除交叉派单',
 );
 ?>

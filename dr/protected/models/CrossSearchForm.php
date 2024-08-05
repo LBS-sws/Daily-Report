@@ -90,6 +90,9 @@ class CrossSearchForm extends CrossApplyForm
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = '';
 		switch ($this->getScenario()) {
+			case "delete"://删除
+                $sql = "delete from swo_cross where id = :id";
+				break;
 			case "reject"://拒绝
                 $sql = "update swo_cross set 
 					status_type = 2,
