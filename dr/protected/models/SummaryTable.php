@@ -144,8 +144,8 @@ class SummaryTable extends SummaryForm{
     //终止服务
     private function ServiceStop(){
         $rows = self::getServiceSTListForType($this->start_date,$this->end_date,$this->city_allow,"T");
-        $listGood = self::getTableListForRows($rows["goodList"],$this->city_allow);
-        $listNot = self::getTableListForRows($rows["notList"],$this->city_allow);
+        $listGood = self::getTableListForRowsEx($rows["goodList"],$this->city_allow,"终止");
+        $listNot = self::getTableListForRowsEx($rows["notList"],$this->city_allow,"终止");
         return self::getTableForTab($listGood,$listNot);
     }
 
@@ -294,7 +294,6 @@ class SummaryTable extends SummaryForm{
         return $html;
     }
 
-
     public static function getTableListForRows($rows,$city_allow){
         $companyList = GetNameToId::getCompanyList($city_allow);
         $html="";
@@ -353,6 +352,105 @@ class SummaryTable extends SummaryForm{
                 $html.="<td>".$row["contract_no"]."</td>";
                 $html.="<td>".$cityName."</td>";
                 $html.="<td>".General::toDate($row["status_dt"])."</td>";
+                $html.="<td>".$companyName."</td>";
+                $html.="<td>".$row["salesman"]."</td>";
+                $html.="<td>".$row["cust_type_name"]."</td>";
+                $html.="<td>".$row["amt_paid"]."(".GetNameToId::getPaidTypeForId($row["paid_type"]).") "."</td>";
+                $html.="<td>".$row["ctrt_period"]."</td>";
+                $html.="<td>".$row["sum_amount"]."</td>";
+                $html.="<td>{$link}</td>";
+                $html.="</tr>";
+            }
+            $html.="</tbody><tfoot>";
+            $html.="<tr>";
+            $html.="<td colspan='4' class='text-right'>".Yii::t("summary","total count:")."</td>";
+            $html.="<td colspan='2'>".$count."</td>";
+            $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
+            $html.="<td colspan='2'>".$sum."</td>";
+            $html.="</tr>";
+            if(!empty($invTable)){
+                $html.="<tr><td colspan='10'>&nbsp;</td></tr>";
+                $count+=$invTable["count"];
+                $sum+=$invTable["sum"];
+                $html.="<tr>";
+                $html.="<td colspan='4' class='text-right'>".Yii::t("summary","total count:")."</td>";
+                $html.="<td colspan='2'>".$count."</td>";
+                $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
+                $html.="<td colspan='2'>".$sum."</td>";
+                $html.="</tr>";
+            }
+            $html.="</tfoot>";
+        }else{
+            $html.="<tbody><tr><td colspan='10'>".Yii::t("summary","none data")."</td></tr></tbody>";
+        }
+        $html.="</table>";
+        return array("html"=>$html,"amt"=>$sum,"count"=>$count);
+    }
+
+    public static function getTableListForRowsEx($rows,$city_allow,$typeStr=""){
+        $companyList = GetNameToId::getCompanyList($city_allow);
+        $html="";
+        $html.= "<table class='table table-bordered table-striped table-condensed table-hover'>";
+        $html.="<thead><tr>";
+        $html.="<th width='90px'>".Yii::t('summary','menu name')."</th>";//菜單名稱
+        $html.="<th width='90px'>".Yii::t('service','Contract No')."</th>";//合同编号
+        $html.="<th width='90px'>".Yii::t('summary','City')."</th>";//城市
+        $html.="<th width='90px'>".$typeStr.Yii::t('summary','search day')."</th>";//日期
+        if(!empty($typeStr)){
+            $html.="<th width='90px'>".Yii::t('service','Sign Date')."</th>";//签约日期
+        }
+        $html.="<th>".Yii::t('service','Customer')."</th>";//客户编号及名称
+        $html.="<th width='100px'>".Yii::t('service','Resp. Sales')."</th>";//客户编号及名称
+        $html.="<th>".Yii::t('service','Customer Type')."</th>";//客户类别
+        $html.="<th width='120px'>".Yii::t('service','Paid Amt')."</th>";//服务金额
+        $html.="<th width='80px'>".Yii::t('customer','Contract Period')."</th>";//合同年限(月)
+        $html.="<th width='100px'>".Yii::t('summary','all money')."</th>";//合同总金额
+        $html.="<th width='1px'></th>";
+        $html.="</tr></thead>";
+        $sum = 0;
+        $count=0;
+        if($rows){
+            $html.="<tbody>";
+            $city="";
+            $cityName = "";
+            foreach ($rows as $row){
+                $count++;
+                if($city!=$row["city"]){
+                    $cityName= General::getCityName($row["city"]);
+                    $city = $row["city"];
+                }
+                switch ($row["sql_type_name"]){
+                    case "D":
+                        $menuStr = Yii::t("app","Customer Service ID");//菜單名稱
+                        $link = self::drawEditButton('A11', 'serviceID/edit', 'serviceID/view', array('index'=>$row['id']));
+                        break;
+                    case "KA":
+                        $menuStr = Yii::t("app","Customer Service KA");//菜單名稱
+                        $link = self::drawEditButton('A13', 'serviceKA/edit', 'serviceKA/view', array('index'=>$row['id']));
+                        break;
+                    default:
+                        $menuStr = Yii::t("app","Customer Service");//菜單名稱
+                        $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
+                }
+                $companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
+                $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
+                $row["ctrt_period"] = is_numeric($row["ctrt_period"])?floatval($row["ctrt_period"]):0;
+
+                if($row["paid_type"]=="M") {//月金额
+                    $row["sum_amount"] = $row["amt_paid"]*$row["ctrt_period"];
+                }else{
+                    $row["sum_amount"] = $row["amt_paid"];
+                }
+                $row["sum_amount"]=round($row["sum_amount"],2);
+                $sum+=$row["sum_amount"];
+                $html.="<tr data-id='{$row["id"]}'>";
+                $html.="<td>".$menuStr."</td>";
+                $html.="<td>".$row["contract_no"]."</td>";
+                $html.="<td>".$cityName."</td>";
+                $html.="<td>".General::toDate($row["status_dt"])."</td>";
+                if(!empty($typeStr)){
+                    $html.="<td>".General::toDate($row["sign_dt"])."</td>";
+                }
                 $html.="<td>".$companyName."</td>";
                 $html.="<td>".$row["salesman"]."</td>";
                 $html.="<td>".$row["cust_type_name"]."</td>";
@@ -749,7 +847,7 @@ class SummaryTable extends SummaryForm{
         $whereSql = "a.status='{$type}' and a.status in ('S','T') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         $whereSql.= " and a.city in ({$city_allow})";
         $whereSql .= self::$whereSQL;
-        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+        $selectSql = "a.id,a.status,a.status_dt,a.sign_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
             ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")

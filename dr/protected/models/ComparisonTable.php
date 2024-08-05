@@ -137,8 +137,8 @@ class ComparisonTable extends ComparisonForm {
     //终止服务（本年）
     private function ServiceStop(){
         $rows = SummaryTable::getServiceSTListForType($this->start_date,$this->end_date,$this->city_allow,"T");
-        $listGood = SummaryTable::getTableListForRows($rows["goodList"],$this->city_allow);
-        $listNot = SummaryTable::getTableListForRows($rows["notList"],$this->city_allow);
+        $listGood = SummaryTable::getTableListForRowsEx($rows["goodList"],$this->city_allow,"终止");
+        $listNot = SummaryTable::getTableListForRowsEx($rows["notList"],$this->city_allow,"终止");
         return SummaryTable::getTableForTab($listGood,$listNot);
     }
 
@@ -148,8 +148,8 @@ class ComparisonTable extends ComparisonForm {
         $lastStartDate = ($this->comparison_year-1)."/".$this->month_start_date;
         $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
         $rows = SummaryTable::getServiceSTListForType($lastStartDate,$lastEndDate,$this->city_allow,"T");
-        $listGood = SummaryTable::getTableListForRows($rows["goodList"],$this->city_allow);
-        $listNot = SummaryTable::getTableListForRows($rows["notList"],$this->city_allow);
+        $listGood = SummaryTable::getTableListForRowsEx($rows["goodList"],$this->city_allow,"终止");
+        $listNot = SummaryTable::getTableListForRowsEx($rows["notList"],$this->city_allow,"终止");
         return SummaryTable::getTableForTab($listGood,$listNot);
     }
 }
