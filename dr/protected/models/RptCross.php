@@ -101,7 +101,7 @@ class RptCross extends ReportData2{
 	        return $cityList[$cityCode];
         }else{
 	        $cityName = General::getCityName($cityCode);
-	        $cityList[$cityCode] = $cityName;
+	        $cityList[$cityCode] = $cityName===false?"":$cityName;
 	        return $cityName;
         }
     }
