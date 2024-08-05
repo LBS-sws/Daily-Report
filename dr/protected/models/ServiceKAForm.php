@@ -18,6 +18,18 @@ class ServiceKAForm extends ServiceForm
 							'serviceka'=>0,
 						);
 
+    //驗證该服务是否交叉派单
+    public function validateCross($attribute, $params) {
+        $id=$this->getScenario()=="new"?0:$this->id;
+        if($this->getScenario()=="delete"){
+            $row = Yii::app()->db->createCommand()->select("id")->from("swo_cross")
+                ->where("table_type=1 and service_id=:id",array(":id"=>$id))->queryRow();
+            if($row){
+                $this->addError($attribute, "该服务已参加交叉派单，无法删除。({$row["id"]})");
+            }
+        }
+    }
+
     //驗證该服务是否已经参加销售提成计算
     public function validateID($attribute, $params) {
         $id=$this->getScenario()=="new"?0:$this->id;
@@ -248,7 +260,8 @@ class ServiceKAForm extends ServiceForm
         $list=array("service_id"=>$this->id,"lcu"=>$uid,"service_type"=>3,"update_type"=>1,"update_html"=>array());
         switch ($this->getScenario()){
             case "delete":
-                $connection->createCommand()->delete("swo_service_history", "service_id=:id", array(":id" => $this->id));
+                //$connection->createCommand()->delete("swo_service_history", "service_id=:id", array(":id" => $this->id));
+                $this->delHistorySave();
                 break;
             case "edit":
                 $model = new ServiceKAForm();
@@ -265,6 +278,27 @@ class ServiceKAForm extends ServiceForm
                 }
                 break;
         }
+    }
+
+    protected function delHistorySave(){
+        $model = new ServiceForm();
+        $model->retrieveData($this->id);
+        $keyArr = self::historyUpdateList($model->status);
+        $delText=array();
+        $delText[]="id：".$this->id;
+        $delText[]="服务状态：".General::getStatusDesc($model->status);
+        foreach ($keyArr as $key){
+            $delText[]=$this->getAttributeLabel($key)."：".self::getNameForValue($key,$model->$key);
+        }
+        $delText= implode("<br/>",$delText);
+        $systemLogModel = new SystemLogForm();
+        $systemLogModel->log_date=date("Y/m/d H:i:s");
+        $systemLogModel->log_user=Yii::app()->user->id;
+        $systemLogModel->log_type=get_class($this);
+        $systemLogModel->log_type_name="KA客户服务";
+        $systemLogModel->option_str="删除";
+        $systemLogModel->option_text=$delText;
+        $systemLogModel->insertSystemLog("D");
     }
 
 	protected function updateServiceContract(&$connection) {

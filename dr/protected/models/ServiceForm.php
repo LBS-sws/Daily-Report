@@ -195,6 +195,7 @@ class ServiceForm extends CFormModel
 			array('sign_dt, ctrt_end_dt, first_dt, equip_install_dt','safe'),
 			array('status_dt','safe'),
             array('id','validateID'),
+            array('id','validateCross'),
             array('city','validateCity'),
 		)
 		: array(
@@ -241,6 +242,18 @@ class ServiceForm extends CFormModel
         if($this->status=="N"){
             if(empty($this->u_system_id)){
                 $this->addError($attribute, "U系统id 不能为空");
+            }
+        }
+    }
+
+    //驗證该服务是否交叉派单
+    public function validateCross($attribute, $params) {
+        $id=$this->getScenario()=="new"?0:$this->id;
+        if($this->getScenario()=="delete"){
+            $row = Yii::app()->db->createCommand()->select("id")->from("swo_cross")
+                ->where("table_type=0 and service_id=:id",array(":id"=>$id))->queryRow();
+            if($row){
+                $this->addError($attribute, "该服务已参加交叉派单，无法删除。({$row["id"]})");
             }
         }
     }
