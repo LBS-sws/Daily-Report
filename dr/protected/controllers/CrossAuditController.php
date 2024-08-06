@@ -75,7 +75,6 @@ class CrossAuditController extends Controller
 	public function actionAuditFull(){
         $model = new CrossAuditForm("audit");
         $model->auditFull();
-        Dialog::message(Yii::t('dialog','Information'), "批量审核完成");
         $this->redirect(Yii::app()->createUrl('crossAudit/index'));
     }
 
@@ -98,9 +97,13 @@ class CrossAuditController extends Controller
 			$model->attributes = $_POST['CrossAuditForm'];
             $model->setScenario("audit");
 			if ($model->validate()) {
-				$model->saveData();
-				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Request Approved'));
-                $this->redirect(Yii::app()->createUrl('crossAudit/index'));
+				$bool = $model->saveData();
+				//Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Request Approved'));
+                if($bool){
+                    $this->redirect(Yii::app()->createUrl('crossAudit/index'));
+                }else{
+                    $this->redirect(Yii::app()->createUrl('crossAudit/edit',array("index"=>$model->id)));
+                }
 			} else {
 				$message = CHtml::errorSummary($model);
 				Dialog::message(Yii::t('dialog','Validation Message'), $message);

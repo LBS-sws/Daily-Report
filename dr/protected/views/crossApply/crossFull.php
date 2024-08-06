@@ -70,7 +70,7 @@ $nowDate = date_format(date_create(),"Y/m/d");
 	
 	$('#crossFullBtn').on('click', function (event) {
 	    $('#cross_apply_date').val('{$nowDate}');
-	    if($('.checkOne:checked').length>1){
+	    if($('.checkOne:checked').length>=1){
 	        $('#crossFull').modal('show');
 	    }else{
 	        $('#errorMessageBody').html('<p>请选择服务单</p>');

@@ -86,8 +86,9 @@ class CrossAuditForm extends CrossApplyForm
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-			$this->saveDataForSql($connection);
+			$bool = $this->saveDataForSql($connection);
 			$transaction->commit();
+			return $bool;
 		}
 		catch(Exception $e) {
 		    var_dump($e);
@@ -137,12 +138,12 @@ class CrossAuditForm extends CrossApplyForm
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		$command->execute();
 
-		if(in_array($this->getScenario(),array("audit","reject"))){
-		    $this->sendEmail();
+		if(in_array($this->getScenario(),array("reject"))){
+		    $this->sendEmail();//审核的邮件由curl成功后再发送
         }
 
 		if($this->getScenario()=="audit"){
-            $this->sendCurl();
+             return $this->sendCurl();
         }
 		return true;
 	}
@@ -182,7 +183,9 @@ class CrossAuditForm extends CrossApplyForm
 
     private function sendCurl(){
         $data=array("data"=>array($this->getCurlData()));
-        SystemU::sendUForCross($data);
+        $rtn = SystemU::sendUForCross($data);
+        $modelObjList = array($this);
+        return $this->curlBlack($rtn,$modelObjList,$data["data"]);
     }
 
     protected function getCurlData(){
@@ -228,28 +231,84 @@ class CrossAuditForm extends CrossApplyForm
         $idList = explode(",",$idList);
         $uid = Yii::app()->user->id;
         $auditDate = date_format(date_create(),"Y/m/d H:i:s");
-        $this->audit_date = $auditDate;
 	    if(!empty($idList)){
 	        $curlData = array();
+	        $modelObjList = array();
 	        foreach ($idList as $id){
-	            $this->id = $id;
-	            $this->clearErrors();
-                if ($this->validateID("id","")) {
-                    Yii::app()->db->createCommand()->update("swo_cross",array(
-                        "audit_user"=>$uid,
-                        "audit_date"=>$auditDate,
-                        "status_type"=>3,
-                        "luu"=>$uid,
-                    ),"id=:id",array(":id"=>$this->id));
-                    $this->sendEmail();//发送邮件
-                    $curlData[]=$this->getCurlData();
+	            $modelObj = new CrossAuditForm();
+                $modelObj->id = $id;
+                $modelObj->audit_date = $auditDate;
+                if ($modelObj->validateID("id","")) {
+                    $modelObjList[]=$modelObj;
+                    $curlData[]=$modelObj->getCurlData();
                 }
             }
 
             if(!empty($curlData)){//发送curl
                 $data=array("data"=>$curlData);
-                SystemU::sendUForCross($data);
+                $rtn = SystemU::sendUForCross($data);
+                //$rtn = array('message'=>'测试', 'code'=>200, 'outData'=>json_encode(array("errorData"=>array(array("lbs_id"=>22,"errorMsg"=>"ddddd")))));;
+                $this->curlBlack($rtn,$modelObjList,$curlData);
+            }else{
+                Dialog::message(Yii::t('dialog','Information'), "数据异常，请刷新重试");
             }
+        }else{
+            Dialog::message(Yii::t('dialog','Information'), "请选择审批的交叉派单");
+        }
+    }
+
+    private function curlBlack($rtn,$modelObjList,$curlData){
+        $uid = Yii::app()->user->id;
+        $notId = array();
+        if($rtn["code"]==200){
+            $outData = json_decode($rtn['outData'],true);
+            $errorData = is_array($outData)&&key_exists("errorData",$outData)?$outData["errorData"]:array();
+            foreach ($errorData as $item){
+                $notId[$item["lbs_id"]] = $item["errorMsg"];
+            }
+        }else{
+            foreach ($curlData as $item){
+                $notId[$item["lbs_id"]] = $rtn['message'];
+            }
+        }
+        foreach ($modelObjList as $modelObj){
+            $key = "".$modelObj->id;
+            if(key_exists($key,$notId)){//派单失败
+                Yii::app()->db->createCommand()->update("swo_cross",array(
+                    "status_type"=>1,
+                    "reject_note"=>$notId[$key],
+                    "luu"=>$uid,
+                ),"id=:id",array(":id"=>$modelObj->id));
+            }else{
+                Yii::app()->db->createCommand()->update("swo_cross",array(
+                    "audit_user"=>$uid,
+                    "audit_date"=>$modelObj->audit_date,
+                    "status_type"=>3,
+                    "luu"=>$uid,
+                ),"id=:id",array(":id"=>$modelObj->id));
+                $modelObj->sendEmail();//发送邮件
+            }
+        }
+        if(empty($notId)){
+            Dialog::message(Yii::t('dialog','Information'), "审核成功");
+            return true;
+        }else{
+            if($rtn["code"]==200){
+                $errorNum = count($notId);
+                $successNum = count($curlData)-$errorNum;
+                $errorText = "成功数量：{$successNum}，失败数量：{$errorNum}";
+                $errorText.= "<div class='errorSummary'>";
+                $errorText.= "<p>失败详情:</p>";
+                $errorText.= "<ul>";
+                foreach ($notId as $lbs_id=>$msg){
+                    $errorText.="<li>{$msg}</li>";
+                }
+                $errorText.= "</ul></div>";
+                Dialog::message("派单系统提示", $errorText);
+            }else{
+                Dialog::message("派单系统提示", $rtn['message']);
+            }
+            return false;
         }
     }
 
