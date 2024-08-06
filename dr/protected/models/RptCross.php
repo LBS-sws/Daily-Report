@@ -19,6 +19,8 @@ class RptCross extends ReportData2{
             'rate_num'=>array('label'=>Yii::t('service','accept rate'),'width'=>18,'align'=>'L'),
             'cross_amt'=>array('label'=>Yii::t('service','accept amt'),'width'=>18,'align'=>'L'),
             'status_type'=>array('label'=>Yii::t('service','status type'),'width'=>18,'align'=>'L'),
+            'lcu'=>array('label'=>Yii::t('service','cross lcu'),'width'=>18,'align'=>'L'),
+            'audit_user'=>array('label'=>Yii::t('service','cross audit user'),'width'=>18,'align'=>'L'),
 		);
 	}
 
@@ -70,9 +72,12 @@ class RptCross extends ReportData2{
         $data=array();
         if($rows){
             $cityList = array();
+            $staffList = array();
             foreach ($rows as $row){
                 $serviceList =CrossApplyForm::getServiceList($row["table_type"],$row["service_id"]);
                 $temp=array();
+                $temp["lcu"]=$this->getStaffNameForList($staffList,$row["lcu"]);
+                $temp["audit_user"]=$this->getStaffNameForList($staffList,$row["audit_user"]);
                 $temp["old_city"]=$this->getCityNameForList($cityList,$row["old_city"]);
                 $temp["table_type"]=CrossApplyForm::getCrossTableTypeNameForKey($row["table_type"]);
                 $temp["contract_no"]=empty($serviceList)?"":$serviceList["contract_no"];
@@ -101,9 +106,30 @@ class RptCross extends ReportData2{
 	        return $cityList[$cityCode];
         }else{
 	        $cityName = General::getCityName($cityCode);
-	        $cityList[$cityCode] = $cityName===false?"":$cityName;
+            $cityName = $cityName===false?"":$cityName;
+	        $cityList[$cityCode] = $cityName;
 	        return $cityName;
         }
+    }
+
+	protected function getStaffNameForList(&$staffList,$username){
+	    if(key_exists($username,$staffList)){
+	        return $staffList[$username];
+        }else{
+	        $staffName = self::getStaffNameForUsername($username);
+	        $staffName = $staffName===false?"":$staffName;
+            $staffList[$username] = $staffName;
+	        return $staffName;
+        }
+    }
+
+    public static function getStaffNameForUsername($username){
+        $suffix = Yii::app()->params['envSuffix'];
+        $sql = "select b.name from hr$suffix.hr_binding a 
+        LEFT JOIN hr$suffix.hr_employee b ON a.employee_id=b.id
+        where user_id='{$username}'";
+        $staffName = Yii::app()->db->createCommand($sql)->queryScalar();
+        return $staffName?$staffName:"";
     }
 
 	public function getReportName() {

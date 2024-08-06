@@ -137,9 +137,12 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
         </div>
         <?php if (in_array($model->status_type,array(2,3,5,6))): ?>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'luu',array('class'=>"col-lg-2 control-label")); ?>
+                <?php echo $form->labelEx($model,'audit_user',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-2">
-                    <?php echo $form->textField($model, 'luu',
+                    <?php
+                    echo $form->hiddenField($model, 'audit_user');
+                    $audit_user = RptCross::getStaffNameForUsername($model->audit_user);
+                    echo TbHtml::textField('audit_user', $audit_user,
                         array('readonly'=>true)
                     ); ?>
                 </div>

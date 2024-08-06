@@ -211,5 +211,7 @@ return array(
     'Internal dispatch'=>'内部派单',
     'Audit Full'=>'批量审核',
     'Deny Full'=>'批量拒绝',
+    'cross lcu'=>'申请人',
+    'cross audit user'=>'审核人',
 );
 ?>
