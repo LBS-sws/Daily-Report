@@ -87,7 +87,7 @@ $buttons = array(
             'name'=>'btnNew',
             'id'=>'btnNew',
             'class'=>'btn btn-block btnChangeAdd',
-            'data-href'=>Yii::app()->createUrl('serviceID/new'),
+            'data-href'=>Yii::app()->createUrl('serviceID/new',array("type"=>"N")),
             'data-dismiss'=>'modal',
         )),
     TbHtml::button(Yii::t('service','Renew Service'),

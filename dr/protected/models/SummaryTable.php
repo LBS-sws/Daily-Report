@@ -722,12 +722,12 @@ class SummaryTable extends SummaryForm{
             ->leftJoin("swo_customer_type f","a.cust_type=f.id")
             ->leftJoin("swo_nature g","a.nature_type=g.id")
             ->where("(case a.paid_type
-							when 'M' then a.amt_paid * a.ctrt_period
-							else a.amt_paid
+							when 'M' then IFNULL(a.amt_paid,0) * a.ctrt_period
+							else IFNULL(a.amt_paid,0)
 						end
 					) > (case a.b4_paid_type
-							when 'M' then a.b4_amt_paid * a.ctrt_period
-							else a.b4_amt_paid
+							when 'M' then IFNULL(a.b4_amt_paid,0) * a.ctrt_period
+							else IFNULL(a.b4_amt_paid,0)
 						end
 					) and ".$whereSql)->order("a.city,a.status_dt desc")->queryAll();
         $queryIARows = $queryIARows?$queryIARows:array();
@@ -738,7 +738,7 @@ class SummaryTable extends SummaryForm{
                 ->from("swo_serviceid a")
                 ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
-                ->where("(a.amt_paid*a.ctrt_period)>a.b4_amt_money and ".$whereSql)->order("a.city,a.status_dt desc")->queryAll();
+                ->where("(IFNULL(a.amt_paid,0)*a.ctrt_period)>a.b4_amt_money and ".$whereSql)->order("a.city,a.status_dt desc")->queryAll();
             $queryIDRows = $queryIDRows?$queryIDRows:array();
         }else{
             $queryIDRows=array();
@@ -751,12 +751,12 @@ class SummaryTable extends SummaryForm{
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
                 ->where("(case a.paid_type
-							when 'M' then a.amt_paid * a.ctrt_period
-							else a.amt_paid
+							when 'M' then IFNULL(a.amt_paid,0) * a.ctrt_period
+							else IFNULL(a.amt_paid,0)
 						end
 					) > (case a.b4_paid_type
-							when 'M' then a.b4_amt_paid * a.ctrt_period
-							else a.b4_amt_paid
+							when 'M' then IFNULL(a.b4_amt_paid,0) * a.ctrt_period
+							else IFNULL(a.b4_amt_paid,0)
 						end
 					) and ".$whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")->order("a.city,a.status_dt desc")->queryAll();
             $queryKARows = $queryKARows?$queryKARows:array();
