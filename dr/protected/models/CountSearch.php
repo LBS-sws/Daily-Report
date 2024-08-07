@@ -439,33 +439,33 @@ class CountSearch extends SearchForCurlU {
         $list=array();
         $rows = Yii::app()->db->createCommand()
             ->select("sum(case a.paid_type
-							when 'M' then a.amt_paid * a.ctrt_period
-							else a.amt_paid
+							when 'M' then IFNULL(a.amt_paid,0) * a.ctrt_period
+							else IFNULL(a.amt_paid,0)
 						end
 					) as sum_amount,sum(case a.b4_paid_type
-							when 'M' then a.b4_amt_paid * a.ctrt_period
-							else a.b4_amt_paid
+							when 'M' then IFNULL(a.b4_amt_paid,0) * a.ctrt_period
+							else IFNULL(a.b4_amt_paid,0)
 						end
 					) as b4_sum_amount,a.city")
             ->from("swo_service a")
             ->leftJoin("swo_customer_type f","a.cust_type=f.id")
             ->where("(case a.paid_type
-							when 'M' then a.amt_paid * a.ctrt_period
-							else a.amt_paid
+							when 'M' then IFNULL(a.amt_paid,0) * a.ctrt_period
+							else IFNULL(a.amt_paid,0)
 						end
 					) > (case a.b4_paid_type
-							when 'M' then a.b4_amt_paid * a.ctrt_period
-							else a.b4_amt_paid
+							when 'M' then IFNULL(a.b4_amt_paid,0) * a.ctrt_period
+							else IFNULL(a.b4_amt_paid,0)
 						end
 					) and ".$whereSql)->group("a.city")->queryAll();
         $rows = $rows?$rows:array();
 
         if(self::$IDBool){
             $IDRows = Yii::app()->db->createCommand()
-                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,sum(a.b4_amt_money) as b4_sum_amount,a.city")
+                ->select("sum(IFNULL(a.amt_paid,0)*a.ctrt_period) as sum_amount,sum(a.b4_amt_money) as b4_sum_amount,a.city")
                 ->from("swo_serviceid a")
                 ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
-                ->where("(a.amt_paid*a.ctrt_period)>a.b4_amt_money and ".$whereSql)
+                ->where("(IFNULL(a.amt_paid,0)*a.ctrt_period)>a.b4_amt_money and ".$whereSql)
                 ->group("a.city")->queryAll();
             $IDRows = $IDRows?$IDRows:array();
             $rows = array_merge($rows,$IDRows);
@@ -473,23 +473,23 @@ class CountSearch extends SearchForCurlU {
         if(self::$KABool){
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum(case a.paid_type
-							when 'M' then a.amt_paid * a.ctrt_period
-							else a.amt_paid
+							when 'M' then IFNULL(a.amt_paid,0) * a.ctrt_period
+							else IFNULL(a.amt_paid,0)
 						end
 					) as sum_amount,sum(case a.b4_paid_type
-							when 'M' then a.b4_amt_paid * a.ctrt_period
-							else a.b4_amt_paid
+							when 'M' then IFNULL(a.b4_amt_paid,0) * a.ctrt_period
+							else IFNULL(a.b4_amt_paid,0)
 						end
 					) as b4_sum_amount,a.city")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->where("(case a.paid_type
-							when 'M' then a.amt_paid * a.ctrt_period
-							else a.amt_paid
+							when 'M' then IFNULL(a.amt_paid,0) * a.ctrt_period
+							else IFNULL(a.amt_paid,0)
 						end
 					) > (case a.b4_paid_type
-							when 'M' then a.b4_amt_paid * a.ctrt_period
-							else a.b4_amt_paid
+							when 'M' then IFNULL(a.b4_amt_paid,0) * a.ctrt_period
+							else IFNULL(a.b4_amt_paid,0)
 						end
 					) and ".$whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
                 ->group("a.city")->queryAll();

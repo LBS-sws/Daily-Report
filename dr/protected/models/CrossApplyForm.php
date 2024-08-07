@@ -51,7 +51,7 @@ class CrossApplyForm extends CFormModel
         $list["status_type"] = Yii::t('service','status type');
         $list["luu"] = Yii::t('service','audit user');
         $list["audit_date"] = Yii::t('service','audit date');
-        $list["audit_user"] = Yii::t('service','audit user');
+        $list["audit_user"] = Yii::t('service','cross audit user');
         $list["cross_type"] = Yii::t('service','Cross type');
         $list["u_update_date"] = Yii::t('service','U audit date');
         $list["u_update_user"] = Yii::t('service','U audit user');
