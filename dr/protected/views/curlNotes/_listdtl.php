@@ -1,12 +1,12 @@
 <tr>
     <td><?php echo $this->record['id']; ?></td>
     <td><?php echo $this->record['info_type']; ?></td>
-	<td class="text-break">
-        <pre style="display: none;"><?php echo htmlspecialchars($this->record['data_content']); ?></pre>
+	<td class="text-break" data-id="<?php echo $this->record['id']; ?>" data-type="0">
+        <pre style="display: none;"></pre>
         <span>查看</span>
     </td>
-	<td class="text-break">
-        <pre style="display: none;"><?php echo htmlspecialchars($this->record['out_content']); ?></pre>
+	<td class="text-break" data-id="<?php echo $this->record['id']; ?>" data-type="1">
+        <pre style="display: none;"></pre>
         <span>查看</span>
     </td>
 	<td><?php echo $this->record['message']; ?></td>

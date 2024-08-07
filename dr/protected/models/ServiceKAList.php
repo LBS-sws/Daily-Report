@@ -160,7 +160,7 @@ class ServiceKAList extends CListPageModel
     //驗證该服务是否交叉派单
     private function validateCross($service_id) {
         $row = Yii::app()->db->createCommand()->select("id")->from("swo_cross")
-            ->where("table_type=1 and service_id=:id and status_type not in (2,6)",array(":id"=>$service_id))
+            ->where("table_type=1 and service_id=:id and status_type not in (2,5,6)",array(":id"=>$service_id))
             ->queryRow();
         return $row?false:true;//如果存在，则不允许批量交叉派单
     }

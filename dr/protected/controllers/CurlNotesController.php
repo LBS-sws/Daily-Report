@@ -24,11 +24,11 @@ class CurlNotesController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('send','testOffice','testCompany','testComplaint','testServiceOne','TestServiceFull','testIp','testCrossOne','System'),
+				'actions'=>array('send','testOffice','testCompany','testComplaint','testServiceOne','TestServiceFull','testIp','testCrossOne','TestCrossFull','System'),
 				'expression'=>array('CurlNotesController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index'),
+				'actions'=>array('index','getAjaxStr'),
 				'expression'=>array('CurlNotesController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -36,6 +36,19 @@ class CurlNotesController extends Controller
 			),
 		);
 	}
+
+    public function actionGetAjaxStr()
+    {
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $model = new CurlNotesList();
+            $id = key_exists("id",$_POST)?$_POST["id"]:0;
+            $type = key_exists("type",$_POST)?$_POST["type"]:0;
+            $content = $model->getCurlTextForID($id,$type);
+            echo CJSON::encode(array("content"=>$content));
+        }else{
+            $this->redirect(Yii::app()->createUrl('curlNotes/index'));
+        }
+    }
 
 	public function actionIndex($pageNum=0) 
 	{
@@ -97,6 +110,13 @@ class CurlNotesController extends Controller
 	{
         $model = new CurlNotesList();
         $model->testCrossOne($index);
+        die();
+	}
+
+	public function actionTestCrossFull($idStr='3,4,5')
+	{
+        $model = new CurlNotesList();
+        $model->testCrossFull($idStr);
         die();
 	}
 

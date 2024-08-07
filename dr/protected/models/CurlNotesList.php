@@ -323,6 +323,21 @@ class CurlNotesList extends CListPageModel
 	    $this->sendCurl("/sync/crossOne",$data);
     }
 
+    public function testCrossFull($idStr){
+        $idList = explode(",",$idStr);
+        $data=array();
+        foreach ($idList as $id){
+            $data[] = array(
+                "lbs_id"=> $id,
+                "status_type"=>1,
+                "u_update_user"=> "40002_测试",
+                "u_update_date"=> "2024-8-22 10:53:23",
+                "office_id"=> null,
+            );
+        }
+	    $this->sendCurl("/sync/crossFull",$data);
+    }
+
     public function testServiceFull(){
 	    $data =array();
 	    for ($i=1;$i<=10;$i++){
@@ -403,5 +418,26 @@ class CurlNotesList extends CListPageModel
             var_dump($out);
         }
         curl_close($ch);
+    }
+
+
+    public function getCurlTextForID($id,$type=0){
+        $type = "".$type;
+        $list = array(
+            0=>"data_content",//请求内容
+            1=>"out_content",//响应的内容
+            //2=>"cmd_content",//执行结果
+        );
+        $selectStr = key_exists($type,$list)?$list[$type]:$list[0];
+        $suffix = Yii::app()->params['envSuffix'];
+        $row = Yii::app()->db->createCommand()->select($selectStr)->from("datasync{$suffix}.sync_api_curl")
+            ->where("id=:id", array(':id'=>$id))->queryRow();
+        if($row){
+            $searchList = array("\\r","\\n","\\t");
+            $replaceList = array("\r","\n","\t");
+            return str_replace($searchList,$replaceList,$row[$selectStr]);
+        }else{
+            return "";
+        }
     }
 }

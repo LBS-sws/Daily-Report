@@ -152,6 +152,7 @@ class CrossApplyForm extends CFormModel
     }
 
     public function validateServiceID($attribute, $params) {
+	    $crossId = empty($this->id)?0:$this->id;
         $id = $this->$attribute;
         if($this->table_type==0){
             $tableNameOne="swo_service";
@@ -165,9 +166,20 @@ class CrossApplyForm extends CFormModel
             ->leftJoin("{$tableNameTwo} b","a.id=b.service_id")
             ->where("a.id=:id and a.city in ({$city_allow})",array(":id"=>$id))->queryRow();
         if($row){
-            $this->old_city = $row["city"];
-            $this->contract_no = $row["contract_no"];
-            $this->resetContractNo(true);
+            $crossRow = Yii::app()->db->createCommand()->select("id")->from("swo_cross")
+                ->where("status_type not in (2,5,6) and id!=:id and service_id=:service_id and table_type=:table_type",array(
+                    ":id"=>$crossId,
+                    ":service_id"=>$this->service_id,
+                    ":table_type"=>$this->table_type
+                ))->queryRow();
+            if($crossRow){
+                $this->addError($attribute, "已有进行中的交叉派单，请先完成交叉派单：".$crossRow["id"]);
+                return false;
+            }else{
+                $this->old_city = $row["city"];
+                $this->contract_no = $row["contract_no"];
+                $this->resetContractNo(true);
+            }
         }else{
             $this->addError($attribute, "合约编号不存在，无法交叉派单");
             return false;
@@ -195,6 +207,15 @@ class CrossApplyForm extends CFormModel
         $row = Yii::app()->db->createCommand()->select("*")
             ->from("swo_cross")
             ->where("table_type=:table_type and service_id=:service_id and status_type not in (2,6)",array(
+                ":service_id"=>$service_id,":table_type"=>$table_type
+            ))->order("id desc")->queryRow();
+        return $row;
+    }
+
+    public static function getFlowCross($table_type,$service_id){
+        $row = Yii::app()->db->createCommand()->select("*")
+            ->from("swo_cross")
+            ->where("table_type=:table_type and service_id=:service_id and status_type not in (2,5,6)",array(
                 ":service_id"=>$service_id,":table_type"=>$table_type
             ))->order("id desc")->queryRow();
         return $row;
@@ -478,6 +499,10 @@ class CrossApplyForm extends CFormModel
                     }elseif (!empty($endCross["qualification_city"])&&$this->qualification_city!=$endCross["qualification_city"]){
                         $row["error"] = "资质方不一致";
                     }
+                }
+                $flowCross = $this->getFlowCross($this->table_type,$id);
+                if($flowCross){
+                    $row["error"] = "已有进行中的交叉派单";
                 }
                 $list[]=$row;
             }
