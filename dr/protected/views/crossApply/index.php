@@ -23,21 +23,23 @@ $this->pageTitle=Yii::app()->name . ' - CrossApply';
 </section>
 
 <section class="content">
-	<?php $this->widget('ext.layout.ListPageWidget', array(
-			'title'=>Yii::t('service','My Cross Apply'),
-			'model'=>$model,
-				'viewhdr'=>'//crossApply/_listhdr',
-				'viewdtl'=>'//crossApply/_listdtl',
-				'gridsize'=>'24',
-				'height'=>'600',
-				'search'=>array(
-							'contract_no',
-							'company_name',
-							'apply_date',
-							'old_city',
-							'cross_city'
-						),
-		));
+	<?php
+    $this->widget('ext.layout.ListPageWidget', array(
+        'title'=>Yii::t('service','My Cross Apply'),
+        'model'=>$model,
+        'viewhdr'=>'//crossApply/_listhdr',
+        'viewdtl'=>'//crossApply/_listdtl',
+        'gridsize'=>'24',
+        'height'=>'600',
+        'search'=>array(
+            'contract_no',
+            'company_name',
+            'apply_date',
+            'old_city',
+            'cross_city',
+            'status_type',
+        ),
+    ));
 	?>
 </section>
 <?php

@@ -162,10 +162,14 @@ class CrossApplyForm extends CFormModel
             $tableNameTwo="swo_service_ka_no";
         }
         $city_allow = Yii::app()->user->city_allow();
-        $row = Yii::app()->db->createCommand()->select("a.city,b.contract_no")->from("{$tableNameOne} a")
+        $row = Yii::app()->db->createCommand()->select("a.city,a.u_system_id,b.contract_no")->from("{$tableNameOne} a")
             ->leftJoin("{$tableNameTwo} b","a.id=b.service_id")
             ->where("a.id=:id and a.city in ({$city_allow})",array(":id"=>$id))->queryRow();
         if($row){
+            if(empty($row["u_system_id"])){
+                $this->addError($attribute, "派单系统id不能为空");
+                return false;
+            }
             $crossRow = Yii::app()->db->createCommand()->select("id")->from("swo_cross")
                 ->where("status_type not in (2,5,6) and id!=:id and service_id=:service_id and table_type=:table_type",array(
                     ":id"=>$crossId,

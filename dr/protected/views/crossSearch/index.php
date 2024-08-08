@@ -35,7 +35,8 @@ $this->pageTitle=Yii::app()->name . ' - CrossSearch';
             'company_name',
             'apply_date',
             'old_city',
-            'cross_city'
+            'cross_city',
+            'status_type',
         ),
     ));
     ?>

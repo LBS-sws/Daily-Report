@@ -64,6 +64,10 @@ class CrossApplyList extends CListPageModel
 					$companySql = self::searchCompanySql($svalue);
                     $clause .= "and ({$companySql}) ";
 					break;
+                case 'status_type':
+                    $companySql = CrossApplyList::searchStatusTypeSql($svalue);
+                    $clause .= "and ({$companySql}) ";
+                    break;
 			}
 		}
 		
@@ -218,5 +222,43 @@ class CrossApplyList extends CListPageModel
                 return $serviceSql;
             }
         }
+    }
+
+    public static function searchStatusTypeSql($svalue){
+        if($svalue===""){
+            return "a.id>0";
+        }
+        $list = self::getCrossStatusList();
+        $sql = array();
+        foreach ($list as $key=>$item){
+            if (strpos($item,$svalue)!==false){
+                $sql[$key]=$key;
+            }
+        }
+        if(empty($sql)){
+            $sql[10]=-5;
+        }
+        $outStr = Yii::t("service","Approved");//二次审核的文字不一致
+        $outBool = false;
+        if (strpos($outStr,$svalue)!==false){
+            $sql[5]=5;
+            $outBool=true;
+        }
+        if(in_array(5,$sql)){
+            unset($sql[5]);
+            $sql = empty($sql)?array(-5):$sql;
+            if($outBool){
+                $sql = implode(",",$sql);
+                $sql =  "a.status_type in ({$sql}) or (a.status_type=5 and a.cross_num>=2)";
+            }else{
+                $sql = implode(",",$sql);
+                $sql =  "a.status_type in ({$sql}) or (a.status_type=5 and a.cross_num<2)";
+            }
+        }else{
+            $sql = implode(",",$sql);
+            $sql =  "a.status_type in ({$sql})";
+        }
+
+        return $sql;
     }
 }

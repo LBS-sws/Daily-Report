@@ -65,6 +65,10 @@ class CrossSearchList extends CListPageModel
                     $companySql = CrossApplyList::searchCompanySql($svalue);
                     $clause .= "and ({$companySql}) ";
                     break;
+                case 'status_type':
+                    $companySql = CrossApplyList::searchStatusTypeSql($svalue);
+                    $clause .= "and ({$companySql}) ";
+                    break;
 			}
 		}
 		
