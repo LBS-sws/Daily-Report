@@ -654,13 +654,14 @@ class SummaryTable extends SummaryForm{
             $queryIDRows=array();
         }
         if(self::$KABool){
+            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and not (a.paid_type=1 and a.ctrt_period<12)")->order("a.city,a.status_dt desc")->queryAll();
+                ->where($whereSql." and {$kaSqlPrx} and not (a.paid_type=1 and a.ctrt_period<12)")->order("a.city,a.status_dt desc")->queryAll();
             $queryKARows = $queryKARows?$queryKARows:array();
             $queryIARows = array_merge($queryIARows,$queryKARows);
         }
@@ -695,13 +696,14 @@ class SummaryTable extends SummaryForm{
             $queryIDRows=array();
         }
         if(self::$KABool){
+            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")->order("a.city,a.status_dt desc")->queryAll();
+                ->where($whereSql." and {$kaSqlPrx}")->order("a.city,a.status_dt desc")->queryAll();
             $queryKARows = $queryKARows?$queryKARows:array();
             $queryIARows = array_merge($queryIARows,$queryKARows);
         }
@@ -744,6 +746,7 @@ class SummaryTable extends SummaryForm{
             $queryIDRows=array();
         }
         if(self::$KABool){
+            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")
@@ -758,7 +761,7 @@ class SummaryTable extends SummaryForm{
 							when 'M' then IFNULL(a.b4_amt_paid,0) * a.ctrt_period
 							else IFNULL(a.b4_amt_paid,0)
 						end
-					) and ".$whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")->order("a.city,a.status_dt desc")->queryAll();
+					) and ".$whereSql." and {$kaSqlPrx}")->order("a.city,a.status_dt desc")->queryAll();
             $queryKARows = $queryKARows?$queryKARows:array();
             $queryIARows = array_merge($queryIARows,$queryKARows);
         }
@@ -810,13 +813,14 @@ class SummaryTable extends SummaryForm{
             $queryIDRows=array();
         }
         if(self::$KABool){
+            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
+                ->where($whereSql." and {$kaSqlPrx} and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
             if($queryKARows){
                 foreach ($queryKARows as $key=>$row){
                     $month_date = date("Y/m",strtotime($row['status_dt']));
@@ -898,13 +902,14 @@ class SummaryTable extends SummaryForm{
         }
 
         if(self::$KABool){
+            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
+                ->where($whereSql." and {$kaSqlPrx} and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
             if($queryKARows){
                 foreach ($queryKARows as $key=>$row){
                     $month_date = date("Y/m",strtotime($row['status_dt']));
@@ -984,13 +989,14 @@ class SummaryTable extends SummaryForm{
             $queryIDRows=array();
         }
         if(self::$KABool){
+            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
+                ->where($whereSql." and {$kaSqlPrx} and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
             if($queryKARows){
                 foreach ($queryKARows as $key=>$row){
                     $month_date = date("Y/m",strtotime($row['status_dt']));
@@ -1033,13 +1039,14 @@ class SummaryTable extends SummaryForm{
             ->where($whereSql." and a.paid_type=1 and a.ctrt_period<12")->queryAll();
         $queryIARows = $queryIARows?$queryIARows:array();
         if(self::$KABool){
+            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and a.paid_type=1 and a.ctrt_period<12")
+                ->where($whereSql." and {$kaSqlPrx} and a.paid_type=1 and a.ctrt_period<12")
                 ->queryAll();
             $queryKARows = $queryKARows?$queryKARows:array();
             $queryIARows = array_merge($queryIARows,$queryKARows);
@@ -1085,13 +1092,14 @@ class SummaryTable extends SummaryForm{
         }
 
         if(self::$KABool){
+            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
-                ->where($whereSql.$whereSqlIA." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")->queryAll();
+                ->where($whereSql.$whereSqlIA." and {$kaSqlPrx}")->queryAll();
             $queryKARows = $queryKARows?$queryKARows:array();
             $queryIARows = array_merge($queryIARows,$queryKARows);
         }
@@ -1135,13 +1143,14 @@ class SummaryTable extends SummaryForm{
         }
 
         if(self::$KABool){
+            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")->queryAll();
+                ->where($whereSql." and {$kaSqlPrx}")->queryAll();
             $queryKARows = $queryKARows?$queryKARows:array();
             $queryIARows = array_merge($queryIARows,$queryKARows);
         }

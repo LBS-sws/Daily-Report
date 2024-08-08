@@ -15,6 +15,22 @@ class CountSearch extends SearchForCurlU {
         return self::$system;
     }
 
+    public static function getServiceKASQL($searchPrx="b."){
+        $suffix = Yii::app()->params['envSuffix'];
+        $kaCity = array();
+        $rows = Yii::app()->db->createCommand()->select("code,name")->from("security$suffix.sec_city")
+            ->where("ka_bool=1")
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $kaCity[]=$row["code"];
+            }
+        }
+        $kaCity = "'".implode("','",$kaCity)."'";
+        $sql ="DATE_FORMAT({$searchPrx}status_dt,'%Y')<'2024' or {$searchPrx}city in ({$kaCity})";
+        return "({$sql})";
+    }
+
     //獲取暫停、終止的最後一條記錄(一条服务在一个月内只能存在一条暂停和终止)，特例：暫停→恢復→終止（三個都需要計算）
     public static function getServiceForST($start_dt,$end_dt,$city_allow,$type="all"){
         $list = array();
@@ -119,6 +135,7 @@ class CountSearch extends SearchForCurlU {
         }
 
         if(self::$KABool){ //KA服務的暫停、終止
+            $kaSqlPrx = self::getServiceKASQL();
             $KARows= Yii::app()->db->createCommand()
                 ->select("a.id,a.status,a.status_dt,a.contract_no,a.service_id,
             b.city,({$sum_money}) as sum_money,
@@ -131,7 +148,7 @@ class CountSearch extends SearchForCurlU {
                 ->from("swo_service_ka_no a")
                 ->leftJoin("swo_service_ka b","b.id=a.service_id")
                 ->leftJoin("swo_customer_type f","b.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->where($whereSql." and {$kaSqlPrx}")
                 ->queryAll();
             if($KARows){
                 foreach ($KARows as $row){
@@ -208,6 +225,7 @@ class CountSearch extends SearchForCurlU {
         }
 
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum(case a.paid_type
 							when 'M' then a.amt_paid * a.ctrt_period
@@ -216,7 +234,7 @@ class CountSearch extends SearchForCurlU {
 					) as sum_amount,a.city")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->where($whereSql." and {$kaSqlPrx}")
                 ->group("a.city")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
@@ -267,6 +285,7 @@ class CountSearch extends SearchForCurlU {
         }
 
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("
             sum(
@@ -276,7 +295,7 @@ class CountSearch extends SearchForCurlU {
             ) as sum_amount,a.city")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->where($whereSql." and {$kaSqlPrx}")
                 ->group("a.city")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
@@ -330,6 +349,7 @@ class CountSearch extends SearchForCurlU {
         }
 
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("
                 sum(if(a.status='N',($sumAmtSql),0)) as add_sum,
@@ -340,7 +360,7 @@ class CountSearch extends SearchForCurlU {
                 a.city")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->where($whereSql." and {$kaSqlPrx}")
                 ->group("a.city")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
@@ -403,6 +423,7 @@ class CountSearch extends SearchForCurlU {
             $rows = array_merge($rows,$IDRows);
         }
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum(case a.paid_type
 							when 'M' then a.amt_paid * a.ctrt_period
@@ -415,7 +436,7 @@ class CountSearch extends SearchForCurlU {
 					) as b4_sum_amount,a.city")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->where($whereSql." and {$kaSqlPrx}")
                 ->group("a.city")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
@@ -471,6 +492,7 @@ class CountSearch extends SearchForCurlU {
             $rows = array_merge($rows,$IDRows);
         }
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum(case a.paid_type
 							when 'M' then IFNULL(a.amt_paid,0) * a.ctrt_period
@@ -491,7 +513,7 @@ class CountSearch extends SearchForCurlU {
 							when 'M' then IFNULL(a.b4_amt_paid,0) * a.ctrt_period
 							else IFNULL(a.b4_amt_paid,0)
 						end
-					) and ".$whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+					) and ".$whereSql." and {$kaSqlPrx}")
                 ->group("a.city")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
@@ -546,6 +568,7 @@ class CountSearch extends SearchForCurlU {
             $rows = array_merge($rows,$IDRows);
         }
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum($sum_money) as sum_amount,a.city,
             sum(if(a.ctrt_period>=12,({$sum_money}),0)) as num_long,
@@ -557,7 +580,7 @@ class CountSearch extends SearchForCurlU {
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
                 ->leftJoin("swo_nature g","a.nature_type=g.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->where($whereSql." and {$kaSqlPrx}")
                 ->group("a.city")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
@@ -615,6 +638,7 @@ class CountSearch extends SearchForCurlU {
             $rows = array_merge($rows,$IDRows);
         }
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum({$sum_money}) as sum_amount,a.city,
             sum(if(a.paid_type=1 and a.ctrt_period<12,({$sum_money}),0)) as num_new_n,
@@ -622,7 +646,7 @@ class CountSearch extends SearchForCurlU {
             ")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->where($whereSql." and {$kaSqlPrx}")
                 ->group("a.city")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
@@ -670,6 +694,7 @@ class CountSearch extends SearchForCurlU {
             $rows = array_merge($rows,$IDRows);
         }
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum(case a.paid_type
 							when 'M' then a.amt_paid * a.ctrt_period
@@ -678,7 +703,7 @@ class CountSearch extends SearchForCurlU {
 					) as sum_amount,a.city")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and not (a.paid_type=1 and a.ctrt_period<12)")->group("a.city")->queryAll();
+                ->where($whereSql." and {$kaSqlPrx} and not (a.paid_type=1 and a.ctrt_period<12)")->group("a.city")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
         }
@@ -723,6 +748,7 @@ class CountSearch extends SearchForCurlU {
             */
         }
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum(case a.paid_type
 							when 'M' then a.amt_paid * a.ctrt_period
@@ -731,7 +757,7 @@ class CountSearch extends SearchForCurlU {
 					) as sum_amount,a.city")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and a.paid_type=1 and a.ctrt_period<12")->group("a.city")->queryAll();
+                ->where($whereSql." and {$kaSqlPrx} and a.paid_type=1 and a.ctrt_period<12")->group("a.city")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
         }
@@ -1016,6 +1042,7 @@ class CountSearch extends SearchForCurlU {
             $rows = array_merge($rows,$IDRows);
         }
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum(case a.paid_type
 							when 'M' then a.amt_paid * a.ctrt_period
@@ -1028,7 +1055,7 @@ class CountSearch extends SearchForCurlU {
 					) as b4_sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->where($whereSql." and {$kaSqlPrx}")
                 ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
@@ -1079,6 +1106,7 @@ class CountSearch extends SearchForCurlU {
             $rows = array_merge($rows,$IDRows);
         }
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum(case a.paid_type
 							when 'M' then a.amt_paid * a.ctrt_period
@@ -1087,7 +1115,7 @@ class CountSearch extends SearchForCurlU {
 					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->where($whereSql." and {$kaSqlPrx}")
                 ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
@@ -1141,6 +1169,7 @@ class CountSearch extends SearchForCurlU {
             $rows = array_merge($rows,$IDRows);
         }
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum(case a.paid_type
 							when 'M' then a.amt_paid * a.ctrt_period
@@ -1149,7 +1178,7 @@ class CountSearch extends SearchForCurlU {
 					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024'")
+                ->where($whereSql." and {$kaSqlPrx}")
                 ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);
@@ -1222,6 +1251,7 @@ class CountSearch extends SearchForCurlU {
             }
         }
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("b.");
             $KARows= Yii::app()->db->createCommand()
                 ->select("a.id,b.status,b.status_dt,a.contract_no,a.service_id,
             b.city,({$sum_money}) as sum_money,
@@ -1229,7 +1259,7 @@ class CountSearch extends SearchForCurlU {
                 ->from("swo_service_ka_no a")
                 ->leftJoin("swo_service_ka b","b.id=a.service_id")
                 ->leftJoin("swo_customer_type f","b.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(b.status_dt,'%Y')<'2024'")
+                ->where($whereSql." and {$kaSqlPrx}")
                 ->queryAll();
             if($KARows){//
                 foreach ($KARows as $row){
@@ -1318,6 +1348,7 @@ class CountSearch extends SearchForCurlU {
         }
 
         if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum(case a.paid_type
 							when 'M' then a.amt_paid * a.ctrt_period
@@ -1326,7 +1357,7 @@ class CountSearch extends SearchForCurlU {
 					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-                ->where($whereSql." and DATE_FORMAT(a.status_dt,'%Y')<'2024' and a.paid_type=1 and a.ctrt_period<12")
+                ->where($whereSql." and {$kaSqlPrx} and a.paid_type=1 and a.ctrt_period<12")
                 ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);

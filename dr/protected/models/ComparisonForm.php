@@ -26,6 +26,8 @@ class ComparisonForm extends CFormModel
 	public $th_sum=2;//所有th的个数
 
     public $downJsonText='';
+
+    protected $class_type="NONE";//类型 NONE:普通  KA:KA
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -158,10 +160,33 @@ class ComparisonForm extends CFormModel
         $this->last_month_end_date = CountSearch::computeLastMonth($this->end_date);
     }
 
-    public function retrieveData() {
-        $data = array();
+    protected function getMyCityAllow(){
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
+
+        $whereSql = "code in ({$city_allow}) ";
+        if($this->class_type=="KA"){
+            $whereSql.= " and ka_bool=1";
+        }else{
+            $whereSql.= " and ka_bool!=1";
+        }
+        $myCity=array();
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("code,name")->from("security$suffix.sec_city")
+            ->where($whereSql)
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $myCity[]=$row["code"];
+            }
+        }
+        $myCity = "'".implode("','",$myCity)."'";
+        return $myCity;
+    }
+
+    public function retrieveData() {
+        $data = array();
+        $city_allow = self::getMyCityAllow();
         $suffix = Yii::app()->params['envSuffix'];
         $this->computeDate();
         ComparisonForm::setDayNum($this->start_date,$this->end_date,$this->day_num);
@@ -267,7 +292,11 @@ class ComparisonForm extends CFormModel
 
         $this->data = $data;
         $session = Yii::app()->session;
-        $session['comparison_c01'] = $this->getCriteria();
+        if($this->class_type=="KA"){
+            $session['comparisonKA_c01'] = $this->getCriteria();
+        }else{
+            $session['comparison_c01'] = $this->getCriteria();
+        }
         return true;
     }
 
@@ -903,12 +932,17 @@ class ComparisonForm extends CFormModel
         $this->month_end_date = date("m/d",strtotime($this->end_date));
         $headList = $this->getTopArr();
         $excel = new DownSummary();
-        $excel->SetHeaderTitle(Yii::t("app","Comparison"));
+        if($this->class_type=="KA"){
+            $titleName = Yii::t("app","KA Comparison");
+        }else{
+            $titleName = Yii::t("app","Comparison");
+        }
+        $excel->SetHeaderTitle($titleName);
         $excel->SetHeaderString($this->start_date." ~ ".$this->end_date);
         $excel->init();
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);
-        $excel->outExcel(Yii::t("app","Comparison"));
+        $excel->outExcel($titleName);
     }
 
     protected function clickList(){

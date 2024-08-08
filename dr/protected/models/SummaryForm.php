@@ -23,6 +23,8 @@ class SummaryForm extends CFormModel
 	public $th_sum=2;//所有th的个数
 
     public $downJsonText='';
+
+    protected $class_type="NONE";//类型 NONE:普通  KA:KA
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -135,6 +137,30 @@ class SummaryForm extends CFormModel
 		return $city;
 	}
 
+    protected function getMyCityAllow(){
+        $city_allow = Yii::app()->user->city_allow();
+        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
+
+        $whereSql = "code in ({$city_allow}) ";
+        if($this->class_type=="KA"){
+            $whereSql.= " and ka_bool=1";
+        }else{
+            $whereSql.= " and ka_bool!=1";
+        }
+        $myCity=array();
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("code,name")->from("security$suffix.sec_city")
+            ->where($whereSql)
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $myCity[]=$row["code"];
+            }
+        }
+        $myCity = "'".implode("','",$myCity)."'";
+        return $myCity;
+    }
+
     public function retrieveData() {
         $this->summary_year = date("Y",strtotime($this->start_date));
 	    $rptModel = new RptSummarySC();
@@ -142,8 +168,7 @@ class SummaryForm extends CFormModel
         $criteria->start_dt = $this->start_date;
         $criteria->end_dt = $this->end_date;
         ComparisonForm::setDayNum($this->start_date,$this->end_date,$this->day_num);
-        $city_allow = Yii::app()->user->city_allow();
-        $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
+        $city_allow = self::getMyCityAllow();
         $criteria->city = $city_allow;
         $rptModel->criteria = $criteria;
         $rptModel->retrieveData();
@@ -165,7 +190,11 @@ class SummaryForm extends CFormModel
         }
 
         $session = Yii::app()->session;
-        $session['summary_c01'] = $this->getCriteria();
+        if($this->class_type=="KA"){
+            $session['summaryKA_c01'] = $this->getCriteria();
+        }else{
+            $session['summary_c01'] = $this->getCriteria();
+        }
         return true;
     }
 
@@ -562,12 +591,17 @@ class SummaryForm extends CFormModel
         $this->validateDate("","");
         $headList = $this->getTopArr();
         $excel = new DownSummary();
-        $excel->SetHeaderTitle(Yii::t("app","Summary"));
+        if($this->class_type=="KA"){
+            $titleName = Yii::t("app","KA Summary");
+        }else{
+            $titleName = Yii::t("app","Summary");
+        }
+        $excel->SetHeaderTitle($titleName);
         $excel->SetHeaderString($this->start_date." ~ ".$this->end_date);
         $excel->init();
         $excel->setSummaryHeader($headList);
         $excel->setSummaryData($excelData);
-        $excel->outExcel(Yii::t("app","Summary"));
+        $excel->outExcel($titleName);
     }
 
     protected function clickList(){

@@ -249,9 +249,17 @@ return array(
                 'access'=>'G03',
                 'url'=>'/summary/index',
             ),
+            'KA Summary'=>array( //合同分析查询
+                'access'=>'G25',
+                'url'=>'/summaryKA/index',
+            ),
             'Comparison'=>array( //合同同比分析
                 'access'=>'G05',
                 'url'=>'/comparison/index',
+            ),
+            'KA Comparison'=>array( //合同同比分析
+                'access'=>'G26',
+                'url'=>'/comparisonKA/index',
             ),
             'Monthly performance'=>array( //月度业绩
                 'access'=>'G17',
