@@ -59,6 +59,8 @@ class ServiceIDForm extends CFormModel
     public $prepay_month=0;//预付月数
     public $prepay_start=0;//预付起始月
     public $sign;//货币图形
+    public $office_id;
+    public $contract_type;
 
     public $service_info=array(
         array('id'=>0,
@@ -146,6 +148,8 @@ class ServiceIDForm extends CFormModel
             'b4_pieces'=>Yii::t('service','Before:').Yii::t('service','machine number'),
             'b4_amt_paid'=>Yii::t('service','Before:').Yii::t('service','Monthly'),
             'b4_amt_money'=>Yii::t('service','Before:').Yii::t('service','all money'),
+            'office_id'=>Yii::t('service','office of'),
+            'contract_type'=>Yii::t('service','contract type'),
         );
 
         switch ($this->status){
@@ -177,7 +181,7 @@ class ServiceIDForm extends CFormModel
             //salesman,technician_id,technician,othersalesman_id,othersalesman,sign_dt
             //ctrt_end_dt,ctrt_period,cont_info,first_dt,status,status_dt
             //remarks,remarks2,surplus,prepay_month,prepay_start
-            array('id,service_new_id,service_no,company_id,company_name,nature_type,cust_type,
+            array('id,office_id,contract_type,service_new_id,service_no,company_id,company_name,nature_type,cust_type,
                 cust_type_name,cust_type_three,cust_type_four,cust_type_end,pieces,product_id,
                 service,pay_week,b4_amt_paid,amt_paid,b4_amt_money,amt_money,amt_install,need_install,salesman_id,
                 salesman,technician_id,technician,othersalesman_id,othersalesman,sign_dt,
@@ -386,6 +390,8 @@ class ServiceIDForm extends CFormModel
             $this->pieces = $row['pieces'];
             $this->prepay_month = $row['prepay_month'];
             $this->prepay_start = $row['prepay_start'];
+            $this->office_id = $row['office_id'];
+            $this->contract_type = $row['contract_type'];
             $details = Yii::app()->db->createCommand()->select("*")->from("swo_serviceid_info")
                 ->where("serviceID_id=:id",array(":id"=>$this->id))->order("back_date asc")->queryAll();
             if($details){
@@ -555,6 +561,8 @@ class ServiceIDForm extends CFormModel
         $this->setEmptyToArr($arr,"status_dt");
         $this->setEmptyToArr($arr,"prepay_month",true);
         $this->setEmptyToArr($arr,"prepay_start",true);
+        $arr["office_id"] = empty($this->office_id)?null:$this->office_id;
+        $arr["contract_type"] = $this->contract_type===""?null:$this->contract_type;
         return $arr;
     }
 

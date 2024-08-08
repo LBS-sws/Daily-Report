@@ -102,6 +102,22 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     </div>
                 <?php endif ?>
             </div>
+
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'contract_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php
+                    echo $form->dropDownList($model, 'contract_type', GetNameToId::getContractTypeList('none'), array('readonly'=>($model->scenario=='view'),'empty'=>''));
+                    ?>
+                </div>
+                <?php echo $form->labelEx($model,'office_id',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php
+                    $this_city = empty($model->city)?Yii::app()->user->city():$model->city;
+                    echo $form->dropDownList($model, 'office_id', GetNameToId::getOfficeNameListForCity($this_city), array('readonly'=>($model->scenario=='view')));
+                    ?>
+                </div>
+            </div>
             <?php if ($model->status!='N'&&$model->scenario=='new'): ?>
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'service_new_id',array('class'=>"col-sm-2 control-label"));   ?>
@@ -112,6 +128,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     </div>
                 </div>
                 <script>
+
                     $(function () {
                         $("#service_new_id").on("change",function () {
                             if($(this).val()!=""){
@@ -548,7 +565,9 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
         </div>
     </div>
 </section>
-<script>
+<?php
+
+$js = <<<EOF
     $("#ServiceIDForm_status_dt,#ServiceIDForm_ctrt_end_dt").on("change",function () {
         var endDate = $("#ServiceIDForm_status_dt").val();
         var stopDate = $("#ServiceIDForm_ctrt_end_dt").val();
@@ -643,7 +662,9 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
             $("#ServiceIDForm_amt_money").val(money*month);
         }
     });
-</script>
+EOF;
+Yii::app()->clientScript->registerScript('changeSelectMore',$js,CClientScript::POS_READY);
+?>
 <?php
 $language = Yii::app()->language;
 $js = "

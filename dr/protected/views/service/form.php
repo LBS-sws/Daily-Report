@@ -154,6 +154,22 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
 					?>
                 </div>
 			</div>
+
+			<div class="form-group">
+                <?php echo $form->labelEx($model,'contract_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+					<?php
+					echo $form->dropDownList($model, 'contract_type', GetNameToId::getContractTypeList('none'), array('readonly'=>($model->getReadonly()),'empty'=>''));
+					?>
+                </div>
+                <?php echo $form->labelEx($model,'office_id',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+					<?php
+					$this_city = empty($model->city)?Yii::app()->user->city():$model->city;
+					echo $form->dropDownList($model, 'office_id', GetNameToId::getOfficeNameListForCity($this_city), array('readonly'=>($model->getReadonly())));
+					?>
+                </div>
+			</div>
 			<div class="form-group">
 				<?php
 					switch ($model->status) {

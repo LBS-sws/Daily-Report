@@ -211,5 +211,12 @@ return array(
     'Deny Full'=>'批量拒絕',
     'cross lcu'=>'申請人',
     'cross audit user'=>'審核人',
+
+    'office of'=>'歸屬',
+    'contract type'=>'合約類型',
+    'u system id'=>'派單系統id',
+    'normal contract'=>'普通合約',
+    'ka contract'=>'ka合約',
+    'cross contract'=>'外包合約',
 );
 ?>

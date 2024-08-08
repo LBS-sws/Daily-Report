@@ -219,6 +219,7 @@ class ServiceKAForm extends ServiceForm
                 $this->lcu = $row['lcu'];
                 $this->luu = $row['luu'];
                 $this->office_id = $row['office_id'];
+                $this->contract_type = $row['contract_type'];
                 $this->u_system_id = $row['u_system_id'];
 //                print_r('<pre>');
 //                print_r($this);exit();
@@ -340,7 +341,7 @@ class ServiceKAForm extends ServiceForm
 							b4_service, b4_paid_type, b4_amt_paid, 
 							ctrt_period, cont_info, first_dt, first_tech_id, first_tech, reason,tracking,
 							status, status_dt, remarks, remarks2, ctrt_end_dt,
-							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,office_id,u_system_id,
+							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,office_id,contract_type,u_system_id,
 							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,prepay_month,prepay_start
 						) values (
 							:service_new_id,:company_id, :company_name, :product_id, :service, :nature_type, :two_nature_type, :cust_type, 
@@ -348,7 +349,7 @@ class ServiceKAForm extends ServiceForm
 							:b4_service, :b4_paid_type, :b4_amt_paid, 
 							:ctrt_period, :cont_info, :first_dt, :first_tech_id, :first_tech, :reason,:tracking,
 							:status, :status_dt, :remarks, :remarks2, :ctrt_end_dt,
-							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, :cust_type_name,:pieces,:office_id,:u_system_id,
+							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, :cust_type_name,:pieces,:office_id,:contract_type,:u_system_id,
 							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3,:prepay_month,:prepay_start
 						)";
 				$this->execSql($connection,$sql);
@@ -410,6 +411,8 @@ class ServiceKAForm extends ServiceForm
                             surplus_edit3 = :surplus_edit3, 
                             prepay_month = :prepay_month, 
                             prepay_start = :prepay_start,                  
+                            office_id = :office_id,                  
+                            contract_type = :contract_type,                  
                             u_system_id = :u_system_id,                  
 							luu = :luu 
 						where id = :id 

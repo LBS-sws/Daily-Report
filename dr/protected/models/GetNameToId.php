@@ -239,4 +239,38 @@ class GetNameToId{
         }
         return $list;
     }
+
+    //获取需安装名字
+    public static function getContractTypeList($type="all"){
+        switch ($type){
+            case "all":
+                $list = array(
+                    '0'=>Yii::t('service','normal contract'),//普通合约
+                    '1'=>Yii::t('service','ka contract'),//KA合约
+                    '9'=>Yii::t('service','cross contract')//外包合约
+                );
+                break;
+            case "ka":
+                $list = array(
+                    '1'=>Yii::t('service','ka contract'),//KA合约
+                );
+                break;
+            default:
+                $list = array(
+                    '0'=>Yii::t('service','normal contract'),//普通合约
+                    '9'=>Yii::t('service','cross contract')//外包合约
+                );
+        }
+        return $list;
+    }
+
+    //获取需安装名字
+    public static function getContractTypeNameForType($type){
+        $list = self::getContractTypeList("all");
+        $type = "".$type;
+        if(key_exists($type,$list)){
+            return $list[$type];
+        }
+        return $type;
+    }
 }

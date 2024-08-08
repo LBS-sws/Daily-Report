@@ -69,6 +69,7 @@ class ServiceForm extends CFormModel
 	public $prepay_month=0;
 	public $prepay_start=0;
     public $office_id;
+    public $contract_type;
     public $contract_no;
     public $commission;
     public $other_commission;
@@ -171,8 +172,9 @@ class ServiceForm extends CFormModel
             'luu'=>Yii::t('service','luu'),
             'lcd'=>Yii::t('service','lcd'),
             'lud'=>Yii::t('service','lud'),
-            'office_id'=>"归属",
-            'u_system_id'=>"U系统id",
+            'office_id'=>Yii::t('service','office of'),
+            'contract_type'=>Yii::t('service','contract type'),
+            'u_system_id'=>Yii::t('service','u system id'),
 		);
 	}
 
@@ -183,7 +185,7 @@ class ServiceForm extends CFormModel
 	{
 		return $this->getScenario()=="delete"
 		? array(
-			array('id, office_id,tracking,technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, nature_type_two, cust_type, prepay_month,prepay_start,contract_no
+			array('id, office_id,contract_type,tracking,technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, nature_type_two, cust_type, prepay_month,prepay_start,contract_no
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
 				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'),
@@ -204,7 +206,7 @@ class ServiceForm extends CFormModel
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, 
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
 */
-			array('id, u_system_id,office_id, tracking,technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, nature_type_two, cust_type, prepay_month,prepay_start,contract_no
+			array('id, u_system_id,office_id,contract_type, tracking,technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, nature_type_two, cust_type, prepay_month,prepay_start,contract_no
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
 				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm, company_id','safe'),
@@ -447,6 +449,7 @@ class ServiceForm extends CFormModel
                 $this->lcu = $row['lcu'];
                 $this->luu = $row['luu'];
                 $this->office_id = $row['office_id'];
+                $this->contract_type = $row['contract_type'];
                 $this->u_system_id = $row['u_system_id'];
 //                print_r('<pre>');
 //                print_r($this);exit();
@@ -485,7 +488,7 @@ class ServiceForm extends CFormModel
     protected static function historyUpdateList($status){
         $list = array(
             'status_dt','contract_no','company_id','nature_type','nature_type_two',
-            'cust_type','cust_type_name','product_id','paid_type','amt_paid','office_id','u_system_id'
+            'cust_type','cust_type_name','product_id','paid_type','amt_paid','office_id','contract_type','u_system_id'
         );
         switch ($status){
             case "N"://新增
@@ -526,6 +529,9 @@ class ServiceForm extends CFormModel
         switch ($type){
             case "office_id":
                 $value = GetNameToId::getOfficeNameForID($value);
+                break;
+            case "contract_type":
+                $value = GetNameToId::getContractTypeNameForType($value);
                 break;
             case "first_tech_id":
                 $value = GetNameToId::getEmployeeNameForStr($value);
@@ -665,7 +671,7 @@ class ServiceForm extends CFormModel
 							b4_service, b4_paid_type, b4_amt_paid, 
 							ctrt_period, cont_info, first_dt, first_tech_id, first_tech, reason,tracking,
 							status, status_dt, remarks, remarks2, ctrt_end_dt,
-							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,office_id,u_system_id,
+							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,contract_type,office_id,u_system_id,
 							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,prepay_month,prepay_start
 						) values (
 							:service_new_id,:company_id, :company_name, :product_id, :service, :nature_type, :two_nature_type, :cust_type, 
@@ -673,7 +679,7 @@ class ServiceForm extends CFormModel
 							:b4_service, :b4_paid_type, :b4_amt_paid, 
 							:ctrt_period, :cont_info, :first_dt, :first_tech_id, :first_tech, :reason,:tracking,
 							:status, :status_dt, :remarks, :remarks2, :ctrt_end_dt,
-							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, :cust_type_name,:pieces,:office_id,:u_system_id,
+							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, :cust_type_name,:pieces,:contract_type,:office_id,:u_system_id,
 							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3,:prepay_month,:prepay_start
 						)";
 				$this->execSql($connection,$sql);
@@ -736,6 +742,7 @@ class ServiceForm extends CFormModel
                             prepay_month = :prepay_month, 
                             prepay_start = :prepay_start,                  
                             office_id = :office_id,                  
+                            contract_type = :contract_type,                  
                             u_system_id = :u_system_id,                  
 							luu = :luu 
 						where id = :id 
@@ -773,6 +780,10 @@ class ServiceForm extends CFormModel
 		if (strpos($sql,':office_id')!==false){
             $this->office_id = empty($this->office_id)?null:$this->office_id;
             $command->bindParam(':office_id',$this->office_id,PDO::PARAM_INT);
+        }
+		if (strpos($sql,':contract_type')!==false){
+            $this->contract_type = $this->contract_type===""?null:$this->contract_type;
+            $command->bindParam(':contract_type',$this->contract_type,PDO::PARAM_INT);
         }
 		if (strpos($sql,':u_system_id')!==false){
             $this->u_system_id = empty($this->u_system_id)?null:$this->u_system_id;
