@@ -112,6 +112,7 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 				<div class="col-sm-10">
 				<?php
                 $fastCityList = UserForm::getCityListForArea();
+                echo TbHtml::checkBox("0",false,array('label'=>"全部","class"=>"fastChange",'data-city'=>"",'labelOptions'=>array("class"=>"checkbox-inline")));
                 foreach ($fastCityList as $row){
                     echo TbHtml::checkBox($row["code"],false,array('label'=>$row["name"],"class"=>"fastChange",'data-city'=>$row["city"],'labelOptions'=>array("class"=>"checkbox-inline")));
                 }
@@ -406,7 +407,7 @@ $('.fastChange').change(function(){
     var checkBool = $(this).is(':checked')?true:false;
     $('#UserForm_look_city').find('input[type=\"checkbox\"]').each(function(){
         var city = ','+$(this).val()+',';
-        if(cityStr.indexOf(city)>-1){
+        if(cityStr==',,'||cityStr.indexOf(city)>-1){
             $(this).prop('checked',checkBool);
         }
     });
