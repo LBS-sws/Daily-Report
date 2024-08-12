@@ -162,20 +162,20 @@ class CalcStaff extends Calculation {
 		$sql = "select e.city, count(e.code) as counter from (
 					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position, a.start_time
 					from hr$suffix.hr_employee a
-					where a.id not in (
+					where a.table_type=1 and a.id not in (
 						select w.employee_id
 						from hr$suffix.hr_employee_operate w
 						left outer join hr$suffix.hr_employee_operate x on w.employee_id=x.employee_id and x.id > w.id
-						where x.id is null and w.lud > '$d2 23:59:59'
+						where w.table_type=1 and x.id is null and w.lud > '$d2 23:59:59'
 					)
 				union
 					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position, b.start_time
 					from hr$suffix.hr_employee_operate b
 					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
-					where c.id is null and b.lud > '$d2 23:59:59'
+					where b.table_type=1 and c.id is null and b.lud > '$d2 23:59:59'
 				) e
 					inner join hr$suffix.hr_employee f on f.id = e.employee_id
-				where (ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) < date_add('$d1', interval -1 month))
+				where f.table_type=1 and (ifnull(str_to_date(e.entry_time,'%Y/%m/%d'),str_to_date(e.entry_time,'%Y-%m-%d')) < date_add('$d1', interval -1 month))
 				and (ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) is null or 
 					ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) >= date_add('$d1', interval 1 month))
 					and e.start_time is null
@@ -198,21 +198,21 @@ class CalcStaff extends Calculation {
 					select a.id as employee_id, a.city, a.code, a.name, a.staff_type, a.staff_status, a.entry_time, a.leave_time, a.lud, a.position, a.start_time,
 					if((isnull(a.end_time) or (a.end_time = '')),NULL,(ifnull(str_to_date(a.end_time,'%Y/%m/%d'),str_to_date(a.end_time,'%Y-%m-%d')) + interval 1 day)) AS ctrt_renew_dt
 					from hr$suffix.hr_employee a
-					where a.id not in (
+					where a.table_type=1 and  a.id not in (
 						select w.employee_id
 						from hr$suffix.hr_employee_operate w
 						left outer join hr$suffix.hr_employee_operate x on w.employee_id=x.employee_id and x.id > w.id
-						where x.id is null and w.lud > '$d2 23:59:59'
+						where w.table_type=1 and x.id is null and w.lud > '$d2 23:59:59'
 					)
 				union
 					select b.employee_id, b.city, b.code, b.name, b.staff_type, b.staff_status, b.entry_time, b.leave_time, b.lud, b.position, b.start_time,
 					if((isnull(b.end_time) or (b.end_time = '')),NULL,(ifnull(str_to_date(b.end_time,'%Y/%m/%d'),str_to_date(b.end_time,'%Y-%m-%d')) + interval 1 day)) AS ctrt_renew_dt
 					from hr$suffix.hr_employee_operate b
 					left outer join hr$suffix.hr_employee_operate c on b.employee_id=c.employee_id and c.id > b.id
-					where c.id is null and b.lud > '$d2 23:59:59'
+					where b.table_type=1 and  c.id is null and b.lud > '$d2 23:59:59'
 				) e
 				inner join hr$suffix.hr_employee f on f.id = e.employee_id
-				where e.start_time < e.ctrt_renew_dt and e.ctrt_renew_dt < date_add('$d1', interval -1 month)
+				where f.table_type=1 and  e.start_time < e.ctrt_renew_dt and e.ctrt_renew_dt < date_add('$d1', interval -1 month)
 					and (ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) is null or 
 					ifnull(str_to_date(f.leave_time,'%Y/%m/%d'),str_to_date(f.leave_time,'%Y-%m-%d')) >= date_add('$d1', interval 1 month))
 					and e.start_time is not null and e.ctrt_renew_dt is not null
