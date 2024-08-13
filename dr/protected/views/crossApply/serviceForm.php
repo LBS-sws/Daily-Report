@@ -176,6 +176,12 @@ $serviceModel->nature_type_two=GetNameToId::getNatureTwoNameForId($serviceModel-
     </div>
 </div>
 <div class="form-group">
+    <?php echo Tbhtml::label($serviceModel->getAttributeLabel('u_system_id'),'',array('class'=>"col-lg-2 control-label")); ?>
+    <div class="col-lg-2">
+        <?php echo Tbhtml::textField('service[u_system_id]',$serviceModel->u_system_id,array('readonly'=>true)); ?>
+    </div>
+</div>
+<div class="form-group">
     <?php echo Tbhtml::label($serviceModel->getAttributeLabel('lcu'),'',array('class'=>"col-lg-2 control-label")); ?>
     <div class="col-lg-2">
         <?php echo Tbhtml::textField('service[lcu]',$serviceModel->lcu,array('readonly'=>true)); ?>
