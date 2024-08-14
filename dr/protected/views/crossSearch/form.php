@@ -31,15 +31,6 @@ $this->pageTitle=Yii::app()->name . ' - CrossSearch Form';
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
 				'submit'=>Yii::app()->createUrl('crossSearch/index')));
 		?>
-<?php if ($model->status_type==1): ?>
-			<?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Approve'), array(
-				'submit'=>Yii::app()->createUrl('crossSearch/audit')));
-			?>
-            <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Deny'), array(
-                    'data-toggle'=>'modal','data-target'=>'#denyDialog',)
-            );
-            ?>
-<?php endif ?>
 	</div>
             <?php if (Yii::app()->user->validFunction('CN30')): ?>
             <div class="btn-group pull-right" role="group">

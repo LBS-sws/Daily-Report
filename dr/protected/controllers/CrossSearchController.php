@@ -24,7 +24,7 @@ class CrossSearchController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('audit','edit','reject'),
+				'actions'=>array('edit'),
 				'expression'=>array('CrossSearchController','allowReadWrite'),
 			),
 			array('allow', 

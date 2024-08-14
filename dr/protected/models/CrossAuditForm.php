@@ -128,7 +128,7 @@ class CrossAuditForm extends CrossApplyForm
 		if (strpos($sql,':reject_note')!==false)
 			$command->bindParam(':reject_note',$this->reject_note,PDO::PARAM_STR);
         if (strpos($sql,':audit_user')!==false)
-            $command->bindParam(':audit_user',$this->audit_user,PDO::PARAM_STR);
+            $command->bindParam(':audit_user',$uid,PDO::PARAM_STR);
         if (strpos($sql,':audit_date')!==false){
             $this->audit_date = date_format(date_create(),"Y/m/d H:i:s");
             $command->bindParam(':audit_date',$this->audit_date,PDO::PARAM_STR);
