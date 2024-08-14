@@ -196,5 +196,6 @@ return array(
     'Cross Delete'=>'删除交叉派单',
     'KA Summary'=>'KA合同分析查询',
     'KA Comparison'=>'KA合同同比分析',
+    'Outsource'=>'外包数据分析',
 );
 ?>

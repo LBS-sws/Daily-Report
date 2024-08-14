@@ -379,6 +379,10 @@ class CurlNotesList extends CListPageModel
             "getTechnicianSNC"=>array("args"=>array("year"=>"2023","month"=>"2","city"=>"'{$city}'")),
             //获取IAIB总数/remote/countlAlB.php
             "countIAIB"=>array("args"=>array("year"=>"2024","month"=>"5")),
+            //获取外包总金额
+            "getOutsourceCountMoney"=>array("args"=>array("start"=>"2024-08-01","end"=>"2024-08-31","staffList"=>"","city"=>"'{$city}'")),
+            //获取外包金额详情
+            "getOutsourceServiceMoney"=>array("args"=>array("start"=>"2024-08-01","end"=>"2024-08-31","staffList"=>"","city"=>"'{$city}'")),
         );
         if(key_exists($type,$list)){
             $params=array();

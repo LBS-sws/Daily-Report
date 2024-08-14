@@ -113,6 +113,7 @@ class DownSummary{
 
     public function setSummaryHeader($headerArr,$bool=false){
         if(!empty($headerArr)){
+            $this->th_num=0;
             for ($i=0;$i<$this->colTwo;$i++){
                 $startStr = $this->getColumn($i);
                 $this->objPHPExcel->getActiveSheet()->mergeCells($startStr.$this->current_row.':'.$startStr.($this->current_row+1));
@@ -227,8 +228,8 @@ class DownSummary{
         }
     }
 
-    public function setSummaryData($data){
-        if(key_exists("MO",$data)){//是否有澳門地區的數據
+    public function setSummaryData($data,$bool=true){
+        if($bool&&key_exists("MO",$data)){//是否有澳門地區的數據
             $moData=$data["MO"];
             unset($data["MO"]);
         }else{
@@ -269,6 +270,18 @@ class DownSummary{
                             )
                         )
                     );
+                //平均值
+                $col = 0;
+                if(isset($regionList["average"])){
+                    $this->current_row++;
+                    foreach ($regionList["average"] as $keyStr=>$text){
+                        $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
+                        $col++;
+                    }
+                    $this->objPHPExcel->getActiveSheet()
+                        ->getStyle("A{$this->current_row}:{$thEndStr}{$this->current_row}")
+                        ->applyFromArray(array('font'=>array('bold'=>true)));
+                }
                 $this->current_row++;
                 $this->current_row++;
             }

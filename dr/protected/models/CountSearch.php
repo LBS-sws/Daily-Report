@@ -1889,4 +1889,16 @@ class CountSearch extends SearchForCurlU {
         }
         return $sql;
     }
+
+    //获取U系统的服务单数据(外包人员)-汇总
+    public static function getOutsourceCountMoney($startDay,$endDay,$staffList,$city_allow=""){
+        $list = SystemU::getOutsourceCountMoney($startDay,$endDay,$staffList,$city_allow);
+        return isset($list["data"])?$list["data"]:array();
+    }
+
+    //获取U系统的服务单数据(外包人员)-详情
+    public static function getOutsourceServiceMoney($startDay,$endDay,$staffList,$city_allow=""){
+        $list = SystemU::getOutsourceServiceMoney($startDay,$endDay,$staffList,$city_allow);
+        return isset($list["data"])?$list["data"]:array();
+    }
 }

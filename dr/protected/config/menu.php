@@ -241,6 +241,10 @@ return array(
                 'access'=>'G02',
                 'url'=>'/comprehensive/index',
             ),
+            'Outsource'=>array( //外包数据分析
+                'access'=>'G28',
+                'url'=>'/outsource/index',
+            ),
             'Bonus Month'=>array( //月度提成奖金表
                 'access'=>'G24',
                 'url'=>'/bonusMonth/index',

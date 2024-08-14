@@ -274,5 +274,12 @@ return array(
     'KA Technician'=>'KA技术服务',
     'stop sum none'=>'计算停单率的终止金额',
     'num stop show'=>'暂停后终止服务金额',
+
+    'Actual service amount'=>'实际服务金额',
+    'Outsource amount'=>'外包服务总金额',
+    'Outsource rate'=>'外包比例',
+    'Outsource cost amount'=>'外包成本',
+    'Outsource cost rate'=>'外包成本/外包服务总金额%',
+    'Outsource productivity'=>'外包人员生产力',
 );
 ?>
