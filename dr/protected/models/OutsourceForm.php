@@ -225,11 +225,9 @@ class OutsourceForm extends CFormModel
             $regionList = $endRegionList[$cityCode];
             $defStaffList=$this->defMoreStaff($staffCode,$staffList["name"]);
             $defStaffList["city"]=$cityCode;
-            if(key_exists($cityCode,$citySetList)){
-                $defStaffList["city_name"]=$citySetList[$cityCode]["city_name"];
-                $defStaffList["region_code"]=$citySetList[$cityCode]["region_code"];
-                $defStaffList["region_name"]=$citySetList[$cityCode]["region_name"];
-            }
+            $defStaffList["city_name"]=key_exists($cityCode,$citySetList)?$citySetList[$cityCode]["city_name"]:$cityCode;
+            $defStaffList["region_code"]=key_exists($cityCode,$citySetList)?$citySetList[$cityCode]["region_code"]:"none";
+            $defStaffList["region_name"]=key_exists($cityCode,$citySetList)?$citySetList[$cityCode]["region_name"]:"";
             $defStaffList["position_name"]=$staffList["position_name"];
             $money = 0;
             if(key_exists($staffCode,$outStaffMoney)&&!empty($outStaffMoney[$staffCode])){

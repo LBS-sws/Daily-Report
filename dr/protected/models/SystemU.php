@@ -281,7 +281,7 @@ class SystemU {
             "key"=>$key,
             "begin"=>$start,
             "end"=>$end,
-            "staffList"=>$staffList,
+            "staffs"=>$staffList,
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
@@ -326,7 +326,7 @@ class SystemU {
             "key"=>$key,
             "begin"=>$start,
             "end"=>$end,
-            "staffList"=>$staffList,
+            "staffs"=>$staffList,
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
@@ -770,13 +770,14 @@ class SystemU {
         if(json_decode($out,true)!==false){
             $json = json_decode($out,true);
             if(isset($json["code"])&&isset($json["data"])&&$json["code"]==200){
-                $bool = false;
                 echo "返回数组：";
                 echo "<br/>";
                 var_dump($json["data"]);
             }
         }
         if($bool){
+            echo "<br/>";
+            echo "<br/>";
             echo "响应数据：";
             echo "<br/>";
             echo $out;
