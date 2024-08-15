@@ -16,4 +16,5 @@ CREATE TABLE `swo_send_set_jd` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='金蝶关联的配置表';
 
-alter table swo_supplier add local_bool int(1) NOT NULL DEFAULT 1 COMMENT '是否本地物料 0:否 1：是' after city;
+alter table swo_supplier add local_bool int(1) NOT NULL DEFAULT 1 COMMENT '是否本地供应商 0:否 1：是' after city;
+alter table swo_supplier add display int(1) NOT NULL DEFAULT 0 COMMENT '是否显示 0:否 1：是' after city;
