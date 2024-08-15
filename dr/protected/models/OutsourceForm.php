@@ -218,7 +218,6 @@ class OutsourceForm extends CFormModel
         foreach ($staffAllList["staffList"] as $staffList){ //外包员工表格
             $staffCode = "".$staffList["code"];
             $cityCode = "".$staffList["city"];
-            $exprList = array();//额外增加的数组
             if(!key_exists($cityCode,$endRegionList)){
                 $endRegionList[$cityCode] = self::getEndRegionList($cityCode,$citySetList);
             }
@@ -233,34 +232,29 @@ class OutsourceForm extends CFormModel
             if(key_exists($staffCode,$outStaffMoney)&&!empty($outStaffMoney[$staffCode])){
                 foreach ($outStaffMoney[$staffCode] as $staffCity=>$staffCityMoney){
                     if($staffCity==$cityCode){
-                        $money = $staffCityMoney;
+                        $money = $staffCityMoney===false?0:$staffCityMoney;
                         continue;
                     }else{
-                        if(!in_array($staffCity,$this->outCity)){
-                            $this->outCity[]=$staffCity;
+                        if($staffCityMoney!==false){
+                            if(!in_array($staffCity,$this->outCity)){
+                                $this->outCity[]=$staffCity;
+                            }
+                            $exprDef = $defStaffList;
+                            $exprDef["city"] = $staffCity;
+                            $exprDef["city_name"]=key_exists($staffCity,$citySetList)?$citySetList[$staffCity]["city_name"]:$staffCity;
+                            $exprDef["region_code"]=key_exists($staffCity,$citySetList)?$citySetList[$staffCity]["region_code"]:"";
+                            $exprDef["region_name"]=key_exists($staffCity,$citySetList)?$citySetList[$staffCity]["region_name"]:"";
+                            $exprDef["service_money"]=$staffCityMoney;
+                            if(!key_exists($staffCity,$endRegionList)){
+                                $endRegionList[$staffCity] = self::getEndRegionList($staffCity,$citySetList);
+                            }
+                            $this->pushDataTwoForArr($dataTwo,$exprDef,$endRegionList[$staffCity]);
                         }
-                        $exprDef = $defStaffList;
-                        $exprDef["city"] = $staffCity;
-                        $exprDef["city_name"]=key_exists($staffCity,$citySetList)?$citySetList[$staffCity]["city_name"]:$staffCity;
-                        $exprDef["region_code"]=key_exists($staffCity,$citySetList)?$citySetList[$staffCity]["region_code"]:"";
-                        $exprDef["region_name"]=key_exists($staffCity,$citySetList)?$citySetList[$staffCity]["region_name"]:"";
-                        $exprDef["service_money"]=$staffCityMoney;
-                        $exprList[]=$exprDef;
                     }
                 }
             }
             $defStaffList["service_money"]=$money;
-            if(!key_exists($regionList["region_code"],$dataTwo)){
-                $dataTwo[$regionList["region_code"]]=array(
-                    "region"=>$regionList["region_code"],
-                    "region_name"=>$regionList["region_name"],
-                    "list"=>array(),
-                );
-            }
-            $dataTwo[$regionList["region_code"]]["list"][]=$defStaffList;
-            if(!empty($exprList)){
-                $dataTwo[$regionList["region_code"]]["list"]=array_merge($dataTwo[$regionList["region_code"]]["list"],$exprList);
-            }
+            $this->pushDataTwoForArr($dataTwo,$defStaffList,$regionList);
         }
 
 
@@ -282,6 +276,17 @@ class OutsourceForm extends CFormModel
         $session = Yii::app()->session;
         $session['outsource_c01'] = $this->getCriteria();
         return true;
+    }
+
+    private function pushDataTwoForArr(&$dataTwo,$arr,$regionList){
+        if(!key_exists($regionList["region_code"],$dataTwo)){
+            $dataTwo[$regionList["region_code"]]=array(
+                "region"=>$regionList["region_code"],
+                "region_name"=>$regionList["region_name"],
+                "list"=>array(),
+            );
+        }
+        $dataTwo[$regionList["region_code"]]["list"][]=$arr;
     }
 
     //設置該城市的默認值
