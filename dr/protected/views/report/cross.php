@@ -47,7 +47,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
                         echo TbHtml::checkBox("0",false,array('label'=>"全部","class"=>"fastChange",'data-city'=>"",'labelOptions'=>array("class"=>"checkbox-inline")));
                         $fastCityList = UserForm::getCityListForArea();
                         foreach ($fastCityList as $row){
-                            echo TbHtml::checkBox($row["code"],false,array('label'=>$row["name"],"class"=>"fastChange",'data-city'=>$row["city"],'labelOptions'=>array("class"=>"checkbox-inline")));
+                            echo TbHtml::checkBox($row["code"],false,array('label'=>$row["name"],"class"=>"fastChange hide",'data-city'=>$row["city"],'labelOptions'=>array("class"=>"checkbox-inline hide")));
                         }
                         ?>
                     </div>
@@ -62,7 +62,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
                             foreach ($item as $key=>$value) {$model->city[] = $key;}
                         }
                         echo $form->inlineCheckBoxList($model,'city', $item,
-                            array('id'=>'look_city'));
+                            array('class'=>'look_city'));
                         ?>
                     </div>
                 </div>
@@ -141,12 +141,21 @@ if (!empty($datefields)) {
 $js="
 $('.fastChange').change(function(){
     var cityStr = ','+$(this).data('city')+',';
-    console.log(cityStr);
     var checkBool = $(this).is(':checked')?true:false;
-    $('#report_look_city').find('input[type=\"checkbox\"]').each(function(){
+    $('.look_city').each(function(){
         var city = ','+$(this).val()+',';
         if(cityStr==',,'||cityStr.indexOf(city)>-1){
             $(this).prop('checked',checkBool);
+        }
+    });
+});
+
+$('.look_city').each(function(){
+    var city = ','+$(this).val()+',';
+    $('.fastChange.hide').each(function(){
+        var cityStr = ','+$(this).data('city')+',';
+        if(cityStr.indexOf(city)>-1){
+            $(this).removeClass('hide').parent('label').removeClass('hide');
         }
     });
 });
