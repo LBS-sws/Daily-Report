@@ -253,6 +253,7 @@ class GetNameToId{
             case "ka":
                 $list = array(
                     '1'=>Yii::t('service','ka contract'),//KA合约
+                    '9'=>Yii::t('service','cross contract')//外包合约
                 );
                 break;
             default:

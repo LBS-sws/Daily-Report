@@ -75,6 +75,7 @@ class ServiceForm extends CFormModel
     public $other_commission;
     public $tracking;
     public $u_system_id;
+    public $is_intersect=0;//是否允许交叉派单
 
 	public $files;
 
@@ -175,6 +176,7 @@ class ServiceForm extends CFormModel
             'office_id'=>Yii::t('service','office of'),
             'contract_type'=>Yii::t('service','contract type'),
             'u_system_id'=>Yii::t('service','u system id'),
+            'is_intersect'=>Yii::t('service','is intersect'),
 		);
 	}
 
@@ -185,7 +187,7 @@ class ServiceForm extends CFormModel
 	{
 		return $this->getScenario()=="delete"
 		? array(
-			array('id, office_id,contract_type,tracking,technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, nature_type_two, cust_type, prepay_month,prepay_start,contract_no
+			array('id, office_id,is_intersect,contract_type,tracking,technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, nature_type_two, cust_type, prepay_month,prepay_start,contract_no
 				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
 				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'),
@@ -451,6 +453,7 @@ class ServiceForm extends CFormModel
                 $this->office_id = $row['office_id'];
                 $this->contract_type = $row['contract_type'];
                 $this->u_system_id = $row['u_system_id'];
+                $this->is_intersect = $row['is_intersect'];
 //                print_r('<pre>');
 //                print_r($this);exit();
 				break;

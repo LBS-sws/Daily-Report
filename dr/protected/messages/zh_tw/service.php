@@ -218,5 +218,6 @@ return array(
     'normal contract'=>'普通合約',
     'ka contract'=>'ka合約',
     'cross contract'=>'外包合約',
+    'is intersect'=>'是否交叉',
 );
 ?>

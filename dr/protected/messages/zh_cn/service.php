@@ -220,5 +220,6 @@ return array(
     'normal contract'=>'普通合约',
     'ka contract'=>'ka合约',
     'cross contract'=>'外包合约',
+    'is intersect'=>'是否交叉',
 );
 ?>

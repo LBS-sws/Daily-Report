@@ -221,6 +221,7 @@ class ServiceKAForm extends ServiceForm
                 $this->office_id = $row['office_id'];
                 $this->contract_type = $row['contract_type'];
                 $this->u_system_id = $row['u_system_id'];
+                $this->is_intersect = $row['is_intersect'];
 //                print_r('<pre>');
 //                print_r($this);exit();
 				break;

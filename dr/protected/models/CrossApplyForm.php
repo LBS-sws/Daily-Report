@@ -162,10 +162,15 @@ class CrossApplyForm extends CFormModel
             $tableNameTwo="swo_service_ka_no";
         }
         $city_allow = Yii::app()->user->city_allow();
-        $row = Yii::app()->db->createCommand()->select("a.city,a.u_system_id,b.contract_no")->from("{$tableNameOne} a")
+        $row = Yii::app()->db->createCommand()->select("a.city,a.is_intersect,a.u_system_id,b.contract_no")
+            ->from("{$tableNameOne} a")
             ->leftJoin("{$tableNameTwo} b","a.id=b.service_id")
             ->where("a.id=:id and a.city in ({$city_allow})",array(":id"=>$id))->queryRow();
         if($row){
+            if(empty($row["is_intersect"])){
+                $this->addError($attribute, "该合约不允许交叉派单");
+                return false;
+            }
             if(empty($row["u_system_id"])){
                 $this->addError($attribute, "派单系统id不能为空");
                 return false;
@@ -489,6 +494,9 @@ class CrossApplyForm extends CFormModel
                 }
                 $endCross = $this->getEndCrossListForTypeAndId($this->table_type,$id);
                 $row["error"] = "";
+                if(empty($row["is_intersect"])){
+                    $row["error"] = "该合约不允许交叉派单";
+                }
                 if(empty($row["contract_no"])){
                     $row["error"] = "合约编号不能为空";
                 }

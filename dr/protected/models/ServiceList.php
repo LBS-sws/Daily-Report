@@ -143,7 +143,7 @@ class ServiceList extends CListPageModel
 					'city_name'=>$record['city_name'],
 					'office_name'=>GetNameToId::getOfficeNameForID($record['office_id']),
 					'no_of_attm'=>$record['no_of_attm'],
-                    'cross_bool'=>$record['status']=="N"&&self::validateCross($record['id']),
+                    'cross_bool'=>$record['status']=="N"&&!empty($record['is_intersect'])&&self::validateCross($record['id']),
 				);
 			}
 		}
