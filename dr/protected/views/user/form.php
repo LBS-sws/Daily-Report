@@ -111,9 +111,12 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
                 ?>
 				<div class="col-sm-10">
 				<?php
+                $allCityList=array();
                 $fastCityList = UserForm::getCityListForArea();
                 echo TbHtml::checkBox("0",false,array('label'=>"全部","class"=>"fastChange",'data-city'=>"",'labelOptions'=>array("class"=>"checkbox-inline")));
                 foreach ($fastCityList as $row){
+                    $allCityList[$row["code"]]=$row["name"];
+                    $row["city"] = empty($row["city"])?$row["code"]:$row["city"];
                     echo TbHtml::checkBox($row["code"],false,array('label'=>$row["name"],"class"=>"fastChange",'data-city'=>$row["city"],'labelOptions'=>array("class"=>"checkbox-inline")));
                 }
                 ?>
@@ -123,7 +126,8 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 				<?php echo $form->labelEx($model,'look_city',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-10">
 				<?php
-                echo $form->inlineCheckBoxList($model, 'look_city', UserForm::getCityListForCity(),
+                $allCityList = array_merge(UserForm::getCityListForCity(),$allCityList);
+                echo $form->inlineCheckBoxList($model, 'look_city', $allCityList,
 					array('disabled'=>($model->scenario=='view'),'id'=>'look_city'));
 				?>
 				</div>

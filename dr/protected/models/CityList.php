@@ -74,6 +74,8 @@ class CityList extends CListPageModel
 				case 'ka_bool':
 					$order .= " order by a.ka_bool ";
 					break;
+                default:
+                    $order .= " order by {$this->orderField} ";
 			}
 			if ($this->orderType=='D') $order .= "desc ";
 		}

@@ -11,6 +11,7 @@ class CityForm extends CFormModel
 	public $currency;
 	public $SARANK;//销售系统排行榜
 	public $DRRANK;//日报表系统排行榜
+	public $MMRANK;//技术部综合排行榜
 	public $OPERA;//营业报告（营运系统）
 	public $JD_city;//金蝶组织编号
     //public $BS_city;//北森组织编号
@@ -24,6 +25,8 @@ class CityForm extends CFormModel
         'DRRANK'=>array("type"=>"list","func"=>array("CityForm","getRankList"),"param"=>array()),
         //营业报告（营运系统）
         'OPERA'=>array("type"=>"list","func"=>array("CityForm","getRankList"),"param"=>array()),
+        //技术部综合排行榜（营运系统）
+        'MMRANK'=>array("type"=>"list","func"=>array("CityForm","getRankList"),"param"=>array()),
         //金蝶系统编号
         'JD_city'=>array("type"=>"text"),
         //北森组织编号
@@ -46,6 +49,7 @@ class CityForm extends CFormModel
 			'ka_bool'=>Yii::t('code','city type'),
 			'SARANK'=>Yii::t('code','rank for sales'),
 			'DRRANK'=>Yii::t('code','rank for dr'),
+			'MMRANK'=>Yii::t('code','rank for technical'),
 			'OPERA'=>Yii::t('code','operation month'),
 			'JD_city'=>Yii::t('code','JD City'),
 			'BS_city'=>Yii::t('code','BS City'),
