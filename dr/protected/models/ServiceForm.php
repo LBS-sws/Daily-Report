@@ -343,6 +343,7 @@ class ServiceForm extends CFormModel
                 $data = $row;
                 unset($data["id"]);
                 unset($data["contract_no"]);
+                $data["contract_type"]=$data["contract_type"]==0?1:$data["contract_type"];
                 Yii::app()->db->createCommand()->insert("swo_service_ka",$data);
                 $this->id = Yii::app()->db->getLastInsertID();
                 Yii::app()->db->createCommand()->insert("swo_service_ka_no",array(

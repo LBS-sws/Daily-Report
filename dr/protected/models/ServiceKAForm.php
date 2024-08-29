@@ -111,6 +111,7 @@ class ServiceKAForm extends ServiceForm
                 $data = $row;
                 unset($data["id"]);
                 unset($data["contract_no"]);
+                $data["contract_type"]=$data["contract_type"]==1?0:$data["contract_type"];
                 Yii::app()->db->createCommand()->insert("swo_service",$data);
                 $this->id = Yii::app()->db->getLastInsertID();
                 Yii::app()->db->createCommand()->insert("swo_service_contract_no",array(
