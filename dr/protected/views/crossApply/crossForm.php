@@ -10,6 +10,9 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
     <li role="presentation">
         <a href="#service" aria-controls="service" role="tab" data-toggle="tab"><?php echo $table_type_name;?></a>
     </li>
+    <li role="presentation">
+        <a href="#crossTable" aria-controls="crossTable" role="tab" data-toggle="tab"><?php echo Yii::t("service","Cross Table");?></a>
+    </li>
 </ul>
 
 <!-- Tab panes -->
@@ -176,6 +179,12 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
     <div role="tabpanel" class="tab-pane" id="service">
         <p>&nbsp;</p>
         <?php $this->renderPartial('//crossApply/serviceForm',array("model"=>$model,"form"=>$form)); ?>
+    </div>
+
+    <!-- service -->
+    <div role="tabpanel" class="tab-pane" id="crossTable">
+        <p>&nbsp;</p>
+        <?php $this->renderPartial('//crossApply/crossTable',array("model"=>$model,"form"=>$form)); ?>
     </div>
 </div>
 

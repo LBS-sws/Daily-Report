@@ -221,6 +221,15 @@ class CrossApplyForm extends CFormModel
         return $row;
     }
 
+    public static function getAllCrossListForTypeAndId($table_type,$service_id){
+        $rows = Yii::app()->db->createCommand()->select("*")
+            ->from("swo_cross")
+            ->where("table_type=:table_type and service_id=:service_id and status_type not in (2,6)",array(
+                ":service_id"=>$service_id,":table_type"=>$table_type
+            ))->order("lcd asc")->queryAll();
+        return $rows;
+    }
+
     public static function getFlowCross($table_type,$service_id){
         $row = Yii::app()->db->createCommand()->select("*")
             ->from("swo_cross")

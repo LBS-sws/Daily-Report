@@ -219,5 +219,6 @@ return array(
     'ka contract'=>'ka合約',
     'cross contract'=>'外包合約',
     'is intersect'=>'是否交叉',
+    'Cross Table'=>'交叉派單次數詳情',
 );
 ?>
