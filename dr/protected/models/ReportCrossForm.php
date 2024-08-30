@@ -28,8 +28,8 @@ class ReportCrossForm extends CReportForm
 		$this->id = 'RptCross';
 		$this->name = Yii::t('app','Cross report');
 		$this->format = 'EXCEL';
-		$this->city = Yii::app()->user->city();
-		$this->fields = 'start_dt,end_dt,company_status';
+		$this->city = "";
+		$this->fields = 'start_dt,end_dt,company_status,city';
 	}
 
     public function addQueueItem() {

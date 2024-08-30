@@ -28,7 +28,7 @@ class RptCross extends ReportData2{
         $rtn = parent::getSelectString();
         if (isset($this->criteria)) {
             if ($this->fieldExist('company_status')&&!empty($this->criteria->company_status)) {
-                $rtn.= empty($rtn)?"":" ；";
+                $rtn.= empty($rtn)?"":" ；\n";
                 $rtn.= Yii::t('service','status type').': ';
                 $status = $this->criteria->company_status;
                 if(!General::isJSON($status)){
@@ -62,6 +62,16 @@ class RptCross extends ReportData2{
                     $statusSql = "'".implode("','",$statusSql)."'";
                 }
                 $whereSql .= " and a.status_type in ({$statusSql})";
+            }
+            if(isset($this->criteria->city)&&!empty($this->criteria->city)){
+                $city = $this->criteria->city;
+                if(!General::isJSON($city)){
+                    $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+                }else{
+                    $city_allow = json_decode($city,true);
+                    $city_allow = "'".implode("','",$city_allow)."'";
+                }
+                $whereSql .= " and (a.cross_city in ({$city_allow}) or a.old_city in ({$city_allow}) or (a.cross_type=5 and a.qualification_city in ({$city_allow}))) ";
             }
         }
         $rows = Yii::app()->db->createCommand()->select("a.*")

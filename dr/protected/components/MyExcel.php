@@ -222,7 +222,9 @@ class MyExcel {
 	
 	protected function outHeader($sheetid=0) {
 		$this->objPHPExcel->setActiveSheetIndex($sheetid)
+            ->mergeCellsByColumnAndRow(0,1,9,1)
             ->setCellValueByColumnAndRow(0,1, $this->header_title)
+            ->mergeCellsByColumnAndRow(0,2,9,2)
 			->setCellValueByColumnAndRow(0,2, $this->header_string);
 		$this->objPHPExcel->getActiveSheet()->getStyleByColumnAndRow(0,1)->getFont()
 			->setSize(14)
@@ -234,7 +236,9 @@ class MyExcel {
 			->setBold(true)
 			->setItalic(true);
 		$this->objPHPExcel->getActiveSheet()->getStyleByColumnAndRow(0,2)->getAlignment()
-			->setWrapText(false);		
+			->setWrapText(true);
+        $this->objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(30);
+        $this->objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(70);
 
 		$this->current_row = 4;
 		if (!empty($this->hdr_def)) {

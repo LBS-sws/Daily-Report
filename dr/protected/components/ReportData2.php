@@ -20,7 +20,7 @@ class ReportData2 {
 				
 			}
 			if ($this->fieldExist('city')&&!empty($this->criteria->city)) {
-				$rtn.= empty($rtn)?"":" ；";
+				$rtn.= empty($rtn)?"":" ；\n";
 				$rtn.= Yii::t('report','City').': ';
 				$rtn.= General::getCityNameForList($this->criteria->city);
 			}
