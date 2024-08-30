@@ -104,6 +104,10 @@ class CrossApplyForm extends CFormModel
                 if($this->cross_type!=$endCrossList["cross_type"]){
                     $this->addError($attribute, "业务场景与上一次不一致");
                     return false;
+                }else{
+                    $this->qualification_city = $endCrossList["qualification_city"];
+                    $this->qualification_ratio = $endCrossList["qualification_ratio"];
+                    $this->rate_num = $endCrossList["rate_num"];
                 }
             }
 	        if(in_array($this->cross_type,array('5','6','7','8'))){
@@ -517,8 +521,12 @@ class CrossApplyForm extends CFormModel
                         $row["error"] = "业务场景不一致";
                     }elseif (!empty($endCross["cross_city"])&&$this->cross_city!=$endCross["cross_city"]){
                         $row["error"] = "承接城市不一致";
+                    }elseif (!empty($endCross["rate_num"])&&floatval($this->rate_num)!=floatval($endCross["rate_num"])){
+                        $row["error"] = "承接比例不一致";
                     }elseif (!empty($endCross["qualification_city"])&&$this->qualification_city!=$endCross["qualification_city"]){
                         $row["error"] = "资质方不一致";
+                    }elseif (!empty($endCross["qualification_ratio"])&&floatval($this->qualification_ratio)!=floatval($endCross["qualification_ratio"])){
+                        $row["error"] = "资质方比例不一致";
                     }
                 }
                 $flowCross = $this->getFlowCross($this->table_type,$id);

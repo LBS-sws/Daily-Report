@@ -17,6 +17,7 @@ $serviceModel->nature_type_two=GetNameToId::getNatureTwoNameForId($serviceModel-
 <div class="form-group">
     <?php echo Tbhtml::label($serviceModel->getAttributeLabel('status'),'',array('class'=>"col-lg-2 control-label")); ?>
     <div class="col-lg-3">
+        <?php echo Tbhtml::hiddenField('service[id]',$serviceModel->id); ?>
         <?php echo Tbhtml::textField('service[status]',GetNameToId::getServiceStatusForKey($serviceModel->status),array('readonly'=>true)); ?>
     </div>
     <?php echo Tbhtml::label($serviceModel->getAttributeLabel('contract_no'),'',array('class'=>"col-lg-1 control-label")); ?>

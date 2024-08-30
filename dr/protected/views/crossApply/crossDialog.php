@@ -50,7 +50,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","Qualification ratio"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
-            <?php echo Tbhtml::numberField('CrossApply[qualification_ratio]','',array('id'=>'qualification_ratio','min'=>0,'max'=>100,'append'=>"%")); ?>
+            <?php echo Tbhtml::numberField('CrossApply[qualification_ratio]','',array('id'=>'qualification_ratio','min'=>0,'max'=>100,'append'=>"%",'data-val'=>$endCrossList?$endCrossList["qualification_ratio"]:"")); ?>
         </div>
     </div>
     <div class="form-group">
@@ -70,7 +70,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","accept rate"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
-            <?php echo Tbhtml::numberField('CrossApply[rate_num]','',array('id'=>'cross_rate_num','min'=>0,'max'=>100,'append'=>"%")); ?>
+            <?php echo Tbhtml::numberField('CrossApply[rate_num]','',array('id'=>'cross_rate_num','min'=>0,'max'=>100,'append'=>"%",'data-val'=>$endCrossList?$endCrossList["rate_num"]:"")); ?>
         </div>
     </div>
     <div class="form-group">
@@ -101,14 +101,22 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    var pre_cross_city=$('#cross_cross_city').data('city');
 	    var pre_qualification_city=$('#qualification_city').data('city');
 	    var pre_cross_type=$('#cross_type').data('type');
+	    var pre_qualification_ratio=$('#qualification_ratio').data('val');
+	    var pre_cross_rate_num=$('#cross_rate_num').data('val');
 	    if(pre_cross_city!=''&&pre_cross_city!=undefined){
 	        $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_cross_city);
 	    }
 	    if(pre_qualification_city!=''&&pre_qualification_city!=undefined){
-	        $('#qualification_city').val(pre_qualification_city);
+	        $('#qualification_city').attr('readonly','readonly').addClass('readonly').val(pre_qualification_city);
 	    }
 	    if(pre_cross_type!=''&&pre_cross_type!=undefined){
-	        $('#cross_type').val(pre_cross_type).trigger('change');
+	        $('#cross_type').attr('readonly','readonly').addClass('readonly').val(pre_cross_type).trigger('change');
+	    }
+	    if(pre_qualification_ratio!=''&&pre_qualification_ratio!=undefined){
+	        $('#qualification_ratio').attr('readonly','readonly').addClass('readonly').val(pre_qualification_ratio);
+	    }
+	    if(pre_cross_rate_num!=''&&pre_cross_rate_num!=undefined){
+	        $('#cross_rate_num').attr('readonly','readonly').addClass('readonly').val(pre_cross_rate_num);
 	    }
 	});
 	$('#cross_rate_num,#cross_month_amt,#qualification_ratio').on('change',function(){
