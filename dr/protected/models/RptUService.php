@@ -29,7 +29,8 @@ class RptUService extends ReportData2 {
         $endDay = isset($this->criteria->end_dt)?date("Y/m/d",strtotime($this->criteria->end_dt)):date("Y/m/d");
         $this->data=array();
         $list = array();
-        $rows = CountSearch::getTechnicianMoney($startDay,$endDay,$city_allow);
+        //$rows = CountSearch::getTechnicianMoney($startDay,$endDay,$city_allow);
+        $rows = CountSearch::getTechnicianMoney($startDay,$endDay);//由于派单系统不做城市判断，所以查询所有城市
         $UStaffCodeList = array_column($rows,"staff");
         $userList = $this->getUserList($UStaffCodeList,$endDay);
         $cityList = self::getCityList($city_allow);
@@ -39,6 +40,9 @@ class RptUService extends ReportData2 {
             $staff_code = isset($item["staff"])?$item["staff"]:"none";
             $u_city = isset($item["city_code"])?$item["city_code"]:"none";
             $u_city = SummaryForm::resetCity($u_city);
+            if (strpos($city_allow,"'{$u_city}'")===false){
+                continue;//由于派单系统不做城市判断，所以查询所有城市,由LBS删除多余城市
+            }
             $amt = isset($item["amt"])&&is_numeric($item["amt"])?floatval($item["amt"]):0;
             $temp = array(
                 "city_code"=>$u_city,//城市编号
