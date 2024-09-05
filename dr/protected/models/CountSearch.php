@@ -1130,6 +1130,84 @@ class CountSearch extends SearchForCurlU {
     }
 
     //客户服务查询(根據服務類型)（月為鍵名)
+    public static function getServiceForTypeAndTwoToMonth($endDate,$city_allow="",$type="N"){
+        $groupList = array(
+            "IA 客户"=>"IA",
+            "IB 客户"=>"IB",
+            "IC客户"=>"IC",
+            "飘盈香客户"=>"IA",
+            "甲醛客户"=>"IA",
+        );
+        $groupSql="case f.description ";
+        foreach ($groupList as $key=>$item){
+            $groupSql.=" when '{$key}' then '{$item}'";
+        }
+        $groupSql.=" else 'OTHER' end";
+        $year = date("Y",strtotime($endDate));
+        $startDate =$year."/01/01";
+        $maxMonth = date("n",strtotime($endDate));
+        $monthList = array();
+        for ($i=1;$i<=$maxMonth;$i++){
+            $month = $i<10?"0".$i:$i;
+            $monthList["{$year}/{$month}_IA"]=0;
+            $monthList["{$year}/{$month}_IB"]=0;
+            $monthList["{$year}/{$month}_IC"]=0;
+            $monthList["{$year}/{$month}_OTHER"]=0;
+        }
+        $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("({$groupSql})as type_class_name,sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.city,type_class_name,month_dt")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("({$groupSql})as type_class_name,sum(a.amt_paid*a.ctrt_period) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.city,type_class_name,month_dt")->queryAll();//
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+        if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
+            $KARows = Yii::app()->db->createCommand()
+                ->select("({$groupSql})as type_class_name,sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and {$kaSqlPrx}")
+                ->group("a.city,type_class_name,month_dt")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            $listKey = $row["month_dt"]."_".$row["type_class_name"];
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=$monthList;
+            }
+            if(key_exists($listKey,$list[$row["city"]])){
+                $list[$row["city"]][$listKey]+=$row["sum_amount"];
+            }
+        }
+        return $list;
+    }
+
+    //客户服务查询(根據服務類型)（月為鍵名)
     public static function getServiceForTypeToMonthEx($startDate,$endDate,$city_allow="",$type="N"){
         $monthList = array();
         $i=0;

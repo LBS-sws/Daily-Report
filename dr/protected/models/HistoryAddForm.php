@@ -111,6 +111,8 @@ class HistoryAddForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $citySetList = CitySetForm::getCitySetList($city_allow);
+        //服务新增(IA、IB、IC、OTHER)
+        $nowDetailServiceList = CountSearch::getServiceForTypeAndTwoToMonth($this->end_date,$city_allow);
         //服务新增
         $nowServiceList = CountSearch::getServiceForTypeToMonth($this->end_date,$city_allow);
         //获取U系统的產品数据
@@ -124,6 +126,7 @@ class HistoryAddForm extends CFormModel
             $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
             ComparisonForm::setComparisonConfig($defMoreList,$this->search_year,$this->start_date,$city);
 
+            $this->addListForCity($defMoreList,$city,$nowDetailServiceList);
             $this->addListForCity($defMoreList,$city,$nowServiceList);
             $this->addListForCity($defMoreList,$city,$nowInvList,"U");
             $this->addListForCity($defMoreList,$city,$lastServiceList);
@@ -161,6 +164,10 @@ class HistoryAddForm extends CFormModel
             $dateStrOne = $this->search_year."/{$month}";
             $dateStrTwo = $this->last_year."/{$month}";
             $arr[$dateStrOne]=0;
+            $arr[$dateStrOne."_IA"]=0;
+            $arr[$dateStrOne."_IB"]=0;
+            $arr[$dateStrOne."_IC"]=0;
+            $arr[$dateStrOne."_OTHER"]=0;
             $arr[$dateStrOne."_u"]=$arr[$dateStrOne];
             $arr[$dateStrTwo]=0;
             $arr[$dateStrTwo."_u"]=$arr[$dateStrTwo];
@@ -237,35 +244,46 @@ class HistoryAddForm extends CFormModel
     }
 
     private function getTopArr(){
-        $monthArr = array();
+        $monthArrOne = array();
+        $monthArrTwo = array();
         for($i=1;$i<=$this->search_month;$i++){
-            $monthArr[]=array("name"=>$i.Yii::t("summary","Month"));
+            $monthArrOne[]=array("name"=>$i.Yii::t("summary","Month"),"rowspan"=>2);
+            $monthArrTwo[]=array("name"=>$i.Yii::t("summary","Month"),
+                "colspan"=>array(
+                    array("name"=>"IA"),//年初目标
+                    array("name"=>"IB"),//达成目标
+                    array("name"=>"IC"),//滚动目标
+                    array("name"=>"其它"),//达成目标
+                    array("name"=>"合计"),//达成目标
+                )
+            );
         }
-        $monthArr[]=array("name"=>Yii::t("summary","Average"));
+        $monthArrOne[]=array("name"=>Yii::t("summary","Average"),"rowspan"=>2);
+        $monthArrTwo[]=array("name"=>Yii::t("summary","Average"),"rowspan"=>2);
         $topList=array(
-            array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
+            array("name"=>Yii::t("summary","City"),"rowspan"=>3),//城市
             array("name"=>$this->last_year,"background"=>"#f7fd9d",
-                "colspan"=>$monthArr
+                "colspan"=>$monthArrOne
             ),//上一年
             array("name"=>$this->search_year,"background"=>"#fcd5b4",
-                "colspan"=>$monthArr
+                "colspan"=>$monthArrTwo
             )//本年
         );
 
         $topList[]=array("name"=>$this->search_month.Yii::t("summary"," month estimate"),"background"=>"#f2dcdb",
             "colspan"=>array(
-                array("name"=>Yii::t("summary","now week")),//本周
-                array("name"=>Yii::t("summary","last week")),//上周
-                array("name"=>Yii::t("summary","growth")),//加速增长
+                array("name"=>Yii::t("summary","now week"),"rowspan"=>2),//本周
+                array("name"=>Yii::t("summary","last week"),"rowspan"=>2),//上周
+                array("name"=>Yii::t("summary","growth"),"rowspan"=>2),//加速增长
             )
         );//本月預估
 
         $topList[]=array("name"=>Yii::t("summary","Target contrast"),"background"=>"#DCE6F1",
             "colspan"=>array(
-                array("name"=>Yii::t("summary","Start Target")),//年初目标
-                array("name"=>Yii::t("summary","Start Target result")),//达成目标
-                array("name"=>Yii::t("summary","Roll Target")),//滚动目标
-                array("name"=>Yii::t("summary","Roll Target result")),//达成目标
+                array("name"=>Yii::t("summary","Start Target"),"rowspan"=>2),//年初目标
+                array("name"=>Yii::t("summary","Start Target result"),"rowspan"=>2),//达成目标
+                array("name"=>Yii::t("summary","Roll Target"),"rowspan"=>2),//滚动目标
+                array("name"=>Yii::t("summary","Roll Target result"),"rowspan"=>2),//达成目标
             )
         );//目标对比
 
@@ -274,10 +292,10 @@ class HistoryAddForm extends CFormModel
 
     //顯示提成表的表格內容（表頭）
     protected function tableTopHtml(){
-        $this->th_sum = 0;
         $topList = self::getTopArr();
         $trOne="";
         $trTwo="";
+        $trThree="";
         $html="<thead>";
         foreach ($topList as $list){
             $clickName=$list["name"];
@@ -292,18 +310,31 @@ class HistoryAddForm extends CFormModel
             }
             if(!empty($colList)){
                 foreach ($colList as $col){
-                    $colNum++;
-                    $trTwo.="<th style='{$style}'><span>".$col["name"]."</span></th>";
-                    $this->th_sum++;
+                    $threeCol=key_exists("colspan",$col)?$col['colspan']:array();
+                    if(!empty($threeCol)){
+                        foreach ($threeCol as $three){
+                            $colNum++;
+                            $this->th_sum++;
+                            $trThree.="<th style='{$style}'><span>".$three["name"]."</span></th>";
+
+                        }
+                    }else{
+                        $colNum++;
+                        $this->th_sum++;
+                    }
+                    $threeColNum=count($threeCol);
+                    $threeColNum = empty($threeColNum)?1:$threeColNum;
+                    //$this->th_sum++;
+
+                    if(key_exists("rowspan",$col)){
+                        $trTwo.="<th colspan='{$threeColNum}' rowspan='{$col["rowspan"]}' style='{$style}'><span>".$col["name"]."</span></th>";
+                    }else{
+                        $trTwo.="<th colspan='{$threeColNum}' style='{$style}'><span>".$col["name"]."</span></th>";
+                    }
                 }
-            }else{
-                $this->th_sum++;
             }
             $colNum = empty($colNum)?1:$colNum;
-            $trOne.="<th style='{$style}' colspan='{$colNum}'";
-            if($colNum>1){
-                $trOne.=" class='click-th'";
-            }
+            $trOne.="<th style='{$style}' colspan='{$colNum}' class='click-th'";
             if(key_exists("rowspan",$list)){
                 $trOne.=" rowspan='{$list["rowspan"]}'";
             }
@@ -313,7 +344,8 @@ class HistoryAddForm extends CFormModel
             $trOne.=" ><span>".$clickName."</span></th>";
         }
         $html.=$this->tableHeaderWidth();//設置表格的單元格寬度
-        $html.="<tr>{$trOne}</tr><tr>{$trTwo}</tr>";
+        $this->th_sum++;
+        $html.="<tr>{$trOne}</tr><tr>{$trTwo}</tr><tr>{$trThree}</tr>";
         $html.="</thead>";
         return $html;
     }
@@ -353,6 +385,10 @@ class HistoryAddForm extends CFormModel
         for($i=1;$i<=$this->search_month;$i++){
             $month = $i>=10?$i:"0{$i}";
             $bodyKey[]=$this->last_year."/{$month}";
+            $dateTwoList[]=$this->search_year."/{$month}"."_IA";
+            $dateTwoList[]=$this->search_year."/{$month}"."_IB";
+            $dateTwoList[]=$this->search_year."/{$month}"."_IC";
+            $dateTwoList[]=$this->search_year."/{$month}"."_OTHER";
             $dateTwoList[]=$this->search_year."/{$month}";
         }
         $bodyKey[]="last_average";
@@ -428,11 +464,8 @@ class HistoryAddForm extends CFormModel
                             }
                             $tdClass = HistoryAddForm::getTextColorForKeyStr($text,$keyStr);
                             $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][]",$text);
-                            if(strpos($keyStr,'/')!==false){//调试U系统同步数据
-                                $html.="<td class='{$tdClass}' data-u='{$cityList[$keyStr."_u"]}'><span>{$text}</span>{$inputHide}</td>";
-                            }else{
-                                $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
-                            }
+
+                            $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
                         }
                         $html.="</tr>";
                     }
@@ -478,7 +511,7 @@ class HistoryAddForm extends CFormModel
         $this->validateDate("","");
         $headList = $this->getTopArr();
         $excel = new DownSummary();
-        $excel->colTwo=1;
+        $excel->colTwo=0;
         $excel->SetHeaderTitle(Yii::t("app","History Add")."（{$this->search_date}）");
         $titleTwo = $this->start_date." ~ ".$this->end_date."\r\n";
         $titleTwo.="本周:".date("Y/m/d",$this->week_start)." ~ ".date("Y/m/d",$this->week_end)." ({$this->week_day})\r\n";
@@ -490,7 +523,7 @@ class HistoryAddForm extends CFormModel
         }
         $excel->SetHeaderString($titleTwo);
         $excel->init();
-        $excel->setSummaryHeader($headList);
+        $excel->setHistoryAddHeader($headList);
         $excel->setSummaryData($excelData);
         $excel->outExcel(Yii::t("app","History Add"));
     }

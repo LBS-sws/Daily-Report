@@ -115,22 +115,21 @@ $this->pageTitle=Yii::app()->name . ' - HistoryAdd Form';
 $js="
     $('.click-th').click(function(){
         var contNum = 1;
-        var startNum=contNum;
+        var startNum=0;
         var endNum = $(this).attr('colspan');
+        endNum = (endNum==undefined||endNum=='')?1:parseInt(endNum,10);
         $(this).prevAll('.click-th').each(function(){
             var colspan = $(this).attr('colspan');
-            startNum += parseInt(colspan,10);
+            colspan = (colspan==undefined||colspan=='')?1:parseInt(colspan,10);
+            startNum += colspan;
         });
-        endNum = parseInt(endNum,10)+startNum;
+        endNum = endNum+startNum;
         if($(this).hasClass('active')){
             $(this).children('span').text($(this).data('text'));
             $(this).removeClass('active');
             $('#historyAdd>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = $(this).data('width')+'px';
                 $(this).width(width);
-            });
-            $('#historyAdd>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
-                $(this).children('span').text($(this).data('text'));
             });
             $('#historyAdd>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
@@ -144,10 +143,6 @@ $js="
             $('#historyAdd>thead>tr').eq(0).children().slice(startNum,endNum).each(function(){
                 var width = '15px';
                 $(this).width(width);
-            });
-            $('#historyAdd>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
-                $(this).data('text',$(this).text());
-                $(this).children('span').text('');
             });
             $('#historyAdd>tbody>tr').each(function(){
                 $(this).children().slice(startNum,endNum).each(function(){
