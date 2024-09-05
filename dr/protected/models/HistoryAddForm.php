@@ -148,6 +148,7 @@ class HistoryAddForm extends CFormModel
                 }
                 if($str==="U"&&key_exists($dateStr."_u",$data)){
                     $data[$dateStr."_u"]+=$value;
+                    $data[$dateStr."_OTHER"]+=$value;
                 }
             }
         }
