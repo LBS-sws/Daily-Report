@@ -120,6 +120,8 @@ class HistoryAddForm extends CFormModel
         $nowInvList = CountSearch::getUInvMoneyToMonthEx($this->start_date,$this->end_date,$city_allow);
         //服务新增(上一年)
         $lastServiceList = CountSearch::getServiceForTypeToMonth($this->last_end_date,$city_allow);
+        //服务新增(IA、IB、IC、OTHER)
+        $lastDetailServiceList = CountSearch::getServiceForTypeAndTwoToMonth($this->last_end_date,$city_allow);
         //获取U系统的產品数据(上一年)
         $lastInvList = CountSearch::getUInvMoneyToMonthEx($this->last_start_date,$this->last_end_date,$city_allow);
         foreach ($citySetList as $cityRow){
@@ -131,6 +133,7 @@ class HistoryAddForm extends CFormModel
             $this->addListForCity($defMoreList,$city,$nowServiceList);
             $this->addListForCity($defMoreList,$city,$nowInvList,"U");
             $this->addListForCity($defMoreList,$city,$lastServiceList);
+            $this->addListForCity($defMoreList,$city,$lastDetailServiceList);
             $this->addListForCity($defMoreList,$city,$lastInvList,"U");
             RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
@@ -174,6 +177,10 @@ class HistoryAddForm extends CFormModel
             $arr[$dateStrOne."_OTHER"]=0;
             $arr[$dateStrOne."_u"]=$arr[$dateStrOne];
             $arr[$dateStrTwo]=0;
+            $arr[$dateStrTwo."_IA"]=0;
+            $arr[$dateStrTwo."_IB"]=0;
+            $arr[$dateStrTwo."_IC"]=0;
+            $arr[$dateStrTwo."_OTHER"]=0;
             $arr[$dateStrTwo."_u"]=$arr[$dateStrTwo];
         }
         $arr["now_average"]=0;//本年平均
@@ -248,11 +255,9 @@ class HistoryAddForm extends CFormModel
     }
 
     private function getTopArr(){
-        $monthArrOne = array();
-        $monthArrTwo = array();
+        $monthArr = array();
         for($i=1;$i<=$this->search_month;$i++){
-            $monthArrOne[]=array("name"=>$i.Yii::t("summary","Month"),"rowspan"=>2);
-            $monthArrTwo[]=array("name"=>$i.Yii::t("summary","Month"),
+            $monthArr[]=array("name"=>$i.Yii::t("summary","Month"),
                 "colspan"=>array(
                     array("name"=>"IA"),//年初目标
                     array("name"=>"IB"),//达成目标
@@ -262,15 +267,14 @@ class HistoryAddForm extends CFormModel
                 )
             );
         }
-        $monthArrOne[]=array("name"=>Yii::t("summary","Average"),"rowspan"=>2);
-        $monthArrTwo[]=array("name"=>Yii::t("summary","Average"),"rowspan"=>2);
+        $monthArr[]=array("name"=>Yii::t("summary","Average"),"rowspan"=>2);
         $topList=array(
             array("name"=>Yii::t("summary","City"),"rowspan"=>3),//城市
             array("name"=>$this->last_year,"background"=>"#f7fd9d",
-                "colspan"=>$monthArrOne
+                "colspan"=>$monthArr
             ),//上一年
             array("name"=>$this->search_year,"background"=>"#fcd5b4",
-                "colspan"=>$monthArrTwo
+                "colspan"=>$monthArr
             )//本年
         );
 
@@ -391,6 +395,10 @@ class HistoryAddForm extends CFormModel
         $dateTwoList = array();
         for($i=1;$i<=$this->search_month;$i++){
             $month = $i>=10?$i:"0{$i}";
+            $bodyKey[]=$this->last_year."/{$month}"."_IA";
+            $bodyKey[]=$this->last_year."/{$month}"."_IB";
+            $bodyKey[]=$this->last_year."/{$month}"."_IC";
+            $bodyKey[]=$this->last_year."/{$month}"."_OTHER";
             $bodyKey[]=$this->last_year."/{$month}";
             $dateTwoList[]=$this->search_year."/{$month}"."_IA";
             $dateTwoList[]=$this->search_year."/{$month}"."_IB";
