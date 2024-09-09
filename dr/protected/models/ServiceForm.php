@@ -812,7 +812,7 @@ class ServiceForm extends CFormModel
 		if (strpos($sql,':paid_type')!==false)
 			$command->bindParam(':paid_type',$this->paid_type,PDO::PARAM_STR);
 		if (strpos($sql,':amt_paid')!==false) {
-			$apaid = General::toMyNumber($this->amt_paid);
+			$apaid = empty($this->amt_paid)?0:$this->amt_paid;
 			$command->bindParam(':amt_paid',$apaid,PDO::PARAM_STR);
 		}
 		if (strpos($sql,':amt_install')!==false) {
@@ -846,7 +846,7 @@ class ServiceForm extends CFormModel
 			$command->bindParam(':ctrt_end_dt',$edate,PDO::PARAM_STR);
 		}
 		if (strpos($sql,':ctrt_period')!==false) {
-			$cp = General::toMyNumber($this->ctrt_period);
+			$cp = empty($this->ctrt_period)?0:$this->ctrt_period;
 			$command->bindParam(':ctrt_period',$cp,PDO::PARAM_INT);
 		}
 
@@ -890,7 +890,7 @@ class ServiceForm extends CFormModel
 		if (strpos($sql,':b4_paid_type')!==false)
 			$command->bindParam(':b4_paid_type',$this->b4_paid_type,PDO::PARAM_STR);
 		if (strpos($sql,':b4_amt_paid')!==false) {
-			$b4apaid = General::toMyNumber($this->b4_amt_paid);
+			$b4apaid = empty($this->b4_amt_paid)?0:$this->b4_amt_paid;
 			$command->bindParam(':b4_amt_paid',$b4apaid,PDO::PARAM_STR);
 		}
 

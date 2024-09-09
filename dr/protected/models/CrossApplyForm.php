@@ -192,6 +192,10 @@ class CrossApplyForm extends CFormModel
                 $this->old_city = $row["city"];
                 $this->contract_no = $row["contract_no"];
                 $this->resetContractNo(true);
+                if($this->old_month_amt===""||$this->old_month_amt===null){
+                    $this->addError($attribute, "合约的月金额不能为空");
+                    return false;
+                }
             }
         }else{
             $this->addError($attribute, "合约编号不存在，无法交叉派单");
@@ -515,6 +519,9 @@ class CrossApplyForm extends CFormModel
                 }
                 if(empty($row["u_system_id"])){
                     $row["error"] = "U系统ID不能为空";
+                }
+                if($row["amt_paid"]===""||$row["amt_paid"]===null){
+                    $row["error"] = "合约的月金额不能为空";
                 }
                 if($endCross){
                     if($this->cross_type!=$endCross["cross_type"]){
