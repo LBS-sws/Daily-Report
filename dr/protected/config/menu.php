@@ -91,6 +91,10 @@ return array(
 		'access'=>'B',
 		'icon'=>'fa-file-text-o',
 		'items'=>array(
+			'KA signed report'=>array( //KA新签报表
+				'access'=>'B40',
+				'url'=>'/report/kaSigned',
+			),
 			'Cross report'=>array( //交叉派单报表
 				'access'=>'B39',
 				'url'=>'/report/cross',

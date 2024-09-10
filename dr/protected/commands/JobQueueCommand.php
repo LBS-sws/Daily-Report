@@ -330,6 +330,7 @@ EOF;
 		$criteria->touser = isset($param['TOUSER']) ? $param['TOUSER'] : '';
 		$criteria->ccuser = isset($param['CCUSER']) ? $param['CCUSER'] : '';
 		$criteria->type = isset($param['TYPE']) ? $param['TYPE'] : '';
+		$criteria->staff_list = isset($param['STAFFLIST']) ? $param['STAFFLIST'] : '';
 		$criteria->company_status = isset($param['COMPANYSTATUS']) ? $param['COMPANYSTATUS'] : '';
 		$criteria->chain_num = isset($param['CHAINNUM']) ? $param['CHAINNUM'] : '';
 		$paper_sz = $param['PAPER_SZ'];
@@ -449,6 +450,7 @@ EOF;
 			case 'RptSupplier': $model = new RptSupplier(); break;
 			case 'RptServiceLoss': $model = new RptServiceLoss(); break;
             case 'RptCross': $model = new RptCross(); break;
+            case 'RptKaSigned': $model = new RptKaSigned(); break;
 		}
 		return $model;
 	}

@@ -20,6 +20,7 @@ class ReportForm extends CFormModel
 	public $type;
 	public $form;
 	public $company_status;
+	public $staff_list;
 	public $chain_num;
 
 	/**

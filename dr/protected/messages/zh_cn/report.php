@@ -80,5 +80,6 @@ return array(
     'service loss report'=>'合约丢失数据分析',
     'Re signing amount'=>'重签金额（暂停或终止3个月后新增的单）',
     'Cross report'=>'交叉派单报表',
+    'KA signed report'=>'KA新签报表',
 );
 ?>

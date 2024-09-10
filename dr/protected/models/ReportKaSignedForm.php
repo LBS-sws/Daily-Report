@@ -1,37 +1,38 @@
 <?php
 /* Reimbursement Form */
 
-class ReportCrossForm extends CReportForm
+class ReportKaSignedForm extends CReportForm
 {
-	public $company_status;//null：全部 A:生效中 T:停止服务 U:不明
+	public $staff_list=array();//
 	
 	protected function labelsEx() {
         return array(
             //'company_status'=>Yii::t('customer','Status'),
-            'company_status'=>Yii::t('customer','Status').'<br>('.Yii::t('dialog','Hold down <kbd>Ctrl</kbd> button to select multiple options').')',
+            'staff_list'=>Yii::t('summary','Staff Name'),
         );
 	}
 	
 	protected function rulesEx() {
         return array(
-            array('company_status','safe'),
+            array('staff_list','required'),
         );
 	}
 
 	protected function queueItemEx() {
 		return array(
-				'COMPANYSTATUS'=>(is_array($this->company_status) ? json_encode($this->company_status) : $this->company_status),
+				'STAFFLIST'=>json_encode($this->staff_list),
 			);
 	}
 	
 	public function init() {
-		$this->id = 'RptCross';
-		$this->name = Yii::t('app','Cross report');
+		$this->id = 'RptKaSigned';
+		$this->name = Yii::t('app','KA signed report');
 		$this->format = 'EXCEL';
 		$this->city = "";
-        $this->start_dt = date_format(date_create(),"Y/m/01");
-        $this->end_dt = date_format(date_create(),"Y/m/d");
-		$this->fields = 'start_dt,end_dt,company_status,city';
+		$this->staff_list = array();
+		$this->start_dt = date_format(date_create(),"Y/m/01");
+		$this->end_dt = date_format(date_create(),"Y/m/d");
+		$this->fields = 'start_dt,end_dt,staff_list';
 	}
 
     public function addQueueItem() {
@@ -123,5 +124,37 @@ class ReportCrossForm extends CReportForm
             $transaction->rollback();
             throw new CHttpException(404,'Cannot update.'.$e->getMessage());
         }
+    }
+
+    public static function getGroupStaffList(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $uid = Yii::app()->user->id;
+        $list = array();
+        $row = Yii::app()->db->createCommand()->select("b.id,b.code,b.name")->from("hr{$suffix}.hr_binding a")
+            ->leftJoin("hr{$suffix}.hr_employee b","a.employee_id=b.id")
+            ->where("a.user_id=:username",array(":username"=>$uid))->queryRow();
+        if($row){
+            $list[$row["id"]] = $row["name"]." ({$row["code"]})";
+            $bossRow = Yii::app()->db->createCommand()->select("a.id")
+                ->from("hr{$suffix}.hr_group_staff a")
+                ->leftJoin("hr{$suffix}.hr_group b","a.group_id=b.id")
+                ->where("a.employee_id=:employee_id and b.group_code='KARPT'",array(":employee_id"=>$row["id"]))
+                ->queryRow();
+            if($bossRow){//该员工有分组
+                $infoRows = Yii::app()->db->createCommand()->select("b.id,b.code,b.name")
+                    ->from("hr{$suffix}.hr_group_branch a")
+                    ->leftJoin("hr{$suffix}.hr_employee b","a.employee_id=b.id")
+                    ->where("a.group_staff_id=:group_staff_id",array(":group_staff_id"=>$bossRow["id"]))
+                    ->queryAll();
+                if($infoRows){//该员工有管辖员工
+                    foreach ($infoRows as $infoRow){
+                        $list[$infoRow["id"]] = $infoRow["name"]." ({$infoRow["code"]})";
+                    }
+                }
+            }
+        }else{
+            $list["-1"] = "未绑定员工";
+        }
+        return $list;
     }
 }

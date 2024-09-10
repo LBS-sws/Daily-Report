@@ -63,6 +63,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('supplier'),'expression'=>array('ReportController','allowSupplier')),
 			array('allow','actions'=>array('serviceLoss'),'expression'=>array('ReportController','allowServiceLoss')),
             array('allow','actions'=>array('cross'),'expression'=>array('ReportController','allowCross')),
+            array('allow','actions'=>array('kaSigned'),'expression'=>array('ReportController','allowKaSigned')),
 			array('allow',
 				'actions'=>array('generate'),
 				'expression'=>array('ReportController','allowReadOnly'),
@@ -672,6 +673,29 @@ class ReportController extends Controller
             }
         }
         $this->render('cross',array('model'=>$model));
+    }
+
+// Report: kaSigned
+    protected static function allowKaSigned() {
+        return Yii::app()->user->validFunction('B40');
+    }
+
+    public function actionKaSigned() {
+        $this->function_id = "B40";
+        Yii::app()->session['active_func'] = $this->function_id;
+        $model = new ReportKaSignedForm();
+        if (isset($_POST['ReportKaSignedForm'])) {
+            $model->attributes = $_POST['ReportKaSignedForm'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            }
+            else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('kaSigned',array('model'=>$model));
     }
 
 // Report: serviceLoss

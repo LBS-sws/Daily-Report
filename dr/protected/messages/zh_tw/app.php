@@ -195,5 +195,6 @@ return array(
     'KA Summary'=>'KA合同分析查詢',
     'KA Comparison'=>'KA合同同比分析',
     'Outsource'=>'外包數據分析',
+    'KA signed report'=>'KA新簽報表',
 );
 ?>
