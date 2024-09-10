@@ -64,7 +64,7 @@ $this->pageTitle=Yii::app()->name . ' - Service';
     </div>
 	<?php 
 		$search = array(
-						'service_no',
+						'contract_no',
 						'company_name',
 						'type_desc',
 						'nature_desc',

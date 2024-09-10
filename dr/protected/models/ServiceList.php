@@ -10,7 +10,9 @@ class ServiceList extends CListPageModel
 	 */
 	public function attributeLabels()
 	{
-		return array(	
+		return array(
+            'contract_no'=>Yii::t('service','Contract No'),
+            'service_no'=>Yii::t('service','service no'),
 			'company_name'=>Yii::t('service','Customer'),
 			'type_desc'=>Yii::t('service','Customer Type'),
 			'nature_desc'=>Yii::t('service','Nature'),
@@ -95,6 +97,9 @@ class ServiceList extends CListPageModel
 					break;
 				case 'cont_info':
 					$clause .= General::getSqlConditionClause('a.cont_info',$svalue);
+					break;
+				case 'contract_no':
+                    $clause .= "and a.id in (select no.service_id from swo_service_contract_no no where no.contract_no like '%{$svalue}%' )";;
 					break;
 				case 'status':
 					$field = "(select case a.status when 'N' then '".General::getStatusDesc('N')."' 
