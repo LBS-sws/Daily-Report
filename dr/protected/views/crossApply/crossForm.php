@@ -90,8 +90,8 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
             <div class="form-group">
                 <?php echo $form->labelEx($model,'qualification_ratio',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
-                    <?php echo $form->textField($model, 'qualification_ratio',
-                        array('readonly'=>$model->readonly(),'id'=>'qualification_ratio','append'=>"%")
+                    <?php echo $form->numberField($model, 'qualification_ratio',
+                        array('readonly'=>$model->readonly(),'id'=>'qualification_ratio','append'=>"%","min"=>0,"max"=>"100")
                     ); ?>
                 </div>
             </div>
@@ -116,8 +116,8 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
             <div class="form-group">
                 <?php echo $form->labelEx($model,'rate_num',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
-                    <?php echo $form->textField($model, 'rate_num',
-                        array('readonly'=>$model->readonly(),'id'=>'cross_rate_num','append'=>"%")
+                    <?php echo $form->numberField($model, 'rate_num',
+                        array('readonly'=>$model->readonly(),'id'=>'cross_rate_num','append'=>"%","min"=>0,"max"=>"100")
                     ); ?>
                 </div>
             </div>

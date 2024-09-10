@@ -140,6 +140,8 @@ $('#crossFullOk').on('click',function(){
         }
         if(qualification_ratio==''){
             html+='<p>资质方比例不能为空</p>';
+        }else if(qualification_ratio<0||qualification_ratio>100){
+            html+='<p>资质方比例的范围：0 ~ 100</p>';
         }
     }
     if(cross_type!='5'){
@@ -148,6 +150,8 @@ $('#crossFullOk').on('click',function(){
         }
         if(rate_num==''){
             html+='<p>承接比例不能为空</p>';
+        }else if(rate_num<0||rate_num>100){
+            html+='<p>承接比例的范围：0 ~ 100</p>';
         }
     }
     

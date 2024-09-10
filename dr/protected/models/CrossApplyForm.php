@@ -78,6 +78,7 @@ class CrossApplyForm extends CFormModel
             array('service_id','validateServiceID'),
             array('cross_type','validateCrossType'),
             array('cross_city','validateCrossCity'),
+            array('qualification_ratio,rate_num','numerical','min'=>0,'max'=>100),
 		);
 	}
 
