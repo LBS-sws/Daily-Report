@@ -168,16 +168,20 @@ class CustomerForm extends CFormModel
 	}
 
 	//发送所有客户资料到金蝶系统
-    public function sendAllCustomerToJD($city=""){
+    public function sendAllCustomerToJD($city="",$minID=0){
         $whereSql="";
         if(!empty($city)){
             $cityList = explode(",",$city);
             $whereSql= "and city in('".implode("','",$cityList)."')";
         }
+        if(!empty($minID)){
+            $whereSql= "and id>$minID ";
+        }
         $pageMax = 100;//最大数量
         $sqlCount = "select count(id) from swo_company where id>0 {$whereSql}";
         $totalRow = Yii::app()->db->createCommand($sqlCount)->queryScalar();
         if($totalRow>0){
+            echo "max number:{$totalRow}<br/>\r\n";
             $sql = "select * from swo_company where id>0 {$whereSql}";
             $this->sendCustomerToJDPage($sql,$totalRow,$pageMax);
         }
@@ -210,7 +214,7 @@ class CustomerForm extends CFormModel
             $curlModel->saveTableForArr();
             $curlModel->saveJDCustomerID($returnJD);
             $page++;
-            echo "send success。page:{$page}<br/>";
+            echo "send success。page:{$page}<br/>\r\n";
             if($totalRow>$startNum){
                 $this->sendCustomerToJDPage($sql,$totalRow,$pageMax,$page);
             }

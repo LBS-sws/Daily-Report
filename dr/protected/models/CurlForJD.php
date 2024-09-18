@@ -34,8 +34,9 @@ class CurlForJD{
                 $json = json_decode($out, true);
                 if(is_array($json)&&key_exists("errorCode",$json)&&$json["errorCode"]==0){
                     $rtn['code'] = 200;
+                    $rtn['message'] = "成功";
                 }else{
-                    $rtn['message'] = isset($json["message"])?$json["message"]:"";
+                    $rtn['message'] = isset($json["message"])?$json["message"]:"失败！";
                 }
             }
         }else{
@@ -94,8 +95,9 @@ class CurlForJD{
                 $json = json_decode($out, true);
                 if(is_array($json)&&key_exists("errorCode",$json)&&$json["errorCode"]==0){
                     $rtn['code'] = 200;
+                    $rtn['message'] = "成功";
                 }else{
-                    $rtn['message'] = isset($json["message"])?$json["message"]:"";
+                    $rtn['message'] = isset($json["message"])?$json["message"]:"失败！";
                 }
             }
         }else{
@@ -151,8 +153,9 @@ class CurlForJD{
                 $json = json_decode($out, true);
                 if(is_array($json)&&key_exists("errorCode",$json)&&$json["errorCode"]==0){
                     $rtn['code'] = 200;
+                    $rtn['message'] = "成功";
                 }else{
-                    $rtn['message'] = isset($json["message"])?$json["message"]:"";
+                    $rtn['message'] = isset($json["message"])?$json["message"]:"失败！";
                 }
             }
         }else{
@@ -203,8 +206,9 @@ class CurlForJD{
                 if(is_array($json)&&key_exists("errorCode",$json)&&$json["errorCode"]==0){
                     $rtn['code'] = 200;
                     $rtn['outData'] = $json["data"]["rows"];
+                    $rtn['message'] = "成功";
                 }else{
-                    $rtn['message'] = isset($json["message"])?$json["message"]:"";
+                    $rtn['message'] = isset($json["message"])?$json["message"]:"失败";
                 }
             }
         }else{
@@ -242,8 +246,9 @@ class CurlForJD{
                 if(is_array($json)&&key_exists("errorCode",$json)&&$json["errorCode"]==0){
                     $rtn['code'] = 200;
                     $rtn['outData'] = $json["data"]["rows"];
+                    $rtn['message'] = "成功";
                 }else{
-                    $rtn['message'] = isset($json["message"])?$json["message"]:"";
+                    $rtn['message'] = isset($json["message"])?$json["message"]:"失败！";
                 }
             }
         }else{
