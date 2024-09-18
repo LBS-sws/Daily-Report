@@ -157,6 +157,7 @@ class CustomerForm extends CFormModel
             $curlModel = new CurlForCustomer();
             $rtn = $curlModel->sendJDCurlForCustomer($this);
             $curlModel->saveTableForArr();
+            $curlModel->saveJDCustomerID($rtn);
 			$transaction->commit();
 		}
 		catch(Exception $e) {
@@ -205,8 +206,9 @@ class CustomerForm extends CFormModel
                 $this->email = $row['email'];
                 $data[] = $curlModel->getDataForCustomerModel($this);
             }
-            $curlModel->sendJDCurlForCustomerData($data);
+            $returnJD = $curlModel->sendJDCurlForCustomerData($data);
             $curlModel->saveTableForArr();
+            $curlModel->saveJDCustomerID($returnJD);
             $page++;
             echo "send success。page:{$page}<br/>";
             if($totalRow>$startNum){
@@ -222,6 +224,7 @@ class CustomerForm extends CFormModel
     protected function saveJDSetInfo(&$connection) {
         foreach (self::$jd_set_list as $list){
             $field_value = key_exists($list["field_id"],$this->jd_set)?$this->jd_set[$list["field_id"]]:null;
+
             $rs = Yii::app()->db->createCommand()->select("id,field_id")->from("swo_send_set_jd")
                 ->where("set_type ='customer' and table_id=:table_id and field_id=:field_id",array(
                     ':field_id'=>$list["field_id"],':table_id'=>$this->id,
