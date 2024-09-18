@@ -65,8 +65,7 @@ class JDToken{
         $rtn = array('token'=>'', 'status'=>false,'message'=>'404');
         $root = Yii::app()->params['JDCurlRootURL'];
         $url = $root."/kapi/oauth2/getToken";
-
-        $uid = Yii::app()->user->id;
+        $uid = Yii::app()->getComponent('user')===null?"admin":Yii::app()->user->id;
 
         $data=array(
             "client_id"=>$this->client_id,

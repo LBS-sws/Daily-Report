@@ -51,7 +51,7 @@ class CurlForJD{
             "data_content"=>json_encode($data),
             "out_content"=>$rtn['outData'],
             "message"=>$rtn['message'],
-            "lcu"=>Yii::app()->user->id,
+            "lcu"=>Yii::app()->getComponent('user')===null?"admin":Yii::app()->user->id,
             "lcd"=>$sendDate,
         );
         return $rtn;
@@ -111,7 +111,7 @@ class CurlForJD{
             "data_content"=>json_encode($data),
             "out_content"=>$rtn['outData'],
             "message"=>$rtn['message'],
-            "lcu"=>Yii::app()->user->id,
+            "lcu"=>Yii::app()->getComponent('user')===null?"admin":Yii::app()->user->id,
             "lcd"=>$sendDate,
         );
         $suffix = Yii::app()->params['envSuffix'];
@@ -165,7 +165,7 @@ class CurlForJD{
             "data_content"=>json_encode($data),
             "out_content"=>$rtn['outData'],
             "message"=>$rtn['message'],
-            "lcu"=>Yii::app()->user->id,
+            "lcu"=>Yii::app()->getComponent('user')===null?"admin":Yii::app()->user->id,
             "lcd"=>$sendDate,
         );
         $suffix = Yii::app()->params['envSuffix'];
