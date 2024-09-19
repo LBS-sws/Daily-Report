@@ -383,6 +383,10 @@ class CurlNotesList extends CListPageModel
             "getOutsourceCountMoney"=>array("args"=>array("start"=>"2024-08-01","end"=>"2024-08-31","staffList"=>"","city"=>"'{$city}'")),
             //获取外包金额详情
             "getOutsourceServiceMoney"=>array("args"=>array("start"=>"2024-08-01","end"=>"2024-08-31","staffList"=>"","city"=>"'{$city}'")),
+            //获取办事处INV类型发票城市金额
+            "getInvDataOfficeCityAmount"=>array("args"=>array("start"=>"2024-08-01","end"=>"2024-08-31","city"=>"'{$city}'")),
+            //获取办事处INV类型发票城市金额
+            "getUServiceOfficeMoney"=>array("args"=>array("start"=>"2024-08-01","end"=>"2024-08-31","city"=>"'{$city}'")),
         );
         if(key_exists($type,$list)){
             $params=array();

@@ -384,6 +384,116 @@ class DownSummary{
         }
     }
 
+    public function setSummaryOfficeData($data,$officeData){
+        if(key_exists("MO",$data)){//是否有澳門地區的數據
+            $moData=$data["MO"];
+            unset($data["MO"]);
+        }else{
+            $moData = array();
+        }
+        if(!empty($data)){
+            foreach ($data as $region=>$regionList){
+                if(isset($regionList["list"])&&!empty($regionList["list"])){
+                    foreach ($regionList["list"] as $city=>$cityList){
+                        $col = 0;
+                        foreach ($cityList as $keyStr=>$text){
+                            $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
+                            $meStr = $this->getColumn($col);
+                            $this->objPHPExcel->getActiveSheet()
+                                ->getStyle($meStr.$this->current_row)->applyFromArray(
+                                    array(
+                                        'font'=>array(
+                                            'bold'=>true
+                                        )
+                                    )
+                                );
+                            $col++;
+                        }
+                        $this->current_row++;
+                        //办事处
+                        if(key_exists($city,$officeData)){
+                            foreach ($officeData[$city] as $officeList){
+                                $col = 0;
+                                foreach ($officeList as $keyStr=>$text){
+                                    $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
+                                    $col++;
+                                }
+                                $this->current_row++;
+                            }
+                        }
+                    }
+                }
+                //合计
+                $col = 0;
+                if(isset($regionList["count"])){
+                    foreach ($regionList["count"] as $keyStr=>$text){
+                        $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
+                        $col++;
+                    }
+                }
+                $thEndStr = $this->getColumn($this->th_num-1);
+                $this->objPHPExcel->getActiveSheet()
+                    ->getStyle("A{$this->current_row}:{$thEndStr}{$this->current_row}")
+                    ->applyFromArray(
+                        array(
+                            'font'=>array(
+                                'bold'=>true,
+                            ),
+                            'borders' => array(
+                                'top' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                                )
+                            )
+                        )
+                    );
+                //平均值
+                $col = 0;
+                if(isset($regionList["average"])){
+                    $this->current_row++;
+                    foreach ($regionList["average"] as $keyStr=>$text){
+                        $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
+                        $col++;
+                    }
+                    $this->objPHPExcel->getActiveSheet()
+                        ->getStyle("A{$this->current_row}:{$thEndStr}{$this->current_row}")
+                        ->applyFromArray(array('font'=>array('bold'=>true)));
+                }
+                $this->current_row++;
+                $this->current_row++;
+            }
+        }
+
+        if(!empty($moData)){
+            $col = 0;
+            foreach ($moData as $keyStr=>$text){
+                $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
+                $meStr = $this->getColumn($col);
+                $this->objPHPExcel->getActiveSheet()
+                    ->getStyle($meStr.$this->current_row)->applyFromArray(
+                        array(
+                            'font'=>array(
+                                'bold'=>true
+                            )
+                        )
+                    );
+                $col++;
+            }
+            $this->current_row++;
+            //办事处
+            $city="MO";
+            if(key_exists($city,$officeData)){
+                foreach ($officeData[$city] as $officeList){
+                    $col = 0;
+                    foreach ($officeList as $keyStr=>$text){
+                        $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
+                        $col++;
+                    }
+                    $this->current_row++;
+                }
+            }
+        }
+    }
+
     public function setUServiceData($data){
         if(!empty($data)){
             $endStr = $this->getColumn($this->th_num-1);

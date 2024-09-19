@@ -139,6 +139,50 @@ class SystemU {
         return $rtn;
     }
 
+    //获取INV类型的城市汇总 - 办事处
+    public static function getInvDataOfficeCityAmount($start, $end, $city='',$printBool=false) {
+        $rtn = array('message'=>'', 'data'=>array());
+        $key = self::generate_key();
+        $root = Yii::app()->params['uCurlRootURL'];
+        $url = $root.'/api/lbs.GetInvInvoiceOfficeAmount/index';
+        $data = array(
+            "key"=>$key,
+            "begin"=>$start,
+            "end"=>$end,
+            "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
+        );
+        $data_string = json_encode($data);
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type:application/json',
+            'Content-Length:'.strlen($data_string),
+        ));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $out = curl_exec($ch);
+        if($printBool){//测试专用
+            self::printCurl($url,$data,$out,$curlStartDate);
+        }
+        if ($out===false) {
+            $rtn['message'] = curl_error($ch);
+        } else {
+            $json = json_decode($out, true);
+            if(isset($json["code"])&&$json["code"]==200){
+                $rtn['data'] = $json["data"];
+                $rtn['message'] = self::getJsonError(json_last_error());
+            }else{
+                $rtn['data'] = array();
+                $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+            }
+        }
+        return $rtn;
+    }
+
     //获取INV类型的城市(月份)汇总
     public static function getInvDataCityMonth($start, $end, $city='',$printBool=false) {
         $rtn = array('message'=>'', 'data'=>array());
@@ -233,6 +277,50 @@ class SystemU {
         $key = self::generate_key();
         $root = Yii::app()->params['uCurlRootURL'];
         $url = $root.'/api/lbs.GetUServiceMoney/index';
+        $data = array(
+            "key"=>$key,
+            "begin"=>$start,
+            "end"=>$end,
+            "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
+        );
+        $data_string = json_encode($data);
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type:application/json',
+            'Content-Length:'.strlen($data_string),
+        ));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $out = curl_exec($ch);
+        if($printBool){//测试专用
+            self::printCurl($url,$data,$out,$curlStartDate);
+        }
+        if ($out===false) {
+            $rtn['message'] = curl_error($ch);
+        } else {
+            $json = json_decode($out, true);
+            if(isset($json["code"])&&$json["code"]==200){
+                $rtn['data'] = $json["data"];
+                $rtn['message'] = self::getJsonError(json_last_error());
+            }else{
+                $rtn['data'] = array();
+                $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+            }
+        }
+        return $rtn;
+    }
+
+    //获取服务单月数据 - 办事处
+    public static function getUServiceOfficeMoney($start, $end, $city='',$printBool=false) {
+        $rtn = array('message'=>'', 'data'=>array());
+        $key = self::generate_key();
+        $root = Yii::app()->params['uCurlRootURL'];
+        $url = $root.'/api/lbs.GetUServiceMoneyForOffice/index';
         $data = array(
             "key"=>$key,
             "begin"=>$start,

@@ -250,6 +250,19 @@ class SummaryForm extends CFormModel
         }
     }
 
+    protected function resetOfficeTdRow(&$list){
+	    $newSum = $list["num_new"]+$list["u_invoice_sum"];//所有新增总金额
+        $list["num_stop_show"] = $list["num_stop"]-$list["num_stop_none"];
+        $list["num_growth"] = 0;
+	    $list["num_growth"]+=$list["num_new"];
+	    $list["num_growth"]+=$list["u_invoice_sum"];
+	    $list["num_growth"]+=$list["last_month_sum"];
+	    $list["num_growth"]+=$list["num_stop"];
+	    $list["num_growth"]+=$list["num_restore"];
+	    $list["num_growth"]+=$list["num_pause"];
+	    $list["num_growth"]+=$list["num_update"];
+    }
+
     //顯示提成表的表格內容
     public function summaryHtml(){
         $html= '<table id="summary" class="table table-fixed table-condensed table-bordered table-hover">';
@@ -482,6 +495,10 @@ class SummaryForm extends CFormModel
                     $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                     $exprData = self::tdClick($tdClass,$keyStr,$cityList["city"]);//点击后弹窗详细内容
                     ComparisonForm::setTextColorForKeyStr($tdClass,$keyStr,$cityList);
+                    if($keyStr == "city_name"){
+                        $tdClass.=" changeOffice";
+                        $text = "<i class='fa fa-spinner fa-pulse'></i>&nbsp;".$text;
+                    }
                     $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span></td>";
                 }
                 $html.="</tr>";
@@ -500,7 +517,7 @@ class SummaryForm extends CFormModel
                     $regionRow = [];//地区汇总
                     foreach ($regionList["list"] as $cityList) {
                         $this->resetTdRow($cityList);
-                        $html.="<tr>";
+                        $html.="<tr data-city='{$cityList["city"]}'>";
                         foreach ($bodyKey as $keyStr){
                             if(!key_exists($keyStr,$regionRow)){
                                 $regionRow[$keyStr]=0;
@@ -519,6 +536,10 @@ class SummaryForm extends CFormModel
                             $text = ComparisonForm::showNum($text);
                             //$inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
                             $this->downJsonText["excel"][$regionList['region']]['list'][$cityList['city']][$keyStr]=$text;
+                            if($keyStr == "city_name"){
+                                $tdClass.=" changeOffice";
+                                $text = "<i class='fa fa-spinner fa-pulse'></i>&nbsp;".$text;
+                            }
                             $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span></td>";
                         }
                         $html.="</tr>";
@@ -588,6 +609,7 @@ class SummaryForm extends CFormModel
             $excelData = json_decode($excelData,true);
             $excelData = key_exists("excel",$excelData)?$excelData["excel"]:array();
         }
+        $officeData = key_exists("officeList",$_POST)?json_decode($_POST["officeList"],true):array();
         $this->validateDate("","");
         $headList = $this->getTopArr();
         $excel = new DownSummary();
@@ -600,7 +622,7 @@ class SummaryForm extends CFormModel
         $excel->SetHeaderString($this->start_date." ~ ".$this->end_date);
         $excel->init();
         $excel->setSummaryHeader($headList);
-        $excel->setSummaryData($excelData);
+        $excel->setSummaryOfficeData($excelData,$officeData);
         $excel->outExcel($titleName);
     }
 
@@ -645,5 +667,140 @@ class SummaryForm extends CFormModel
         $lnk=Yii::app()->createUrl($url,$param);
 
         return "<a href=\"$lnk\" target='_blank'><span class=\"$icon\"></span></a>";
+    }
+
+    public static function getDefaultList(){
+        $arr = RptSummarySC::defMoreCity("none","none");
+        foreach (ComparisonForm::$con_list as $itemStr){//初始化
+            $arr[$itemStr]="";
+            $arr[$itemStr."_rate"]="";
+            $arr["start_".$itemStr]="";
+            $arr["start_".$itemStr."_rate"]="";
+        }
+        return $arr;
+    }
+
+    //顯示表格內的數據來源
+    public function ajaxOfficeForData(){
+        $cityList = key_exists("cityList",$_GET)?$_GET["cityList"]:array();
+        $city_allow = "'".implode("','",$cityList)."'";
+        $this->start_date = key_exists("startDate",$_GET)?$_GET["startDate"]:"";
+        $this->end_date = key_exists("endDate",$_GET)?$_GET["endDate"]:"";
+        $startDate = $this->start_date;
+        $endDate = $this->end_date;
+        $lastStartDate = CountSearch::computeLastMonth($startDate);
+        $lastEndDate = CountSearch::computeLastMonth($endDate);
+        $defaultList = self::getDefaultList();
+        $officeList = self::getOfficeListForCity($city_allow,$defaultList);
+        $resetOfficeId = $officeList["resetList"];
+        $hideList = array();
+        $officeList = $officeList["list"];
+        $cityHtmlTr=array();
+
+        //获取U系统的服务单数据(報表不需要生意額數據)
+        $uServiceMoney = CountOfficeSearch::getUServiceOfficeMoneyOne($startDate,$endDate,$city_allow);
+        //获取U系统的產品数据
+        $uInvMoney = CountOfficeSearch::getUInvOfficeMoneyOne($startDate,$endDate,$city_allow);
+        //服务新增（非一次性 和 一次性)
+        $serviceAddForNY = CountOfficeSearch::getServiceOfficeAddForNY($startDate,$endDate,$city_allow);
+        //终止服务、暂停服务
+        $serviceForST = CountOfficeSearch::getServiceOfficeForST($startDate,$endDate,$city_allow);
+        //恢復服务
+        $serviceForR = CountOfficeSearch::getServiceOfficeForType($startDate,$endDate,$city_allow,"R");
+        //更改服务
+        $serviceForA = CountOfficeSearch::getServiceOfficeForA($startDate,$endDate,$city_allow);
+        //新增服務的詳情
+        $serviceDetailForAdd = CountOfficeSearch::getServiceOfficeDetailForAdd($startDate,$endDate,$city_allow);
+        //服务新增（一次性)(上月)
+        $lastServiceAddForNY = CountOfficeSearch::getServiceOfficeAddForY($lastStartDate,$lastEndDate,$city_allow);
+        //获取U系统的產品数据(上月)
+        $lastUInvMoney = CountOfficeSearch::getUInvOfficeMoneyOne($lastStartDate,$lastEndDate,$city_allow);
+
+        foreach ($officeList as $city=>$row){
+            $html = "";
+            foreach ($row as $key=>$officeRow){//u_invoice_num
+                $uKey = key_exists($key,$resetOfficeId)?$resetOfficeId[$key]:$city;
+                $officeRow["u_invoice_num"]=isset($uInvMoney[$uKey])?$uInvMoney[$uKey]["sum_money"]:0;
+                $officeRow["u_actual_money"]=isset($uServiceMoney[$uKey])?$uServiceMoney[$uKey]:0;
+                $officeRow["u_actual_money"]+=$officeRow["u_invoice_num"];
+                $officeRow["u_num_cate"]=isset($uInvMoney[$uKey])?$uInvMoney[$uKey]["u_num_cate"]:0;
+                $officeRow["u_num_not_cate"]=isset($uInvMoney[$uKey])?$uInvMoney[$uKey]["u_num_not_cate"]:0;
+                $officeRow["num_new"]=isset($serviceAddForNY[$city][$key])?$serviceAddForNY[$city][$key]["num_new"]:0;
+                $officeRow["num_new_n"]=isset($serviceAddForNY[$city][$key])?$serviceAddForNY[$city][$key]["num_new_n"]:0;
+                $officeRow["u_invoice_sum"]=$officeRow["num_new_n"];
+                $officeRow["u_invoice_sum"]+=$officeRow["u_invoice_num"];
+                $officeRow["num_pause"]=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_pause"]:0;
+                $officeRow["num_stop"]=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_stop"]:0;
+                $officeRow["num_stop_none"]=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_stop_none"]:0;
+                $officeRow["num_restore"]=isset($serviceForR[$city][$key])?$serviceForR[$city][$key]:0;
+                $officeRow["num_update"]=isset($serviceForA[$city][$key])?$serviceForA[$city][$key]:0;
+                if(isset($serviceDetailForAdd[$city][$key])){
+                    $officeRow["num_long"]=$serviceDetailForAdd[$city][$key]["num_long"];
+                    $officeRow["num_short"]=$serviceDetailForAdd[$city][$key]["num_short"];
+                    $officeRow["one_service"]=$serviceDetailForAdd[$city][$key]["one_service"];
+                    $officeRow["num_cate"]=$serviceDetailForAdd[$city][$key]["num_cate"];
+                    $officeRow["num_not_cate"]=$serviceDetailForAdd[$city][$key]["num_not_cate"];
+                }
+                $officeRow["last_u_invoice_sum"]=isset($lastUInvMoney[$uKey])?$lastUInvMoney[$uKey]["sum_money"]:0;
+                $officeRow["last_one_service"]=isset($lastServiceAddForNY[$city][$key])?$lastServiceAddForNY[$city][$key]:0;
+                $officeRow["last_month_sum"]=-1*($officeRow["last_one_service"]+$officeRow["last_u_invoice_sum"]);
+
+                self::resetOfficeTdRow($officeRow);
+                $htmlData=self::getOfficeHtmlTr($city,$key,$officeRow);
+                $html.=$htmlData["html"];
+                $hideList[$city][$key] = $htmlData["data"];
+            }
+            $cityHtmlTr[$city] = $html;
+        }
+
+        return array("cityHtml"=>$cityHtmlTr,"hideHtml"=>TbHtml::hiddenField("officeList",json_encode($hideList)));
+    }
+
+    protected function getOfficeHtmlTr($city,$office_id,$officeRow){
+        $bodyKey = $this->getDataAllKeyStr();
+        $data=array();
+        $html = "";
+        $html.= "<tr class='office-city-tr' data-city='{$city}' data-type='hide' data-office='{$office_id}' style='display: none;'>";
+        foreach ($bodyKey as $item){
+            $keyStr = $item=="city_name"?"office_name":$item;
+            $text = key_exists($keyStr,$officeRow)?$officeRow[$keyStr]:"";
+            $text = ComparisonForm::showNum($text);
+            $html.= "<td>".$text."</td>";
+            $data[]=$text;
+        }
+        $html.= "</tr>";
+        return array("html"=>$html,'data'=>$data);
+    }
+
+    public static function getOfficeListForCity($city_allow,$deList=array()){
+        $suffix = Yii::app()->params['envSuffix'];
+        $cityList = explode(",",$city_allow);
+        $list = array();
+        $resetList = array();
+        if(!empty($cityList)){
+            foreach ($cityList as $city){
+                $temp = $deList;
+                $temp["office_name"] = "本部";
+                $city = str_replace("'","",$city);
+                $list[$city] = array();
+                $list[$city][$city]=$temp;
+            }
+        }
+        $rows = Yii::app()->db->createCommand()->select("id,u_id,city,name")->from("hr$suffix.hr_office")
+            ->where("city in ({$city_allow}) and z_display=1 and u_id!='' and u_id is not null")
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $city = $row["city"];
+                $resetList[$row["id"]] = $row["u_id"];
+                if(key_exists($city,$list)){
+                    $temp = $deList;
+                    $temp["office_name"] = $row["name"];
+                    $list[$city][$row["id"]]=$temp;
+                }
+            }
+        }
+
+        return array("list"=>$list,"resetList"=>$resetList);
     }
 }

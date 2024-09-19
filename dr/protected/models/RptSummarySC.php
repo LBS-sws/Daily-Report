@@ -48,7 +48,7 @@ class RptSummarySC extends ReportData2 {
         $lastUInvMoney = CountSearch::getUInvMoney($lastStartDate,$lastEndDate,$city_allow);
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
-            $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
+            $defMoreList=self::defMoreCity($city,$cityRow["city_name"]);
             $defMoreList["add_type"] = $cityRow["add_type"];
             //$defMoreList["u_actual_money"]+=key_exists($city,$uServiceMoney)?$uServiceMoney[$city]:0;
             $defMoreList["u_invoice_num"]+=key_exists($city,$uInvMoney)?$uInvMoney[$city]["sum_money"]:0;
@@ -121,7 +121,7 @@ class RptSummarySC extends ReportData2 {
         }
     }
 
-    private function defMoreCity($city,$cityName){
+    public static function defMoreCity($city,$cityName){
         return array(
             "city"=>$city,
             "city_name"=>$cityName,
