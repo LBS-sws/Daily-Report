@@ -30,7 +30,7 @@ class RptComplaint extends ReportData2 {
 			'svc_next_dt'=>array('label'=>Yii::t('followup','Next Service Date'),'width'=>18,'align'=>'C'),
 			'svc_call_dt'=>array('label'=>Yii::t('followup','Follow up Date'),'width'=>18,'align'=>'C'),
 			'svc_cust_name'=>array('label'=>Yii::t('followup','Customer Name'),'width'=>15,'align'=>'L'),
-			'svc_comment'=>array('label'=>Yii::t('followup','Comment'),'width'=>15,'align'=>'L'),
+			'svc_comment'=>array('label'=>Yii::t('followup','Comment')."1",'width'=>15,'align'=>'L'),
 			'mcard_remarks'=>array('label'=>Yii::t('followup','Contend of Update to Job Card'),'width'=>10,'align'=>'L'),
 			'mcard_staff'=>array('label'=>Yii::t('followup','Staff of Update Job Card'),'width'=>10,'align'=>'L'),
 			'date_diff'=>array('label'=>Yii::t('followup','Date Diff.'),'width'=>10,'align'=>'L'),

@@ -66,7 +66,7 @@ class FollowupForm extends CFormModel
 			'svc_fin_dt'=>Yii::t('followup','Finish Date').' '.Yii::t('misc','(Y/M/D)'),
 			'svc_call_dt'=>Yii::t('followup','Follow up Date').' '.Yii::t('misc','(Y/M/D)'),
 			'svc_cust_name'=>Yii::t('followup','Customer Name'),
-			'svc_comment'=>Yii::t('followup','Comment'),
+			'svc_comment'=>Yii::t('followup','Comment')."1",
 			'fp_fin_dt'=>Yii::t('followup','Finish Date').' '.Yii::t('misc','(Y/M/D)'),
 			'fp_call_dt'=>Yii::t('followup','Follow up Date').' '.Yii::t('misc','(Y/M/D)'),
 			'fp_cust_name'=>Yii::t('followup','Customer Name'),
@@ -213,7 +213,7 @@ class FollowupForm extends CFormModel
 		$sql = '';
 		switch ($this->scenario) {
 			case 'delete':
-				$sql = "delete from swo_followup where id = :id and city = :city";
+				$sql = "delete from swo_followup where id = :id";
 				break;
 			case 'new':
 				$sql = "insert into swo_followup(
@@ -268,7 +268,7 @@ class FollowupForm extends CFormModel
 							pest_type_id = :pest_type_id,
 							pest_type_name = :pest_type_name,
 							luu = :luu 
-						where id = :id and city = :city
+						where id = :id
 						";
 				break;
 		}

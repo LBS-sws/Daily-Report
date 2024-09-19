@@ -19,6 +19,7 @@ class FollowupList extends CListPageModel
 			'cont_info'=>Yii::t('followup','Contact'),
 			'pest_type_name'=>Yii::t('followup','Pest Type'),
 			'city_name'=>Yii::t('misc','City'),
+			'fp_comment'=>Yii::t('followup','Comment'),
 		);
 	}
 	
@@ -63,6 +64,9 @@ class FollowupList extends CListPageModel
 					break;
 				case 'content':
 					$clause .= General::getSqlConditionClause('a.content',$svalue);
+					break;
+				case 'fp_comment':
+					$clause .= General::getSqlConditionClause('a.fp_comment',$svalue);
 					break;
 			}
 		}
