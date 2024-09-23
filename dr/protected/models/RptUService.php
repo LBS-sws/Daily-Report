@@ -38,14 +38,16 @@ class RptUService extends ReportData2 {
         $conditionList = is_array($conditionList)?$conditionList:array($conditionList);
 		foreach ($rows as $item){//由于数据太多，尝试优化
             $staff_code = isset($item["staff"])?$item["staff"]:"none";
+            $user = self::getUserListForCode($staff_code,$userList);
+            $lbs_city = key_exists("city",$user)?$user["city"]:"none";
             $u_city = isset($item["city_code"])?$item["city_code"]:"none";
             $u_city = SummaryForm::resetCity($u_city);
-            if (strpos($city_allow,"'{$u_city}'")===false){
+            if (strpos($city_allow,"'{$lbs_city}'")===false){
                 continue;//由于派单系统不做城市判断，所以查询所有城市,由LBS删除多余城市
             }
             $amt = isset($item["amt"])&&is_numeric($item["amt"])?floatval($item["amt"]):0;
             $temp = array(
-                "city_code"=>$u_city,//城市编号
+                "city_code"=>$lbs_city,//城市编号
                 "staff"=>$staff_code,//员工
                 "area"=>"",//区域(U系统)
                 "u_city"=>$u_city,//城市(U系统)
@@ -56,23 +58,22 @@ class RptUService extends ReportData2 {
                 "entry_month"=>"",//员工名称
                 "amt"=>$amt,//服务金额
             );
-            $user = self::getUserListForCode($staff_code,$userList);
             $entryMonth = empty($user["entry_month"])?0:$user["entry_month"];
             //年资范围
             $bool =$entryMonth>=$this->seniority_min&&$entryMonth<=$this->seniority_max;
             if(in_array($user["level_type"],$conditionList)&&$bool){ //职位且年资范围
-                if(!key_exists($u_city,$list)){
-                    $list[$u_city]=array();
+                if(!key_exists($lbs_city,$list)){
+                    $list[$lbs_city]=array();
                 }
-                $uCity = self::getCityListForCode($u_city,$cityList);
-                $temp["area"] = $uCity["region_name"];
-                $temp["u_city_name"] = $uCity["city_name"];
+                $cityNameList = self::getCityListForCode($lbs_city,$cityList);
+                $temp["area"] = $cityNameList["region_name"];
+                $temp["u_city_name"] = $cityNameList["city_name"];
                 $temp["city"] = $user["city"];
                 $temp["dept_name"] = $user["dept_name"];
                 $temp["entry_month"] = $user["entry_month"];
                 $temp["name"] = $user["name"]." ({$user["code"]})".($user["staff_status"]==-1?Yii::t("summary"," - Leave"):"");
 
-                $list[$u_city][$staff_code] = $temp;
+                $list[$lbs_city][$staff_code] = $temp;
             }
         }
 
