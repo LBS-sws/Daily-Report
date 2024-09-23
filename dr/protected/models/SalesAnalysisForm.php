@@ -334,7 +334,7 @@ class SalesAnalysisForm extends CFormModel
                     }
                     $data[$region]=array(
                         "region"=>$region,
-                        "region_name"=>key_exists($city,$cityList)?$cityList[$city]["region_name"]:"none",
+                        "region_name"=>key_exists($city,$cityList)?$cityList[$city]["region_name"]:"none".$city,
                         "list"=>$monthDataList,
                     );
                 }

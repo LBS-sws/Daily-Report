@@ -272,12 +272,12 @@ class UServiceForm extends CFormModel
             $city = "none";
             $regionRow = array("staff_num"=>0);//地区汇总
             foreach ($data as $staffCode=>$row) {
-                if($city==="none"||$row["u_city"]!=$city){//地區匯總
+                if($city==="none"||$row["city_code"]!=$city){//地區匯總
                     if($city!="none"){
                         $html.=$this->printTableTr($regionRow,$RegionKey);
                         $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
                     }
-                    $city = $row["u_city"];
+                    $city = $row["city_code"];
                     $regionRow = array("staff_num"=>0);
                     $regionRow["region"]=Yii::t("summary","Count：").$row["u_city_name"];
                 }
