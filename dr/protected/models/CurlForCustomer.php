@@ -105,10 +105,10 @@ class CurlForCustomer extends CurlForJD{
             "createorg_number"=>"LBSGL",//创建组织.编码
             //"internal_company_number"=>"",//内部业务单元.编码
             //"societycreditcode"=>"",//统一社会信用代码
-            "tx_register_no"=>$model->tax_reg_no,//纳税人识别号
-            "linkman"=>$model->cont_name,//联系人
-            "bizpartner_phone"=>$model->cont_phone,//联系电话
-            "postal_code"=>$model->email,//电子邮箱
+            //"tx_register_no"=>$model->tax_reg_no,//纳税人识别号 (2024年9月23日删除)
+            //"linkman"=>$model->cont_name,//联系人 (2024年9月23日删除)
+            //"bizpartner_phone"=>$model->cont_phone,//联系电话 (2024年9月23日删除)
+            //"postal_code"=>$model->email,//电子邮箱 (2024年9月23日删除)
             "address"=>$model->address,//电子邮箱(金蝶接口未有)
             "group_code"=>$model->group_id,//集团编号(金蝶接口未有)
             "group_name"=>$model->group_name,//集团名称(金蝶接口未有)
