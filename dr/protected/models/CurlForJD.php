@@ -4,6 +4,14 @@ class CurlForJD{
     protected $info_type="warehouse";
     protected $saveArr=array();
 
+    public function setInfoType($info_type){
+        $this->info_type = $info_type;
+    }
+
+    public function getSaveArr(){
+        return $this->saveArr;
+    }
+
     protected function sendData($data,$url) {
         $root = Yii::app()->params['JDCurlRootURL'];
         $endUrl = $root.$url;
@@ -44,6 +52,7 @@ class CurlForJD{
             $rtn["message"] = "token获取失败:".$tokenList["message"];//token获取失败
         }
 
+        $rtn["message"] = mb_strlen($rtn["message"],'UTF-8')>250?mb_substr($rtn["message"],0,250,'UTF-8'):$rtn["message"];
         $this->saveArr = array(
             "status_type"=>$rtn['code']==200?"C":"E",
             "info_type"=>$this->info_type,
@@ -105,6 +114,7 @@ class CurlForJD{
             $rtn["message"] = "token获取失败:".$tokenList["message"];//token获取失败
         }
 
+        $rtn["message"] = mb_strlen($rtn["message"],'UTF-8')>250?mb_substr($rtn["message"],0,250,'UTF-8'):$rtn["message"];
         $sqlData=array(
             "status_type"=>$rtn['code']==200?"C":"E",
             "info_type"=>$info_type,
@@ -163,6 +173,7 @@ class CurlForJD{
             $rtn["message"] = "token获取失败:".$tokenList["message"];//token获取失败
         }
 
+        $rtn["message"] = mb_strlen($rtn["message"],'UTF-8')>250?mb_substr($rtn["message"],0,250,'UTF-8'):$rtn["message"];
         $sqlData=array(
             "status_type"=>$rtn['code']==200?"C":"E",
             "data_content"=>json_encode($data),
@@ -215,6 +226,7 @@ class CurlForJD{
             $rtn["message"] = "token获取失败:".$tokenList["message"];//token获取失败
         }
 
+        $rtn["message"] = mb_strlen($rtn["message"],'UTF-8')>250?mb_substr($rtn["message"],0,250,'UTF-8'):$rtn["message"];
         return $rtn;
     }
 
@@ -255,6 +267,7 @@ class CurlForJD{
             $rtn["message"] = "token获取失败:".$tokenList["message"];//token获取失败
         }
 
+        $rtn["message"] = mb_strlen($rtn["message"],'UTF-8')>250?mb_substr($rtn["message"],0,250,'UTF-8'):$rtn["message"];
         return $rtn;
     }
 }

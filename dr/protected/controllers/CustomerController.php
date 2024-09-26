@@ -43,10 +43,10 @@ class CustomerController extends Controller
 		);
 	}
 
-	public function actionSendAllToJD($city="")
+	public function actionSendAllToJD($city="",$minID=0,$maxID=0)
 	{
 		$model = new CustomerForm();
-        $model->sendAllCustomerToJD($city);
+        $model->sendAllCustomerToJD($city,$minID,$maxID);
         Yii::app()->end();
 	}
 

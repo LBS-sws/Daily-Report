@@ -168,7 +168,7 @@ class CustomerForm extends CFormModel
 	}
 
 	//发送所有客户资料到金蝶系统
-    public function sendAllCustomerToJD($city="",$minID=0){
+    public function sendAllCustomerToJD($city="",$minID=0,$maxID=0){
         $whereSql="";
         if(!empty($city)){
             $cityList = explode(",",$city);
@@ -176,6 +176,9 @@ class CustomerForm extends CFormModel
         }
         if(!empty($minID)){
             $whereSql.= " and id>$minID ";
+        }
+        if(!empty($maxID)){
+            $whereSql.= " and id<$maxID ";
         }
         $pageMax = 100;//最大数量
         $sqlCount = "select count(id) from swo_company where id>0 {$whereSql}";
@@ -194,6 +197,7 @@ class CustomerForm extends CFormModel
         if($rows){
             $data = array();
             $curlModel = new CurlForCustomer();
+            $curlModel->setInfoType("customerAll");
             foreach ($rows as $row){
                 $this->id = $row['id'];
                 $this->code = $row['code'];
