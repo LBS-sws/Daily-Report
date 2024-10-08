@@ -25,6 +25,7 @@ class HistoryStopForm extends CFormModel
 
 	public $th_sum=1;//所有th的个数
 
+    public $downJsonText='';
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -295,12 +296,15 @@ class HistoryStopForm extends CFormModel
     public function tableBodyHtml(){
         $html="";
         if(!empty($this->data)){
+            $this->downJsonText=array();
             $html.="<tbody>";
             $moData = key_exists("MO",$this->data)?$this->data["MO"]:array();
             unset($this->data["MO"]);//澳门需要单独处理
             $html.=$this->showServiceHtml($this->data);
             $html.=$this->showServiceHtmlForMO($moData);
             $html.="</tbody>";
+            $this->downJsonText=json_encode($this->downJsonText);
+            $html.=TbHtml::hiddenField("excel",$this->downJsonText);
         }
         return $html;
     }
@@ -341,8 +345,8 @@ class HistoryStopForm extends CFormModel
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                     $tdClass = HistoryAddForm::getTextColorForKeyStr($text,$keyStr);
-                    $inputHide = TbHtml::hiddenField("excel[MO][]",$text);
-                    $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
+                    $this->downJsonText["excel"]['MO'][$keyStr]=$text;
+                    $html.="<td class='{$tdClass}'><span>{$text}</span></td>";
                 }
                 $html.="</tr>";
             }
@@ -375,11 +379,12 @@ class HistoryStopForm extends CFormModel
                                 $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
                             }
                             $tdClass = HistoryAddForm::getTextColorForKeyStr($text,$keyStr);
-                            $inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][]",$text);
+                            $this->downJsonText["excel"][$regionList['region']]['list'][$cityList['city']][$keyStr]=$text;
+                            //$inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][]",$text);
                             if(strpos($keyStr,'/')!==false){//调试U系统同步数据
-                                $html.="<td class='{$tdClass}' data-u='{$cityList[$keyStr."_u"]}'><span>{$text}</span>{$inputHide}</td>";
+                                $html.="<td class='{$tdClass}' data-u='{$cityList[$keyStr."_u"]}'><span>{$text}</span></td>";
                             }else{
-                                $html.="<td class='{$tdClass}'><span>{$text}</span>{$inputHide}</td>";
+                                $html.="<td class='{$tdClass}'><span>{$text}</span></td>";
                             }
                         }
                         $html.="</tr>";
@@ -407,8 +412,8 @@ class HistoryStopForm extends CFormModel
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
             $tdClass = HistoryAddForm::getTextColorForKeyStr($text,$keyStr);
-            $inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][]",$text);
-            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span>{$inputHide}</td>";
+            $this->downJsonText["excel"][$data['region']]['count'][$keyStr]=$text;
+            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span></td>";
         }
         $html.="</tr>";
         return $html;
@@ -423,6 +428,10 @@ class HistoryStopForm extends CFormModel
 
     //下載
     public function downExcel($excelData){
+        if(!is_array($excelData)){
+            $excelData = json_decode($excelData,true);
+            $excelData = key_exists("excel",$excelData)?$excelData["excel"]:array();
+        }
         $this->validateDate("","");
         $headList = $this->getTopArr();
         $excel = new DownSummary();
