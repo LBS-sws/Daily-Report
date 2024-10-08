@@ -3,6 +3,7 @@ class RptUService extends ReportData2 {
     public $condition="";//筛选条件
     public $seniority_min=0;//年资（最小）
     public $seniority_max=9999;//年资（最大）
+    public $staff_type=0;//员工类型 0：全部 1：专职 2：其他
 
 	public function fields() {
 		return array(
@@ -39,11 +40,23 @@ class RptUService extends ReportData2 {
 		foreach ($rows as $item){//由于数据太多，尝试优化
             $staff_code = isset($item["staff"])?$item["staff"]:"none";
             $user = self::getUserListForCode($staff_code,$userList);
+            $staff_type = key_exists("table_type",$user)?$user["table_type"]:1;
             $lbs_city = key_exists("city",$user)?$user["city"]:"none";
             $u_city = isset($item["city_code"])?$item["city_code"]:"none";
             $u_city = SummaryForm::resetCity($u_city);
             if (strpos($city_allow,"'{$lbs_city}'")===false){
                 continue;//由于派单系统不做城市判断，所以查询所有城市,由LBS删除多余城市
+            }
+            $bool = false;
+            if(empty($this->staff_type)){//全部
+                $bool = true;//允许
+            }else if($this->staff_type==1&&$staff_type==1){//专职
+                $bool = true;//允许
+            }else if($this->staff_type==2&&$staff_type!=1){//其它
+                $bool = true;//允许
+            }
+            if(!$bool){
+                continue;
             }
             $amt = isset($item["amt"])&&is_numeric($item["amt"])?floatval($item["amt"]):0;
             $temp = array(
@@ -57,6 +70,7 @@ class RptUService extends ReportData2 {
                 "dept_name"=>"",//员工名称
                 "entry_month"=>"",//员工名称
                 "amt"=>$amt,//服务金额
+                "staff_type"=>self::getStaffTypeStrForType($staff_type,true),//员工类型
             );
             $entryMonth = empty($user["entry_month"])?0:$user["entry_month"];
             //年资范围
@@ -95,7 +109,7 @@ class RptUService extends ReportData2 {
 		if(key_exists($code,$list)){
 			return $list[$code];
 		}else{
-			return array("level_type"=>3,"staff_status"=>0,"code"=>$code,"name"=>"","city"=>"","dept_name"=>"","entry_month"=>"");
+			return array("level_type"=>3,"table_type"=>1,"staff_status"=>0,"code"=>$code,"name"=>"","city"=>"","dept_name"=>"","entry_month"=>"");
 		}
 	}
 
@@ -105,6 +119,26 @@ class RptUService extends ReportData2 {
 		}else{
 			return array("code"=>$code,"city_name"=>"","region_name"=>"");
 		}
+	}
+    public static function getStaffTypeStrForType($type=1,$bool=false){
+        $list = array(
+            1=>"专职",
+            2=>"兼职",
+            3=>"外聘",
+            4=>"业务承揽",
+            5=>"外包商",
+            6=>"临时账号"
+        );
+        if($bool){
+            $type = "".$type;
+            if(key_exists($type,$list)){
+                return $list[$type];
+            }else{
+                return $type;
+            }
+        }else{
+            return $list;
+        }
 	}
 
 	public function getUserList($UStaffCodeList,$endDate){
@@ -116,7 +150,7 @@ class RptUService extends ReportData2 {
             $whereSql = "a.code=0";
         }
         $rows = Yii::app()->db->createCommand()
-            ->select("a.code,a.staff_status,a.entry_time,g.name as dept_name,a.name,a.city,
+            ->select("a.code,a.table_type,a.staff_status,a.entry_time,g.name as dept_name,a.name,a.city,
             g.level_type")
             ->from("hr{$suffix}.hr_employee a")
             ->leftJoin("hr{$suffix}.hr_dept g","a.position = g.id")

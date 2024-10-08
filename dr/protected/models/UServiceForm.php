@@ -14,6 +14,7 @@ class UServiceForm extends CFormModel
 	public $condition;//筛选条件
 	public $seniority_min=6;//年资（最小）
 	public $seniority_max=9999;//年资（最大）
+	public $staff_type=0;//员工类型 0：全部 1：专职 2：其他
     public $month_type;
     public $city;
     public $city_desc="全部";
@@ -44,6 +45,7 @@ class UServiceForm extends CFormModel
             'city'=>Yii::t('app','City'),
             'condition'=>Yii::t('summary','screening condition'),
             'seniority_min'=>Yii::t('summary','seniority（month）'),
+            'staff_type'=>Yii::t('summary','Staff Type'),
 		);
 	}
 
@@ -53,7 +55,7 @@ class UServiceForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('condition,seniority_min,seniority_max,search_type,city,city_desc,search_start_date,search_end_date,search_year,search_quarter,search_month','safe'),
+            array('staff_type,condition,seniority_min,seniority_max,search_type,city,city_desc,search_start_date,search_end_date,search_year,search_quarter,search_month','safe'),
             array('search_type','required'),
             array('search_type','validateDate'),
             array('city','validateCity'),
@@ -136,6 +138,7 @@ class UServiceForm extends CFormModel
             'seniority_min'=>$this->seniority_min,
             'seniority_max'=>$this->seniority_max,
             'city_desc'=>$this->city_desc,
+            'staff_type'=>$this->staff_type,
             'city'=>$this->city
         );
     }
@@ -145,6 +148,7 @@ class UServiceForm extends CFormModel
 	    $rptModel->condition = $this->condition;
 	    $rptModel->seniority_min = $this->seniority_min;
 	    $rptModel->seniority_max = $this->seniority_max;
+	    $rptModel->staff_type = $this->staff_type;
         $criteria = new ReportForm();
         $criteria->start_dt = $this->start_date;
         $criteria->end_dt = $this->end_date;
@@ -173,6 +177,7 @@ class UServiceForm extends CFormModel
             array("name"=>Yii::t("summary","Area"),"background"=>"#f7fd9d"),//區域
             array("name"=>Yii::t("summary","City"),"background"=>"#fcd5b4"),//城市
             array("name"=>Yii::t("summary","Staff Name"),"background"=>"#f2dcdb"),//员工
+            array("name"=>Yii::t("summary","Staff Type"),"background"=>"#f2dcdb"),//员工类型
             array("name"=>Yii::t("summary","dept name"),"background"=>"#FDE9D9"),//职位
             array("name"=>Yii::t("summary","entry month"),"background"=>"#DCE6F1"),//入职月数
             array("name"=>Yii::t("summary","Paid Amt"),"background"=>"#d1e2fb"),//服务金额
@@ -230,11 +235,11 @@ class UServiceForm extends CFormModel
     private function tableHeaderWidth(){
         $html="<tr>";
         for($i=0;$i<$this->th_sum;$i++){
-            if(in_array($i,array(2,4,5,6,7,8))){
+            if(in_array($i,array(2,3,5,6,7,8))){
                 $width=75;
             }elseif($i==9){
                 $width=110;
-            }elseif(in_array($i,array(1,3,12,14))){
+            }elseif(in_array($i,array(1,4,12,14))){
                 $width=90;
             }else{
                 $width=83;
@@ -259,7 +264,7 @@ class UServiceForm extends CFormModel
     //获取td对应的键名
     private function getDataAllKeyStr(){
         $bodyKey = array(
-            "area","u_city_name","name","dept_name","entry_month","amt"
+            "area","u_city_name","name","staff_type","dept_name","entry_month","amt"
         );
         return $bodyKey;
     }
@@ -402,5 +407,13 @@ class UServiceForm extends CFormModel
         }
         $arr[3]=Yii::t("summary","search day");//日期
         return $arr;
+    }
+
+    public static function getStaffType(){
+        return array(
+            0=>Yii::t("summary","All"),
+            1=>Yii::t("summary","Professional"),
+            3=>Yii::t("summary","Other"),
+        );
     }
 }

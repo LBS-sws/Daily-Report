@@ -158,6 +158,14 @@ $this->pageTitle=Yii::app()->name . ' - UService Form';
                                 ); ?>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
+                            <div class="col-sm-10">
+                                <?php echo $form->inlineRadioButtonList($model, 'staff_type',UServiceForm::getStaffType(),
+                                    array('readonly'=>true,'id'=>'staff_type')
+                                ); ?>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-lg-12" style="padding-top: 15px;">

@@ -147,6 +147,14 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
                     ); ?>
                 </div>
             </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-10">
+                    <?php echo $form->inlineRadioButtonList($model, 'staff_type',UServiceForm::getStaffType(),
+                        array('readonly'=>false,'id'=>'staff_type')
+                    ); ?>
+                </div>
+            </div>
 		</div>
 	</div>
 </section>
@@ -179,9 +187,8 @@ $js="
         var year = $(this).val();
         $('#year_one,#year_two').val(year);
     });
-    $('input[type=radio]').change(function(){
+    $('input[name=\"UServiceForm[search_type]\"]').change(function(){
         var id = $(this).val();
-        console.log(id);
         $('#search_div').children('div').hide();
         $('#search_div').children('div[data-id='+id+']').show();
     });
