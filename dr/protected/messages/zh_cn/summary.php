@@ -281,5 +281,10 @@ return array(
     'Outsource cost amount'=>'外包成本',
     'Outsource cost rate'=>'外包成本/外包服务总金额%',
     'Outsource productivity'=>'外包人员生产力',
+
+    'All'=>'全部',
+    'Other'=>'其它',
+    'Professional'=>'专职',
+    'Staff Type'=>'员工类型',
 );
 ?>
