@@ -502,10 +502,10 @@ class DownSummary{
                     $this->objPHPExcel->getActiveSheet()
                         ->setCellValueByColumnAndRow(0, $this->current_row, $list["region"]);
                     $this->objPHPExcel->getActiveSheet()
-                        ->setCellValueByColumnAndRow(4, $this->current_row, $list["entry_month"]);
+                        ->setCellValueByColumnAndRow(5, $this->current_row, $list["entry_month"]);
                     $this->objPHPExcel->getActiveSheet()
-                        ->setCellValueByColumnAndRow(5, $this->current_row, $list["amt"]);
-                    $this->objPHPExcel->getActiveSheet()->mergeCells("A".$this->current_row.':D'.$this->current_row);
+                        ->setCellValueByColumnAndRow(6, $this->current_row, $list["amt"]);
+                    $this->objPHPExcel->getActiveSheet()->mergeCells("A".$this->current_row.':E'.$this->current_row);
                     $this->objPHPExcel->getActiveSheet()
                         ->getStyle("A{$this->current_row}:{$endStr}{$this->current_row}")
                         ->applyFromArray(

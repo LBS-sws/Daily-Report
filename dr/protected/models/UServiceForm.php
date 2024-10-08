@@ -319,8 +319,9 @@ class UServiceForm extends CFormModel
     }
 
     protected function printTableTr($data,$bodyKey){
+        $colspan = $this->th_sum-2;
         $html="<tr class='tr-end click-tr'>";
-        $html.="<td colspan='4' style='font-weight: bold'>".$data["region"]."</td>";
+        $html.="<td colspan='{$colspan}' style='font-weight: bold'>".$data["region"]."</td>";
         $html.="<td style='font-weight: bold'>".$data["entry_month"]."</td>";
         $html.="<td style='font-weight: bold'>".self::showNum($data["amt"],"amt")."</td>";
         $html.="</tr>";
@@ -333,7 +334,7 @@ class UServiceForm extends CFormModel
         $data["month_average"] = round($data["entry_month"]/$data["staff_num"]);
         $data["amt_average"] = self::showNum(($data["amt"]/$data["staff_num"]),"amt");
         $html.="<tr class='tr-end'>";
-        $html.="<td colspan='4' style='font-weight: bold'>".$data["region"]."</td>";
+        $html.="<td colspan='{$colspan}' style='font-weight: bold'>".$data["region"]."</td>";
         $html.="<td style='font-weight: bold;color:red;'>".$data["month_average"]."</td>";
         $html.="<td style='font-weight: bold;color:red;'>".$data["amt_average"]."</td>";
         $html.="</tr>";
