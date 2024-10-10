@@ -29,13 +29,17 @@ class FollowupList extends CListPageModel
 		$allcond = Yii::app()->user->validFunction('CN01') ? "" : "and a.lcu='$user'";
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
-		$sql1 = "select a.*, b.name as city_name 
-				from swo_followup a, security$suffix.sec_city b
-				where a.city=b.code and a.city in ($city) $allcond
+		$sql1 = "select a.*,concat(f.code,f.name) as company_name_str, b.name as city_name 
+				from swo_followup a
+				LEFT JOIN security$suffix.sec_city b ON a.city=b.code
+				LEFT JOIN swo_company f ON f.id=a.company_id 
+				where  a.city in ($city) $allcond
 			";
 		$sql2 = "select count(a.id)
-				from swo_followup a, security$suffix.sec_city b
-				where a.city=b.code and a.city in ($city) $allcond 
+				from swo_followup a
+				LEFT JOIN security$suffix.sec_city b ON a.city=b.code 
+				LEFT JOIN swo_company f ON f.id=a.company_id 
+				where a.city in ($city) $allcond 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -51,7 +55,7 @@ class FollowupList extends CListPageModel
 					$clause .= General::getSqlConditionClause('a.pest_type_name',$svalue);
 					break;
 				case 'company_name':
-					$clause .= General::getSqlConditionClause('a.company_name',$svalue);
+					$clause .= "and (f.code like '%{$svalue}%' or f.name like '%{$svalue}%')";
 					break;
 				case 'resp_staff':
 					$clause .= General::getSqlConditionClause('a.resp_staff',$svalue);
@@ -94,7 +98,7 @@ class FollowupList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'entry_dt'=>General::toDate($record['entry_dt']),
-					'company_name'=>$record['company_name'],
+					'company_name'=>$record['company_name_str'],
 					'resp_staff'=>$record['resp_staff'],
 					'resp_tech'=>$record['resp_tech'],
 					'content'=>$record['content'],

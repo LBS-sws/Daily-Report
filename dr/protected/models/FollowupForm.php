@@ -5,7 +5,7 @@ class FollowupForm extends CFormModel
 	public $id = 0;
 	public $entry_dt;
 	public $type = '';
-	public $company_id = 0;
+	public $company_id;
 	public $company_name;
 	public $content;
 	public $job_report;
@@ -46,6 +46,7 @@ class FollowupForm extends CFormModel
 			'id'=>Yii::t('followup','Record ID'),
 			'entry_dt'=>Yii::t('followup','Date').' '.Yii::t('misc','(Y/M/D)'),
 			'type'=>Yii::t('followup','Type'),
+			'company_id'=>Yii::t('followup','Customer'),
 			'company_name'=>Yii::t('followup','Customer'),
 			'content'=>Yii::t('followup','job content'),
 			'job_report'=>Yii::t('followup','job report'),
@@ -87,7 +88,7 @@ class FollowupForm extends CFormModel
 				mgr_talk, change, tech_notify, cont_info, type, mcard_remarks, mcard_staff,
 				fp_cust_name, fp_comment, svc_comment, svc_cust_name, company_id, leader
 				','safe'),
-			array('company_name, content, entry_dt','required'),
+			array('company_name, company_id, content, entry_dt','required'),
 			array('entry_dt','date','allowEmpty'=>false,
 				'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
 			),
@@ -124,9 +125,11 @@ class FollowupForm extends CFormModel
 	public function retrieveData($index)
 	{
 		$user = Yii::app()->user->id;
-		$allcond = Yii::app()->user->validFunction('CN01') ? "" : "and lcu='$user'";
+		$allcond = Yii::app()->user->validFunction('CN01') ? "" : "and a.lcu='$user'";
 		$city = Yii::app()->user->city_allow();
-		$sql = "select * from swo_followup where id=$index and city in ($city) $allcond";
+		$sql = "select a.*,concat(f.code,f.name) as company_name_str from swo_followup a
+		LEFT JOIN swo_company f ON f.id=a.company_id 
+        where a.id=$index and a.city in ($city) $allcond";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0)
 		{
@@ -135,7 +138,7 @@ class FollowupForm extends CFormModel
 				$this->id = $row['id'];
 				$this->entry_dt = General::toDate($row['entry_dt']);
 				$this->company_id = $row['company_id'];
-				$this->company_name = $row['company_name'];
+				$this->company_name = $row['company_name_str'];
 				$this->type = $row['type'];
 				$this->content = $row['content'];
 				$this->job_report = $row['job_report'];

@@ -133,14 +133,9 @@ class RptComplaint extends ReportData2 {
 				$temp['entry_dt'] = General::toDate($row['entry_dt']);
 				$temp['type'] = $row['type'];
 				$temp['pest_type_name'] = $row['pest_type_name'];
-				$temp['company_name'] = $row['company_name'];
-				
-				$company_name = $row['company_name'];
-				$sql1 = "select * from swo_company where :company_name regexp code and :company_name regexp name and city='$city' limit 1";
-				$command=Yii::app()->db->createCommand($sql1);
-				$command->bindParam(':company_name',$company_name,PDO::PARAM_STR);
-				$rec = $command->queryRow();
-				$temp['address'] = $rec===false ? '' : $rec['address'];
+                $companyRow = self::getCompanyRowForId($row["company_id"]);
+				$temp['company_name'] = empty($companyRow)?$row['company_name']:$companyRow["code"].$companyRow["name"];
+				$temp['address'] = empty($companyRow)?"":$companyRow["address"];
 
 				$temp['content'] = $row['content'];
 				$temp['job_report'] = $row['job_report'];
@@ -178,5 +173,11 @@ class RptComplaint extends ReportData2 {
 		//$city_name = isset($this->criteria) ? ' - '.General::getCityNameForList($this->criteria->city) : '';
 		return parent::getReportName();
 	}
+    //获取客户类别1名字
+    public static function getCompanyRowForId($company_id){
+        $row = Yii::app()->db->createCommand()->select("*")->from("swo_company")
+            ->where("id=:id",array(":id"=>$company_id))->queryRow();
+        return $row?$row:array();
+    }
 }
 ?>
