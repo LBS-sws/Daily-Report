@@ -34,7 +34,7 @@ class FollowupController extends Controller
 				'expression'=>array('FollowupController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','resetCompany'),
 				'expression'=>array('FollowupController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -43,7 +43,14 @@ class FollowupController extends Controller
 		);
 	}
 
-	public function actionIndex($pageNum=0) 
+	public function actionResetCompany()
+	{
+		$model = new FollowupForm();
+		$model->resetCompany();
+		Yii::app()->end();
+	}
+
+	public function actionIndex($pageNum=0)
 	{
 		$model = new FollowupList;
 		if (isset($_POST['FollowupList'])) {

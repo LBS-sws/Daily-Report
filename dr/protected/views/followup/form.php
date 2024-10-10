@@ -93,7 +93,7 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 				<div class="col-sm-7">
 					<?php echo $form->hiddenField($model, 'company_id'); ?>
 					<?php echo $form->textField($model, 'company_name', 
-						array('size'=>50,'maxlength'=>1000,'readonly'=>($model->scenario=='view'),
+						array('size'=>50,'maxlength'=>1000,'readonly'=>true,
 						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->scenario=='view')))
 					)); ?>
 				</div>

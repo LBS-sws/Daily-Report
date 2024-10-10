@@ -137,8 +137,8 @@ class FollowupForm extends CFormModel
 			{
 				$this->id = $row['id'];
 				$this->entry_dt = General::toDate($row['entry_dt']);
-				$this->company_id = $row['company_id'];
-				$this->company_name = $row['company_name_str'];
+				$this->company_id = empty($row['company_id'])?"":$row['company_id'];
+				$this->company_name = empty($row['company_name_str'])?$row['company_name']:$row['company_name_str'];
 				$this->type = $row['type'];
 				$this->content = $row['content'];
 				$this->job_report = $row['job_report'];
@@ -374,4 +374,53 @@ class FollowupForm extends CFormModel
 			$this->id = Yii::app()->db->getLastInsertID();
 		return true;
 	}
+
+	//刷新旧数据
+    public function resetCompany(){
+	    echo "start:<br/>";
+        $rows = Yii::app()->db->createCommand()->select("id,company_name,city")->from("swo_followup")
+            ->where("company_id=0 or company_id is null")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                echo "reset ID:".$row["id"]."；companyName:".$row["company_name"]."；";
+                $code = self::getCodeForStr($row["company_name"]);
+                $company_id=0;
+                if(!empty($code)){
+                    $companyRow = Yii::app()->db->createCommand()->select("id")->from("swo_company")
+                        ->where("code=:code and city=:city",array(":code"=>$code,":city"=>$row["city"]))->queryRow();
+                    $company_id = $companyRow?$companyRow["id"]:0;
+                }
+                if(empty($company_id)){
+                    $companyRow = Yii::app()->db->createCommand()->select("id")->from("swo_company")
+                        ->where("name=:name and city=:city",array(":name"=>$row["company_name"],":city"=>$row["city"]))->queryRow();
+                    $company_id = $companyRow?$companyRow["id"]:0;
+                }
+                if(empty($company_id)){
+                    echo "companyID:0；error!";
+                }else{
+                    echo "companyID:{$company_id}；success!";
+                    Yii::app()->db->createCommand()->update("swo_followup",array(
+                        "company_id"=>$company_id
+                    ),"id=".$row["id"]);
+                }
+                echo "<br/>";
+            }
+        }
+	    echo "end<br/>";
+    }
+
+    public static function getCodeForStr($str){
+        $code = "";
+        if(!empty($str)){
+            $arr = str_split($str);
+            foreach ($arr as $item){
+                if(preg_match('/\w/', $item)){
+                    $code.=$item;
+                }else{
+                    break;
+                }
+            }
+        }
+        return $code;
+    }
 }
