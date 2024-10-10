@@ -8,6 +8,7 @@ class FollowupForm extends CFormModel
 	public $company_id;
 	public $company_name;
 	public $content;
+	public $city;
 	public $job_report;
 	public $cont_info;
 	public $resp_staff;
@@ -145,6 +146,7 @@ class FollowupForm extends CFormModel
 				$this->cont_info = $row['cont_info'];
 				$this->resp_staff = $row['resp_staff'];
 				$this->resp_tech = $row['resp_tech'];
+				$this->city = $row['city'];
 				$this->mgr_notify = $row['mgr_notify'];
 				$this->sch_dt = General::toDate($row['sch_dt']);
 				$this->follow_staff = $row['follow_staff'];

@@ -54,6 +54,7 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 		<div class="box-body">
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
+			<?php echo $form->hiddenField($model, 'city'); ?>
 
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'entry_dt',array('class'=>"col-sm-2 control-label")); ?>
@@ -376,7 +377,7 @@ $('#lstlookup').change(function(){
 ";
 Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButtonEx('btnCompany', 'company', 'company_id', 'company_name');
+$js = Script::genLookupButtonEx('btnCompany', 'company', 'company_id', 'company_name',array("incity"=>"FollowupForm_city"));
 Yii::app()->clientScript->registerScript('lookupCompany',$js,CClientScript::POS_READY);
 
 $js = Script::genLookupButtonEx('btnStaffResp', 'staff', '', 'resp_staff');
