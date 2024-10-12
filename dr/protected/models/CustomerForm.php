@@ -373,4 +373,111 @@ class CustomerForm extends CFormModel
         $systemLogModel->option_text=$delText;
         $systemLogModel->insertSystemLog("D");
     }
+
+    public function companyZZ(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $codeStr = "'002DWXSBY','01BCQLRFZ','01CALYSHG','01DWXSHHGJ','01DWXSJFD','01DWXSJFLD','01DWXSMHD','01DWXSXED','01DWXSXT','01DWXSZB','01HYCQHGLSD','01JNHXSSGJ','01JOBNLKR','01JYDZCHXLSX','01LCDZBXCG','01LGKRWFJ','01LINLEESDNMC','01LKSPNRHGD','01LSQFCJ','01MBYBA','01MWYTHG','01RJSRW','01SCSL','01SPLHSY','01SXJDHYZXD','01SZRSLL','01WBYZCND','01WLDWFJ','01XXLCT','01XYFWFJ','01XYYJZCGHJT','01XYYJZCGLY','01YJYJHCZD','01YLSHG','01ZCXEDWLD','02BSDJZXCG','02CJDBJCCHGTRTHD','02CXECSMFHTD','02DBJCCHGZJCD','02DWXSHRWJ','02DWXSSMD','02DWXSWW','02DWXSYT','02DZHZRL','02FSCQ','02HMGFP','02HXRXHXL','02HYHGSMD','02LCDCYXHXLD','02SXJWD','02WLDWDD','02WYXY','02XLWNRHGCC','02XYEHTQD','02ZMGXCLLLYST','02ZZXXTY','03BCLW','03CXEMFSDD','03DWXSTXBM','03DWXSBDM','03JSKRWD','03LCDCYWDD','03LCXX','03PCSFD','03XYYJZCGTXD','03YJYJZJCHLSC','03ZHSDBGYXZRGS','03ZZSDWYGLYXZRGS','04CDGS','04CQLYSHGSND','04DHG','04DHMMGD','04DWXSDMZGC','04DWXSGYZX','04DWXSHJ','04DWXSLYD','04DWXSMDC','04DWXSQPYD','04DWXSSNC','04DWXSTHD','04DWXSZJD','04EYGTY','04FEKF','04FJXXCY','04GZC','04HNZZZBHY','04HYHGHCD','04JMSX','04LSCHGTYD','04LXESFQ','04LXJGGNRFG','04MDLSLC','04PCHXEZ','04PCJACY','04PCJYD','04PCLY','04QJKRGDD','04QXZY','04SDFPTYFQL','04SEJKSS','04SJYTCG','04SMLWSSHT','04SMLWSSHTD','04SNCF','04STJY','04SXJCJGCD','04SXJCJHPGFGKD','04SXJLSD','04SXJSGTSJFD','04SXJWGD','04SYSXCMDSDGC','04SZFPLJBJ','04TYQXHLCL','04TYQXLSXD','04WSHGW','04XCXCL','04XLKRGDD','04XRML','04XXGNPCD','04XYECTGD','04XYLCDCLTH','04XYRCDXYD','04YGYXYS','04YJYJFCMYD','04YJYJLTGJ','04YKLLHR','04YMZDPD','04YWKFYDGC','04YYDTBC','04YYWCYD','04ZMJL','04ZZHJJD','04ZZSYTWYYXZRGS','05DWXSLKD','06DWXSGYZXB6','06DWXSJHD','06DWXSXTCKB22','06MDLXTCZ','06MDLXTLC','06QSXLJCR','06THBHXT','06THCSXT','06XTSYHQJJYD','06YJYJXTDXLJD','06YJYJXTLCD','03XFNWDD','01PDHTKC','04SYSXCGD','06BTYKYXTYHJHXTD','01SGLLZZHXKR','01GFNKRHGZZ','03XLGHXKRZZLL','06CLBXQXTQJD','03QJX','04YJYJHNGYDXD','01SXTZZRL','01QJXLSD','02LCDCYCFGCD','02DHCFXHXLD','01DHCFSSYD','04ZZSTJDGCGS','03XYECTQSD','01YJYJSSYD','06BTYKYXTWDGCD','04YJYJXSMJD','02YJYJHQGCD','04MFJD','03HZFLRKR','06SXTRLXTCSHZ','04DWXSXNZD','04DWXSZSD','01DWXSJCD','04DWXSKQMJ','03DWXSWDD','01YKLLXRD','01LSQLZTFWZX','03WSWWJSGJ','04AA','06DWXSXTHLD','06NNJKCTHD','CSSPJMX','04NLSYJSST','03LCDHG','04HWHPCTD','04NHJTKFN','04SXTZZRLSNCD','04TQSK'";
+        echo "start:<br/>";
+        $CSRows = Yii::app()->db->createCommand()->select("id,code")->from("swo_company")
+            ->where("city='CS' and code in ({$codeStr})")->queryAll();
+        $lud = "2024-10-12 12:00:00";
+        if($CSRows){
+            foreach ($CSRows as $CSRow){
+                echo "ID:{$CSRow["id"]}；CS Code:{$CSRow["code"]}；";
+                $ZZRow = Yii::app()->db->createCommand()->select("id,code")->from("swo_company")
+                    ->where("city='ZZ' and code=:code",array(":code"=>$CSRow["code"]))->queryRow();
+                if($ZZRow){//如果株洲存在该编号
+                    //删除株洲资料
+                    Yii::app()->db->createCommand()->delete("swo_company","id=:id",array(":id"=>$ZZRow["id"]));
+                    echo "<br/>Delete:{$ZZRow["id"]}！";
+                    //修改客户服务(普通合约)
+                    $aa=Yii::app()->db->createCommand()->update("swo_service",array(
+                        "company_id"=>$CSRow["id"],
+                        "lud"=>$lud
+                    ),"company_id=".$ZZRow["id"]);
+                    echo "service:{$aa}；";
+                    //修改客户服务(KA合约)
+                    $aa=Yii::app()->db->createCommand()->update("swo_service_ka",array(
+                        "company_id"=>$CSRow["id"],
+                        "lud"=>$lud
+                    ),"company_id=".$ZZRow["id"]);
+                    echo "service:{$aa}；";
+                    //修改客户服务(ID合约)
+                    $aa=Yii::app()->db->createCommand()->update("swo_serviceid",array(
+                        "company_id"=>$CSRow["id"],
+                        "lud"=>$lud
+                    ),"company_id=".$ZZRow["id"]);
+                    echo "service:{$aa}；";
+                    //修改投诉个案
+                    $aa=Yii::app()->db->createCommand()->update("swo_followup",array(
+                        "company_id"=>$CSRow["id"],
+                        "lud"=>$lud
+                    ),"company_id=".$ZZRow["id"]);
+                    echo "service:{$aa}；";
+                    //修改物流配送
+                    $aa=Yii::app()->db->createCommand()->update("swo_logistic",array(
+                        "company_id"=>$CSRow["id"],
+                        "lud"=>$lud
+                    ),"company_id=".$ZZRow["id"]);
+                    echo "service:{$aa}；";
+                    //修改品鉴记录
+                    $aa=Yii::app()->db->createCommand()->update("swo_qc",array(
+                        "company_id"=>$CSRow["id"],
+                        "lud"=>$lud
+                    ),"company_id=".$ZZRow["id"]);
+                    echo "service:{$aa}；";
+                    //修改付款/收款记录
+                    $aa=Yii::app()->db->createCommand()->update("account{$suffix}.acc_trans_info",array(
+                        "field_value"=>$CSRow["id"],
+                        "lud"=>$lud
+                    ),"field_id='payer_id' and field_value=".$ZZRow["id"]);
+                    echo "service:{$aa}；";
+                }
+                echo "<br/>Update ZZ！";
+                //修改长沙客户到株洲
+                $aa=Yii::app()->db->createCommand()->update("swo_company",array(
+                    "city"=>"ZZ",
+                    "lud"=>$lud
+                ),"id=:id",array(":id"=>$CSRow["id"]));
+                echo "service:{$aa}；";
+                //修改客户服务(普通合约)
+                $aa=Yii::app()->db->createCommand()->update("swo_service",array(
+                    "city"=>"ZZ",
+                    "lud"=>$lud
+                ),"company_id=".$CSRow["id"]);
+                echo "service:{$aa}；";
+                //修改客户服务(KA合约)
+                $aa=Yii::app()->db->createCommand()->update("swo_service_ka",array(
+                    "city"=>"ZZ",
+                    "lud"=>$lud
+                ),"company_id=".$CSRow["id"]);
+                echo "service:{$aa}；";
+                //修改客户服务(ID合约)
+                $aa=Yii::app()->db->createCommand()->update("swo_serviceid",array(
+                    "city"=>"ZZ",
+                    "lud"=>$lud
+                ),"company_id=".$CSRow["id"]);
+                echo "service:{$aa}；";
+                //修改投诉个案
+                $aa=Yii::app()->db->createCommand()->update("swo_followup",array(
+                    "city"=>"ZZ",
+                    "lud"=>$lud
+                ),"company_id=".$CSRow["id"]);
+                echo "service:{$aa}；";
+                //修改物流配送
+                $aa=Yii::app()->db->createCommand()->update("swo_logistic",array(
+                    "city"=>"ZZ",
+                    "lud"=>$lud
+                ),"company_id=".$CSRow["id"]);
+                echo "service:{$aa}；";
+                //修改品鉴记录
+                $aa=Yii::app()->db->createCommand()->update("swo_qc",array(
+                    "city"=>"ZZ",
+                    "lud"=>$lud
+                ),"company_id=".$CSRow["id"]);
+                echo "service:{$aa}；<br/><br/>";
+            }
+        }
+        echo "end:<br/>";
+    }
 }

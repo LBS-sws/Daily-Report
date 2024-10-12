@@ -34,13 +34,21 @@ class CustomerController extends Controller
 				'expression'=>array('CustomerController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','companyZZ'),
 				'expression'=>array('CustomerController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
 		);
+	}
+
+	//重置株洲城市的客户资料及其它关系表
+	public function actionCompanyZZ()
+	{
+		$model = new CustomerForm();
+        $model->companyZZ();
+        Yii::app()->end();
 	}
 
 	public function actionSendAllToJD($city="",$minID=0,$maxID=0)
