@@ -6,10 +6,10 @@ class TimerCommand extends CConsoleCommand {
 
     public function run() {
         $date = date_format(date_create(),"Y-m-d H:i");
-
-        if($date=="2024-09-18 17:13"){
+echo $date."\n";
+        if($date=="2024-10-12 17:26"){
             $model = new CustomerForm();
-            $model->sendAllCustomerToJD();
+            $model->sendAllTrimCustomer();
             Yii::app()->end();
         }
         //echo "start：\r\n";

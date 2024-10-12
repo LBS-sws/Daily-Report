@@ -190,6 +190,20 @@ class CustomerForm extends CFormModel
         }
     }
 
+	//发送所有客户资料到金蝶系统
+    public function sendAllTrimCustomer(){
+        $pageMax = 100;//最大数量
+        $sqlCount = "select count(id) from swo_company where code LIKE '% %'";
+        $totalRow = Yii::app()->db->createCommand($sqlCount)->queryScalar();
+        if($totalRow>0){
+            echo "max number:{$totalRow}<br/>\r\n";
+            $sql = "select * from swo_company where code LIKE '% %'";
+            $this->sendCustomerToJDPage($sql,$totalRow,$pageMax);
+        }
+        $updateSql = "UPDATE swo_company SET code = REPLACE(code, ' ', '')";
+        Yii::app()->db->createCommand($updateSql)->execute();
+    }
+
     protected function sendCustomerToJDPage($sql,$totalRow,$pageMax,$page=0){
         $startNum = $page*$pageMax;
         $whereSql = $sql." ORDER BY id ASC LIMIT {$startNum},$pageMax";
@@ -200,7 +214,7 @@ class CustomerForm extends CFormModel
             $curlModel->setInfoType("customerAll");
             foreach ($rows as $row){
                 $this->id = $row['id'];
-                $this->code = $row['code'];
+                $this->code = str_replace(' ','',$row['code']);
                 $this->city = $row['city'];
                 $this->name = $row['name'];
                 $this->full_name = $row['full_name'];

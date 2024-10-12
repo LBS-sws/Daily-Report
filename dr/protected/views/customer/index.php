@@ -26,11 +26,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer';
 <section class="content">
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
-		<?php 
-			if (Yii::app()->user->validRWFunction('A01'))
-				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','New Record'), array(
-					'submit'=>Yii::app()->createUrl('customer/new'),
-				)); 
+		<?php
 			 echo TbHtml::button('dummyButton', array('style'=>'display:none','disabled'=>true,'submit'=>'#',));
 		?>
 	</div>

@@ -25,12 +25,6 @@ $this->pageTitle=Yii::app()->name . ' - Customer Form';
 <section class="content">
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
-		<?php 
-			if ($model->scenario!='new' && $model->scenario!='view') {
-				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Another'), array(
-					'submit'=>Yii::app()->createUrl('customer/new')));
-			}
-		?>
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
 				'submit'=>Yii::app()->createUrl('customer/index')));
 		?>
