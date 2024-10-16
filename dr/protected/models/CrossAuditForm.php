@@ -8,7 +8,7 @@ class CrossAuditForm extends CrossApplyForm
 	public function rules()
 	{
 		return array(
-            array('id,table_type,service_id,contract_no,apply_date,month_amt,rate_num,old_city,
+            array('id,table_type,apply_category,service_id,contract_no,apply_date,month_amt,rate_num,old_city,
             cross_city,cross_type,status_type,reject_note,remark,audit_date,audit_user','safe'),
 			array('service_id,apply_date,month_amt,cross_type','required'),
 			array('reject_note','required',"on"=>array("reject")),
@@ -24,6 +24,7 @@ class CrossAuditForm extends CrossApplyForm
         if($row){
             $this->table_type = $row["table_type"];
             $this->service_id = $row["service_id"];
+            $this->apply_date = General::toDate($row['apply_date']);
             $this->cross_num = $row['cross_num'];
             $this->old_city = $row["old_city"];
             $this->cross_type = $row['cross_type'];
@@ -35,6 +36,8 @@ class CrossAuditForm extends CrossApplyForm
             $this->qualification_city = $row['qualification_city'];
             $this->qualification_ratio = ($row['qualification_ratio']===""||$row['qualification_ratio']===null)?null:floatval($row['qualification_ratio']);
             $this->qualification_amt = $row['qualification_amt'];
+            $this->apply_category = $row['apply_category'];
+            $this->effective_date = General::toDate($row['effective_date']);
             $this->resetContractNo(true);
         }else{
             $this->addError($attribute, "交叉派单不存在，请刷新重试");
@@ -74,6 +77,8 @@ class CrossAuditForm extends CrossApplyForm
             $this->qualification_city = $row['qualification_city'];
             $this->qualification_ratio = floatval($row['qualification_ratio']);
             $this->qualification_amt = $row['qualification_amt'];
+            $this->apply_category = $row['apply_category'];
+            $this->effective_date = General::toDate($row['effective_date']);
             $this->resetContractNo();
             return true;
 		}else{
@@ -197,7 +202,7 @@ class CrossAuditForm extends CrossApplyForm
             "send_money"=>$this->month_amt,//发包方金额
             "send_contract_id"=>$this->old_city,//发包方（城市代号：ZY）
             "audit_user_name"=>self::getEmployeeStrForUsername(Yii::app()->user->id),//审核人名称+编号如：400002_沈超
-            "audit_date"=>$this->audit_date,//审核日期
+            "audit_date"=>General::toMyDate($this->audit_date),//审核日期
             "contract_id"=>$this->u_system_id,//u_system_id
             "contract_type"=>$this->cross_type,//类型：4:长约 3：短约 2：资质借用
             "accept_audit_ratio"=>$this->rate_num,//审核比例
@@ -206,6 +211,8 @@ class CrossAuditForm extends CrossApplyForm
             "qualification_audit_ratio"=>$this->qualification_ratio,//资质方比例
             "qualification_contract_id"=>$this->qualification_city,//资质方
             "qualification_money"=>$this->qualification_amt,//资质方金额
+            "effective_date"=>General::toMyDate($this->effective_date),//生效日期
+            "apply_category"=>empty($this->apply_category)?2:$this->apply_category,//申请类型
         );
         return $data;
     }

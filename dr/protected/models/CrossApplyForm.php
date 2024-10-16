@@ -25,6 +25,8 @@ class CrossApplyForm extends CFormModel
 	public $audit_user;
 	public $luu;
 	public $lcu;
+	public $apply_category;
+	public $effective_date;
 
     public $cross_type;
     public $old_month_amt;
@@ -59,6 +61,8 @@ class CrossApplyForm extends CFormModel
         $list["qualification_city"] = Yii::t('service','Qualification city');
         $list["qualification_amt"] = Yii::t('service','Qualification Amt');
         $list["table_type"] = Yii::t('summary','menu name');
+        $list["apply_category"] = Yii::t('service','apply category');
+        $list["effective_date"] = Yii::t('service','effective date');
 
 		return $list;
 	}
@@ -69,10 +73,10 @@ class CrossApplyForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('id,table_type,cross_num,service_id,contract_no,apply_date,month_amt,rate_num,old_city,cross_type,
+            array('id,apply_category,table_type,cross_num,service_id,contract_no,apply_date,month_amt,rate_num,old_city,cross_type,
             cross_city,status_type,reject_note,remark,audit_date,audit_user,luu,qualification_ratio,
             qualification_city,qualification_amt,cross_amt','safe'),
-			array('service_id,apply_date,cross_type','required'),
+			array('service_id,apply_date,cross_type,effective_date','required'),
             array('month_amt','numerical','allowEmpty'=>false),
             array('table_type','validateTableType'),
             array('service_id','validateServiceID'),
@@ -93,23 +97,30 @@ class CrossApplyForm extends CFormModel
     }
 
     public function validateCrossType($attribute, $params) {
-	    $list = self::getCrossTypeList();
+        $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($this->table_type,$this->service_id);
+	    $list = empty($endCrossList)?self::getCrossTypeList():self::getCrossTypeThreeList();
 	    $this->cross_type="".$this->cross_type;
 	    if(!key_exists($this->cross_type,$list)){
             $this->addError($attribute, "业务场景不存在，请刷新重试");
             return false;
         }else{
-            $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($this->table_type,$this->service_id);
             if($endCrossList){
-                $this->cross_city = $endCrossList["cross_city"];
-                if($this->cross_type!=$endCrossList["cross_type"]){
-                    $this->addError($attribute, "业务场景与上一次不一致");
+                if(empty($this->apply_category)){
+                    $this->addError($attribute, "申请类型不能为空");
                     return false;
-                }else{
-                    $this->qualification_city = $endCrossList["qualification_city"];
-                    $this->qualification_ratio = $endCrossList["qualification_ratio"];
-                    $this->rate_num = $endCrossList["rate_num"];
+                }elseif ($this->apply_category==1){
+                    $this->cross_city = $endCrossList["cross_city"];
+                    if($this->cross_type!=$endCrossList["cross_type"]){
+                        $this->addError($attribute, "业务场景与上一次不一致");
+                        return false;
+                    }else{
+                        $this->qualification_city = $endCrossList["qualification_city"];
+                        $this->qualification_ratio = $endCrossList["qualification_ratio"];
+                        $this->rate_num = $endCrossList["rate_num"];
+                    }
                 }
+            }else{
+                $this->apply_category=null;
             }
 	        if(in_array($this->cross_type,array('5','6','7','8'))){
                 if($this->qualification_city===""){
@@ -221,11 +232,11 @@ class CrossApplyForm extends CFormModel
         }
     }
 
-    public static function getEndCrossListForTypeAndId($table_type,$service_id){
+    public static function getEndCrossListForTypeAndId($table_type,$service_id,$notID=0){
         $row = Yii::app()->db->createCommand()->select("*")
             ->from("swo_cross")
-            ->where("table_type=:table_type and service_id=:service_id and status_type not in (2,6)",array(
-                ":service_id"=>$service_id,":table_type"=>$table_type
+            ->where("id!=:notID and table_type=:table_type and service_id=:service_id and status_type not in (2,6)",array(
+                ":notID"=>$notID,":service_id"=>$service_id,":table_type"=>$table_type
             ))->order("id desc")->queryRow();
         return $row;
     }
@@ -279,6 +290,8 @@ class CrossApplyForm extends CFormModel
             $this->qualification_city = $row['qualification_city'];
             $this->qualification_ratio = floatval($row['qualification_ratio']);
             $this->qualification_amt = $row['qualification_amt'];
+            $this->apply_category = $row['apply_category'];
+            $this->effective_date = General::toDate($row['effective_date']);
             $this->resetContractNo();
             return true;
 		}else{
@@ -323,6 +336,13 @@ class CrossApplyForm extends CFormModel
         return $list;
     }
 
+    public static function getApplyCategoryList(){
+        return array(
+            "1"=>Yii::t("service","amount adjustment"),//合约金额调整
+            "2"=>Yii::t("service","type adjustment"),//合约类型调整
+        );
+    }
+
     public static function getCrossTypeList(){
         return array(
             "3"=>Yii::t("service","short contract"),//短约
@@ -336,8 +356,23 @@ class CrossApplyForm extends CFormModel
         );
     }
 
+    public static function getCrossTypeThreeList(){
+        return array(
+            "0"=>Yii::t("service","ordinary"),//普通
+            "1"=>Yii::t("service","KA"),//KA
+            "3"=>Yii::t("service","short contract"),//短约
+            "2"=>Yii::t("service","long contract"),//长约
+            "5"=>Yii::t("service","more contract"),//资质借用
+            "7"=>Yii::t("service","more contract - short"),//资质借用短约
+            "6"=>Yii::t("service","more contract - long"),//资质借用长约
+            "4"=>Yii::t("service","holdco contract"),//Holdco与收购
+            "8"=>Yii::t("service","more contract - holdco"),//资质借用-Holdco与收购
+            "10"=>Yii::t("service","Internal dispatch"),//内部派单
+        );
+    }
+
     public static function getCrossTypeStrToKey($key){
-        $list = self::getCrossTypeList();
+        $list = self::getCrossTypeThreeList();
         $key="".$key;
         if (key_exists($key,$list)){
             return $list[$key];
@@ -371,11 +406,13 @@ class CrossApplyForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_cross(
-						service_id,table_type, contract_no, apply_date, month_amt, rate_num, old_city, cross_city, cross_type, old_month_amt, remark, cross_amt, qualification_ratio, qualification_city, qualification_amt, lcu, lcd) values (
-						:service_id,:table_type, :contract_no, :apply_date, :month_amt, :rate_num, :old_city, :cross_city, :cross_type, :old_month_amt, :remark, :cross_amt, :qualification_ratio, :qualification_city, :qualification_amt, :lcu, :lcd)";
+						apply_category,effective_date,service_id,table_type, contract_no, apply_date, month_amt, rate_num, old_city, cross_city, cross_type, old_month_amt, remark, cross_amt, qualification_ratio, qualification_city, qualification_amt, lcu, lcd) values (
+						:apply_category,:effective_date,:service_id,:table_type, :contract_no, :apply_date, :month_amt, :rate_num, :old_city, :cross_city, :cross_type, :old_month_amt, :remark, :cross_amt, :qualification_ratio, :qualification_city, :qualification_amt, :lcu, :lcd)";
 				break;
 			case 'edit':
 				$sql = "update swo_cross set 
+					effective_date = :effective_date, 
+					apply_category = :apply_category, 
 					apply_date = :apply_date, 
 					month_amt = :month_amt,
 					rate_num = :rate_num,
@@ -429,6 +466,14 @@ class CrossApplyForm extends CFormModel
             $command->bindParam(':qualification_city',$this->qualification_city,PDO::PARAM_STR);
         if (strpos($sql,':qualification_amt')!==false)
             $command->bindParam(':qualification_amt',$this->qualification_amt,PDO::PARAM_STR);
+        if (strpos($sql,':apply_category')!==false){
+            $this->apply_category = $this->apply_category===""?null:$this->apply_category;
+            $command->bindParam(':apply_category',$this->apply_category,PDO::PARAM_STR);
+        }
+        if (strpos($sql,':effective_date')!==false){
+            $this->effective_date = $this->effective_date===""?null:$this->effective_date;
+            $command->bindParam(':effective_date',$this->effective_date,PDO::PARAM_STR);
+        }
 
 		if (strpos($sql,':lcu')!==false)
 			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
@@ -512,9 +557,6 @@ class CrossApplyForm extends CFormModel
                 }
                 $endCross = $this->getEndCrossListForTypeAndId($this->table_type,$id);
                 $row["error"] = "";
-                if(empty($row["is_intersect"])){
-                    $row["error"] = "该合约不允许交叉派单";
-                }
                 if(empty($row["contract_no"])){
                     $row["error"] = "合约编号不能为空";
                 }

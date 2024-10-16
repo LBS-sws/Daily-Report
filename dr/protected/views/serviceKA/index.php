@@ -108,6 +108,11 @@ $('.clickable-row').click(function() {
 ";
 Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 
+$js = Script::genDatePicker(array(
+    'cross_apply_date',
+    'effective_date',
+));
+Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 ?>
 
 <?php $this->endWidget(); ?>

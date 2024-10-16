@@ -222,5 +222,11 @@ return array(
     'cross contract'=>'外包合约',
     'is intersect'=>'是否交叉',
     'Cross Table'=>'交叉派单次数详情',
+    'effective date'=>'生效日期',
+    'apply category'=>'申请类型',
+    'amount adjustment'=>'合约金额调整',
+    'type adjustment'=>'合约类型调整',
+    'ordinary'=>'普通合约',
+    'KA'=>'KA合约',
 );
 ?>

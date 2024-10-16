@@ -59,6 +59,13 @@ $this->pageTitle=Yii::app()->name . ' - CrossApply Form';
 <?php $this->renderPartial('//site/removedialog'); ?>
 
 <?php
+if (!$model->readonly()) {
+    $js = Script::genDatePicker(array(
+        'cross_apply_date',
+        'effective_date',
+    ));
+    Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
+}
 $js = Script::genDeleteData(Yii::app()->createUrl('crossApply/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 

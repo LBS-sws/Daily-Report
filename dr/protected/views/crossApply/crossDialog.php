@@ -25,19 +25,25 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 <div class="form-group">
     <?php echo Tbhtml::label(Yii::t("service","Apply date"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
-        <?php echo Tbhtml::textField('CrossApply[apply_date]','',array('id'=>'cross_apply_date','prepend'=>"<span class='fa fa-calendar'></span>")); ?>
+        <?php echo Tbhtml::textField('CrossApply[apply_date]','',array('id'=>'cross_apply_date','autocomplete'=>'off','prepend'=>"<span class='fa fa-calendar'></span>")); ?>
     </div>
 </div>
 <div class="form-group">
     <?php echo Tbhtml::label(Yii::t("service","Monthly"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
-        <?php echo Tbhtml::textField('CrossApply[month_amt]','',array('id'=>'cross_month_amt','prepend'=>"<span class='fa fa-cny'></span>")); ?>
+        <?php echo Tbhtml::textField('CrossApply[month_amt]','',array('id'=>'cross_month_amt','autocomplete'=>'off','prepend'=>"<span class='fa fa-cny'></span>")); ?>
+    </div>
+</div>
+<div class="form-group <?php echo empty($endCrossList)?'hide':'';?>">
+    <?php echo Tbhtml::label(Yii::t("service","apply category"),'',array('class'=>"col-lg-3 control-label")); ?>
+    <div class="col-lg-5">
+        <?php echo Tbhtml::dropDownList('CrossApply[apply_category]','',CrossApplyForm::getApplyCategoryList(),array("id"=>"apply_category")); ?>
     </div>
 </div>
 <div class="form-group">
     <?php echo Tbhtml::label(Yii::t("service","Cross type"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
-        <?php echo Tbhtml::dropDownList('CrossApply[cross_type]','',CrossApplyForm::getCrossTypeList(),array('empty'=>'',"id"=>"cross_type",'data-type'=>$endCrossList?$endCrossList["cross_type"]:"")); ?>
+        <?php echo Tbhtml::dropDownList('CrossApply[cross_type]','',empty($endCrossList)?CrossApplyForm::getCrossTypeList():CrossApplyForm::getCrossTypeThreeList(),array('empty'=>'',"id"=>"cross_type",'data-type'=>$endCrossList?$endCrossList["cross_type"]:"")); ?>
     </div>
 </div>
 <div class="qualification-div" style="display: none">
@@ -50,13 +56,13 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","Qualification ratio"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
-            <?php echo Tbhtml::numberField('CrossApply[qualification_ratio]','',array('id'=>'qualification_ratio','min'=>0,'max'=>100,'append'=>"%",'data-val'=>$endCrossList?$endCrossList["qualification_ratio"]:"")); ?>
+            <?php echo Tbhtml::numberField('CrossApply[qualification_ratio]','',array('id'=>'qualification_ratio','autocomplete'=>'off','min'=>0,'max'=>100,'append'=>"%",'data-val'=>$endCrossList?$endCrossList["qualification_ratio"]:"")); ?>
         </div>
     </div>
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","Qualification Amt"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
-            <?php echo Tbhtml::textField('CrossApply[qualification_amt]','',array('id'=>'qualification_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")); ?>
+            <?php echo Tbhtml::textField('CrossApply[qualification_amt]','',array('id'=>'qualification_amt','autocomplete'=>'off','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")); ?>
         </div>
     </div>
 </div>
@@ -70,14 +76,20 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","accept rate"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
-            <?php echo Tbhtml::numberField('CrossApply[rate_num]','',array('id'=>'cross_rate_num','min'=>0,'max'=>100,'append'=>"%",'data-val'=>$endCrossList?$endCrossList["rate_num"]:"")); ?>
+            <?php echo Tbhtml::numberField('CrossApply[rate_num]','',array('id'=>'cross_rate_num','autocomplete'=>'off','min'=>0,'max'=>100,'append'=>"%",'data-val'=>$endCrossList?$endCrossList["rate_num"]:"")); ?>
         </div>
     </div>
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","accept amt"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
-            <?php echo Tbhtml::textField('CrossApply[rate_amt]','',array('id'=>'cross_rate_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")); ?>
+            <?php echo Tbhtml::textField('CrossApply[rate_amt]','',array('id'=>'cross_rate_amt','autocomplete'=>'off','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")); ?>
         </div>
+    </div>
+</div>
+<div class="form-group">
+    <?php echo Tbhtml::label(Yii::t("service","effective date"),'',array('class'=>"col-lg-3 control-label")); ?>
+    <div class="col-lg-5">
+        <?php echo Tbhtml::textField('CrossApply[effective_date]','',array('id'=>'effective_date','autocomplete'=>'off','prepend'=>"<span class='fa fa-calendar'></span>")); ?>
     </div>
 </div>
 <div class="form-group">
@@ -97,27 +109,41 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    $('#cross_service_id').val($('#{$modelForm}_id').val());
 	    $('#cross_contract_no').val($('#{$modelForm}_contract_no').val());
 	    $('#cross_apply_date').val('{$nowDate}');
+	    $('#effective_date').val('{$nowDate}');
 	    $('#cross_month_amt').val(month_amt);
+	    $('#apply_category').trigger('change');
+	});
+	$('#apply_category').on('change',function(){
+	    var apply_category=$('#apply_category').val();
 	    var pre_cross_city=$('#cross_cross_city').data('city');
 	    var pre_qualification_city=$('#qualification_city').data('city');
 	    var pre_cross_type=$('#cross_type').data('type');
 	    var pre_qualification_ratio=$('#qualification_ratio').data('val');
 	    var pre_cross_rate_num=$('#cross_rate_num').data('val');
-	    if(pre_cross_city!=''&&pre_cross_city!=undefined){
-	        $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_cross_city);
+	    if(apply_category==1){
+            if(pre_cross_city!=''&&pre_cross_city!=undefined){
+                $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_cross_city);
+            }
+            if(pre_qualification_city!=''&&pre_qualification_city!=undefined){
+                $('#qualification_city').attr('readonly','readonly').addClass('readonly').val(pre_qualification_city);
+            }
+            if(pre_cross_type!=''&&pre_cross_type!=undefined){
+                $('#cross_type').attr('readonly','readonly').addClass('readonly').val(pre_cross_type).trigger('change');
+            }
+            if(pre_qualification_ratio!=''&&pre_qualification_ratio!=undefined){
+                $('#qualification_ratio').attr('readonly','readonly').addClass('readonly').val(pre_qualification_ratio);
+            }
+            if(pre_cross_rate_num!=''&&pre_cross_rate_num!=undefined){
+                $('#cross_rate_num').attr('readonly','readonly').addClass('readonly').val(pre_cross_rate_num);
+            }
+	    }else{
+	        $('#cross_cross_city').removeAttr('readonly').removeClass('readonly')
+	        $('#qualification_city').removeAttr('readonly').removeClass('readonly')
+	        $('#cross_type').removeAttr('readonly').removeClass('readonly')
+	        $('#qualification_ratio').removeAttr('readonly').removeClass('readonly')
+	        $('#cross_rate_num').removeAttr('readonly').removeClass('readonly')
 	    }
-	    if(pre_qualification_city!=''&&pre_qualification_city!=undefined){
-	        $('#qualification_city').attr('readonly','readonly').addClass('readonly').val(pre_qualification_city);
-	    }
-	    if(pre_cross_type!=''&&pre_cross_type!=undefined){
-	        $('#cross_type').attr('readonly','readonly').addClass('readonly').val(pre_cross_type).trigger('change');
-	    }
-	    if(pre_qualification_ratio!=''&&pre_qualification_ratio!=undefined){
-	        $('#qualification_ratio').attr('readonly','readonly').addClass('readonly').val(pre_qualification_ratio);
-	    }
-	    if(pre_cross_rate_num!=''&&pre_cross_rate_num!=undefined){
-	        $('#cross_rate_num').attr('readonly','readonly').addClass('readonly').val(pre_cross_rate_num);
-	    }
+	    $('#cross_month_amt').trigger('change');
 	});
 	$('#cross_rate_num,#cross_month_amt,#qualification_ratio').on('change',function(){
 	    var qualification_ratio= $('#qualification_ratio').val();

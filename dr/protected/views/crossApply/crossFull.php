@@ -19,7 +19,7 @@ $table_type = $modelForm=="ServiceList"?0:1;
     <?php echo Tbhtml::hiddenField('CrossApply[attrStr]','',array("id"=>"attrStr")); ?>
     <?php echo Tbhtml::label(Yii::t("service","Apply date"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
-        <?php echo Tbhtml::textField('CrossApply[apply_date]','',array('id'=>'cross_apply_date','prepend'=>"<span class='fa fa-calendar'></span>")); ?>
+        <?php echo Tbhtml::textField('CrossApply[apply_date]','',array('id'=>'cross_apply_date','autocomplete'=>'off','prepend'=>"<span class='fa fa-calendar'></span>")); ?>
     </div>
 </div>
 <div class="form-group">
@@ -38,7 +38,7 @@ $table_type = $modelForm=="ServiceList"?0:1;
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","Qualification ratio"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
-            <?php echo Tbhtml::numberField('CrossApply[qualification_ratio]','',array('id'=>'qualification_ratio','min'=>0,'max'=>100,'append'=>"%")); ?>
+            <?php echo Tbhtml::numberField('CrossApply[qualification_ratio]','',array('id'=>'qualification_ratio','autocomplete'=>'off','min'=>0,'max'=>100,'append'=>"%")); ?>
         </div>
     </div>
 </div>
@@ -52,10 +52,16 @@ $table_type = $modelForm=="ServiceList"?0:1;
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","accept rate"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
-            <?php echo Tbhtml::numberField('CrossApply[rate_num]','',array('id'=>'cross_rate_num','min'=>0,'max'=>100,'append'=>"%")); ?>
+            <?php echo Tbhtml::numberField('CrossApply[rate_num]','',array('id'=>'cross_rate_num','autocomplete'=>'off','min'=>0,'max'=>100,'append'=>"%")); ?>
         </div>
     </div>
 </div>
+    <div class="form-group">
+        <?php echo Tbhtml::label(Yii::t("service","effective date"),'',array('class'=>"col-lg-3 control-label")); ?>
+        <div class="col-lg-5">
+            <?php echo Tbhtml::textField('CrossApply[effective_date]','',array('id'=>'effective_date','autocomplete'=>'off','prepend'=>"<span class='fa fa-calendar'></span>")); ?>
+        </div>
+    </div>
 <div class="form-group">
     <?php echo Tbhtml::label(Yii::t("service","Remarks"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-7">
@@ -70,6 +76,7 @@ $nowDate = date_format(date_create(),"Y/m/d");
 	
 	$('#crossFullBtn').on('click', function (event) {
 	    $('#cross_apply_date').val('{$nowDate}');
+	    $('#effective_date').val('{$nowDate}');
 	    if($('.checkOne:checked').length>=1){
 	        $('#crossFull').modal('show');
 	    }else{

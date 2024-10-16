@@ -1,5 +1,8 @@
 <?php
 $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_type);
+
+
+$endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$model->service_id,$model->id);
 ?>
 
 <!-- Nav tabs -->
@@ -58,7 +61,7 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
             <?php echo $form->labelEx($model,'apply_date',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
                 <?php echo $form->textField($model, 'apply_date',
-                    array('readonly'=>$model->readonly(),'id'=>'cross_apply_date','prepend'=>"<span class='fa fa-calendar'></span>")
+                    array('readonly'=>$model->readonly(),'id'=>'cross_apply_date','autocomplete'=>'off','prepend'=>"<span class='fa fa-calendar'></span>")
                 ); ?>
             </div>
         </div>
@@ -66,14 +69,22 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
             <?php echo $form->labelEx($model,'month_amt',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
                 <?php echo $form->textField($model, 'month_amt',
-                    array('readonly'=>$model->readonly(),'id'=>'cross_month_amt','prepend'=>"<span class='fa fa-cny'></span>")
+                    array('readonly'=>$model->readonly(),'id'=>'cross_month_amt','autocomplete'=>'off','prepend'=>"<span class='fa fa-cny'></span>")
+                ); ?>
+            </div>
+        </div>
+        <div class="form-group <?php echo empty($endCrossList)?'hide':'';?>">
+            <?php echo $form->labelEx($model,'apply_category',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php echo $form->dropDownList($model, 'apply_category',CrossApplyForm::getApplyCategoryList(),
+                    array('readonly'=>$model->readonly(),'id'=>'apply_category')
                 ); ?>
             </div>
         </div>
         <div class="form-group">
             <?php echo $form->labelEx($model,'cross_type',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
-                <?php echo $form->dropDownList($model, 'cross_type',CrossApplyForm::getCrossTypeList(),
+                <?php echo $form->dropDownList($model, 'cross_type',empty($endCrossList)?CrossApplyForm::getCrossTypeList():CrossApplyForm::getCrossTypeThreeList(),
                     array('empty'=>'','readonly'=>$model->readonly(),'id'=>'cross_type')
                 ); ?>
             </div>
@@ -91,7 +102,7 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
                 <?php echo $form->labelEx($model,'qualification_ratio',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
                     <?php echo $form->numberField($model, 'qualification_ratio',
-                        array('readonly'=>$model->readonly(),'id'=>'qualification_ratio','append'=>"%","min"=>0,"max"=>"100")
+                        array('readonly'=>$model->readonly(),'id'=>'qualification_ratio','autocomplete'=>'off','append'=>"%","min"=>0,"max"=>"100")
                     ); ?>
                 </div>
             </div>
@@ -99,7 +110,7 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
                 <?php echo $form->labelEx($model,'qualification_amt',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
                     <?php echo $form->textField($model, 'qualification_amt',
-                        array('id'=>'qualification_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")
+                        array('id'=>'qualification_amt','readonly'=>true,'autocomplete'=>'off','prepend'=>"<span class='fa fa-cny'></span>")
                     ); ?>
                 </div>
             </div>
@@ -117,7 +128,7 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
                 <?php echo $form->labelEx($model,'rate_num',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
                     <?php echo $form->numberField($model, 'rate_num',
-                        array('readonly'=>$model->readonly(),'id'=>'cross_rate_num','append'=>"%","min"=>0,"max"=>"100")
+                        array('readonly'=>$model->readonly(),'id'=>'cross_rate_num','autocomplete'=>'off','append'=>"%","min"=>0,"max"=>"100")
                     ); ?>
                 </div>
             </div>
@@ -125,9 +136,17 @@ $table_type_name = CrossApplyForm::getCrossTableTypeNameForKey($model->table_typ
                 <?php echo $form->labelEx($model,'cross_amt',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
                     <?php echo $form->textField($model, 'cross_amt',
-                        array('id'=>'cross_rate_amt','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")
+                        array('id'=>'cross_rate_amt','readonly'=>true,'autocomplete'=>'off','prepend'=>"<span class='fa fa-cny'></span>")
                     ); ?>
                 </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $form->labelEx($model,'effective_date',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php echo $form->textField($model, 'effective_date',
+                    array('readonly'=>$model->readonly(),'id'=>'effective_date','autocomplete'=>'off','prepend'=>"<span class='fa fa-calendar'></span>")
+                ); ?>
             </div>
         </div>
         <div class="form-group">

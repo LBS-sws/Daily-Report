@@ -8,9 +8,9 @@ class CrossSearchForm extends CrossApplyForm
 	public function rules()
 	{
 		return array(
-            array('id,table_type,service_id,contract_no,apply_date,month_amt,rate_num,old_city,
+            array('id,table_type,service_id,apply_category,contract_no,apply_date,month_amt,rate_num,old_city,
             cross_city,cross_type,status_type,reject_note,remark,audit_date,audit_user','safe'),
-			array('service_id,apply_date,month_amt,rate_num,cross_city,cross_type','required'),
+			array('service_id,effective_date,apply_date,month_amt,rate_num,cross_city,cross_type','required'),
 			array('reject_note','required',"on"=>array("reject")),
 			array('id','validateID'),
 		);
@@ -64,6 +64,8 @@ class CrossSearchForm extends CrossApplyForm
             $this->qualification_city = $row['qualification_city'];
             $this->qualification_ratio = floatval($row['qualification_ratio']);
             $this->qualification_amt = $row['qualification_amt'];
+            $this->apply_category = $row['apply_category'];
+            $this->effective_date = General::toDate($row['effective_date']);
             return true;
 		}else{
 		    return false;

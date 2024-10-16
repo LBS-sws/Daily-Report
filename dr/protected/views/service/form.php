@@ -74,7 +74,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
             <?php if ($model->scenario!='new'): ?>
                 <div class="btn-group pull-right" role="group">
                     <?php
-                    if (Yii::app()->user->validRWFunction('CD01')&&!empty($model->is_intersect)&&!empty($model->contract_no)&&$model->status=="N"){ //交叉派单
+                    if (Yii::app()->user->validRWFunction('CD01')&&!empty($model->contract_no)&&$model->status=="N"){ //交叉派单
                         echo TbHtml::button('<span class="fa fa-superpowers"></span> '.Yii::t('app','Cross dispatch'), array(
                                 'data-toggle'=>'modal','data-target'=>'#crossDialog',)
                         );
@@ -145,13 +145,6 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php echo $form->textField($model, 'contract_no',
                         array('class'=>'form-control','maxlength'=>30,));
                     ?>
-                </div>
-                <?php echo $form->labelEx($model,'office_id',array('class'=>"col-sm-1 control-label")); ?>
-                <div class="col-sm-2">
-					<?php
-					$this_city = empty($model->city)?Yii::app()->user->city():$model->city;
-					echo $form->dropDownList($model, 'office_id', GetNameToId::getOfficeNameListForCity($this_city), array('readonly'=>($model->getReadonly())));
-					?>
                 </div>
 			</div>
 
@@ -603,14 +596,6 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                             array('readonly'=>($model->scenario=='view'))
                         ); ?>
                     </div>
-                    <?php echo $form->labelEx($model,'is_intersect',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
-                    <div class="col-sm-2">
-                        <?php
-                        $is_intersect = empty($model->is_intersect)?"否":"是";
-                        echo $form->hiddenField($model,"is_intersect");
-                        echo TbHtml::textField("is_intersect",$is_intersect,array("readonly"=>true));
-                         ?>
-                    </div>
                 </div>
             <?php endif ?>
 
@@ -776,6 +761,7 @@ if ($model->scenario!='view') {
         'ServiceForm_first_dt',
         'ServiceForm_equip_install_dt',
         'cross_apply_date',
+        'effective_date',
     ));
 	Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 }

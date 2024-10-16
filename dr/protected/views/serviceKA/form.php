@@ -74,7 +74,7 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
             <?php if ($model->scenario!='new'): ?>
                 <div class="btn-group pull-right" role="group">
                     <?php
-                    if (Yii::app()->user->validRWFunction('CD01')&&!empty($model->is_intersect)&&!empty($model->contract_no)&&$model->status=="N"){ //交叉派单
+                    if (Yii::app()->user->validRWFunction('CD01')&&!empty($model->contract_no)&&$model->status=="N"){ //交叉派单
                         echo TbHtml::button('<span class="fa fa-superpowers"></span> '.Yii::t('app','Cross dispatch'), array(
                                 'data-toggle'=>'modal','data-target'=>'#crossDialog',)
                         );
@@ -596,14 +596,6 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
                             array('readonly'=>($model->scenario=='view'))
                         ); ?>
                     </div>
-                    <?php echo $form->labelEx($model,'is_intersect',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
-                    <div class="col-sm-2">
-                        <?php
-                        $is_intersect = empty($model->is_intersect)?"否":"是";
-                        echo $form->hiddenField($model,"is_intersect");
-                        echo TbHtml::textField("is_intersect",$is_intersect,array("readonly"=>true));
-                        ?>
-                    </div>
                 </div>
             <?php endif ?>
 
@@ -762,14 +754,16 @@ $js = Script::genDeleteData(Yii::app()->createUrl('serviceKA/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 if ($model->scenario!='view') {
-	$js = "
-	$('#ServiceKAForm_status_dt').datepicker({autoclose: true, format: 'yyyy/mm/dd'});
-	$('#ServiceKAForm_sign_dt').datepicker({autoclose: true, format: 'yyyy/mm/dd'});
-	$('#ServiceKAForm_ctrt_end_dt').datepicker({autoclose: true, format: 'yyyy/mm/dd'});
-	$('#ServiceKAForm_first_dt').datepicker({autoclose: true, format: 'yyyy/mm/dd'});
-	$('#ServiceKAForm_equip_install_dt').datepicker({autoclose: true, format: 'yyyy/mm/dd'});
-	";
-	Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
+    $js = Script::genDatePicker(array(
+        'ServiceKAForm_status_dt',
+        'ServiceKAForm_sign_dt',
+        'ServiceKAForm_ctrt_end_dt',
+        'ServiceKAForm_first_dt',
+        'ServiceKAForm_equip_install_dt',
+        'cross_apply_date',
+        'effective_date',
+    ));
+    Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 }
 
 $js = Script::genReadonlyField();
