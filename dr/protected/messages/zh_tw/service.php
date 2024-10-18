@@ -225,6 +225,7 @@ return array(
     'apply category'=>'申請類型',
     'amount adjustment'=>'合約金額調整',
     'type adjustment'=>'合約類型調整',
+    'body adjustment'=>'合約內容調整',
     'ordinary'=>'普通合約',
     'KA'=>'KA合約',
 );

@@ -31,13 +31,16 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 <div class="form-group">
     <?php echo Tbhtml::label(Yii::t("service","Monthly"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
-        <?php echo Tbhtml::textField('CrossApply[month_amt]','',array('id'=>'cross_month_amt','autocomplete'=>'off','prepend'=>"<span class='fa fa-cny'></span>")); ?>
+        <?php echo Tbhtml::textField('CrossApply[month_amt]','',array('id'=>'cross_month_amt','autocomplete'=>'off','prepend'=>"<span class='fa fa-cny'></span>",'data-amt'=>$endCrossList?$endCrossList["month_amt"]:"")); ?>
     </div>
 </div>
-<div class="form-group <?php echo empty($endCrossList)?'hide':'';?>">
+<div class="form-group">
     <?php echo Tbhtml::label(Yii::t("service","apply category"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
-        <?php echo Tbhtml::dropDownList('CrossApply[apply_category]','',CrossApplyForm::getApplyCategoryList(),array("id"=>"apply_category")); ?>
+        <?php
+        $apply_category = empty($endCrossList)?2:1;
+        ?>
+        <?php echo Tbhtml::dropDownList('CrossApply[apply_category]',$apply_category,CrossApplyForm::getApplyCategoryList(),array("id"=>"apply_category",'readonly'=>$apply_category==2)); ?>
     </div>
 </div>
 <div class="form-group">
@@ -115,33 +118,51 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	});
 	$('#apply_category').on('change',function(){
 	    var apply_category=$('#apply_category').val();
+	    var pre_cross_month_amt=$('#cross_month_amt').data('amt');
 	    var pre_cross_city=$('#cross_cross_city').data('city');
 	    var pre_qualification_city=$('#qualification_city').data('city');
 	    var pre_cross_type=$('#cross_type').data('type');
 	    var pre_qualification_ratio=$('#qualification_ratio').data('val');
 	    var pre_cross_rate_num=$('#cross_rate_num').data('val');
-	    if(apply_category==1){
-            if(pre_cross_city!=''&&pre_cross_city!=undefined){
-                $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_cross_city);
-            }
-            if(pre_qualification_city!=''&&pre_qualification_city!=undefined){
-                $('#qualification_city').attr('readonly','readonly').addClass('readonly').val(pre_qualification_city);
-            }
-            if(pre_cross_type!=''&&pre_cross_type!=undefined){
-                $('#cross_type').attr('readonly','readonly').addClass('readonly').val(pre_cross_type).trigger('change');
-            }
-            if(pre_qualification_ratio!=''&&pre_qualification_ratio!=undefined){
-                $('#qualification_ratio').attr('readonly','readonly').addClass('readonly').val(pre_qualification_ratio);
-            }
-            if(pre_cross_rate_num!=''&&pre_cross_rate_num!=undefined){
-                $('#cross_rate_num').attr('readonly','readonly').addClass('readonly').val(pre_cross_rate_num);
-            }
-	    }else{
-	        $('#cross_cross_city').removeAttr('readonly').removeClass('readonly')
-	        $('#qualification_city').removeAttr('readonly').removeClass('readonly')
-	        $('#cross_type').removeAttr('readonly').removeClass('readonly')
-	        $('#qualification_ratio').removeAttr('readonly').removeClass('readonly')
-	        $('#cross_rate_num').removeAttr('readonly').removeClass('readonly')
+	    switch(apply_category){
+	        case '1'://调整合约类型
+                if(pre_cross_city!=''&&pre_cross_city!=undefined){
+                    $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_cross_city);
+                }
+                if(pre_qualification_city!=''&&pre_qualification_city!=undefined){
+                    $('#qualification_city').attr('readonly','readonly').addClass('readonly').val(pre_qualification_city);
+                }
+                if(pre_cross_type!=''&&pre_cross_type!=undefined){
+                    $('#cross_type').attr('readonly','readonly').addClass('readonly').val(pre_cross_type).trigger('change');
+                }
+                if(pre_qualification_ratio!=''&&pre_qualification_ratio!=undefined){
+                    $('#qualification_ratio').attr('readonly','readonly').addClass('readonly').val(pre_qualification_ratio);
+                }
+                if(pre_cross_rate_num!=''&&pre_cross_rate_num!=undefined){
+                    $('#cross_rate_num').attr('readonly','readonly').addClass('readonly').val(pre_cross_rate_num);
+                }
+                $('#cross_month_amt').removeAttr('readonly').removeClass('readonly');
+	            break;
+	        case '3'://调整合约内容
+                if(pre_cross_type!=''&&pre_cross_type!=undefined){
+                    $('#cross_type').attr('readonly','readonly').addClass('readonly').val(pre_cross_type).trigger('change');
+                }
+                if(pre_cross_month_amt!=''&&pre_cross_month_amt!=undefined){
+                    $('#cross_month_amt').attr('readonly','readonly').addClass('readonly').val(pre_cross_month_amt).trigger('change');
+                }
+                $('#cross_cross_city').removeAttr('readonly').removeClass('readonly');
+                $('#qualification_city').removeAttr('readonly').removeClass('readonly');
+                $('#qualification_ratio').removeAttr('readonly').removeClass('readonly');
+                $('#cross_rate_num').removeAttr('readonly').removeClass('readonly');
+	            break;
+            default:
+                $('#cross_month_amt').removeAttr('readonly').removeClass('readonly');
+                $('#cross_cross_city').removeAttr('readonly').removeClass('readonly');
+                $('#qualification_city').removeAttr('readonly').removeClass('readonly');
+                $('#cross_type').removeAttr('readonly').removeClass('readonly');
+                $('#qualification_ratio').removeAttr('readonly').removeClass('readonly');
+                $('#cross_rate_num').removeAttr('readonly').removeClass('readonly');
+	            break;
 	    }
 	    $('#cross_month_amt').trigger('change');
 	});

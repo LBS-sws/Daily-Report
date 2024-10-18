@@ -108,7 +108,7 @@ class CrossApplyForm extends CFormModel
                 if(empty($this->apply_category)){
                     $this->addError($attribute, "申请类型不能为空");
                     return false;
-                }elseif ($this->apply_category==1){
+                }elseif ($this->apply_category==1){//调整金额
                     $this->cross_city = $endCrossList["cross_city"];
                     if($this->cross_type!=$endCrossList["cross_type"]){
                         $this->addError($attribute, "业务场景与上一次不一致");
@@ -118,9 +118,14 @@ class CrossApplyForm extends CFormModel
                         $this->qualification_ratio = $endCrossList["qualification_ratio"];
                         $this->rate_num = $endCrossList["rate_num"];
                     }
+                }elseif ($this->apply_category==3){//调整内容
+                    if($this->cross_type!=$endCrossList["cross_type"]){
+                        $this->addError($attribute, "业务场景与上一次不一致");
+                        return false;
+                    }
                 }
             }else{
-                $this->apply_category=null;
+                $this->apply_category=2;//首次交叉，强制转换成类型调整
             }
 	        if(in_array($this->cross_type,array('5','6','7','8'))){
                 if($this->qualification_city===""){
@@ -183,10 +188,6 @@ class CrossApplyForm extends CFormModel
             ->leftJoin("{$tableNameTwo} b","a.id=b.service_id")
             ->where("a.id=:id and a.city in ({$city_allow})",array(":id"=>$id))->queryRow();
         if($row){
-            if(empty($row["is_intersect"])){
-                $this->addError($attribute, "该合约不允许交叉派单");
-                return false;
-            }
             if(empty($row["u_system_id"])){
                 $this->addError($attribute, "派单系统id不能为空");
                 return false;
@@ -340,6 +341,7 @@ class CrossApplyForm extends CFormModel
         return array(
             "1"=>Yii::t("service","amount adjustment"),//合约金额调整
             "2"=>Yii::t("service","type adjustment"),//合约类型调整
+            "3"=>Yii::t("service","body adjustment"),//合约内容调整
         );
     }
 

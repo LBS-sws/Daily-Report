@@ -73,9 +73,12 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
                 ); ?>
             </div>
         </div>
-        <div class="form-group <?php echo empty($endCrossList)?'hide':'';?>">
+        <div class="form-group">
             <?php echo $form->labelEx($model,'apply_category',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
+                <?php
+                $model->apply_category = empty($endCrossList)?2:$model->apply_category;
+                ?>
                 <?php echo $form->dropDownList($model, 'apply_category',CrossApplyForm::getApplyCategoryList(),
                     array('readonly'=>$model->readonly(),'id'=>'apply_category')
                 ); ?>

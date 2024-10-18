@@ -226,6 +226,7 @@ return array(
     'apply category'=>'申请类型',
     'amount adjustment'=>'合约金额调整',
     'type adjustment'=>'合约类型调整',
+    'body adjustment'=>'合约内容调整',
     'ordinary'=>'普通合约',
     'KA'=>'KA合约',
 );
