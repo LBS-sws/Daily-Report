@@ -123,6 +123,14 @@ class CrossApplyForm extends CFormModel
                         $this->addError($attribute, "业务场景与上一次不一致");
                         return false;
                     }
+                }elseif ($this->apply_category==2){//合约类型调整
+                    if($this->cross_type==0||$this->cross_type==1){//资质借用、普通合约、KA合约
+                        $this->cross_city=$endCrossList["cross_city"];
+                        $this->cross_amt=0;
+                        $this->rate_num=0;
+                        $this->qualification_city = $endCrossList["qualification_city"];
+                        $this->qualification_ratio = $endCrossList["qualification_ratio"];
+                    }
                 }
             }else{
                 $this->apply_category=2;//首次交叉，强制转换成类型调整
@@ -139,13 +147,15 @@ class CrossApplyForm extends CFormModel
                 $this->cross_amt=$this->month_amt*((100-$this->qualification_ratio)/100)*($this->rate_num/100);
                 $this->cross_amt = round($this->cross_amt,2);
             }else{
-                $this->qualification_ratio=null;
-                $this->qualification_city=null;
-                $this->qualification_amt=null;
+                if(!in_array($this->cross_type,array(0,1))){//普通合约、KA合约
+                    $this->qualification_ratio=null;
+                    $this->qualification_city=null;
+                    $this->qualification_amt=null;
+                }
                 $this->cross_amt=$this->month_amt*($this->rate_num/100);
                 $this->cross_amt = round($this->cross_amt,2);
             }
-            if($this->cross_type==5){//资质借用
+            if($this->cross_type==5){//资质借用、普通合约、KA合约
                 $this->cross_city=null;
                 $this->cross_amt=null;
                 $this->rate_num=null;

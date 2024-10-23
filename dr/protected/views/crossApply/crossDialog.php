@@ -197,6 +197,10 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	
 	$('#cross_type').change(function(){
 	    var cross_type = $(this).val();
+	    var pre_cross_rate_num=$('#cross_rate_num').data('val');
+	    var pre_cross_city=$('#cross_cross_city').data('city');
+	    var pre_qualification_city=$('#qualification_city').data('city');
+	    var pre_qualification_ratio=$('#qualification_ratio').data('val');
 	    if(['5','6','7','8'].indexOf(cross_type)>=0){
 	        $('.qualification-div').slideDown(100);
 	    }else{
@@ -208,6 +212,27 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
             $('.accept-div').slideUp(100);
         }else{
 	        $('.accept-div').slideDown(100);
+        }
+        if(cross_type=='0'||cross_type=='1'){
+            if(pre_cross_rate_num!=''&&pre_cross_rate_num!=undefined){
+	            $('.accept-div').slideDown(100);
+                $('#cross_rate_num').attr('readonly','readonly').addClass('readonly').val(0);
+            }
+            if(pre_cross_city!=''&&pre_cross_city!=undefined){
+                $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_cross_city);
+            }
+            if(pre_qualification_city!=''&&pre_qualification_city!=undefined){
+	            $('.qualification-div').slideDown(100);
+                $('#qualification_city').attr('readonly','readonly').addClass('readonly').val(pre_qualification_city);
+            }
+            if(pre_qualification_ratio!=''&&pre_qualification_ratio!=undefined){
+                $('#qualification_ratio').attr('readonly','readonly').addClass('readonly').val(pre_qualification_ratio);
+            }
+        }else{
+            $('#cross_rate_num').removeAttr('readonly').removeClass('readonly');
+            $('#cross_cross_city').removeAttr('readonly').removeClass('readonly');
+            $('#qualification_city').removeAttr('readonly').removeClass('readonly');
+            $('#qualification_ratio').removeAttr('readonly').removeClass('readonly');
         }
 	    $('#cross_rate_num').trigger('change');
 	});
