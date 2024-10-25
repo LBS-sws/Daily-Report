@@ -224,7 +224,7 @@ return array(
     'effective date'=>'生效日期',
     'apply category'=>'申請類型',
     'amount adjustment'=>'合約金額調整',
-    'type adjustment'=>'合約類型調整',
+    'type adjustment'=>'合約類型調整(增加子合約)',
     'body adjustment'=>'合約內容調整',
     'ordinary'=>'普通合約',
     'KA'=>'KA合約',

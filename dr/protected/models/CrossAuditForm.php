@@ -19,7 +19,11 @@ class CrossAuditForm extends CrossApplyForm
     public function validateID($attribute, $params) {
         $index = is_numeric($this->id)?$this->id:0;
         $city_allow = Yii::app()->user->city_allow();
-        $sql = "select * from swo_cross where id='".$index."' and status_type=1 and (cross_city in ({$city_allow})  or (cross_type=5 and qualification_city in ({$city_allow})))";
+        $sql = "select * from swo_cross where id='".$index."' and (
+            (cross_city in ({$city_allow}) and cross_type not in(0,1))
+            or (old_city in ({$city_allow}) and cross_type in(0,1))
+            or (cross_type=5 and qualification_city in ({$city_allow}))
+		)";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if($row){
             $this->table_type = $row["table_type"];
@@ -50,7 +54,11 @@ class CrossAuditForm extends CrossApplyForm
 	{
 		$suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
-		$sql = "select * from swo_cross where id='".$index."' and (cross_city in ({$city_allow})  or (cross_type=5 and qualification_city in ({$city_allow})))";
+		$sql = "select * from swo_cross where id='".$index."' and (
+            (cross_city in ({$city_allow}) and cross_type not in(0,1))
+            or (old_city in ({$city_allow}) and cross_type in(0,1))
+            or (cross_type=5 and qualification_city in ({$city_allow}))
+		)";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		if ($row!==false) {
 			$this->id = $row['id'];
@@ -182,7 +190,12 @@ class CrossAuditForm extends CrossApplyForm
         $message.="<p>备注：".$this->remark."</p>";
         $message.="<p>申请时间：".$this->apply_date."</p>";
         $emailModel = new Email($title,$message,$title);
-        $emailModel->addEmailToLcu($this->lcu);
+        if(in_array($this->cross_type,array(0,1))){//普通合约、KA合约
+            $city = empty($this->cross_city)?$this->qualification_city:$this->cross_city;
+            $emailModel->addEmailToPrefixAndCity("CD02",$city);
+        }else{
+            $emailModel->addEmailToLcu($this->lcu);
+        }
         $emailModel->sent();
     }
 
@@ -205,7 +218,7 @@ class CrossAuditForm extends CrossApplyForm
             "audit_date"=>General::toMyDate($this->audit_date),//审核日期
             "contract_id"=>$this->u_system_id,//u_system_id
             "contract_type"=>$this->cross_type,//类型：4:长约 3：短约 2：资质借用
-            "accept_audit_ratio"=>$this->rate_num,//审核比例
+            "accept_audit_ratio"=>empty($this->cross_city)?null:$this->rate_num,//审核比例
             "accept_money"=>$this->cross_amt,//承接方金额
             "accept_contract_id"=>$this->cross_city,//承接方（城市代号：ZY）
             "qualification_audit_ratio"=>$this->qualification_ratio,//资质方比例

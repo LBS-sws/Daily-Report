@@ -529,8 +529,12 @@ class CrossApplyForm extends CFormModel
         $message.="<p>比例后金额：".$this->cross_amt."</p>";
         $message.="<p>备注：".$this->remark."</p>";
         $message.="<p>申请时间：".$this->apply_date."</p>";
+        if(in_array($this->cross_type,array(0,1))){//普通合约、KA合约
+            $title = "交叉派单 - ".CrossApplyForm::getCrossTypeStrToKey($this->cross_type);
+        }
         $emailModel = new Email($title,$message,$title);
-        $emailModel->addEmailToPrefixAndCity("CD02",$this->cross_city);
+        $city = empty($this->cross_city)?$this->qualification_city:$this->cross_city;
+        $emailModel->addEmailToPrefixAndCity("CD02",$city);
         $emailModel->sent();
     }
 
