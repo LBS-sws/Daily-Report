@@ -514,7 +514,8 @@ class ComparisonForm extends CFormModel
         $pre="";
         if (strpos($num," +")!==false){
             $pre=" +";
-            $num = end(explode(" +",$num));
+            $arrNum = explode(" +",$num);
+            $num = end($arrNum);
         }
         if (strpos($num,'%')!==false){
             $number = floatval($num);
