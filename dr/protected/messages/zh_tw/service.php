@@ -221,7 +221,7 @@ return array(
     'is intersect'=>'是否交叉',
     'Cross Table'=>'交叉派單次數詳情',
 
-    'effective date'=>'生效日期',
+    'effective date'=>'交叉生效日期',
     'apply category'=>'申請類型',
     'amount adjustment'=>'合約金額調整',
     'type adjustment'=>'合約類型調整(增加子合約)',

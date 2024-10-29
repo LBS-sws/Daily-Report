@@ -125,7 +125,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    var pre_qualification_ratio=$('#qualification_ratio').data('val');
 	    var pre_cross_rate_num=$('#cross_rate_num').data('val');
 	    switch(apply_category){
-	        case '1'://调整合约类型
+	        case '1'://合约金额调整
                 if(pre_cross_city!=''&&pre_cross_city!=undefined){
                     $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_cross_city);
                 }
@@ -231,8 +231,10 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
         }else{
             $('#cross_rate_num').removeAttr('readonly').removeClass('readonly');
             $('#cross_cross_city').removeAttr('readonly').removeClass('readonly');
-            $('#qualification_city').removeAttr('readonly').removeClass('readonly');
-            $('#qualification_ratio').removeAttr('readonly').removeClass('readonly');
+            if($('#apply_category').val()!=1){
+                $('#qualification_city').removeAttr('readonly').removeClass('readonly');
+                $('#qualification_ratio').removeAttr('readonly').removeClass('readonly');
+            }
         }
 	    $('#cross_rate_num').trigger('change');
 	});
