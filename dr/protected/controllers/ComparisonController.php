@@ -28,7 +28,7 @@ class ComparisonController extends Controller
 				'expression'=>array('ComparisonController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view','downExcel','ajaxDetail'),
+				'actions'=>array('index','view','downExcel','ajaxDetail','ajaxOffice'),
 				'expression'=>array('ComparisonController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -36,6 +36,17 @@ class ComparisonController extends Controller
 			),
 		);
 	}
+
+    //办事处列表的異步請求
+    public function actionAjaxOffice(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $model = new ComparisonForm('index');
+            $data =$model->ajaxOfficeForData();
+            echo CJSON::encode(array('status'=>1,'list'=>$data));//Yii 的方法将数组处理成json数据
+        }else{
+            $this->redirect(Yii::app()->createUrl('comparison/index'));
+        }
+    }
 
     //详情列表的異步請求
     public function actionAjaxDetail(){

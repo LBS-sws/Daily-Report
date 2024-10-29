@@ -788,6 +788,10 @@ class ComparisonForm extends CFormModel
                     $text = ComparisonForm::showNum($text);
                     //$inputHide = TbHtml::hiddenField("excel[MO][{$keyStr}]",$text);
                     $this->downJsonText["excel"]['MO'][$keyStr]=$text;
+                    if($keyStr == "city_name"){
+                        $tdClass.=" changeOffice";
+                        $text = "<i class='fa fa-spinner fa-pulse'></i>&nbsp;".$text;
+                    }
                     $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span></td>";
                 }
                 $html.="</tr>";
@@ -871,6 +875,10 @@ class ComparisonForm extends CFormModel
                             $text = ComparisonForm::showNum($text);
                             //$inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
                             $this->downJsonText["excel"][$regionList['region']]['list'][$cityList['city']][$keyStr]=$text;
+                            if($keyStr == "city_name"){
+                                $tdClass.=" changeOffice";
+                                $text = "<i class='fa fa-spinner fa-pulse'></i>&nbsp;".$text;
+                            }
                             if($keyStr=="new_sum"){//调试U系统同步数据
                                 $html.="<td class='{$tdClass}' {$exprData} data-u='{$cityList['u_sum']}'><span>{$text}</span></td>";
                             }elseif($keyStr=="new_sum_last"){//调试U系统同步数据
@@ -975,4 +983,178 @@ class ComparisonForm extends CFormModel
 
         return $expr;
     }
+
+    //顯示表格內的數據來源
+    public function ajaxOfficeForData(){
+        $cityList = key_exists("cityList",$_GET)?$_GET["cityList"]:array();
+        $city_allow = "'".implode("','",$cityList)."'";
+        $this->start_date = key_exists("startDate",$_GET)?$_GET["startDate"]:"";
+        $this->end_date = key_exists("endDate",$_GET)?$_GET["endDate"]:"";
+        $defaultList = self::defMoreCity("none","none");
+        $officeList = SummaryForm::getOfficeListForCity($city_allow,$defaultList);
+        $resetOfficeId = $officeList["resetList"];
+        $hideList = array();
+        $officeList = $officeList["list"];
+        $cityHtmlTr=array();
+
+        $this->computeDate();
+        $startDate = $this->start_date;
+        $endDate = $this->end_date;
+        $monthStartDate = $this->last_month_start_date;
+        $monthEndDate = $this->last_month_end_date;
+        $lastStartDate = ($this->comparison_year-1)."/".$this->month_start_date;
+        $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
+        $lastMonthStartDate = ($this->comparison_year-1)."/".date("m/d",strtotime($monthStartDate));
+        $lastMonthEndDate = ($this->comparison_year-1)."/".date("m/d",strtotime($monthEndDate));
+        $allMonthStartDate = date("Y/m/01",strtotime($this->start_date));
+        $allMonthStartDate = date("Y/m/01",strtotime($allMonthStartDate." - 1 months"));
+        $allMonthEndDate = date("Y/m/01",strtotime($this->end_date));
+        $allMonthEndDate = date("Y/m/t",strtotime($allMonthEndDate." - 1 months"));
+        //获取U系统的服务单数据
+        $uServiceMoney = CountOfficeSearch::getUServiceOfficeMoneyOne($startDate,$endDate,$city_allow);
+        //获取U系统的服务单数据(上月)
+        $uServiceMoneyLast = CountOfficeSearch::getUServiceOfficeMoneyOne($monthStartDate,$monthEndDate,$city_allow);
+        //获取U系统的服务单数据(上月)(整月)
+        $uServiceMoneyAllLast = CountOfficeSearch::getUServiceOfficeMoneyOne($allMonthStartDate,$allMonthEndDate,$city_allow);
+        //获取U系统的產品数据(上月)(整月)
+        $monthUInvAllMoney = CountOfficeSearch::getUInvOfficeMoneyOne($allMonthStartDate,$allMonthEndDate,$city_allow);
+        //获取U系统的產品数据
+        $uInvMoney = CountOfficeSearch::getUInvOfficeMoneyOne($startDate,$endDate,$city_allow);
+        //获取U系统的產品数据(上一年)
+        $lastUInvMoney = CountOfficeSearch::getUInvOfficeMoneyOne($lastStartDate,$lastEndDate,$city_allow);
+        //服务新增（非一次性 和 一次性)
+        $serviceAddForNY = CountOfficeSearch::getServiceOfficeAddForNY($startDate,$endDate,$city_allow);
+        //服务新增（非一次性 和 一次性)(上一年)
+        $lastServiceAddForNY = CountOfficeSearch::getServiceOfficeAddForNY($lastStartDate,$lastEndDate,$city_allow);
+        //终止服务、暂停服务
+        $serviceForST = CountOfficeSearch::getServiceOfficeForST($startDate,$endDate,$city_allow);
+        //终止服务、暂停服务(上一年)
+        $lastServiceForST = CountOfficeSearch::getServiceOfficeForST($lastStartDate,$lastEndDate,$city_allow);
+        //恢復服务
+        $serviceForR = CountOfficeSearch::getServiceOfficeForType($startDate,$endDate,$city_allow,"R");
+        //恢復服务(上一年)
+        $lastServiceForR = CountOfficeSearch::getServiceOfficeForType($lastStartDate,$lastEndDate,$city_allow,"R");
+        //更改服务
+        $serviceForA = CountOfficeSearch::getServiceOfficeForA($startDate,$endDate,$city_allow);
+        //更改服务(上一年)
+        $lastServiceForA = CountOfficeSearch::getServiceOfficeForA($lastStartDate,$lastStartDate,$city_allow);
+        //服务新增（一次性)(上月)
+        $monthServiceAddForY = CountOfficeSearch::getServiceOfficeAddForY($monthStartDate,$monthEndDate,$city_allow);
+        //服务新增（一次性)(上月)(上一年)
+        $lastMonthServiceAddForY = CountOfficeSearch::getServiceOfficeAddForY($lastMonthStartDate,$lastMonthEndDate,$city_allow);
+        //获取U系统的產品数据(上月)
+        $monthUInvMoney = CountOfficeSearch::getUInvOfficeMoneyOne($monthStartDate,$monthEndDate,$city_allow);
+        //获取U系统的產品数据(上月)(上一年)
+        $lastMonthUInvMoney = CountOfficeSearch::getUInvOfficeMoneyOne($lastMonthStartDate,$lastMonthEndDate,$city_allow);
+        foreach ($officeList as $city=>$row){
+            $html = "";
+            foreach ($row as $key=>$officeRow){//u_invoice_num
+                $uKey = key_exists($key,$resetOfficeId)?$resetOfficeId[$key]:$city;
+                $officeRow["u_actual_money"]=isset($uServiceMoney[$uKey])?$uServiceMoney[$uKey]:0;
+                $officeRow["u_sum"]+=key_exists($uKey,$uInvMoney)?$uInvMoney[$uKey]["sum_money"]:0;
+                $officeRow["u_actual_money"]+=$officeRow["u_sum"];
+                $officeRow["u_sum_last"]+=key_exists($uKey,$lastUInvMoney)?$lastUInvMoney[$uKey]["sum_money"]:0;
+                if(isset($serviceAddForNY[$city][$key])){
+                    $officeRow["new_sum"]+=$serviceAddForNY[$city][$key]["num_new"];
+                    $officeRow["new_sum_n"]+=$serviceAddForNY[$city][$key]["num_new_n"];
+                }
+                $officeRow["new_sum_n"]+=$officeRow["u_sum"];//一次性新增需要加上U系统产品金额
+                if(isset($lastServiceAddForNY[$city][$key])){
+                    $officeRow["new_sum_last"]+=$lastServiceAddForNY[$city][$key]["num_new"];
+                    $officeRow["new_sum_n_last"]+=$lastServiceAddForNY[$city][$key]["num_new_n"];
+                }
+                $officeRow["new_sum_n_last"]+=$officeRow["u_sum_last"];//一次性新增需要加上U系统产品金额
+                //上月一次性服务+新增（产品）
+                $officeRow["new_month_n_last"]+=isset($lastMonthServiceAddForY[$city][$key])?-1*$lastMonthServiceAddForY[$city][$key]:0;
+                $officeRow["new_month_n_last"]+=key_exists($uKey,$lastMonthUInvMoney)?-1*$lastMonthUInvMoney[$uKey]["sum_money"]:0;
+                $officeRow["new_month_n"]+=isset($monthServiceAddForY[$city][$key])?-1*$monthServiceAddForY[$city][$key]:0;
+                $officeRow["new_month_n"]+=key_exists($uKey,$monthUInvMoney)?-1*$monthUInvMoney[$uKey]["sum_money"]:0;
+                //上月生意额
+                $officeRow["last_u_actual"]+=key_exists($uKey,$uServiceMoneyLast)?$uServiceMoneyLast[$uKey]:0;
+                $officeRow["last_u_actual"]+=key_exists($uKey,$monthUInvMoney)?$monthUInvMoney[$uKey]["sum_money"]:0;
+                //上月生意额(整月)
+                $officeRow["last_u_all"]+=key_exists($uKey,$uServiceMoneyAllLast)?$uServiceMoneyAllLast[$uKey]:0;
+                $officeRow["last_u_all"]+=key_exists($uKey,$monthUInvAllMoney)?$monthUInvAllMoney[$uKey]["sum_money"]:0;
+                //暂停、停止
+                if(isset($serviceForST[$city][$key])){
+                    $officeRow["stop_sum"]+=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_stop"]:0;
+                    $officeRow["pause_sum"]+=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_pause"]:0;
+                    $officeRow["stop_sum_none"]+=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_stop_none"]:0;
+                    $officeRow["stopSumOnly"]+=isset($serviceForST[$city][$key])?$serviceForST[$city][$key]["num_month"]:0;
+                }
+                if(isset($lastServiceForST[$city][$key])){
+                    $officeRow["stop_sum_last"]+=isset($lastServiceForST[$city][$key])?-1*$lastServiceForST[$city][$key]["num_stop"]:0;
+                    $officeRow["pause_sum_last"]+=isset($lastServiceForST[$city][$key])?-1*$lastServiceForST[$city][$key]["num_pause"]:0;
+                }
+                //恢复
+                $officeRow["resume_sum_last"]+=isset($lastServiceForR[$city][$key])?$lastServiceForR[$city][$key]:0;
+                $officeRow["resume_sum"]+=isset($serviceForR[$city][$key])?$serviceForR[$city][$key]:0;
+                //更改
+                $officeRow["amend_sum_last"]+=isset($lastServiceForA[$city][$key])?$lastServiceForA[$city][$key]:0;
+                $officeRow["amend_sum"]+=isset($serviceForA[$city][$key])?$serviceForA[$city][$key]:0;
+
+                self::resetOfficeTdRow($officeRow);
+                $htmlData=self::getOfficeHtmlTr($city,$key,$officeRow);
+                $html.=$htmlData["html"];
+                $hideList[$city][$key] = $htmlData["data"];
+            }
+            $cityHtmlTr[$city] = $html;
+        }
+
+        return array("cityHtml"=>$cityHtmlTr,"hideHtml"=>TbHtml::hiddenField("officeList",json_encode($hideList)));
+    }
+
+    protected function resetOfficeTdRow(&$list,$bool=false){
+        $newSum = $list["new_sum"]+$list["new_sum_n"];//所有新增总金额
+        //$list["monthStopRate"] = $this->comparisonRate($list["stopSumOnly"],$list["u_actual_money"]);
+        //2023年9月改版：月停单率 = (new_sum_n+new_month_n+stop_sum/12)/last_u_actual
+        if($bool){
+            $list["monthStopRate"] = "-";
+            $list["comStopRate"] = "-";
+        }else{
+            $list["monthStopRate"] = $list["new_sum_n"]+$list["new_month_n"]+round($list["stop_sum"]/12,2);
+            $list["monthStopRate"] = $this->comparisonRate($list["monthStopRate"],$list["last_u_actual"]);
+
+            $list["comStopRate"] = $list["stop_sum_none"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
+            $list["comStopRate"]/= 12;//stop_sum_none,last_u_all
+            $lastSum = $list["new_month_n"]+$list["last_u_all"];
+            $list["comStopRate"] = $this->comparisonRate($list["comStopRate"],$lastSum);
+        }
+        $list["net_sum"]=0;
+        $list["net_sum"]+=$list["new_sum"]+$list["new_sum_n"]+$list["new_month_n"];
+        $list["net_sum"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
+        $list["net_sum"]+=$list["amend_sum"];
+        $list["net_sum_last"]=0;
+        $list["net_sum_last"]+=$list["new_sum_last"]+$list["new_sum_n_last"]+$list["new_month_n_last"];
+        $list["net_sum_last"]+=$list["stop_sum_last"]+$list["resume_sum_last"]+$list["pause_sum_last"];
+        $list["net_sum_last"]+=$list["amend_sum_last"];
+        $list["new_rate"] = $this->nowAndLastRate($list["new_sum"],$list["new_sum_last"],true);
+        $list["new_n_rate"] = $this->nowAndLastRate($list["new_sum_n"],$list["new_sum_n_last"],true);
+        $list["new_month_rate"] = $this->nowAndLastRate($list["new_month_n"],$list["new_month_n_last"],true);
+        $list["stop_rate"] = $this->nowAndLastRate($list["stop_sum"],$list["stop_sum_last"],true);
+        $list["resume_rate"] = $this->nowAndLastRate($list["resume_sum"],$list["resume_sum_last"],true);
+        $list["pause_rate"] = $this->nowAndLastRate($list["pause_sum"],$list["pause_sum_last"],true);
+        $list["amend_rate"] = $this->nowAndLastRate($list["amend_sum"],$list["amend_sum_last"],true);
+
+        $list["net_rate"] = $this->nowAndLastRate($list["net_sum"],$list["net_sum_last"],true);
+    }
+
+    protected function getOfficeHtmlTr($city,$office_id,$officeRow){
+        $bodyKey = $this->getDataAllKeyStr();
+        $data=array();
+        $html = "";
+        $html.= "<tr class='office-city-tr' data-city='{$city}' data-type='hide' data-office='{$office_id}' style='display: none;'>";
+        foreach ($bodyKey as $item){
+            $keyStr = $item=="city_name"?"office_name":$item;
+            $text = key_exists($keyStr,$officeRow)?$officeRow[$keyStr]:"";
+            $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
+            ComparisonForm::setTextColorForKeyStr($tdClass,$keyStr,$officeRow);
+            $text = ComparisonForm::showNum($text);
+            $html.= "<td class='{$tdClass}'>".$text."</td>";
+            $data[]=$text;
+        }
+        $html.= "</tr>";
+        return array("html"=>$html,'data'=>$data);
+    }
+
 }

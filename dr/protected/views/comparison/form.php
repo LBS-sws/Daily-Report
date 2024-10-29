@@ -9,6 +9,7 @@ $this->pageTitle=Yii::app()->name . ' - Comparison Form';
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 )); ?>
 <style>
+    .changeOffice{ cursor: pointer;}
     .click-th,.click-tr,.td_detail{ cursor: pointer;}
     .click-tr>.fa:before{ content: "\f062";}
     .click-tr.show-tr>.fa:before{ content: "\f063";}
@@ -269,6 +270,54 @@ $('.td_detail').on('click',function(){
 });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
+
+
+$ajaxUrl = Yii::app()->createUrl('comparison/ajaxOffice');
+$js="
+$(function(){
+    var cityList=[];
+    $('td.changeOffice').each(function(){
+        cityList.push($(this).data('city'));
+    });
+    $.ajax({
+        type: 'GET',
+        url: '{$ajaxUrl}',
+        data: {
+            'cityList':cityList,
+            'startDate':'{$model->start_date}',
+            'endDate':'{$model->end_date}'
+        },
+        dataType: 'json',
+        success: function(data) {
+            var dataList = data.list.cityHtml;
+            $('form:first').prepend(data.list.hideHtml);
+            $('td.changeOffice').each(function(){
+                var city = $(this).data('city');
+                if(typeof dataList[city] !== undefined){
+                    $(this).parent('tr').after(dataList[city]);
+                }
+                //fa-minus
+                $(this).find('i:first').removeClass('fa-spinner fa-pulse').addClass('fa-plus');
+            });
+        },
+        error: function(data) { // if error occured
+            alert('Error occured.please try again');
+        }
+    });
+    
+    $('td.changeOffice').on('click',function(){
+        var city = $(this).data('city');
+        if($(this).find('i:first').hasClass('fa-plus')){ //展开
+            $(this).find('i:first').removeClass('fa-plus').addClass('fa-minus');
+            $('tr.office-city-tr[data-city=\"'+city+'\"]').slideDown(100);
+        }else if($(this).find('i:first').hasClass('fa-minus')){ //收缩
+            $(this).find('i:first').removeClass('fa-minus').addClass('fa-plus');
+            $('tr.office-city-tr[data-city=\"'+city+'\"]').slideUp(100);
+        }
+    });
+});
+";
+Yii::app()->clientScript->registerScript('changeOffice',$js,CClientScript::POS_READY);
 
 $language = Yii::app()->language;
 $js = Script::genReadonlyField();
