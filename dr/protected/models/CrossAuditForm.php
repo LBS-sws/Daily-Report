@@ -20,12 +20,12 @@ class CrossAuditForm extends CrossApplyForm
         $index = is_numeric($this->id)?$this->id:0;
         $city_allow = Yii::app()->user->city_allow();
         $sql = "select * from swo_cross where id='".$index."' and (
-            (cross_city in ({$city_allow}) and cross_type not in(0,1))
-            or (old_city in ({$city_allow}) and cross_type in(0,1))
+            cross_city in ({$city_allow})
             or (cross_type=5 and qualification_city in ({$city_allow}))
 		)";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if($row){
+            $this->id = $row["id"];
             $this->table_type = $row["table_type"];
             $this->service_id = $row["service_id"];
             $this->apply_date = General::toDate($row['apply_date']);
@@ -43,6 +43,11 @@ class CrossAuditForm extends CrossApplyForm
             $this->apply_category = $row['apply_category'];
             $this->effective_date = General::toDate($row['effective_date']);
             $this->resetContractNo(true);
+
+            if(in_array($this->cross_type,array(0,1))){//普通合约、KA合约
+                $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($this->table_type,$this->service_id,$this->id);
+                $this->send_city = $endCrossList["cross_city"];
+            }
         }else{
             $this->addError($attribute, "交叉派单不存在，请刷新重试");
             return false;
@@ -55,8 +60,7 @@ class CrossAuditForm extends CrossApplyForm
 		$suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
 		$sql = "select * from swo_cross where id='".$index."' and (
-            (cross_city in ({$city_allow}) and cross_type not in(0,1))
-            or (old_city in ({$city_allow}) and cross_type in(0,1))
+            cross_city in ({$city_allow})
             or (cross_type=5 and qualification_city in ({$city_allow}))
 		)";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
@@ -190,12 +194,10 @@ class CrossAuditForm extends CrossApplyForm
         $message.="<p>备注：".$this->remark."</p>";
         $message.="<p>申请时间：".$this->apply_date."</p>";
         $emailModel = new Email($title,$message,$title);
-        if(in_array($this->cross_type,array(0,1))){//普通合约、KA合约
-            $city = empty($this->cross_city)?$this->qualification_city:$this->cross_city;
-            $emailModel->addEmailToPrefixAndCity("CD02",$city);
-        }else{
-            $emailModel->addEmailToLcu($this->lcu);
+        if(in_array($this->cross_type,array(0,1))&&!empty($this->send_city)){//普通合约、KA合约
+            $emailModel->addEmailToPrefixAndCity("CD02",$this->send_city);
         }
+        $emailModel->addEmailToLcu($this->lcu);
         $emailModel->sent();
     }
 
@@ -207,6 +209,8 @@ class CrossAuditForm extends CrossApplyForm
     }
 
     protected function getCurlData(){
+        $event = $this->apply_category==2&&in_array($this->cross_type,array(1,0))?2:1;
+        $cross_city = $this->cross_city;//发包方自己做
         $data=array(
             "lbs_id"=>$this->id,//唯一标识
             //"customer_code"=>$serviceModel->customer_code."-{$this->old_city}",//客户编号
@@ -218,14 +222,16 @@ class CrossAuditForm extends CrossApplyForm
             "audit_date"=>General::toMyDate($this->audit_date),//审核日期
             "contract_id"=>$this->u_system_id,//u_system_id
             "contract_type"=>$this->cross_type,//类型：4:长约 3：短约 2：资质借用
-            "accept_audit_ratio"=>empty($this->cross_city)?null:$this->rate_num,//审核比例
-            "accept_money"=>$this->cross_amt,//承接方金额
-            "accept_contract_id"=>$this->cross_city,//承接方（城市代号：ZY）
+            "accept_audit_ratio"=>empty($cross_city)?null:$this->rate_num,//审核比例
+            "accept_money"=>empty($cross_city)?null:$this->cross_amt,//承接方金额
+            "accept_contract_id"=>$cross_city,//承接方（城市代号：ZY）
+            "notice_object_id"=>$event==2?$this->old_city:null,//不知道做啥的
             "qualification_audit_ratio"=>$this->qualification_ratio,//资质方比例
             "qualification_contract_id"=>$this->qualification_city,//资质方
             "qualification_money"=>$this->qualification_amt,//资质方金额
             "effective_date"=>General::toMyDate($this->effective_date),//生效日期
             "apply_category"=>empty($this->apply_category)?2:$this->apply_category,//申请类型
+            "event"=>$event,//申请类型
         );
         return $data;
     }

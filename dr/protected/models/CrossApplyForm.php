@@ -27,6 +27,7 @@ class CrossApplyForm extends CFormModel
 	public $lcu;
 	public $apply_category;
 	public $effective_date;
+	public $send_city;//普通合约、KA合约需要查上一个交叉派单的城市
 
     public $cross_type;
     public $old_month_amt;
@@ -97,7 +98,7 @@ class CrossApplyForm extends CFormModel
     }
 
     public function validateCrossType($attribute, $params) {
-        $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($this->table_type,$this->service_id);
+        $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($this->table_type,$this->service_id,$this->id);
 	    $list = empty($endCrossList)?self::getCrossTypeList():self::getCrossTypeThreeList();
 	    $this->cross_type="".$this->cross_type;
 	    if(!key_exists($this->cross_type,$list)){
@@ -125,7 +126,8 @@ class CrossApplyForm extends CFormModel
                     }
                 }elseif ($this->apply_category==2){//合约类型调整
                     if($this->cross_type==0||$this->cross_type==1){//资质借用、普通合约、KA合约
-                        $this->cross_city=$endCrossList["cross_city"];
+                        $this->send_city=$endCrossList["cross_city"];
+                        $this->cross_city=$endCrossList["old_city"];
                         $this->cross_amt=0;
                         $this->rate_num=0;
                         $this->qualification_city = $endCrossList["qualification_city"];
@@ -175,7 +177,7 @@ class CrossApplyForm extends CFormModel
             }
             if($this->cross_city===""){
                 $this->addError($attribute, "承接城市不能为空");
-            }elseif($this->cross_city==$this->old_city){
+            }elseif(!in_array($this->cross_type,array(0,1))&&$this->cross_city==$this->old_city){
                 $this->addError($attribute, "承接城市不能与合约城市一致");
             }
         }
@@ -244,6 +246,7 @@ class CrossApplyForm extends CFormModel
     }
 
     public static function getEndCrossListForTypeAndId($table_type,$service_id,$notID=0){
+        $notID = empty($notID)?0:$notID;
         $row = Yii::app()->db->createCommand()->select("*")
             ->from("swo_cross")
             ->where("id!=:notID and table_type=:table_type and service_id=:service_id and status_type not in (2,6)",array(
@@ -529,13 +532,18 @@ class CrossApplyForm extends CFormModel
         $message.="<p>比例后金额：".$this->cross_amt."</p>";
         $message.="<p>备注：".$this->remark."</p>";
         $message.="<p>申请时间：".$this->apply_date."</p>";
-        if(in_array($this->cross_type,array(0,1))){//普通合约、KA合约
-            $title = "交叉派单 - ".CrossApplyForm::getCrossTypeStrToKey($this->cross_type);
-        }
         $emailModel = new Email($title,$message,$title);
         $city = empty($this->cross_city)?$this->qualification_city:$this->cross_city;
         $emailModel->addEmailToPrefixAndCity("CD02",$city);
         $emailModel->sent();
+        if(in_array($this->cross_type,array(0,1))&&!empty($this->send_city)){//普通合约、KA合约
+            $title = "交叉派单 - ".CrossApplyForm::getCrossTypeStrToKey($this->cross_type);
+            $emailModel->setSubject($title);
+            $emailModel->setDescription($title);
+            $emailModel->resetToAddr();
+            $emailModel->addEmailToPrefixAndCity("CD02",$this->send_city);
+            $emailModel->sent();
+        }
     }
 
 	public function readonly(){

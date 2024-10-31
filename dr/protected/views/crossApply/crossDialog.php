@@ -73,7 +73,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","Cross city"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
-            <?php echo Tbhtml::dropDownList('CrossApply[cross_city]','',CrossApplyForm::getCityList(),array('id'=>'cross_cross_city','empty'=>'','data-city'=>$endCrossList?$endCrossList["cross_city"]:"")); ?>
+            <?php echo Tbhtml::dropDownList('CrossApply[cross_city]','',CrossApplyForm::getCityList(),array('id'=>'cross_cross_city','empty'=>'','data-city'=>$endCrossList?$endCrossList["cross_city"]:"",'data-old'=>$endCrossList?$endCrossList["old_city"]:"")); ?>
         </div>
     </div>
     <div class="form-group">
@@ -120,6 +120,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    var apply_category=$('#apply_category').val();
 	    var pre_cross_month_amt=$('#cross_month_amt').data('amt');
 	    var pre_cross_city=$('#cross_cross_city').data('city');
+	    var pre_old_city=$('#cross_cross_city').data('old');
 	    var pre_qualification_city=$('#qualification_city').data('city');
 	    var pre_cross_type=$('#cross_type').data('type');
 	    var pre_qualification_ratio=$('#qualification_ratio').data('val');
@@ -164,7 +165,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
                 $('#cross_rate_num').removeAttr('readonly').removeClass('readonly');
 	            break;
 	    }
-	    $('#cross_month_amt').trigger('change');
+	    $('#cross_type').trigger('change');
 	});
 	$('#cross_rate_num,#cross_month_amt,#qualification_ratio').on('change',function(){
 	    var qualification_ratio= $('#qualification_ratio').val();
@@ -199,6 +200,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    var cross_type = $(this).val();
 	    var pre_cross_rate_num=$('#cross_rate_num').data('val');
 	    var pre_cross_city=$('#cross_cross_city').data('city');
+	    var pre_old_city=$('#cross_cross_city').data('old');
 	    var pre_qualification_city=$('#qualification_city').data('city');
 	    var pre_qualification_ratio=$('#qualification_ratio').data('val');
 	    if(['5','6','7','8'].indexOf(cross_type)>=0){
@@ -218,8 +220,8 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	            $('.accept-div').slideDown(100);
                 $('#cross_rate_num').attr('readonly','readonly').addClass('readonly').val(0);
             }
-            if(pre_cross_city!=''&&pre_cross_city!=undefined){
-                $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_cross_city);
+            if(pre_old_city!=''&&pre_old_city!=undefined){
+                $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_old_city);
             }
             if(pre_qualification_city!=''&&pre_qualification_city!=undefined){
 	            $('.qualification-div').slideDown(100);
@@ -228,7 +230,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
             if(pre_qualification_ratio!=''&&pre_qualification_ratio!=undefined){
                 $('#qualification_ratio').attr('readonly','readonly').addClass('readonly').val(pre_qualification_ratio);
             }
-        }else{
+        }else if(!$(this).hasClass('readonly')){
             $('#cross_rate_num').removeAttr('readonly').removeClass('readonly');
             $('#cross_cross_city').removeAttr('readonly').removeClass('readonly');
             if($('#apply_category').val()!=1){
