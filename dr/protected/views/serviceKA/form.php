@@ -761,7 +761,6 @@ if ($model->scenario!='view') {
         'ServiceKAForm_first_dt',
         'ServiceKAForm_equip_install_dt',
         'cross_apply_date',
-        'effective_date',
     ));
     Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 }

@@ -72,11 +72,12 @@ $table_type = $modelForm=="ServiceList"?0:1;
 <?php
 	$this->endWidget();
 $nowDate = date_format(date_create(),"Y/m/d");
+$nowDateOne = date_format(date_create(),"Y/m/01");
 	$js="
 	
 	$('#crossFullBtn').on('click', function (event) {
 	    $('#cross_apply_date').val('{$nowDate}');
-	    $('#effective_date').val('{$nowDate}');
+	    $('#effective_date').val('{$nowDateOne}');
 	    if($('.checkOne:checked').length>=1){
 	        $('#crossFull').modal('show');
 	    }else{
@@ -184,6 +185,8 @@ $('#crossFullOk').on('click',function(){
         });
     }
 });
+
+$('#effective_date').datepicker({autoclose: true,language: 'zh_cn', format: 'yyyy/mm/01', minViewMode: 1});
 ";
 Yii::app()->clientScript->registerScript('selectAll',$js,CClientScript::POS_READY);
 ?>

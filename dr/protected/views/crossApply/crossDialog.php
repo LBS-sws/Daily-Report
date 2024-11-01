@@ -95,6 +95,12 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
         <?php echo Tbhtml::textField('CrossApply[effective_date]','',array('id'=>'effective_date','autocomplete'=>'off','prepend'=>"<span class='fa fa-calendar'></span>")); ?>
     </div>
 </div>
+<div class="form-group" id="send_city_div" style="display:none;" >
+    <?php echo Tbhtml::label(Yii::t("service","send cross city"),'',array('class'=>"col-lg-3 control-label")); ?>
+    <div class="col-lg-5">
+        <?php echo Tbhtml::dropDownList('CrossApply[send_city]','',CrossApplyForm::getCityList(),array('id'=>'send_city','empty'=>'','data-city'=>$endCrossList?$endCrossList["cross_city"]:"")); ?>
+    </div>
+</div>
 <div class="form-group">
     <?php echo Tbhtml::label(Yii::t("service","Remarks"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-7">
@@ -105,6 +111,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 <?php
 	$this->endWidget();
     $nowDate = date_format(date_create(),"Y/m/d");
+    $nowDateOne = date_format(date_create(),"Y/m/01");
 	$js="
 	$('#crossDialog').on('show.bs.modal', function (event) {
 	    var month_amt = $('#{$modelForm}_amt_paid').val();
@@ -112,7 +119,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    $('#cross_service_id').val($('#{$modelForm}_id').val());
 	    $('#cross_contract_no').val($('#{$modelForm}_contract_no').val());
 	    $('#cross_apply_date').val('{$nowDate}');
-	    $('#effective_date').val('{$nowDate}');
+	    $('#effective_date').val('{$nowDateOne}');
 	    $('#cross_month_amt').val(month_amt);
 	    $('#apply_category').trigger('change');
 	});
@@ -200,9 +207,12 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    var cross_type = $(this).val();
 	    var pre_cross_rate_num=$('#cross_rate_num').data('val');
 	    var pre_cross_city=$('#cross_cross_city').data('city');
+	    var send_city=$('#send_city').data('city');
 	    var pre_old_city=$('#cross_cross_city').data('old');
 	    var pre_qualification_city=$('#qualification_city').data('city');
 	    var pre_qualification_ratio=$('#qualification_ratio').data('val');
+        $('#send_city').val('');
+        $('#send_city_div').hide();
 	    if(['5','6','7','8'].indexOf(cross_type)>=0){
 	        $('.qualification-div').slideDown(100);
 	    }else{
@@ -215,7 +225,11 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
         }else{
 	        $('.accept-div').slideDown(100);
         }
-        if(cross_type=='0'||cross_type=='1'){
+        if(cross_type=='11'||cross_type=='12'){
+            if(send_city!=''&&send_city!=undefined){
+                $('#send_city_div').show();
+                $('#send_city').val(send_city);
+            }
             if(pre_cross_rate_num!=''&&pre_cross_rate_num!=undefined){
 	            $('.accept-div').slideDown(100);
                 $('#cross_rate_num').attr('readonly','readonly').addClass('readonly').val(0);
@@ -240,6 +254,8 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
         }
 	    $('#cross_rate_num').trigger('change');
 	});
+	
+$('#effective_date').datepicker({autoclose: true,language: 'zh_cn', format: 'yyyy/mm/01', minViewMode: 1});
 	";
 Yii::app()->clientScript->registerScript('crossDialog',$js,CClientScript::POS_READY);
 ?>

@@ -95,7 +95,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
         <?php
         if(in_array($model->cross_type,array('5','6','7','8'))){
             $qualificationBool = false;
-        }elseif(in_array($model->cross_type,array('0','1'))&&!empty($model->qualification_city)){
+        }elseif(in_array($model->cross_type,array('11','12'))&&!empty($model->qualification_city)){
             $qualificationBool = false;
         }else{
             $qualificationBool = true;
@@ -158,6 +158,14 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
             <div class="col-lg-3">
                 <?php echo $form->textField($model, 'effective_date',
                     array('readonly'=>$model->readonly(),'id'=>'effective_date','autocomplete'=>'off','prepend'=>"<span class='fa fa-calendar'></span>")
+                ); ?>
+            </div>
+        </div>
+        <div class="form-group" id="send_city_div" style="<?php echo in_array($model->cross_type,array(11,12))?"":"display:none;";?>" >
+            <?php echo Tbhtml::label(Yii::t("service","send cross city"),'',array('class'=>"col-lg-2 control-label")); ?>
+            <div class="col-lg-3">
+                <?php echo $form->dropDownList($model, 'send_city',CrossApplyForm::getCityList(),
+                    array('empty'=>'','id'=>'send_city','readonly'=>$model->readonly())
                 ); ?>
             </div>
         </div>
@@ -256,6 +264,11 @@ if($model->status_type==2){
             $('.accept-div').slideUp(100);
         }else{
 	        $('.accept-div').slideDown(100);
+        }
+        if(cross_type=='11'||cross_type=='12'){
+            $('#send_city_div').show();
+        }else{
+            $('#send_city_div').hide();
         }
 	    $('#cross_rate_num').trigger('change');
 	});

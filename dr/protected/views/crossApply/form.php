@@ -62,8 +62,9 @@ $this->pageTitle=Yii::app()->name . ' - CrossApply Form';
 if (!$model->readonly()) {
     $js = Script::genDatePicker(array(
         'cross_apply_date',
-        'effective_date',
     ));
+    $js.="	
+$('#effective_date').datepicker({autoclose: true,language: 'zh_cn', format: 'yyyy/mm/01', minViewMode: 1});";
     Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 }
 $js = Script::genDeleteData(Yii::app()->createUrl('crossApply/delete'));

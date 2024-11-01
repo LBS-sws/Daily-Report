@@ -9,7 +9,7 @@ class CrossSearchForm extends CrossApplyForm
 	{
 		return array(
             array('id,table_type,service_id,apply_category,contract_no,apply_date,month_amt,rate_num,old_city,
-            cross_city,cross_type,status_type,reject_note,remark,audit_date,audit_user','safe'),
+            cross_city,cross_type,status_type,reject_note,remark,audit_date,audit_user,send_city','safe'),
 			array('service_id,effective_date,apply_date,month_amt,rate_num,cross_city,cross_type','required'),
 			array('reject_note','required',"on"=>array("reject")),
 			array('id','validateID'),
@@ -50,6 +50,7 @@ class CrossSearchForm extends CrossApplyForm
 			$this->rate_num = floatval($row['rate_num']);
             $this->old_city = $row['old_city'];
             $this->cross_city = $row['cross_city'];
+            $this->send_city = $row['send_city'];
             $this->status_type = $row['status_type'];
             $this->reject_note = $row['reject_note'];
             $this->remark = $row['remark'];
