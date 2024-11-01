@@ -15,7 +15,8 @@ class ResetCommand extends CConsoleCommand {
                 if($uRow){
                     echo " - U_ID:".$uRow["customer_id"];
                     Yii::app()->db->createCommand()->update("swo_company",array(
-                        "u_customer_id"=>$uRow["customer_id"]
+                        "u_customer_id"=>$uRow["customer_id"],
+                        "del_num"=>0,
                     ),"id=".$row["id"]);
                     Yii::app()->db->createCommand()->update("lbs_company_customer",array(
                         "lbs_id"=>$row["id"]
