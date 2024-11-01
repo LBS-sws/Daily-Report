@@ -139,30 +139,22 @@ $this->pageTitle=Yii::app()->name . ' - Customer Form';
 				</div>
 			</div>
 
-
-
-            <legend><?php echo Yii::t("supplier","JD System Curl");?></legend>
-            <?php
-            $html = "";
-            $className = get_class($model);
-            foreach (CustomerForm::$jd_set_list as $num=>$item){
-                $field_value = key_exists($item["field_id"],$model->jd_set)?$model->jd_set[$item["field_id"]]:null;
-                if($num%2==0){
-                    $html.='<div class="form-group">';
-                }
-                $html.=TbHtml::label(Yii::t("supplier",$item["field_name"]),'',array('class'=>"col-sm-2 control-label"));
-                $html.='<div class="col-lg-3">';
-                $html.=TbHtml::textField("{$className}[jd_set][{$item["field_id"]}]",$field_value,array('readonly'=>($model->scenario=='view')));
-                $html.="</div>";
-                if($num%2==1){
-                    $html.='</div>';
-                }
-            }
-            if(count(CustomerForm::$jd_set_list)%2==0){
-                $html.='</div>';
-            }
-            echo $html;
-            ?>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'u_customer_id',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'u_customer_id',
+                        array('readonly'=>true)
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'jd_customer_id',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'jd_customer_id',
+                        array('readonly'=>true)
+                    ); ?>
+                </div>
+            </div>
 		</div>
 	</div>
 </section>

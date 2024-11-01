@@ -10,23 +10,14 @@ class CurlForCustomer extends CurlForJD{
                     if(key_exists("billStatus",$row)&&$row["billStatus"]===true){
                         $jdID = $row["id"];
                         $lbsID = isset($row["keys"]["lbs_apikey"])?$row["keys"]["lbs_apikey"]:0;
-                        $rs = Yii::app()->db->createCommand()->select("id,field_value")->from("swo_send_set_jd")
-                            ->where("set_type ='customer' and table_id=:table_id and field_id=:field_id",array(
-                                ':field_id'=>'jd_customer_id',':table_id'=>$lbsID,
-                            ))->queryRow();
+                        $rs = Yii::app()->db->createCommand()->select("id,jd_customer_id")->from("swo_company")
+                            ->where("id=:id",array(':id'=>$lbsID))->queryRow();
                         if($rs){
-                            if(empty($rs["field_value"])){//空值才允许修改
-                                Yii::app()->db->createCommand()->update('swo_send_set_jd',array(
-                                    "field_value"=>$jdID,
+                            if(empty($rs["jd_customer_id"])){//空值才允许修改
+                                Yii::app()->db->createCommand()->update('swo_company',array(
+                                    "jd_customer_id"=>$jdID,
                                 ),"id=:id",array(':id'=>$rs["id"]));
                             }
-                        }else{
-                            Yii::app()->db->createCommand()->insert('swo_send_set_jd',array(
-                                "table_id"=>$lbsID,
-                                "set_type"=>'customer',
-                                "field_id"=>'jd_customer_id',
-                                "field_value"=>$jdID,
-                            ));
                         }
                     }
                 }

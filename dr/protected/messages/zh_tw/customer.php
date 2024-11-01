@@ -50,5 +50,8 @@ return array(
 
     'chain num'=>'連鎖店數量',
     'note 1:'=>'註：輸入數量後，系統篩選出大於等於該數量的連鎖店客戶（客戶名字前3個字相同判斷為連鎖店）',
+    
+    'u customer id'=>'派單系統ID',
+    'jd customer id'=>'金蝶系統ID',
 );
 ?>
