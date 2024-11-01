@@ -128,13 +128,6 @@ class CustomerForm extends CFormModel
                 $this->email = $row['email'];
                 $this->u_customer_id = $row['u_customer_id'];
                 $this->jd_customer_id = $row['jd_customer_id'];
-
-                $setRows = Yii::app()->db->createCommand()->select("field_id,field_value")
-                    ->from("swo_send_set_jd")->where("table_id=:table_id and set_type='customer'",array(":table_id"=>$index))->queryAll();
-                $setList = array();
-                foreach ($setRows as $setRow){
-                    $setList[$setRow["field_id"]] = $setRow["field_value"];
-                }
 				break;
 			}
 		}
