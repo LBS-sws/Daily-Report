@@ -77,16 +77,30 @@ class CrossApplyForm extends CFormModel
 		return array(
             array('id,apply_category,table_type,cross_num,service_id,contract_no,apply_date,month_amt,rate_num,old_city,cross_type,
             cross_city,status_type,reject_note,remark,audit_date,audit_user,luu,qualification_ratio,
-            qualification_city,qualification_amt,cross_amt,send_city','safe'),
-			array('service_id,apply_date,cross_type,effective_date','required'),
+            qualification_city,qualification_amt,cross_amt,send_city,effective_date','safe'),
+			array('service_id,apply_date,cross_type','required'),
             array('month_amt','numerical','allowEmpty'=>false),
             array('table_type','validateTableType'),
             array('service_id','validateServiceID'),
             array('cross_type','validateCrossType'),
             array('cross_city','validateCrossCity'),
             array('qualification_ratio,rate_num','numerical','min'=>0,'max'=>100),
+            array('effective_date','validateEffective'),
 		);
 	}
+
+    public function validateEffective($attribute, $params) {
+	    if($this->apply_category==2){
+	        if(empty($this->effective_date)){
+                $this->addError($attribute, "交叉生效日期不能为空");
+            }else{
+                $this->effective_date = date_format(date_create($this->effective_date),"Y/m/01");
+            }
+        }else{
+            $this->effective_date=null;
+        }
+        return true;
+    }
 
     public function validateTableType($attribute, $params) {
 	    $this->effective_date = empty($this->effective_date)?null:date_format(date_create($this->effective_date),"Y/m/01");
@@ -635,6 +649,7 @@ class CrossApplyForm extends CFormModel
                     $this->old_month_amt = $row["amt_paid"];
                     $this->month_amt = $row["amt_paid"];
                     $this->validateCrossType("id","");
+                    $this->validateEffective("id","");
                     $this->saveData();
                     $return["success"]++;
                 }else{
