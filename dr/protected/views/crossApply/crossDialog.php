@@ -216,6 +216,12 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    var pre_qualification_ratio=$('#qualification_ratio').data('val');
         $('#send_city').val('');
         $('#send_city_div').hide();
+        if(['11','12','0','1'].indexOf(cross_type)>=0){
+            $('#send_city_div').show();
+            if(send_city!=''&&send_city!=undefined){
+                $('#send_city').val(send_city);
+            }
+        }
 	    if(['5','6','7','8'].indexOf(cross_type)>=0){
 	        $('.qualification-div').slideDown(100);
 	    }else{
@@ -223,16 +229,12 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	        $('#qualification_amt').val('');
 	        $('.qualification-div').slideUp(100);
 	    }
-        if(cross_type=='5'){
+        if(['5','0','1'].indexOf(cross_type)>=0){
             $('.accept-div').slideUp(100);
         }else{
 	        $('.accept-div').slideDown(100);
         }
         if(cross_type=='11'||cross_type=='12'){
-            if(send_city!=''&&send_city!=undefined){
-                $('#send_city_div').show();
-                $('#send_city').val(send_city);
-            }
             if(pre_cross_rate_num!=''&&pre_cross_rate_num!=undefined){
 	            $('.accept-div').slideDown(100);
                 $('#cross_rate_num').attr('readonly','readonly').addClass('readonly').val(0);

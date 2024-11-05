@@ -141,13 +141,19 @@ class CrossApplyForm extends CFormModel
                         return false;
                     }
                 }elseif ($this->apply_category==2){//合约类型调整
-                    if($this->cross_type==11||$this->cross_type==12){//资质借用、普通合约、KA合约
+                    if($this->cross_type==11||$this->cross_type==12){//交叉普通、交叉KA
                         //$this->send_city=$endCrossList["cross_city"];
                         $this->cross_city=$endCrossList["old_city"];
                         $this->cross_amt=0;
                         $this->rate_num=0;
                         $this->qualification_city = $endCrossList["qualification_city"];
                         $this->qualification_ratio = $endCrossList["qualification_ratio"];
+                    }elseif($this->cross_type==0||$this->cross_type==1){//普通合约、KA合约
+                        $this->cross_city=null;
+                        $this->cross_amt=0;
+                        $this->rate_num=0;
+                        $this->qualification_city = null;
+                        $this->qualification_ratio = null;
                     }
                 }
             }else{
@@ -165,7 +171,7 @@ class CrossApplyForm extends CFormModel
                 $this->cross_amt=$this->month_amt*((100-$this->qualification_ratio)/100)*($this->rate_num/100);
                 $this->cross_amt = round($this->cross_amt,2);
             }else{
-                if(!in_array($this->cross_type,array(11,12))){//普通合约、KA合约
+                if(!in_array($this->cross_type,array(0,1,11,12))){//普通合约、KA合约
                     $this->qualification_ratio=null;
                     $this->qualification_city=null;
                     $this->qualification_amt=null;
@@ -193,7 +199,7 @@ class CrossApplyForm extends CFormModel
             }
             if($this->cross_city===""){
                 $this->addError($attribute, "承接城市不能为空");
-            }elseif(!in_array($this->cross_type,array(11,12))&&$this->cross_city==$this->old_city){
+            }elseif(!in_array($this->cross_type,array(0,1,11,12))&&$this->cross_city==$this->old_city){
                 $this->addError($attribute, "承接城市不能与合约城市一致");
             }
         }
@@ -390,8 +396,10 @@ class CrossApplyForm extends CFormModel
 
     public static function getCrossTypeThreeList(){
         return array(
-            "11"=>Yii::t("service","ordinary"),//交叉普通
-            "12"=>Yii::t("service","KA"),//交叉KA
+            "0"=>Yii::t("service","ordinary"),//普通合约
+            "1"=>Yii::t("service","KA"),//KA合约
+            "11"=>Yii::t("service","cross ordinary"),//交叉普通
+            "12"=>Yii::t("service","cross KA"),//交叉KA
             "3"=>Yii::t("service","short contract"),//短约
             "2"=>Yii::t("service","long contract"),//长约
             "5"=>Yii::t("service","more contract"),//资质借用
@@ -558,7 +566,7 @@ class CrossApplyForm extends CFormModel
         $city = empty($this->cross_city)?$this->qualification_city:$this->cross_city;
         $emailModel->addEmailToPrefixAndCity("CD02",$city);
         $emailModel->sent();
-        if(in_array($this->cross_type,array(11,12))&&!empty($this->send_city)){//普通合约、KA合约
+        if(in_array($this->cross_type,array(11,12,0,1))&&!empty($this->send_city)){//普通合约、KA合约
             $title = "交叉派单 - ".CrossApplyForm::getCrossTypeStrToKey($this->cross_type);
             $emailModel->setSubject($title);
             $emailModel->setDescription($title);

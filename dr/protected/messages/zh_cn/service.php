@@ -227,8 +227,10 @@ return array(
     'amount adjustment'=>'合约金额调整',
     'type adjustment'=>'合约类型调整(增加子合约)',
     'body adjustment'=>'合约内容修正',
-    'ordinary'=>'交叉普通',
-    'KA'=>'交叉KA',
+    'cross ordinary'=>'交叉普通',
+    'cross KA'=>'交叉KA',
+    'ordinary'=>'普通合约',
+    'KA'=>'KA合约',
     'send cross city'=>'通知城市',
 );
 ?>

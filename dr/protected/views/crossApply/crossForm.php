@@ -127,7 +127,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
                 </div>
             </div>
         </div>
-        <div class="accept-div" style="<?php if($model->cross_type==5){ echo 'display: none';} ?>">
+        <div class="accept-div" style="<?php if(in_array($model->cross_type,array(0,1,5))){ echo 'display: none';} ?>">
             <div class="form-group">
                 <?php echo $form->labelEx($model,'cross_city',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
@@ -161,7 +161,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
                 ); ?>
             </div>
         </div>
-        <div class="form-group" id="send_city_div" style="<?php echo in_array($model->cross_type,array(11,12))?"":"display:none;";?>" >
+        <div class="form-group" id="send_city_div" style="<?php echo in_array($model->cross_type,array(11,12,0,1))?"":"display:none;";?>" >
             <?php echo Tbhtml::label(Yii::t("service","send cross city"),'',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
                 <?php echo $form->dropDownList($model, 'send_city',CrossApplyForm::getCityList(),

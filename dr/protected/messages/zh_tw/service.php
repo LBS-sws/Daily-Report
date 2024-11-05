@@ -226,8 +226,10 @@ return array(
     'amount adjustment'=>'合約金額調整',
     'type adjustment'=>'合約類型調整(增加子合約)',
     'body adjustment'=>'合約內容修正',
-    'ordinary'=>'交叉普通',
-    'KA'=>'交叉KA',
+    'cross ordinary'=>'交叉普通',
+    'cross KA'=>'交叉KA',
+    'ordinary'=>'普通合約',
+    'KA'=>'KA合約',
     'send cross city'=>'通知城市',
 );
 ?>
