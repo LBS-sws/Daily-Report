@@ -118,5 +118,6 @@ return array(
     'JD City'=>'金蝶组织编号',
     'operation month'=>'营业报告(营运系统)',
     'rank for technical'=>'技术部综合排行榜',
+    'JD cost code'=>'成本中心编号',
 );
 ?>

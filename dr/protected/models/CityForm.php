@@ -14,6 +14,7 @@ class CityForm extends CFormModel
 	public $MMRANK;//技术部综合排行榜
 	public $OPERA;//营业报告（营运系统）
 	public $JD_city;//金蝶组织编号
+	public $JD_cost_code;//成本中心编号
     //public $BS_city;//北森组织编号
 
     protected $dynamic_fields = array(
@@ -29,6 +30,8 @@ class CityForm extends CFormModel
         'MMRANK'=>array("type"=>"list","func"=>array("CityForm","getRankList"),"param"=>array()),
         //金蝶系统编号
         'JD_city'=>array("type"=>"text"),
+        //成本中心编号
+        'JD_cost_code'=>array("type"=>"text"),
         //北森组织编号
         //'BS_city'=>array("type"=>"text"),
     );
@@ -53,6 +56,7 @@ class CityForm extends CFormModel
 			'OPERA'=>Yii::t('code','operation month'),
 			'JD_city'=>Yii::t('code','JD City'),
 			'BS_city'=>Yii::t('code','BS City'),
+			'JD_cost_code'=>Yii::t('code','JD cost code'),
 		);
 	}
 
