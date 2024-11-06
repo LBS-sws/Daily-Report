@@ -90,14 +90,10 @@ class CrossApplyForm extends CFormModel
 	}
 
     public function validateEffective($attribute, $params) {
-	    if($this->apply_category==2){
-	        if(empty($this->effective_date)){
-                $this->addError($attribute, "交叉生效日期不能为空");
-            }else{
-                $this->effective_date = date_format(date_create($this->effective_date),"Y/m/01");
-            }
+        if(empty($this->effective_date)){
+            $this->addError($attribute, "交叉生效日期不能为空");
         }else{
-            $this->effective_date=null;
+            $this->effective_date = date_format(date_create($this->effective_date),"Y/m/01");
         }
         return true;
     }
@@ -148,12 +144,14 @@ class CrossApplyForm extends CFormModel
                         $this->rate_num=0;
                         $this->qualification_city = $endCrossList["qualification_city"];
                         $this->qualification_ratio = $endCrossList["qualification_ratio"];
+                        $this->qualification_amt = $endCrossList["qualification_amt"];
                     }elseif($this->cross_type==0||$this->cross_type==1){//普通合约、KA合约
                         $this->cross_city=null;
                         $this->cross_amt=0;
                         $this->rate_num=0;
                         $this->qualification_city = null;
                         $this->qualification_ratio = null;
+                        $this->qualification_amt = null;
                     }
                 }
             }else{
@@ -171,7 +169,7 @@ class CrossApplyForm extends CFormModel
                 $this->cross_amt=$this->month_amt*((100-$this->qualification_ratio)/100)*($this->rate_num/100);
                 $this->cross_amt = round($this->cross_amt,2);
             }else{
-                if(!in_array($this->cross_type,array(0,1,11,12))){//普通合约、KA合约
+                if(!in_array($this->cross_type,array(11,12))){//普通合约、KA合约
                     $this->qualification_ratio=null;
                     $this->qualification_city=null;
                     $this->qualification_amt=null;
@@ -505,8 +503,9 @@ class CrossApplyForm extends CFormModel
             $command->bindParam(':qualification_ratio',$this->qualification_ratio,PDO::PARAM_STR);
         if (strpos($sql,':qualification_city')!==false)
             $command->bindParam(':qualification_city',$this->qualification_city,PDO::PARAM_STR);
-        if (strpos($sql,':qualification_amt')!==false)
+        if (strpos($sql,':qualification_amt')!==false){
             $command->bindParam(':qualification_amt',$this->qualification_amt,PDO::PARAM_STR);
+        }
         if (strpos($sql,':send_city')!==false){
             $this->send_city = $this->send_city===""?null:$this->send_city;
             $command->bindParam(':send_city',$this->send_city,PDO::PARAM_STR);

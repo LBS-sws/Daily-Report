@@ -134,7 +134,6 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    var pre_cross_rate_num=$('#cross_rate_num').data('val');
 	    switch(apply_category){
 	        case '1'://合约金额调整
-	            $('#effective_div').hide();
                 if(pre_cross_city!=''&&pre_cross_city!=undefined){
                     $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_cross_city);
                 }
@@ -153,7 +152,6 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
                 $('#cross_month_amt').removeAttr('readonly').removeClass('readonly');
 	            break;
 	        case '3'://调整合约内容
-	            $('#effective_div').hide();
                 if(pre_cross_type!=''&&pre_cross_type!=undefined){
                     $('#cross_type').attr('readonly','readonly').addClass('readonly').val(pre_cross_type).trigger('change');
                 }
@@ -166,7 +164,6 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
                 $('#cross_rate_num').removeAttr('readonly').removeClass('readonly');
 	            break;
             default:
-	            $('#effective_div').show();
                 $('#cross_month_amt').removeAttr('readonly').removeClass('readonly');
                 $('#cross_cross_city').removeAttr('readonly').removeClass('readonly');
                 $('#qualification_city').removeAttr('readonly').removeClass('readonly');

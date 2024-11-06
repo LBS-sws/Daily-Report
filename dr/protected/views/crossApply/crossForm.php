@@ -153,7 +153,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
                 </div>
             </div>
         </div>
-        <div class="form-group" id="effective_div" style="<?php if($model->apply_category!=2){ echo 'display: none';} ?>">
+        <div class="form-group" id="effective_div" >
             <?php echo $form->labelEx($model,'effective_date',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
                 <?php echo $form->textField($model, 'effective_date',
