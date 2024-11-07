@@ -1,4 +1,9 @@
-
+<style>
+    .select2.select2-container{ width: 100%!important;}
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 24px;
+    }
+</style>
 <form class="form-horizontal" id="crossForm" method="post">
 <?php
 	$ftrbtn = array();
@@ -62,6 +67,12 @@ $table_type = $modelForm=="ServiceList"?0:1;
             <?php echo Tbhtml::textField('CrossApply[effective_date]','',array('id'=>'effective_date','autocomplete'=>'off','prepend'=>"<span class='fa fa-calendar'></span>")); ?>
         </div>
     </div>
+    <div class="form-group" id="send_city_div" style="display:none;" >
+        <?php echo Tbhtml::label(Yii::t("service","send cross city"),'',array('class'=>"col-lg-3 control-label")); ?>
+        <div class="col-lg-5">
+            <?php echo Tbhtml::dropDownList('CrossApply[send_city]','',CrossApplyForm::getCityList(),array('id'=>'send_city','empty'=>'')); ?>
+        </div>
+    </div>
 <div class="form-group">
     <?php echo Tbhtml::label(Yii::t("service","Remarks"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-7">
@@ -74,7 +85,7 @@ $table_type = $modelForm=="ServiceList"?0:1;
 $nowDate = date_format(date_create(),"Y/m/d");
 $nowDateOne = date_format(date_create(),"Y/m/01");
 	$js="
-	
+	$('#crossFull').attr('tabindex','');
 	$('#crossFullBtn').on('click', function (event) {
 	    $('#cross_apply_date').val('{$nowDate}');
 	    $('#effective_date').val('{$nowDateOne}');
@@ -96,8 +107,10 @@ $nowDateOne = date_format(date_create(),"Y/m/01");
 	    }
         if(cross_type=='5'){
             $('.accept-div').slideUp(100);
+	        $('#send_city_div').show(100);
         }else{
 	        $('.accept-div').slideDown(100);
+            $('#send_city_div').hide(100);
         }
 	});
 	";
@@ -189,6 +202,16 @@ $('#crossFullOk').on('click',function(){
 $('#effective_date').datepicker({autoclose: true,language: 'zh_cn', format: 'yyyy/mm/01', minViewMode: 1});
 ";
 Yii::app()->clientScript->registerScript('selectAll',$js,CClientScript::POS_READY);
+
+$js="
+$('#qualification_city,#cross_cross_city,#send_city').select2({
+    multiple: false,
+    maximumInputLength: 10,
+    language: 'zh-CN',
+    disabled: 'false'
+});
+";
+Yii::app()->clientScript->registerScript('searchCityInput',$js,CClientScript::POS_READY);
 ?>
 
     <div id="confirmDiv" role="dialog" tabindex="-1" class="modal fade">

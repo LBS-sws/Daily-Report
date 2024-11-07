@@ -396,8 +396,8 @@ class CrossApplyForm extends CFormModel
         return array(
             "0"=>Yii::t("service","ordinary"),//普通合约
             "1"=>Yii::t("service","KA"),//KA合约
-            "11"=>Yii::t("service","cross ordinary"),//交叉普通
-            "12"=>Yii::t("service","cross KA"),//交叉KA
+            //"11"=>Yii::t("service","cross ordinary"),//交叉普通
+            //"12"=>Yii::t("service","cross KA"),//交叉KA
             "3"=>Yii::t("service","short contract"),//短约
             "2"=>Yii::t("service","long contract"),//长约
             "5"=>Yii::t("service","more contract"),//资质借用
@@ -565,7 +565,7 @@ class CrossApplyForm extends CFormModel
         $city = empty($this->cross_city)?$this->qualification_city:$this->cross_city;
         $emailModel->addEmailToPrefixAndCity("CD02",$city);
         $emailModel->sent();
-        if(in_array($this->cross_type,array(11,12,0,1))&&!empty($this->send_city)){//普通合约、KA合约
+        if(in_array($this->cross_type,array(11,12,0,1,5))&&!empty($this->send_city)){//普通合约、KA合约
             $title = "交叉派单 - ".CrossApplyForm::getCrossTypeStrToKey($this->cross_type);
             $emailModel->setSubject($title);
             $emailModel->setDescription($title);

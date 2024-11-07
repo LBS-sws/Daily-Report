@@ -193,7 +193,7 @@ class CrossAuditForm extends CrossApplyForm
         $message.="<p>备注：".$this->remark."</p>";
         $message.="<p>申请时间：".$this->apply_date."</p>";
         $emailModel = new Email($title,$message,$title);
-        if(in_array($this->cross_type,array(0,1,11,12))&&!empty($this->send_city)){//普通合约、KA合约
+        if(in_array($this->cross_type,array(0,1,5,11,12))&&!empty($this->send_city)){//普通合约、KA合约
             $emailModel->addEmailToPrefixAndCity("CD01",$this->send_city);
             $emailModel->addEmailToPrefixAndCity("CD02",$this->send_city);
             $emailModel->addEmailToCity($this->send_city);
@@ -226,7 +226,7 @@ class CrossAuditForm extends CrossApplyForm
             "accept_audit_ratio"=>empty($cross_city)?null:$this->rate_num,//审核比例
             "accept_money"=>empty($cross_city)?null:$this->cross_amt,//承接方金额
             "accept_contract_id"=>$cross_city,//承接方（城市代号：ZY）
-            "notice_object_id"=>$event==2?$this->send_city:null,//通知城市
+            "notice_object_id"=>$event==2||$this->cross_type==5?$this->send_city:null,//通知城市
             "qualification_audit_ratio"=>empty($this->qualification_city)?null:$this->qualification_ratio,//资质方比例
             "qualification_contract_id"=>empty($this->qualification_city)?null:$this->qualification_city,//资质方
             "qualification_money"=>empty($this->qualification_city)?null:$this->qualification_amt,//资质方金额

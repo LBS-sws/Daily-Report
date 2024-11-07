@@ -1,3 +1,9 @@
+<style>
+    .select2.select2-container{ width: 100%!important;}
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 24px;
+    }
+</style>
 <?php
 	$ftrbtn = array();
 	$ftrbtn[] = TbHtml::button(Yii::t('dialog','Close'), array('data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_DEFAULT,'class'=>"pull-left"));
@@ -113,6 +119,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
     $nowDate = date_format(date_create(),"Y/m/d");
     $nowDateOne = date_format(date_create(),"Y/m/01");
 	$js="
+	$('#crossDialog').attr('tabindex','');
 	$('#crossDialog').on('show.bs.modal', function (event) {
 	    var month_amt = $('#{$modelForm}_amt_paid').val();
 	    //month_amt = $('#{$modelForm}_paid_type').val()=='M'?month_amt:(month_amt/12);
@@ -135,10 +142,10 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    switch(apply_category){
 	        case '1'://合约金额调整
                 if(pre_cross_city!=''&&pre_cross_city!=undefined){
-                    $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_cross_city);
+                    $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').prop('disabled',true).val(pre_cross_city).trigger('change');
                 }
                 if(pre_qualification_city!=''&&pre_qualification_city!=undefined){
-                    $('#qualification_city').attr('readonly','readonly').addClass('readonly').val(pre_qualification_city);
+                    $('#qualification_city').attr('readonly','readonly').addClass('readonly').prop('disabled',true).val(pre_qualification_city).trigger('change');
                 }
                 if(pre_cross_type!=''&&pre_cross_type!=undefined){
                     $('#cross_type').attr('readonly','readonly').addClass('readonly').val(pre_cross_type).trigger('change');
@@ -158,15 +165,15 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
                 if(pre_cross_month_amt!=''&&pre_cross_month_amt!=undefined){
                     $('#cross_month_amt').attr('readonly','readonly').addClass('readonly').val(pre_cross_month_amt).trigger('change');
                 }
-                $('#cross_cross_city').removeAttr('readonly').removeClass('readonly');
-                $('#qualification_city').removeAttr('readonly').removeClass('readonly');
+                $('#cross_cross_city').removeAttr('readonly').removeClass('readonly').prop('disabled',false);
+                $('#qualification_city').removeAttr('readonly').removeClass('readonly').prop('disabled',false);
                 $('#qualification_ratio').removeAttr('readonly').removeClass('readonly');
                 $('#cross_rate_num').removeAttr('readonly').removeClass('readonly');
 	            break;
             default:
                 $('#cross_month_amt').removeAttr('readonly').removeClass('readonly');
-                $('#cross_cross_city').removeAttr('readonly').removeClass('readonly');
-                $('#qualification_city').removeAttr('readonly').removeClass('readonly');
+                $('#cross_cross_city').removeAttr('readonly').removeClass('readonly').prop('disabled',false);
+                $('#qualification_city').removeAttr('readonly').removeClass('readonly').prop('disabled',false);
                 $('#cross_type').removeAttr('readonly').removeClass('readonly');
                 $('#qualification_ratio').removeAttr('readonly').removeClass('readonly');
                 $('#cross_rate_num').removeAttr('readonly').removeClass('readonly');
@@ -213,7 +220,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    var pre_qualification_ratio=$('#qualification_ratio').data('val');
         $('#send_city').val('');
         $('#send_city_div').hide();
-        if(['11','12','0','1'].indexOf(cross_type)>=0){
+        if(['11','12','0','1','5'].indexOf(cross_type)>=0){
             $('#send_city_div').show();
             if(send_city!=''&&send_city!=undefined){
                 $('#send_city').val(send_city);
@@ -237,20 +244,20 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
                 $('#cross_rate_num').attr('readonly','readonly').addClass('readonly').val(0);
             }
             if(pre_old_city!=''&&pre_old_city!=undefined){
-                $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').val(pre_old_city);
+                $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').prop('disabled',true).val(pre_old_city).trigger('change');
             }
             if(pre_qualification_city!=''&&pre_qualification_city!=undefined){
 	            $('.qualification-div').slideDown(100);
-                $('#qualification_city').attr('readonly','readonly').addClass('readonly').val(pre_qualification_city);
+                $('#qualification_city').attr('readonly','readonly').addClass('readonly').prop('disabled',true).val(pre_qualification_city).trigger('change');
             }
             if(pre_qualification_ratio!=''&&pre_qualification_ratio!=undefined){
                 $('#qualification_ratio').attr('readonly','readonly').addClass('readonly').val(pre_qualification_ratio);
             }
         }else if(!$(this).hasClass('readonly')){
             $('#cross_rate_num').removeAttr('readonly').removeClass('readonly');
-            $('#cross_cross_city').removeAttr('readonly').removeClass('readonly');
+            $('#cross_cross_city').removeAttr('readonly').removeClass('readonly').prop('disabled',false);
             if($('#apply_category').val()!=1){
-                $('#qualification_city').removeAttr('readonly').removeClass('readonly');
+                $('#qualification_city').removeAttr('readonly').removeClass('readonly').prop('disabled',false);
                 $('#qualification_ratio').removeAttr('readonly').removeClass('readonly');
             }
         }
@@ -260,5 +267,14 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 $('#effective_date').datepicker({autoclose: true,language: 'zh_cn', format: 'yyyy/mm/01', minViewMode: 1});
 	";
 Yii::app()->clientScript->registerScript('crossDialog',$js,CClientScript::POS_READY);
+
+$js="
+$('#qualification_city,#cross_cross_city,#send_city').select2({
+    multiple: false,
+    maximumInputLength: 10,
+    language: 'zh-CN'
+});
+";
+Yii::app()->clientScript->registerScript('searchCityInput',$js,CClientScript::POS_READY);
 ?>
 
