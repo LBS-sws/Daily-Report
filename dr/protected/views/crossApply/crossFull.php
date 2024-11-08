@@ -85,7 +85,6 @@ $table_type = $modelForm=="ServiceList"?0:1;
 $nowDate = date_format(date_create(),"Y/m/d");
 $nowDateOne = date_format(date_create(),"Y/m/01");
 	$js="
-	$('#crossFull').attr('tabindex','');
 	$('#crossFullBtn').on('click', function (event) {
 	    $('#cross_apply_date').val('{$nowDate}');
 	    $('#effective_date').val('{$nowDateOne}');
@@ -205,10 +204,10 @@ Yii::app()->clientScript->registerScript('selectAll',$js,CClientScript::POS_READ
 
 $js="
 $('#qualification_city,#cross_cross_city,#send_city').select2({
+    dropdownParent: $('#crossFull'),
     multiple: false,
     maximumInputLength: 10,
-    language: 'zh-CN',
-    disabled: 'false'
+    language: 'zh-CN'
 });
 ";
 Yii::app()->clientScript->registerScript('searchCityInput',$js,CClientScript::POS_READY);

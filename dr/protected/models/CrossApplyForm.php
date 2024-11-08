@@ -161,7 +161,7 @@ class CrossApplyForm extends CFormModel
                 if($this->qualification_city===""){
                     $this->addError($attribute, "资质方不能为空");
                 }
-	            if($this->qualification_ratio===""){
+	            if(empty($this->qualification_ratio)){
                     $this->addError($attribute, "资质方比例不能为空");
                 }
 	            $this->qualification_amt=$this->month_amt*($this->qualification_ratio/100);
@@ -191,11 +191,11 @@ class CrossApplyForm extends CFormModel
             if($this->qualification_city==$this->old_city){
                 $this->addError($attribute, "资质方不能与合约城市一致");
             }
-        }else{
-            if($this->rate_num===""){
+        }elseif(!in_array($this->cross_type,array(0,1))){
+            if(empty($this->rate_num)){
                 $this->addError($attribute, "承接比例不能为空");
             }
-            if($this->cross_city===""){
+            if(empty($this->cross_city)){
                 $this->addError($attribute, "承接城市不能为空");
             }elseif(!in_array($this->cross_type,array(0,1,11,12))&&$this->cross_city==$this->old_city){
                 $this->addError($attribute, "承接城市不能与合约城市一致");

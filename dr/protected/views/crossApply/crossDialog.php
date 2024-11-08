@@ -62,16 +62,18 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
             <?php echo Tbhtml::dropDownList('CrossApply[qualification_city]','',CrossApplyForm::getCityList(),array('id'=>'qualification_city','empty'=>'','data-city'=>$endCrossList?$endCrossList["qualification_city"]:"")); ?>
         </div>
     </div>
-    <div class="form-group">
-        <?php echo Tbhtml::label(Yii::t("service","Qualification ratio"),'',array('class'=>"col-lg-3 control-label")); ?>
-        <div class="col-lg-5">
-            <?php echo Tbhtml::numberField('CrossApply[qualification_ratio]','',array('id'=>'qualification_ratio','autocomplete'=>'off','min'=>0,'max'=>100,'append'=>"%",'data-val'=>$endCrossList?$endCrossList["qualification_ratio"]:"")); ?>
+    <div>
+        <div class="form-group">
+            <?php echo Tbhtml::label(Yii::t("service","Qualification ratio"),'',array('class'=>"col-lg-3 control-label")); ?>
+            <div class="col-lg-5">
+                <?php echo Tbhtml::numberField('CrossApply[qualification_ratio]','',array('id'=>'qualification_ratio','autocomplete'=>'off','min'=>0,'max'=>100,'append'=>"%",'data-val'=>$endCrossList?$endCrossList["qualification_ratio"]:"")); ?>
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <?php echo Tbhtml::label(Yii::t("service","Qualification Amt"),'',array('class'=>"col-lg-3 control-label")); ?>
-        <div class="col-lg-5">
-            <?php echo Tbhtml::textField('CrossApply[qualification_amt]','',array('id'=>'qualification_amt','autocomplete'=>'off','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")); ?>
+        <div class="form-group">
+            <?php echo Tbhtml::label(Yii::t("service","Qualification Amt"),'',array('class'=>"col-lg-3 control-label")); ?>
+            <div class="col-lg-5">
+                <?php echo Tbhtml::textField('CrossApply[qualification_amt]','',array('id'=>'qualification_amt','autocomplete'=>'off','readonly'=>true,'prepend'=>"<span class='fa fa-cny'></span>")); ?>
+            </div>
         </div>
     </div>
 </div>
@@ -119,15 +121,14 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
     $nowDate = date_format(date_create(),"Y/m/d");
     $nowDateOne = date_format(date_create(),"Y/m/01");
 	$js="
-	$('#crossDialog').attr('tabindex','');
 	$('#crossDialog').on('show.bs.modal', function (event) {
 	    var month_amt = $('#{$modelForm}_amt_paid').val();
 	    //month_amt = $('#{$modelForm}_paid_type').val()=='M'?month_amt:(month_amt/12);
 	    $('#cross_service_id').val($('#{$modelForm}_id').val());
 	    $('#cross_contract_no').val($('#{$modelForm}_contract_no').val());
-	    $('#cross_apply_date').val('{$nowDate}');
-	    $('#effective_date').val('{$nowDateOne}');
-	    $('#cross_month_amt').val(month_amt);
+	    $('#cross_apply_date').attr('value','{$nowDate}').trigger('change');
+	    $('#effective_date').attr('value','{$nowDateOne}').trigger('change');
+	    $('#cross_month_amt').attr('value',month_amt);
 	    $('#apply_category').trigger('change');
 	});
 	$('#apply_category').on('change',function(){
@@ -264,12 +265,13 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    $('#cross_rate_num').trigger('change');
 	});
 	
-$('#effective_date').datepicker({autoclose: true,language: 'zh_cn', format: 'yyyy/mm/01', minViewMode: 1});
+$('#effective_date').datepicker({autoclose: false,language: 'zh_cn', format: 'yyyy/mm/01', minViewMode: 1});
 	";
 Yii::app()->clientScript->registerScript('crossDialog',$js,CClientScript::POS_READY);
 
 $js="
 $('#qualification_city,#cross_cross_city,#send_city').select2({
+    dropdownParent: $('#crossDialog'),
     multiple: false,
     maximumInputLength: 10,
     language: 'zh-CN'
