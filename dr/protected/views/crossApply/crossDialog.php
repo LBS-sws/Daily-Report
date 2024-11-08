@@ -20,6 +20,14 @@ $table_type = $modelForm=="ServiceForm"?0:1;
 $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->id);
 ?>
 
+<div class="form-group" style="margin-top: -10px;margin-bottom: 0px;">
+    <div class="col-lg-12">
+        <p class="form-control-static text-danger">
+            <?php $this->renderPartial('//crossApply/crossNote',array('typeText'=>'dialog')); ?>
+        </p>
+    </div>
+</div>
+
 <div class="form-group">
     <?php echo Tbhtml::hiddenField('CrossApply[service_id]','',array('id'=>'cross_service_id')); ?>
     <?php echo Tbhtml::hiddenField('CrossApply[table_type]',$table_type); ?>

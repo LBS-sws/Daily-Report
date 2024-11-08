@@ -19,6 +19,14 @@ $modelForm = get_class($model);
 $table_type = $modelForm=="ServiceList"?0:1;
 
 ?>
+
+    <div class="form-group" style="margin-top: -10px;margin-bottom: 0px;">
+        <div class="col-lg-12">
+            <p class="form-control-static text-danger">
+                <?php $this->renderPartial('//crossApply/crossNote',array('typeText'=>'dialog')); ?>
+            </p>
+        </div>
+    </div>
 <div class="form-group">
     <?php echo Tbhtml::hiddenField('CrossApply[table_type]',$table_type); ?>
     <?php echo Tbhtml::hiddenField('CrossApply[attrStr]','',array("id"=>"attrStr")); ?>

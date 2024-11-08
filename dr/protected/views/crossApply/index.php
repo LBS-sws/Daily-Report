@@ -23,6 +23,13 @@ $this->pageTitle=Yii::app()->name . ' - CrossApply';
 </section>
 
 <section class="content">
+    <div class="box">
+        <div class="box-body">
+            <p class="text-danger">
+                <?php $this->renderPartial('//crossApply/crossNote'); ?>
+            </p>
+        </div>
+    </div>
 	<?php
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('service','My Cross Apply'),

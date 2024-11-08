@@ -43,6 +43,13 @@ $this->pageTitle=Yii::app()->name . ' - CrossApply Form';
 	</div>
 	</div></div>
 
+    <div class="box">
+        <div class="box-body">
+            <p class="text-danger">
+                <?php $this->renderPartial('//crossApply/crossNote'); ?>
+            </p>
+        </div>
+    </div>
 	<div class="box box-info">
 		<div class="box-body">
 			<?php echo $form->hiddenField($model, 'scenario'); ?>

@@ -40,6 +40,13 @@ $this->pageTitle=Yii::app()->name . ' - CrossAudit';
         </div>
     </div>
 
+    <div class="box">
+        <div class="box-body">
+            <p class="text-danger">
+                <?php $this->renderPartial('//crossApply/crossNote'); ?>
+            </p>
+        </div>
+    </div>
 	<?php $this->widget('ext.layout.ListPageWidget', array(
 			'title'=>Yii::t('app','Cross Apply'),
 			'model'=>$model,
