@@ -483,10 +483,14 @@ class CrossApplyForm extends CFormModel
             $command->bindParam(':contract_no',$this->contract_no,PDO::PARAM_STR);
         if (strpos($sql,':apply_date')!==false)
             $command->bindParam(':apply_date',$this->apply_date,PDO::PARAM_STR);
-        if (strpos($sql,':month_amt')!==false)
-            $command->bindParam(':month_amt',$this->month_amt,PDO::PARAM_STR);
-        if (strpos($sql,':rate_num')!==false)
-            $command->bindParam(':rate_num',$this->rate_num,PDO::PARAM_STR);
+        if (strpos($sql,':month_amt')!==false){
+            $month_amt = $this->month_amt===""||!is_numeric($this->month_amt)?null:floatval($this->month_amt);
+            $command->bindParam(':month_amt',$month_amt,PDO::PARAM_STR);
+        }
+        if (strpos($sql,':rate_num')!==false){
+            $rate_num = $this->rate_num===""||!is_numeric($this->rate_num)?null:floatval($this->rate_num);
+            $command->bindParam(':rate_num',$rate_num,PDO::PARAM_STR);
+        }
         if (strpos($sql,':old_city')!==false)
             $command->bindParam(':old_city',$this->old_city,PDO::PARAM_STR);
         if (strpos($sql,':cross_city')!==false)
@@ -495,16 +499,23 @@ class CrossApplyForm extends CFormModel
             $command->bindParam(':remark',$this->remark,PDO::PARAM_STR);
         if (strpos($sql,':cross_type')!==false)
             $command->bindParam(':cross_type',$this->cross_type,PDO::PARAM_STR);
-        if (strpos($sql,':old_month_amt')!==false)
-            $command->bindParam(':old_month_amt',$this->old_month_amt,PDO::PARAM_STR);
-        if (strpos($sql,':cross_amt')!==false)
-            $command->bindParam(':cross_amt',$this->cross_amt,PDO::PARAM_STR);
-        if (strpos($sql,':qualification_ratio')!==false)
-            $command->bindParam(':qualification_ratio',$this->qualification_ratio,PDO::PARAM_STR);
+        if (strpos($sql,':old_month_amt')!==false){
+            $old_month_amt = $this->old_month_amt===""||!is_numeric($this->old_month_amt)?null:floatval($this->old_month_amt);
+            $command->bindParam(':old_month_amt',$old_month_amt,PDO::PARAM_STR);
+        }
+        if (strpos($sql,':cross_amt')!==false){
+            $cross_amt = $this->cross_amt===""||!is_numeric($this->cross_amt)?null:floatval($this->cross_amt);
+            $command->bindParam(':cross_amt',$cross_amt,PDO::PARAM_STR);
+        }
+        if (strpos($sql,':qualification_ratio')!==false){
+            $qualification_ratio = $this->qualification_ratio===""||!is_numeric($this->qualification_ratio)?null:floatval($this->qualification_ratio);
+            $command->bindParam(':qualification_ratio',$qualification_ratio,PDO::PARAM_STR);
+        }
         if (strpos($sql,':qualification_city')!==false)
             $command->bindParam(':qualification_city',$this->qualification_city,PDO::PARAM_STR);
         if (strpos($sql,':qualification_amt')!==false){
-            $command->bindParam(':qualification_amt',$this->qualification_amt,PDO::PARAM_STR);
+            $qualification_amt = $this->qualification_amt===""||!is_numeric($this->qualification_amt)?null:floatval($this->qualification_amt);
+            $command->bindParam(':qualification_amt',$qualification_amt,PDO::PARAM_STR);
         }
         if (strpos($sql,':send_city')!==false){
             $this->send_city = $this->send_city===""?null:$this->send_city;
