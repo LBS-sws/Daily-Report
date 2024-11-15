@@ -391,10 +391,11 @@ class UServiceForm extends CFormModel
 
     public static function getConditionList(){
         return array(
-            1=>Yii::t("summary","Technician level"),
-            2=>Yii::t("summary","Technical supervisor"),
-            3=>Yii::t("summary","Other personnel"),
-            4=>Yii::t("summary","KA Technician"),
+            "1"=>Yii::t("summary","Technician level"),//地推技术员（包括技术员、中级/高级技术员）
+            "2"=>Yii::t("summary","Technical supervisor"),//地推技术主管（技术主管级以上级别）
+            "4"=>Yii::t("summary","KA Technician"),//KA技术服务
+            "5"=>Yii::t("summary","KA Technician supervisor"),//KA技术主管（技术主管级以上级别）
+            "3"=>Yii::t("summary","Other personnel"),//其它人员
         );
     }
 

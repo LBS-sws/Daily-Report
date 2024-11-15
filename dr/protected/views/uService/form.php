@@ -135,7 +135,7 @@ $this->pageTitle=Yii::app()->name . ' - UService Form';
                         </div>
                         <div class="form-group">
                             <?php echo $form->labelEx($model,'condition',array('class'=>"col-sm-2 control-label")); ?>
-                            <div class="col-sm-9">
+                            <div class="col-sm-8">
                                 <?php echo $form->dropDownList($model, 'condition',UServiceForm::getConditionList(),
                                     array('class'=>'select2 de_class','multiple'=>'multiple','de_type'=>'select2','id'=>'condition')
                                 );
