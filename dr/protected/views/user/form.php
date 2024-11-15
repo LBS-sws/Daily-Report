@@ -8,6 +8,11 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 'htmlOptions'=>array('enctype'=>'multipart/form-data'),
 )); ?>
+<style>
+    input[readonly]{pointer-events: none;}
+    select[readonly]{pointer-events: none;}
+    .select2-container .select2-selection--single{ height: 34px;}
+</style>
 
 <section class="content-header">
 	<h1>
@@ -441,6 +446,26 @@ $('#UserForm_city').change(function(){
 });
 	";
 Yii::app()->clientScript->registerScript('fastChange',$js,CClientScript::POS_READY);
+
+switch(Yii::app()->language) {
+    case 'zh_cn': $lang = 'zh-CN'; break;
+    case 'zh_tw': $lang = 'zh-TW'; break;
+    default: $lang = Yii::app()->language;
+}
+$disabled = ($model->scenario!='view') ? 'false' : 'true';
+$js="
+$('#UserForm_city').select2({
+    multiple: false,
+    maximumInputLength: 10,
+    language: '$lang',
+    disabled: $disabled
+});
+function formatState(state) {
+	var rtn = $('<span style=\"color:black\">'+state.text+'</span>');
+	return rtn;
+}
+";
+Yii::app()->clientScript->registerScript('searchCityInput',$js,CClientScript::POS_READY);
 ?>
 
 <?php $this->endWidget(); ?>
