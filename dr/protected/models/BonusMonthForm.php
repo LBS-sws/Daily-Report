@@ -191,7 +191,7 @@ class BonusMonthForm extends CFormModel
         $list["city_employee_name"] = "-";
         $list["city_employee_dept"] = "-";
         if($bool){
-            $list["comStopRate"] = "-";
+            //$list["comStopRate"] = "-";
         }else{
             $cityList = CountSearch::getCityChargeList("'{$list["city"]}'");
             if($cityList){
@@ -203,17 +203,17 @@ class BonusMonthForm extends CFormModel
                     $list["city_employee_dept"] = CountSearch::getDeptNameForDeptId($employeeList["position"]);
                 }
             }
-
-            $list["comStopRate"] = $list["stop_sum_none"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
-            $list["comStopRate"]/= 12;//
-            $lastSum = $list["new_month_n"]+$list["last_u_actual"];
-            $list["comStopRate"] = ComparisonForm::comparisonRate($list["comStopRate"],$lastSum);
-
             $list["num_growth"]=0;
             $list["num_growth"]+=$list["new_sum"]+$list["new_sum_n"]+$list["new_month_n"];
             $list["num_growth"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
             $list["num_growth"]+=$list["amend_sum"];
         }
+
+        $list["comStopRate"] = $list["stop_sum_none"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
+        $list["comStopRate"]/= 12;//
+        $lastSum = $list["new_month_n"]+$list["last_u_actual"];
+        $list["comStopRate"] = ComparisonForm::comparisonRate($list["comStopRate"],$lastSum);
+
         $list["two_net_rate"] = ComparisonForm::comparisonRate($list["num_growth"],$list["two_net"],"net");
     }
 
@@ -402,15 +402,22 @@ class BonusMonthForm extends CFormModel
     protected function showServiceHtml($data){
         $bodyKey = $this->getDataAllKeyStr();
         $clickTdList = $this->getClickTdList();
+        $keyStrExp = array("two_net","stop_sum_none","resume_sum","pause_sum","amend_sum","new_month_n","last_u_actual");
         $html="";
         if(!empty($data)){
-            $allRow = ["two_net"=>0];//总计(所有地区)
+            $allRow = [];//总计(所有地区)
             foreach ($data as $regionList){
-                $regionRow = ["two_net"=>0];//地区汇总
+                $regionRow = [];//地区汇总
                 foreach ($regionList["list"] as $cityList){
+                    foreach ($keyStrExp as $keyExpItm){
+                        $regionRow[$keyExpItm]=key_exists($keyExpItm,$regionRow)?$regionRow[$keyExpItm]:0;
+                        $allRow[$keyExpItm]=key_exists($keyExpItm,$allRow)?$allRow[$keyExpItm]:0;
+                        $regionRow[$keyExpItm]+=key_exists($keyExpItm,$cityList)?$cityList[$keyExpItm]:0;
+                        if($cityList["add_type"]!=1){ //疊加的城市不需要重複統計
+                            $allRow[$keyExpItm]+=key_exists($keyExpItm,$cityList)?$cityList[$keyExpItm]:0;
+                        }
+                    }
                     $this->resetTdRow($cityList);
-                    $regionRow["two_net"]+=$cityList["two_net"];
-                    $allRow["two_net"]+=$cityList["two_net"];
                     $html.="<tr>";
                     foreach ($bodyKey as $keyStr){
                         if(!key_exists($keyStr,$regionRow)){
