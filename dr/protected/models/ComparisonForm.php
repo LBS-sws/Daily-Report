@@ -846,22 +846,20 @@ class ComparisonForm extends CFormModel
         $bodyKey = $this->getDataAllKeyStr();
         $html="";
         if(!empty($data)){
-            //last_u_all,stop_sum_none
-            $allRow = ["stopSumOnly"=>0,"last_u_all"=>0,"stop_sum_none"=>0];//总计(所有地区)
+            //last_u_all
+            $allRow = ["stopSumOnly"=>0,"last_u_all"=>0];//总计(所有地区)
             foreach ($data as $regionList){
                 if(!empty($regionList["list"])) {
-                    $regionRow = ["stopSumOnly"=>0,"last_u_all"=>0,"stop_sum_none"=>0];//地区汇总
+                    $regionRow = ["stopSumOnly"=>0,"last_u_all"=>0];//地区汇总
                     foreach ($regionList["list"] as $cityList) {
                         $regionRow["stopSumOnly"]+=$cityList["stopSumOnly"];
                         $regionRow["last_u_all"]+=$cityList["last_u_all"];
-                        $regionRow["stop_sum_none"]+=$cityList["stop_sum_none"];
                         if($cityList["add_type"]!=1){ //疊加的城市不需要重複統計
                             $allRow["stopSumOnly"]+=$cityList["stopSumOnly"];
                             $allRow["last_u_all"]+=$cityList["last_u_all"];
-                            $allRow["stop_sum_none"]+=$cityList["stop_sum_none"];
                         }
                         $this->resetTdRow($cityList);
-                        //stop_sum_none,last_u_all
+                        //last_u_all
                         $html.="<tr data-stopSumNone='{$cityList['stop_sum_none']}' data-lastUAll='{$cityList['last_u_all']}'>";
                         foreach ($bodyKey as $keyStr){
                             if(!key_exists($keyStr,$regionRow)){
