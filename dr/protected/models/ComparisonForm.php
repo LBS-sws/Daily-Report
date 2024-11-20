@@ -409,16 +409,14 @@ class ComparisonForm extends CFormModel
         //2023年9月改版：月停单率 = (new_sum_n+new_month_n+stop_sum/12)/last_u_actual
         if($bool){
             $list["monthStopRate"] = "-";
-            $list["comStopRate"] = "-";
         }else{
             $list["monthStopRate"] = $list["new_sum_n"]+$list["new_month_n"]+round($list["stop_sum"]/12,2);
             $list["monthStopRate"] = $this->comparisonRate($list["monthStopRate"],$list["last_u_actual"]);
-
-            $list["comStopRate"] = $list["stop_sum_none"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
-            $list["comStopRate"]/= 12;//stop_sum_none,last_u_all
-            $lastSum = $list["new_month_n"]+$list["last_u_all"];
-            $list["comStopRate"] = $this->comparisonRate($list["comStopRate"],$lastSum);
         }
+        $list["comStopRate"] = $list["stop_sum_none"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
+        $list["comStopRate"]/= 12;//stop_sum_none,last_u_all
+        $lastSum = $list["new_month_n"]+$list["last_u_all"];
+        $list["comStopRate"] = $this->comparisonRate($list["comStopRate"],$lastSum);
         $list["net_sum"]=0;
         $list["net_sum"]+=$list["new_sum"]+$list["new_sum_n"]+$list["new_month_n"];
         $list["net_sum"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
@@ -848,13 +846,20 @@ class ComparisonForm extends CFormModel
         $bodyKey = $this->getDataAllKeyStr();
         $html="";
         if(!empty($data)){
-            $allRow = ["stopSumOnly"=>0];//总计(所有地区)
+            //last_u_all,stop_sum_none
+            $allRow = ["stopSumOnly"=>0,"last_u_all"=>0,"stop_sum_none"=>0];//总计(所有地区)
             foreach ($data as $regionList){
                 if(!empty($regionList["list"])) {
-                    $regionRow = ["stopSumOnly"=>0];//地区汇总
+                    $regionRow = ["stopSumOnly"=>0,"last_u_all"=>0,"stop_sum_none"=>0];//地区汇总
                     foreach ($regionList["list"] as $cityList) {
                         $regionRow["stopSumOnly"]+=$cityList["stopSumOnly"];
-                        $allRow["stopSumOnly"]+=$cityList["stopSumOnly"];
+                        $regionRow["last_u_all"]+=$cityList["last_u_all"];
+                        $regionRow["stop_sum_none"]+=$cityList["stop_sum_none"];
+                        if($cityList["add_type"]!=1){ //疊加的城市不需要重複統計
+                            $allRow["stopSumOnly"]+=$cityList["stopSumOnly"];
+                            $allRow["last_u_all"]+=$cityList["last_u_all"];
+                            $allRow["stop_sum_none"]+=$cityList["stop_sum_none"];
+                        }
                         $this->resetTdRow($cityList);
                         //stop_sum_none,last_u_all
                         $html.="<tr data-stopSumNone='{$cityList['stop_sum_none']}' data-lastUAll='{$cityList['last_u_all']}'>";
