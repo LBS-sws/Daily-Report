@@ -52,7 +52,7 @@ class RptUService extends ReportData2 {
                 $bool = true;//允许
             }else if($this->staff_type==1&&$staff_type==1){//专职
                 $bool = true;//允许
-            }else if($this->staff_type==2&&$staff_type!=1){//其它
+            }else if($this->staff_type==3&&$staff_type!=1){//其它
                 $bool = true;//允许
             }
             if(!$bool){
@@ -72,6 +72,9 @@ class RptUService extends ReportData2 {
                 "amt"=>$amt,//服务金额
                 "staff_type"=>self::getStaffTypeStrForType($staff_type,true),//员工类型
             );
+            $cityNameList = self::getCityListForCode($lbs_city,$cityList);
+            //员工在KA城市且是技术主管，强制转换成KA技术主管
+            $user["level_type"]= $cityNameList["ka_bool"]==1&&$user["level_type"]==2?5:$user["level_type"];
             $entryMonth = empty($user["entry_month"])?0:$user["entry_month"];
             //年资范围
             $bool =$entryMonth>=$this->seniority_min&&$entryMonth<=$this->seniority_max;
@@ -79,7 +82,6 @@ class RptUService extends ReportData2 {
                 if(!key_exists($lbs_city,$list)){
                     $list[$lbs_city]=array();
                 }
-                $cityNameList = self::getCityListForCode($lbs_city,$cityList);
                 $temp["area"] = $cityNameList["region_name"];
                 $temp["u_city_name"] = $cityNameList["city_name"];
                 $temp["city"] = $user["city"];
@@ -117,7 +119,7 @@ class RptUService extends ReportData2 {
 		if(key_exists($code,$list)){
 			return $list[$code];
 		}else{
-			return array("code"=>$code,"city_name"=>"","region_name"=>"");
+			return array("code"=>$code,"ka_bool"=>0,"city_name"=>"","region_name"=>"");
 		}
 	}
     public static function getStaffTypeStrForType($type=1,$bool=false){
@@ -176,7 +178,8 @@ class RptUService extends ReportData2 {
 
 	public static function getCityList($city_allow){
         $suffix = Yii::app()->params['envSuffix'];
-        $rows = Yii::app()->db->createCommand()->select("b.code,b.name as city_name,f.name as region_name")
+        $rows = Yii::app()->db->createCommand()
+            ->select("b.code,b.ka_bool,b.name as city_name,f.name as region_name")
             ->from("security{$suffix}.sec_city b")
             ->leftJoin("security{$suffix}.sec_city f","b.region = f.code")
             ->where("b.code in ({$city_allow})")
