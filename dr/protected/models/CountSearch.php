@@ -79,8 +79,8 @@ class CountSearch extends SearchForCurlU {
                     ->select("status")->from("swo_service_contract_no")
                     ->where("contract_no='{$row["contract_no"]}' and 
                         id!='{$row["id"]}' and 
-                        status_dt>'{$row['status_dt']}' and 
-                        DATE_FORMAT(status_dt,'%Y/%m')='{$row['month_date']}'")
+                        status_dt BETWEEN '{$row['status_dt']}' and '{$end_dt}'")
+                    //DATE_FORMAT(status_dt,'%Y/%m')='{$row['month_date']}'
                     ->order("status_dt asc")
                     ->queryRow();//查詢本月的後面一條數據
                 if($nextRow&&in_array($nextRow["status"],array("S","T"))){
@@ -165,8 +165,7 @@ class CountSearch extends SearchForCurlU {
                         ->select("status")->from("swo_service_ka_no")
                         ->where("contract_no='{$row["contract_no"]}' and 
                         id!='{$row["id"]}' and 
-                        status_dt>'{$row['status_dt']}' and 
-                        DATE_FORMAT(status_dt,'%Y/%m')='{$row['month_date']}'")
+                        status_dt BETWEEN '{$row['status_dt']}' and '{$end_dt}'")
                         ->order("status_dt asc")
                         ->queryRow();//查詢本月的後面一條數據
                     if($nextRow&&in_array($nextRow["status"],array("S","T"))){
