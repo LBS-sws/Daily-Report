@@ -46,6 +46,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -90,6 +91,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -134,6 +136,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -178,6 +181,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -222,6 +226,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -266,6 +271,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -310,6 +316,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -354,6 +361,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -399,6 +407,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -444,6 +453,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -488,6 +498,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -532,6 +543,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -576,6 +588,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -620,6 +633,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -664,6 +678,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
@@ -707,6 +722,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                throw new CHttpException("派单系统异常",$out);
             }
         }
         return $rtn;
