@@ -278,6 +278,7 @@ class ComparisonForm extends CFormModel
             }
             if(key_exists($city,$lastServiceForST)){
                 $defMoreList["stop_sum_last"]+=key_exists($city,$lastServiceForST)?-1*$lastServiceForST[$city]["num_stop"]:0;
+                $defMoreList["stop_sum_none_last"]+=key_exists($city,$lastServiceForST)?-1*$lastServiceForST[$city]["num_stop_none"]:0;
                 $defMoreList["pause_sum_last"]+=key_exists($city,$lastServiceForST)?-1*$lastServiceForST[$city]["num_pause"]:0;
             }
             //恢复
@@ -382,6 +383,7 @@ class ComparisonForm extends CFormModel
             "stop_sum_last"=>0,//终止（上一年）
             "stop_sum"=>0,//终止
             "stop_sum_none"=>0,//终止(本条终止的前一条、后一条没有暂停、终止)
+            "stop_sum_none_last"=>0,//终止（上一年）(本条终止的前一条、后一条没有暂停、终止)
             "stop_rate"=>0,//终止对比比例
 
             "resume_sum_last"=>0,//恢复（上一年）
@@ -419,11 +421,12 @@ class ComparisonForm extends CFormModel
         $list["comStopRate"] = $this->comparisonRate($list["comStopRate"],$lastSum);
         $list["net_sum"]=0;
         $list["net_sum"]+=$list["new_sum"]+$list["new_sum_n"]+$list["new_month_n"];
-        $list["net_sum"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
+        //$list["net_sum"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
+        $list["net_sum"]+=$list["stop_sum_none"]+$list["resume_sum"]+$list["pause_sum"];
         $list["net_sum"]+=$list["amend_sum"];
         $list["net_sum_last"]=0;
         $list["net_sum_last"]+=$list["new_sum_last"]+$list["new_sum_n_last"]+$list["new_month_n_last"];
-        $list["net_sum_last"]+=$list["stop_sum_last"]+$list["resume_sum_last"]+$list["pause_sum_last"];
+        $list["net_sum_last"]+=$list["stop_sum_none_last"]+$list["resume_sum_last"]+$list["pause_sum_last"];
         $list["net_sum_last"]+=$list["amend_sum_last"];
         $list["new_rate"] = $this->nowAndLastRate($list["new_sum"],$list["new_sum_last"],true);
         $list["new_n_rate"] = $this->nowAndLastRate($list["new_sum_n"],$list["new_sum_n_last"],true);
@@ -847,16 +850,18 @@ class ComparisonForm extends CFormModel
         $html="";
         if(!empty($data)){
             //last_u_all
-            $allRow = ["stopSumOnly"=>0,"last_u_all"=>0];//总计(所有地区)
+            $allRow = ["stopSumOnly"=>0,"last_u_all"=>0,"stop_sum_none_last"=>0];//总计(所有地区)
             foreach ($data as $regionList){
                 if(!empty($regionList["list"])) {
-                    $regionRow = ["stopSumOnly"=>0,"last_u_all"=>0];//地区汇总
+                    $regionRow = ["stopSumOnly"=>0,"last_u_all"=>0,"stop_sum_none_last"=>0];//地区汇总
                     foreach ($regionList["list"] as $cityList) {
                         $regionRow["stopSumOnly"]+=$cityList["stopSumOnly"];
                         $regionRow["last_u_all"]+=$cityList["last_u_all"];
+                        $regionRow["stop_sum_none_last"]+=$cityList["stop_sum_none_last"];
                         if($cityList["add_type"]!=1){ //疊加的城市不需要重複統計
                             $allRow["stopSumOnly"]+=$cityList["stopSumOnly"];
                             $allRow["last_u_all"]+=$cityList["last_u_all"];
+                            $allRow["stop_sum_none_last"]+=$cityList["stop_sum_none_last"];
                         }
                         $this->resetTdRow($cityList);
                         //last_u_all

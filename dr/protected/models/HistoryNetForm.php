@@ -115,9 +115,9 @@ class HistoryNetForm extends CFormModel
         //服务更改(上一年)
         $lastServiceA = CountSearch::getServiceAToMonth($lastEndDate,$city_allow);
         //服务暫停、終止(本年)
-        $serviceST = CountSearch::getServiceForSTToMonth($endDate,$city_allow);
+        $serviceST = CountSearch::getServiceForSTNoneToMonth($endDate,$city_allow);
         //服务暫停、終止(上一年)
-        $lastServiceST = CountSearch::getServiceForSTToMonth($lastEndDate,$city_allow);
+        $lastServiceST = CountSearch::getServiceForSTNoneToMonth($lastEndDate,$city_allow);
         //服务新增（一次性)(本年)
         $serviceAddForY = CountSearch::getServiceAddForYToMonth($endDate,$city_allow);
         //服务新增（一次性)(上一年)
