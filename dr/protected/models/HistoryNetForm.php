@@ -26,6 +26,8 @@ class HistoryNetForm extends CFormModel
 	public $th_sum=1;//所有th的个数
 
     public $downJsonText='';
+
+    public $u_load_data=array();//查询时长数组
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -91,6 +93,7 @@ class HistoryNetForm extends CFormModel
     }
 
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
@@ -101,7 +104,14 @@ class HistoryNetForm extends CFormModel
         $weekEndDate = date("Y/m/d",$this->week_end);
         $lastWeekStartDate = date("Y/m/d",$this->last_week_start);
         $lastWeekEndDate = date("Y/m/d",$this->last_week_end);
-
+        $this->u_load_data['u_load_start'] = time();
+        //获取U系统的產品数据(本年)
+        $uInvMoney = CountSearch::getUInvMoneyToMonth($endDate,$city_allow);
+        //获取U系统的產品数据(上一年)
+        $lastUInvMoney = CountSearch::getUInvMoneyToMonth($lastEndDate,$city_allow);
+        //获取U系统的服务单数据
+        $uServiceMoney = CountSearch::getUServiceMoneyToMonth($endDate,$city_allow);
+        $this->u_load_data['u_load_end'] = time();
         //服务新增(本年)
         $serviceN = CountSearch::getServiceForTypeToMonth($endDate,$city_allow,"N");
         //服务新增(上一年)
@@ -115,19 +125,13 @@ class HistoryNetForm extends CFormModel
         //服务更改(上一年)
         $lastServiceA = CountSearch::getServiceAToMonth($lastEndDate,$city_allow);
         //服务暫停、終止(本年)
-        $serviceST = CountSearch::getServiceForSTNoneToMonth($endDate,$city_allow);
+        $serviceST = CountSearch::getServiceForSTToMonth($endDate,$city_allow);
         //服务暫停、終止(上一年)
         $lastServiceST = CountSearch::getServiceForSTNoneToMonth($lastEndDate,$city_allow);
         //服务新增（一次性)(本年)
         $serviceAddForY = CountSearch::getServiceAddForYToMonth($endDate,$city_allow);
         //服务新增（一次性)(上一年)
         $lastServiceAddForY = CountSearch::getServiceAddForYToMonth($lastEndDate,$city_allow);
-        //获取U系统的產品数据(本年)
-        $uInvMoney = CountSearch::getUInvMoneyToMonth($endDate,$city_allow);
-        //获取U系统的產品数据(上一年)
-        $lastUInvMoney = CountSearch::getUInvMoneyToMonth($lastEndDate,$city_allow);
-        //获取U系统的服务单数据
-        $uServiceMoney = CountSearch::getUServiceMoneyToMonth($endDate,$city_allow);
         //本週數據
         $serviceWeek = CountSearch::getServiceForAll($weekStartDate,$weekEndDate,$city_allow);
         //上週數據
@@ -161,6 +165,7 @@ class HistoryNetForm extends CFormModel
         $this->data = $data;
         $session = Yii::app()->session;
         $session['historyNet_c01'] = $this->getCriteria();
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

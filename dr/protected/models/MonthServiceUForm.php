@@ -18,6 +18,7 @@ class MonthServiceUForm extends CFormModel
 	public $th_sum=0;//所有th的个数
 
     public $downJsonText='';
+    public $u_load_data=array();//查询时长数组
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -72,6 +73,7 @@ class MonthServiceUForm extends CFormModel
     }
 
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
@@ -80,6 +82,17 @@ class MonthServiceUForm extends CFormModel
         $monthEnd = $this->end_date;
         $lastStartDate = CountSearch::computeLastMonth($monthStart);//上月开始时间
         $lastEndDate = CountSearch::computeLastMonth($monthEnd);//上月结束时间
+
+        $this->u_load_data['u_load_start'] = time();
+        //本月产品
+        $uInvMoney = CountSearch::getUInvMoney($monthStart,$monthEnd,$city_allow);
+        //获取U系统的產品数据(上月)
+        $lastUInvMoney = CountSearch::getUInvMoney($lastStartDate,$lastEndDate,$city_allow);
+        //获取U系统的產品数据
+        $uInvMoneyMonth = CountSearch::getUInvMoneyToMonthEx($this->start_date,$this->end_date,$city_allow);
+        //获取U系统的服务数据
+        $uServiceMoneyMonth = CountSearch::getUServiceMoneyToMonthEx($this->start_date,$this->end_date,$city_allow);
+        $this->u_load_data['u_load_end'] = time();
         //服务新增（非一次性 和 一次性)
         $serviceAddForNY = CountSearch::getServiceAddForNY($monthStart,$monthEnd,$city_allow);
         //终止服务、暂停服务
@@ -88,18 +101,8 @@ class MonthServiceUForm extends CFormModel
         $serviceForR = CountSearch::getServiceForType($monthStart,$monthEnd,$city_allow,"R");
         //更改服务
         $serviceForA = CountSearch::getServiceForA($monthStart,$monthEnd,$city_allow);
-
-        //本月产品
-        $uInvMoney = CountSearch::getUInvMoney($monthStart,$monthEnd,$city_allow);
         //服务新增（一次性)(上月)
         $lastServiceAddForNY = CountSearch::getServiceAddForY($lastStartDate,$lastEndDate,$city_allow);
-        //获取U系统的產品数据(上月)
-        $lastUInvMoney = CountSearch::getUInvMoney($lastStartDate,$lastEndDate,$city_allow);
-
-        //获取U系统的產品数据
-        $uInvMoneyMonth = CountSearch::getUInvMoneyToMonthEx($this->start_date,$this->end_date,$city_allow);
-        //获取U系统的服务数据
-        $uServiceMoneyMonth = CountSearch::getUServiceMoneyToMonthEx($this->start_date,$this->end_date,$city_allow);
 
         $tempList=$this->defMoreCity();
         foreach ($citySetList as $cityRow){
@@ -128,6 +131,7 @@ class MonthServiceUForm extends CFormModel
         $this->data = $data;
         $session = Yii::app()->session;
         $session['monthServiceU_c01'] = $this->getCriteria();
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

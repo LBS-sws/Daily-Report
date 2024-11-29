@@ -3,6 +3,7 @@
 class PerMonthAdd extends PerMonth
 {
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
@@ -14,18 +15,20 @@ class PerMonthAdd extends PerMonth
         $lastWeekEndDate = date("Y/m/d",$this->last_week_end);
         //新增金额 = 合同同比分析里的 “ 新增(除一次性服务）” +  “ 一次性服务+新增（产品） ”
 
-        //服务新增(本年)
-        $serviceN = CountSearch::getServiceForTypeToMonth($endDate,$city_allow,"N");
+        $this->u_load_data['u_load_start'] = time();
         //获取U系统的產品数据(本年)
         $uInvMoney = CountSearch::getUInvMoneyToMonth($endDate,$city_allow);
-        //服务新增(上一年)
-        $lastServiceN = CountSearch::getServiceForType($lastYearStart,$lastYearEnd,$city_allow,"N");
         //获取U系统的產品数据(上一年)
         $lastUInvMoney = CountSearch::getUInvMoney($lastYearStart,$lastYearEnd,$city_allow);
-        //服务新增(上週)
-        $lastServiceWeek = CountSearch::getServiceForType($lastWeekStartDate,$lastWeekEndDate,$city_allow,"N");
         //获取U系统的產品数据(上週)
         $lastUInvMoneyWeek = CountSearch::getUInvMoney($lastWeekStartDate,$lastWeekEndDate,$city_allow);
+        $this->u_load_data['u_load_end'] = time();
+        //服务新增(本年)
+        $serviceN = CountSearch::getServiceForTypeToMonth($endDate,$city_allow,"N");
+        //服务新增(上一年)
+        $lastServiceN = CountSearch::getServiceForType($lastYearStart,$lastYearEnd,$city_allow,"N");
+        //服务新增(上週)
+        $lastServiceWeek = CountSearch::getServiceForType($lastWeekStartDate,$lastWeekEndDate,$city_allow,"N");
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
             $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
@@ -45,6 +48,7 @@ class PerMonthAdd extends PerMonth
         }
         $this->data = $data;
         parent::retrieveData();
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

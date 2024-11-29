@@ -23,6 +23,7 @@ $this->pageTitle=Yii::app()->name . ' - WeekServiceU Form';
 <section class="content-header">
 	<h1>
         <strong><?php echo Yii::t('app','Week Service U'); ?></strong>
+        <?php $this->renderPartial('//site/uLoadData',array("model"=>$model)); ?>
 	</h1>
 <!--
 	<ol class="breadcrumb">

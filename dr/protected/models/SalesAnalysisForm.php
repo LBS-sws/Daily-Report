@@ -21,6 +21,7 @@ class SalesAnalysisForm extends CFormModel
 	public $th_sum=0;//所有th的个数
 
     public $downJsonText='';
+    public $u_load_data=array();//查询时长数组
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -434,6 +435,10 @@ class SalesAnalysisForm extends CFormModel
     }
 
     public function retrieveData($city="") {
+        $this->u_load_data['load_start'] = time();
+
+        $this->u_load_data['u_load_start'] = time();
+        $this->u_load_data['u_load_end'] = time();
         $data = array();
         if(empty($city)){
             $city_allow = Yii::app()->user->city_allow();
@@ -482,6 +487,7 @@ class SalesAnalysisForm extends CFormModel
         $this->data = $data;
         $session = Yii::app()->session;
         $session['salesAnalysis_c01'] = $this->getCriteria();
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

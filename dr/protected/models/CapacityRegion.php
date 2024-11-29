@@ -22,6 +22,7 @@ class CapacityRegion extends CFormModel
     public $th_sum=0;//所有th的个数
     public $downJsonText='';
 
+    public $u_load_data=array();//查询时长数组
     /**
      * Declares customized attribute labels.
      * If not declared here, an attribute would have a label that is
@@ -91,16 +92,19 @@ class CapacityRegion extends CFormModel
     }
 
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $citySetList = CitySetForm::getCitySetList($city_allow);
         $startDate = $this->start_date;
         $endDate = $this->end_date;
-        //服务新增(本年)
-        $serviceN = CountSearch::getServiceForTypeToMonthEx($startDate,$endDate,$city_allow,"N");
+        $this->u_load_data['u_load_start'] = time();
         //获取U系统的產品数据(本年)
         $uInvMoney = CountSearch::getUInvMoneyToMonthEx($startDate,$endDate,$city_allow);
+        $this->u_load_data['u_load_end'] = time();
+        //服务新增(本年)
+        $serviceN = CountSearch::getServiceForTypeToMonthEx($startDate,$endDate,$city_allow,"N");
         //销售人员
         $salesList = SalesMonthCountForm::getSalesForHr($city_allow,$endDate);
 
@@ -131,6 +135,7 @@ class CapacityRegion extends CFormModel
         $this->data = $data;
         $session = Yii::app()->session;
         $session['capacity_c01'] = $this->getCriteria();
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

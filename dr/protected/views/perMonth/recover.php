@@ -23,6 +23,7 @@ $this->pageTitle=Yii::app()->name . ' - PerMonthRecover Form';
 <section class="content-header">
 	<h1>
         <strong><?php echo Yii::t('app','Monthly performance'); ?></strong>
+        <?php $this->renderPartial('//site/uLoadData',array("model"=>$model)); ?>
 	</h1>
 <!--
 	<ol class="breadcrumb">

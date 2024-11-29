@@ -29,6 +29,7 @@ class CapacityArea extends CFormModel
     public $th_sum=1;//所有th的个数
     public $downJsonText='';
 
+    public $u_load_data=array();//查询时长数组
     /**
      * Declares customized attribute labels.
      * If not declared here, an attribute would have a label that is
@@ -109,6 +110,7 @@ class CapacityArea extends CFormModel
     }
 
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
@@ -120,14 +122,16 @@ class CapacityArea extends CFormModel
         $lastWeekEndDate = date("Y/m/d",$this->last_week_end);
         //新增金额 = 合同同比分析里的 “ 新增(除一次性服务）” +  “ 一次性服务+新增（产品） ”
 
-        //服务新增(本年)
-        $serviceN = CountSearch::getServiceForTypeToMonth($endDate,$city_allow,"N");
+        $this->u_load_data['u_load_start'] = time();
         //获取U系统的產品数据(本年)
         $uInvMoney = CountSearch::getUInvMoneyToMonth($endDate,$city_allow);
-        //服务新增(上週)
-        $lastServiceWeek = CountSearch::getServiceForType($lastWeekStartDate,$lastWeekEndDate,$city_allow,"N");
         //获取U系统的產品数据(上週)
         $lastUInvMoneyWeek = CountSearch::getUInvMoney($lastWeekStartDate,$lastWeekEndDate,$city_allow);
+        $this->u_load_data['u_load_end'] = time();
+        //服务新增(本年)
+        $serviceN = CountSearch::getServiceForTypeToMonth($endDate,$city_allow,"N");
+        //服务新增(上週)
+        $lastServiceWeek = CountSearch::getServiceForType($lastWeekStartDate,$lastWeekEndDate,$city_allow,"N");
 
         //销售人员
         $salesList = SalesMonthCountForm::getSalesForHr($city_allow,$endDate);
@@ -149,6 +153,7 @@ class CapacityArea extends CFormModel
         $this->data = $data;
         $session = Yii::app()->session;
         $session['capacity_c01'] = $this->getCriteria();
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

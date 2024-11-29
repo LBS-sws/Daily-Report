@@ -25,6 +25,7 @@ class SummaryForm extends CFormModel
     public $downJsonText='';
 
     protected $class_type="NONE";//类型 NONE:普通  KA:KA
+    public $u_load_data=array();//查询时长数组
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -162,6 +163,7 @@ class SummaryForm extends CFormModel
     }
 
     public function retrieveData() {
+        $load_start = time();
         $this->summary_year = date("Y",strtotime($this->start_date));
 	    $rptModel = new RptSummarySC();
         $criteria = new ReportForm();
@@ -172,9 +174,13 @@ class SummaryForm extends CFormModel
         $criteria->city = $city_allow;
         $rptModel->criteria = $criteria;
         $rptModel->retrieveData();
+        $this->u_load_data = $rptModel->u_load_data;
         $this->data = $rptModel->data;
+        $u_load_start = time();
         //获取U系统的服务单数据
         $uActualMoneyList = CountSearch::getUServiceMoney($this->start_date,$this->end_date,$city_allow);
+        $u_load_end = time();
+        $this->u_load_data["u_load_end"]+=$u_load_end-$u_load_start;
         if($this->data){
             foreach ($this->data as $regionKey=>$regionList){
                 if(!empty($regionList["list"])){
@@ -195,6 +201,8 @@ class SummaryForm extends CFormModel
         }else{
             $session['summary_c01'] = $this->getCriteria();
         }
+        $this->u_load_data['load_start'] = $load_start;
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

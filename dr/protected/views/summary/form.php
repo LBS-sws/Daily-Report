@@ -25,6 +25,7 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
 <section class="content-header">
 	<h1>
         <strong><?php echo Yii::t('app','Summary'); ?></strong>
+        <?php $this->renderPartial('//site/uLoadData',array("model"=>$model)); ?>
 	</h1>
 <!--
 	<ol class="breadcrumb">

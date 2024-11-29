@@ -23,6 +23,7 @@ $this->pageTitle=Yii::app()->name . ' - HistoryNet Form';
 <section class="content-header">
 	<h1>
         <strong><?php echo Yii::t('app','History Net'); ?></strong>
+        <?php $this->renderPartial('//site/uLoadData',array("model"=>$model)); ?>
 	</h1>
 <!--
 	<ol class="breadcrumb">

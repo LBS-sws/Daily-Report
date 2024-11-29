@@ -1,5 +1,6 @@
 <?php
 class RptSummarySC extends ReportData2 {
+    public $u_load_data=array();//查询时长数组
     public function retrieveData() {
 //		$city = Yii::app()->user->city();
         if(!isset($this->criteria->start_dt)){
@@ -28,10 +29,14 @@ class RptSummarySC extends ReportData2 {
         }
         $citySetList = CitySetForm::getCitySetList($city_allow);
 
-        //获取U系统的服务单数据(報表不需要生意額數據)
-        //$uServiceMoney = CountSearch::getUServiceMoney($startDate,$endDate,$city_allow);
+        $this->u_load_data['u_load_start'] = time();
         //获取U系统的產品数据
         $uInvMoney = CountSearch::getUInvMoney($startDate,$endDate,$city_allow);
+        //获取U系统的產品数据(上月)
+        $lastUInvMoney = CountSearch::getUInvMoney($lastStartDate,$lastEndDate,$city_allow);
+        $this->u_load_data['u_load_end'] = time();
+        //获取U系统的服务单数据(報表不需要生意額數據)
+        //$uServiceMoney = CountSearch::getUServiceMoney($startDate,$endDate,$city_allow);
         //服务新增（非一次性 和 一次性)
         $serviceAddForNY = CountSearch::getServiceAddForNY($startDate,$endDate,$city_allow);
         //终止服务、暂停服务
@@ -44,8 +49,6 @@ class RptSummarySC extends ReportData2 {
         $serviceDetailForAdd = CountSearch::getServiceDetailForAdd($startDate,$endDate,$city_allow);
         //服务新增（一次性)(上月)
         $lastServiceAddForNY = CountSearch::getServiceAddForY($lastStartDate,$lastEndDate,$city_allow);
-        //获取U系统的產品数据(上月)
-        $lastUInvMoney = CountSearch::getUInvMoney($lastStartDate,$lastEndDate,$city_allow);
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
             $defMoreList=self::defMoreCity($city,$cityRow["city_name"]);

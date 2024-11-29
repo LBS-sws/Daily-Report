@@ -46,6 +46,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -91,6 +92,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -136,6 +138,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -181,6 +184,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -226,6 +230,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -237,7 +242,7 @@ class SystemU {
         $rtn = array('message'=>'', 'data'=>array());
         $key = self::generate_key();
         $root = Yii::app()->params['uCurlRootURL'];
-        $url = $root.'/api/lbs.getInvInvoiceCityWeek/index';
+        $url = $root.'/api/lbs.GetInvInvoiceCityWeek/index';
         $data = array(
             "key"=>$key,
             "begin"=>$start,
@@ -271,6 +276,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -316,6 +322,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -361,6 +368,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -407,6 +415,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -453,6 +462,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -498,6 +508,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -543,6 +554,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -588,6 +600,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -633,6 +646,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -678,6 +692,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -722,6 +737,7 @@ class SystemU {
             }else{
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
                 throw new CHttpException("派单系统异常",$out);
             }
         }

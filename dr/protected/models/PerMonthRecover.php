@@ -3,6 +3,7 @@
 class PerMonthRecover extends PerMonth
 {
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
@@ -14,6 +15,8 @@ class PerMonthRecover extends PerMonth
         $lastWeekEndDate = date("Y/m/d",$this->last_week_end);
         //净恢复金额 = 合同同比分析里的 “ 恢复服务 ”  + “ 暂停服务 ” + “ 更改服务 ”
 
+        $this->u_load_data['u_load_start'] = time();
+        $this->u_load_data['u_load_end'] = time();
         //恢复服务(本年)
         $serviceR = CountSearch::getServiceForTypeToMonth($endDate,$city_allow,"R");
         //暂停服务(本年)
@@ -56,6 +59,7 @@ class PerMonthRecover extends PerMonth
             RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
         $this->data = $data;
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

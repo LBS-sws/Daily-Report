@@ -27,6 +27,7 @@ $this->pageTitle=Yii::app()->name . ' - UService Form';
 <section class="content-header">
 	<h1>
         <strong><?php echo Yii::t('app','U Service Amount'); ?></strong>
+        <?php $this->renderPartial('//site/uLoadData',array("model"=>$model)); ?>
 	</h1>
 <!--
 	<ol class="breadcrumb">

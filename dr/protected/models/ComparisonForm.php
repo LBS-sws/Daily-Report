@@ -28,6 +28,7 @@ class ComparisonForm extends CFormModel
     public $downJsonText='';
 
     protected $class_type="NONE";//类型 NONE:普通  KA:KA
+    public $u_load_data=array();//查询时长数组
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -185,6 +186,7 @@ class ComparisonForm extends CFormModel
     }
 
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = self::getMyCityAllow();
         $suffix = Yii::app()->params['envSuffix'];
@@ -203,6 +205,7 @@ class ComparisonForm extends CFormModel
         $allMonthStartDate = date("Y/m/01",strtotime($allMonthStartDate." - 1 months"));
         $allMonthEndDate = date("Y/m/01",strtotime($this->end_date));
         $allMonthEndDate = date("Y/m/t",strtotime($allMonthEndDate." - 1 months"));
+        $this->u_load_data['u_load_start'] = time();
         //获取U系统的服务单数据
         $uServiceMoney = CountSearch::getUServiceMoney($startDate,$endDate,$city_allow);
         //获取U系统的服务单数据(上月)
@@ -215,6 +218,11 @@ class ComparisonForm extends CFormModel
         $uInvMoney = CountSearch::getUInvMoney($startDate,$endDate,$city_allow);
         //获取U系统的產品数据(上一年)
         $lastUInvMoney = CountSearch::getUInvMoney($lastStartDate,$lastEndDate,$city_allow);
+        //获取U系统的產品数据(上月)
+        $monthUInvMoney = CountSearch::getUInvMoney($monthStartDate,$monthEndDate,$city_allow);
+        //获取U系统的產品数据(上月)(上一年)
+        $lastMonthUInvMoney = CountSearch::getUInvMoney($lastMonthStartDate,$lastMonthEndDate,$city_allow);
+        $this->u_load_data['u_load_end'] = time();
         //服务新增（非一次性 和 一次性)
         $serviceAddForNY = CountSearch::getServiceAddForNY($startDate,$endDate,$city_allow);
         //服务新增（非一次性 和 一次性)(上一年)
@@ -235,10 +243,6 @@ class ComparisonForm extends CFormModel
         $monthServiceAddForY = CountSearch::getServiceAddForY($monthStartDate,$monthEndDate,$city_allow);
         //服务新增（一次性)(上月)(上一年)
         $lastMonthServiceAddForY = CountSearch::getServiceAddForY($lastMonthStartDate,$lastMonthEndDate,$city_allow);
-        //获取U系统的產品数据(上月)
-        $monthUInvMoney = CountSearch::getUInvMoney($monthStartDate,$monthEndDate,$city_allow);
-        //获取U系统的產品数据(上月)(上一年)
-        $lastMonthUInvMoney = CountSearch::getUInvMoney($lastMonthStartDate,$lastMonthEndDate,$city_allow);
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
             $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
@@ -298,6 +302,7 @@ class ComparisonForm extends CFormModel
         }else{
             $session['comparison_c01'] = $this->getCriteria();
         }
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

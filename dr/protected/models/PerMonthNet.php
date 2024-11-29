@@ -3,6 +3,7 @@
 class PerMonthNet extends PerMonth
 {
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
@@ -23,6 +24,20 @@ class PerMonthNet extends PerMonth
         //净增金额 =  新增服务(除一次性服务) - 终止服务 + 一次性服务+新增（产品）
         // - 上月一次性服务+新增产品 + 恢复 - 暂停 + 更改   （即系统现在的净增公式）
 
+        $this->u_load_data['u_load_start'] = time();
+        //新增产品（本年）
+        $serviceInv = CountSearch::getUInvMoneyToMonth($endDate,$city_allow);
+        //新增产品（本年上月）
+        $subServiceInv = CountSearch::getUInvMoney($lastMonthStart,$lastMonthEnd,$city_allow);
+        //新增产品（上一年12月）
+        $lastAddServiceInv = CountSearch::getUInvMoney("{$this->last_year}/12/01",$lastYearEnd,$city_allow);
+        //新增产品（上上一年12月）
+        $lastSubServiceInv = CountSearch::getUInvMoney(($this->last_year-1)."/12/01",($this->last_year-1)."/12/31",$city_allow);
+        //新增产品（上周）
+        $weekAddServiceInv = CountSearch::getUInvMoney($lastWeekStartDate,$lastWeekEndDate,$city_allow);
+        //新增产品（上月上周）
+        $weekSubServiceInv = CountSearch::getUInvMoney($lastWeekStartDateU,$lastWeekEndDateU,$city_allow);
+        $this->u_load_data['u_load_end'] = time();
         //新增服务(本年)
         $serviceN = CountSearch::getServiceForTypeToMonth($endDate,$city_allow,"N");
         //恢复服务(本年)
@@ -31,12 +46,8 @@ class PerMonthNet extends PerMonth
         $serviceST = CountSearch::getServiceForSTToMonth($endDate,$city_allow);
         //更改服务(本年)
         $serviceA = CountSearch::getServiceAToMonth($endDate,$city_allow);
-        //新增产品（本年）
-        $serviceInv = CountSearch::getUInvMoneyToMonth($endDate,$city_allow);
         //一次性服务（本年）
         $serviceY = CountSearch::getServiceAddForYToMonth($endDate,$city_allow);
-        //新增产品（本年上月）
-        $subServiceInv = CountSearch::getUInvMoney($lastMonthStart,$lastMonthEnd,$city_allow);
         //一次性服务（本年上月）
         $subServiceY = CountSearch::getServiceAddForY($lastMonthStart,$lastMonthEnd,$city_allow);
 
@@ -50,10 +61,6 @@ class PerMonthNet extends PerMonth
         $lastServiceA = CountSearch::getServiceForA($lastYearStart,$lastYearEnd,$city_allow);
         //一次性服务（上一年）
         $lastServiceY = CountSearch::getServiceAddForY($lastYearStartU,$lastYearEndU,$city_allow);
-        //新增产品（上一年12月）
-        $lastAddServiceInv = CountSearch::getUInvMoney("{$this->last_year}/12/01",$lastYearEnd,$city_allow);
-        //新增产品（上上一年12月）
-        $lastSubServiceInv = CountSearch::getUInvMoney(($this->last_year-1)."/12/01",($this->last_year-1)."/12/31",$city_allow);
 
 
         //新增服务(上周)
@@ -64,10 +71,6 @@ class PerMonthNet extends PerMonth
         $weekServiceST = CountSearch::getServiceForST($lastWeekStartDate,$lastWeekEndDate,$city_allow);
         //更改服务(上周)
         $weekServiceA = CountSearch::getServiceForA($lastWeekStartDate,$lastWeekEndDate,$city_allow);
-        //新增产品（上周）
-        $weekAddServiceInv = CountSearch::getUInvMoney($lastWeekStartDate,$lastWeekEndDate,$city_allow);
-        //新增产品（上月上周）
-        $weekSubServiceInv = CountSearch::getUInvMoney($lastWeekStartDateU,$lastWeekEndDateU,$city_allow);
         //一次性服务（上月上周）
         $weekServiceY = CountSearch::getServiceAddForY($lastWeekStartDateU,$lastWeekEndDateU,$city_allow);
 
@@ -111,6 +114,7 @@ class PerMonthNet extends PerMonth
             RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
         $this->data = $data;
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

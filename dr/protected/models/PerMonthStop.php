@@ -3,6 +3,7 @@
 class PerMonthStop extends PerMonth
 {
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
@@ -22,14 +23,20 @@ class PerMonthStop extends PerMonth
         $lastWeekEndDateU = date("Y/m/d",strtotime($lastWeekEndDate." - 1 month"));//上月的上周
         //停止金额 = 合同同比分析里的 “ 终止服务 ” +  “ 上月一次性服务+新增产品 ”
 
-        //终止服务(本年)
-        $serviceT = CountSearch::getServiceForSTToMonth($endDate,$city_allow,"T");
-        //一次性服务(本年)
-        $monthServiceAddForY = CountSearch::getServiceAddForYToMonth($endDate,$city_allow);
+        $this->u_load_data['u_load_start'] = time();
         //产品(本年)
         $uInvMoney = CountSearch::getUInvMoneyToMonth($endDate,$city_allow);
         //新增产品（本年上月）
         $subServiceInv = CountSearch::getUInvMoney($lastMonthStart,$lastMonthEnd,$city_allow);
+        //产品(上一年)
+        $lastUInvMoney = CountSearch::getUInvMoney($lastYearStartU,$lastYearEndU,$city_allow);
+        //产品(上月上週)
+        $lastUInvMoneyWeek = CountSearch::getUInvMoney($lastWeekStartDateU,$lastWeekEndDateU,$city_allow);
+        $this->u_load_data['u_load_end'] = time();
+        //终止服务(本年)
+        $serviceT = CountSearch::getServiceForSTToMonth($endDate,$city_allow,"T");
+        //一次性服务(本年)
+        $monthServiceAddForY = CountSearch::getServiceAddForYToMonth($endDate,$city_allow);
         //一次性服务（本年上月）
         $subServiceY = CountSearch::getServiceAddForY($lastMonthStart,$lastMonthEnd,$city_allow);
 
@@ -37,15 +44,11 @@ class PerMonthStop extends PerMonth
         $lastServiceT = CountSearch::getServiceForST($lastYearStart,$lastYearEnd,$city_allow,"T");
         //一次性服务(上一年)
         $lastMonthServiceAddForY = CountSearch::getServiceAddForY($lastYearStartU,$lastYearEndU,$city_allow);
-        //产品(上一年)
-        $lastUInvMoney = CountSearch::getUInvMoney($lastYearStartU,$lastYearEndU,$city_allow);
 
         //终止服务(上週)
         $lastServiceWeek = CountSearch::getServiceForST($lastWeekStartDate,$lastWeekEndDate,$city_allow,"T");
         //一次性服务(上月上週)
         $lastMonthServiceAddForYWeek = CountSearch::getServiceAddForY($lastWeekStartDateU,$lastWeekEndDateU,$city_allow);
-        //产品(上月上週)
-        $lastUInvMoneyWeek = CountSearch::getUInvMoney($lastWeekStartDateU,$lastWeekEndDateU,$city_allow);
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
             $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
@@ -69,6 +72,7 @@ class PerMonthStop extends PerMonth
             RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
         $this->data = $data;
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

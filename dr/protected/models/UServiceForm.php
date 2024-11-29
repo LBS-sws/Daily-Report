@@ -26,6 +26,7 @@ class UServiceForm extends CFormModel
 
     public $downJsonText='';
 
+    public $u_load_data=array();//查询时长数组
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -144,6 +145,7 @@ class UServiceForm extends CFormModel
     }
 
     public function retrieveData() {
+        $load_start= time();
 	    $rptModel = new RptUService();
 	    $rptModel->condition = $this->condition;
 	    $rptModel->seniority_min = $this->seniority_min;
@@ -155,10 +157,13 @@ class UServiceForm extends CFormModel
         $criteria->city = $this->city_allow;
         $rptModel->criteria = $criteria;
         $rptModel->retrieveData();
+        $this->u_load_data = $rptModel->u_load_data;
         $this->data = $rptModel->data;
 
         $session = Yii::app()->session;
         $session['uService_c01'] = $this->getCriteria();
+        $this->u_load_data['load_start'] = $load_start;
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

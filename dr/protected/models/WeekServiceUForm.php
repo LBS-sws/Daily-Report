@@ -14,6 +14,7 @@ class WeekServiceUForm extends CFormModel
 	public $week_list=array();//
 
     public $downJsonText='';
+    public $u_load_data=array();//查询时长数组
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -81,16 +82,19 @@ class WeekServiceUForm extends CFormModel
     }
 
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $citySetList = CitySetForm::getCitySetList($city_allow);
 
+        $this->u_load_data['u_load_start'] = time();
         //获取U系统的產品数据
         $uInvMoneyWeek = CountSearch::getUInvMoneyForWeek($this->start_date,$this->end_date,$city_allow);
 
         //获取U系统的服务数据
         $uServiceMoneyWeek = CountSearch::getUServiceMoneyForWeek($this->start_date,$this->end_date,$city_allow);
+        $this->u_load_data['u_load_end'] = time();
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];
             $defMoreList=$this->defMoreCity($city,$cityRow["city_name"]);
@@ -105,6 +109,7 @@ class WeekServiceUForm extends CFormModel
         $this->data = $data;
         $session = Yii::app()->session;
         $session['weekServiceU_c01'] = $this->getCriteria();
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

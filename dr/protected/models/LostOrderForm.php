@@ -26,6 +26,7 @@ class LostOrderForm extends CFormModel
     public $th_sum=1;//所有th的个数
     public $downJsonText='';
 
+    public $u_load_data=array();//查询时长数组
     /**
      * Declares customized attribute labels.
      * If not declared here, an attribute would have a label that is
@@ -93,6 +94,7 @@ class LostOrderForm extends CFormModel
     }
 
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
@@ -102,19 +104,22 @@ class LostOrderForm extends CFormModel
         $monthStartDate = date("Y/m/01",strtotime($this->end_date));//本月的第一天
         $lastMonthStart = CountSearch::computeLastMonth($monthStartDate);//查询时间的上月（减法使用）
         $lastMonthEnd = CountSearch::computeLastMonth($endDate);//查询时间的上月（减法使用）
-        //停止金额 = 合同同比分析里的 “ 终止服务 ” +  “ 上月一次性服务+新增产品 ”
 
+        $this->u_load_data['u_load_start'] = time();
         //获取U系统的服务数据
         $uServiceMoney = CountSearch::getUServiceMoneyToMonth($endDate,$city_allow,true);
+        //产品(本年)
+        $uInvMoney = CountSearch::getUInvMoneyToMonth($endDate,$city_allow);
+        //新增产品（本年上月）
+        $subServiceInv = CountSearch::getUInvMoney($lastMonthStart,$lastMonthEnd,$city_allow);
+        $this->u_load_data['u_load_end'] = time();
+
+        //停止金额 = 合同同比分析里的 “ 终止服务 ” +  “ 上月一次性服务+新增产品 ”
 
         //终止服务(本年)
         $serviceT = CountSearch::getServiceForSTToMonth($endDate,$city_allow,"T");
         //一次性服务(本年)
         $monthServiceAddForY = CountSearch::getServiceAddForYToMonth($endDate,$city_allow);
-        //产品(本年)
-        $uInvMoney = CountSearch::getUInvMoneyToMonth($endDate,$city_allow);
-        //新增产品（本年上月）
-        $subServiceInv = CountSearch::getUInvMoney($lastMonthStart,$lastMonthEnd,$city_allow);
         //一次性服务（本年上月）
         $subServiceY = CountSearch::getServiceAddForY($lastMonthStart,$lastMonthEnd,$city_allow);
 
@@ -134,6 +139,7 @@ class LostOrderForm extends CFormModel
             RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
         $this->data = $data;
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

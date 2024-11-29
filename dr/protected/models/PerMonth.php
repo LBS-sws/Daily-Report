@@ -26,6 +26,7 @@ class PerMonth extends CFormModel
 	public $th_sum=1;//所有th的个数
     public $downJsonText='';
 
+    public $u_load_data=array();//查询时长数组
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is

@@ -20,6 +20,7 @@ class PerMonthCount extends CFormModel
     public $th_sum=0;//所有th的个数
     public $downJsonText='';
 
+    public $u_load_data=array();//查询时长数组
     /**
      * Declares customized attribute labels.
      * If not declared here, an attribute would have a label that is
@@ -79,6 +80,7 @@ class PerMonthCount extends CFormModel
     }
 
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
@@ -89,10 +91,14 @@ class PerMonthCount extends CFormModel
         $lastMonthStart = CountSearch::computeLastMonth($monthStartDate);//查询时间的上月（减法使用）
         $lastMonthEnd = CountSearch::computeLastMonth($endDate);//查询时间的上月（减法使用）
 
-        //服务新增
-        $serviceN = CountSearch::getServiceForType($startDate,$endDate,$city_allow,"N");
+        $this->u_load_data['u_load_start'] = time();
         //获取U系统的產品数据
         $uInvMoney = CountSearch::getUInvMoney($startDate,$endDate,$city_allow);
+        //新增产品（本年上月）
+        $subServiceInv = CountSearch::getUInvMoney($lastMonthStart,$lastMonthEnd,$city_allow);
+        $this->u_load_data['u_load_end'] = time();
+        //服务新增
+        $serviceN = CountSearch::getServiceForType($startDate,$endDate,$city_allow,"N");
         //终止服务（num_stop）、暂停服务（num_pause）
         $serviceST = CountSearch::getServiceForST($startDate,$endDate,$city_allow);
         //恢复服务(上一年)
@@ -100,8 +106,6 @@ class PerMonthCount extends CFormModel
         //更改服务(上一年)
         $serviceA = CountSearch::getServiceForA($startDate,$endDate,$city_allow);
 
-        //新增产品（本年上月）
-        $subServiceInv = CountSearch::getUInvMoney($lastMonthStart,$lastMonthEnd,$city_allow);
         //一次性服务（本年上月）
         $subServiceY = CountSearch::getServiceAddForY($lastMonthStart,$lastMonthEnd,$city_allow);
 
@@ -128,6 +132,7 @@ class PerMonthCount extends CFormModel
         $this->data = $data;
         $session = Yii::app()->session;
         $session['perMonth_c01'] = $this->getCriteria();
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

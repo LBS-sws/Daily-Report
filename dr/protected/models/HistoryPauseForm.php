@@ -26,6 +26,8 @@ class HistoryPauseForm extends CFormModel
 	public $th_sum=1;//所有th的个数
 
     public $downJsonText='';
+
+    public $u_load_data=array();//查询时长数组
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -91,6 +93,7 @@ class HistoryPauseForm extends CFormModel
     }
 
     public function retrieveData() {
+        $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = Yii::app()->user->city_allow();
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
@@ -102,6 +105,9 @@ class HistoryPauseForm extends CFormModel
         $lastWeekStartDate = date("Y/m/d",$this->last_week_start);
         $lastWeekEndDate = date("Y/m/d",$this->last_week_end);
 
+        $this->u_load_data['u_load_start'] = time();
+
+        $this->u_load_data['u_load_end'] = time();
         //服务暫停(本年)
         $serviceS = CountSearch::getServiceForSTToMonth($endDate,$city_allow,"S");
         //服务暫停(上一年)
@@ -128,6 +134,7 @@ class HistoryPauseForm extends CFormModel
         $this->data = $data;
         $session = Yii::app()->session;
         $session['historyPause_c01'] = $this->getCriteria();
+        $this->u_load_data['load_end'] = time();
         return true;
     }
 

@@ -5,6 +5,7 @@ class RptUService extends ReportData2 {
     public $seniority_max=9999;//年资（最大）
     public $staff_type=0;//员工类型 0：全部 1：专职 2：其他
 
+    public $u_load_data=array();//查询时长数组
 	public function fields() {
 		return array(
 			'area'=>array('label'=>Yii::t('report','Area'),'width'=>18,'align'=>'L'),
@@ -31,7 +32,9 @@ class RptUService extends ReportData2 {
         $this->data=array();
         $list = array();
         //$rows = CountSearch::getTechnicianMoney($startDay,$endDay,$city_allow);
+        $this->u_load_data['u_load_start'] = time();
         $rows = CountSearch::getTechnicianMoney($startDay,$endDay);//由于派单系统不做城市判断，所以查询所有城市
+        $this->u_load_data['u_load_end'] = time();
         $UStaffCodeList = array_column($rows,"staff");
         $userList = $this->getUserList($UStaffCodeList,$endDay);
         $cityList = self::getCityList($city_allow);
