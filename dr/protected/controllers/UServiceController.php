@@ -71,6 +71,7 @@ class UServiceController extends Controller
             $model->city = null;
             $model->condition = array(1,2,3,4,5);
             $model->seniority_min = 3;
+            $model->staff_type = 1;
         }
 		$this->render('index',array('model'=>$model));
 	}
