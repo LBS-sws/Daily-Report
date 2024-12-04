@@ -783,9 +783,9 @@ class CountSearch extends SearchForCurlU {
     }
 
     //获取U系统的服务单数据
-    public static function getUServiceMoney($startDay,$endDay,$city_allow=""){
+    public static function getUServiceMoney($startDay,$endDay,$city_allow="",$type=0){
         if(self::$system==0){//2024年1月29日年大陆版使用了新的U系统
-            return self::getCurlServiceForCity($startDay,$endDay,$city_allow);
+            return self::getCurlServiceForCity($startDay,$endDay,$city_allow,$type);
         }
         $list = array();
         $citySql = "";
@@ -2096,14 +2096,14 @@ class CountSearch extends SearchForCurlU {
     }
 
     //获取U系统的服务单数据(外包人员)-汇总
-    public static function getOutsourceCountMoney($startDay,$endDay,$staffList,$city_allow=""){
-        $list = SystemU::getOutsourceCountMoney($startDay,$endDay,$staffList,$city_allow);
+    public static function getOutsourceCountMoney($startDay,$endDay,$staffList,$city_allow="",$type=0){
+        $list = SystemU::getOutsourceCountMoney($startDay,$endDay,$staffList,$city_allow,$type);
         return isset($list["data"])?$list["data"]:array();
     }
 
     //获取U系统的服务单数据(外包人员)-详情
-    public static function getOutsourceServiceMoney($startDay,$endDay,$staffList,$city_allow=""){
-        $list = SystemU::getOutsourceServiceMoney($startDay,$endDay,$staffList,$city_allow);
+    public static function getOutsourceServiceMoney($startDay,$endDay,$staffList,$city_allow="",$type=0){
+        $list = SystemU::getOutsourceServiceMoney($startDay,$endDay,$staffList,$city_allow,$type);
         return isset($list["data"])?$list["data"]:array();
     }
 }

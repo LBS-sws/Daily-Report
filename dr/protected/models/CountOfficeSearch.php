@@ -6,8 +6,8 @@
 class CountOfficeSearch extends CountSearch{
 
     //获取服务单月数据 - 办事处
-    public static function getUServiceOfficeMoneyOne($startDay,$endDay,$city_allow=""){
-        $list = SystemU::getUServiceOfficeMoney($startDay,$endDay,$city_allow);
+    public static function getUServiceOfficeMoneyOne($startDay,$endDay,$city_allow="",$type=0){
+        $list = SystemU::getUServiceOfficeMoney($startDay,$endDay,$city_allow,$type);
         $arr = array();
         if(isset($list["data"])&&is_array($list["data"])){
             foreach ($list["data"] as $city=>$rows){
@@ -22,8 +22,8 @@ class CountOfficeSearch extends CountSearch{
     }
 
     //获取U系统的產品数据 - 办事处
-    public static function getUInvOfficeMoneyOne($startDay,$endDay,$city_allow=""){
-        $list = SystemU::getInvDataOfficeCityAmount($startDay,$endDay,$city_allow);
+    public static function getUInvOfficeMoneyOne($startDay,$endDay,$city_allow="",$type=0){
+        $list = SystemU::getInvDataOfficeCityAmount($startDay,$endDay,$city_allow,$type);
         $arr = array();
         if(isset($list["data"])&&is_array($list["data"])){
             foreach ($list["data"] as $city=>$rows){

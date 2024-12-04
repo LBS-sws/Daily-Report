@@ -10,20 +10,20 @@ class SearchForCurlU
 {
 
     //获取U系统的服务单数据(城市分类)
-    public static function getCurlServiceForCity($startDay,$endDay,$city_allow=""){
-        $list = SystemU::getUServiceMoney($startDay,$endDay,$city_allow);
+    public static function getCurlServiceForCity($startDay,$endDay,$city_allow="",$type=0){
+        $list = SystemU::getUServiceMoney($startDay,$endDay,$city_allow,false,$type);
         return isset($list["data"])?$list["data"]:array();
     }
 
     //获取U系统的服务单数据(城市的月份分类)
-    public static function getCurlServiceForMonth($startDay,$endDay,$city_allow=""){
-        $list = SystemU::getUServiceMoneyToMonth($startDay,$endDay,$city_allow);
+    public static function getCurlServiceForMonth($startDay,$endDay,$city_allow="",$type=0){
+        $list = SystemU::getUServiceMoneyToMonth($startDay,$endDay,$city_allow,false,$type);
         return isset($list["data"])?$list["data"]:array();
     }
 
     //获取U系统的服务单数据(城市的周一分类)
-    public static function getCurlServiceForWeek($startDay,$endDay,$city_allow=""){
-        $list = SystemU::getUServiceMoneyToWeek($startDay,$endDay,$city_allow);
+    public static function getCurlServiceForWeek($startDay,$endDay,$city_allow="",$type=1){
+        $list = SystemU::getUServiceMoneyToWeek($startDay,$endDay,$city_allow,false,$type);
         return isset($list["data"])?$list["data"]:array();
     }
 

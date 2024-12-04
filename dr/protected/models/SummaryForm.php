@@ -176,9 +176,10 @@ class SummaryForm extends CFormModel
         $rptModel->retrieveData();
         $this->u_load_data = $rptModel->u_load_data;
         $this->data = $rptModel->data;
+        $uServiceType = $this->search_type==3?1:0;//当日期查询时，根据日期查询
         $u_load_start = time();
         //获取U系统的服务单数据
-        $uActualMoneyList = CountSearch::getUServiceMoney($this->start_date,$this->end_date,$city_allow);
+        $uActualMoneyList = CountSearch::getUServiceMoney($this->start_date,$this->end_date,$city_allow,$uServiceType);
         $u_load_end = time();
         $this->u_load_data["u_load_end"]+=$u_load_end-$u_load_start;
         if($this->data){

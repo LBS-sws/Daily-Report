@@ -208,15 +208,15 @@ class OutsourceForm extends CFormModel
         //获取外包员工
         $staffAllList = self::getOutStaffList($city_allow);
         $staffCodeStr = implode(",",$staffAllList["staffCodeList"]);
-
+        $uServiceType = $this->search_type==3?1:0;//当日期查询时，根据日期查询
 
         $this->u_load_data['u_load_start'] = time();
         //获取U系统的服务单数据
-        $uServiceMoney = CountSearch::getUServiceMoney($startDate,$endDate,$city_allow);
+        $uServiceMoney = CountSearch::getUServiceMoney($startDate,$endDate,$city_allow,$uServiceType);
         //获取外包员工的服务金额(详情金额)
-        $outStaffMoney = CountSearch::getOutsourceServiceMoney($startDate,$endDate,$staffCodeStr,$city_allow);
+        $outStaffMoney = CountSearch::getOutsourceServiceMoney($startDate,$endDate,$staffCodeStr,$city_allow,$uServiceType);
         //获取地区的外包金额(总金额)
-        $outsourceMoney=CountSearch::getOutsourceCountMoney($startDate,$endDate,$staffCodeStr,$city_allow);
+        $outsourceMoney=CountSearch::getOutsourceCountMoney($startDate,$endDate,$staffCodeStr,$city_allow,$uServiceType);
         $this->u_load_data['u_load_end'] = time();
 
         $endRegionList = array();//城市最终归属的区域

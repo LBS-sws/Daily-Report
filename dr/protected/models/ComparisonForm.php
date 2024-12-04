@@ -205,13 +205,14 @@ class ComparisonForm extends CFormModel
         $allMonthStartDate = date("Y/m/01",strtotime($allMonthStartDate." - 1 months"));
         $allMonthEndDate = date("Y/m/01",strtotime($this->end_date));
         $allMonthEndDate = date("Y/m/t",strtotime($allMonthEndDate." - 1 months"));
+        $uServiceType = $this->search_type==3?1:0;//当日期查询时，根据日期查询
         $this->u_load_data['u_load_start'] = time();
         //获取U系统的服务单数据
-        $uServiceMoney = CountSearch::getUServiceMoney($startDate,$endDate,$city_allow);
+        $uServiceMoney = CountSearch::getUServiceMoney($startDate,$endDate,$city_allow,$uServiceType);
         //获取U系统的服务单数据(上月)
-        $uServiceMoneyLast = CountSearch::getUServiceMoney($monthStartDate,$monthEndDate,$city_allow);
+        $uServiceMoneyLast = CountSearch::getUServiceMoney($monthStartDate,$monthEndDate,$city_allow,$uServiceType);
         //获取U系统的服务单数据(上月)(整月)
-        $uServiceMoneyAllLast = CountSearch::getUServiceMoney($allMonthStartDate,$allMonthEndDate,$city_allow);
+        $uServiceMoneyAllLast = CountSearch::getUServiceMoney($allMonthStartDate,$allMonthEndDate,$city_allow,$uServiceType);
         //获取U系统的產品数据(上月)(整月)
         $monthUInvAllMoney = CountSearch::getUInvMoney($allMonthStartDate,$allMonthEndDate,$city_allow);
         //获取U系统的產品数据

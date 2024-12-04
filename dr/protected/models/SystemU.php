@@ -47,6 +47,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -93,6 +94,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -139,6 +141,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -185,6 +188,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -231,6 +235,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -277,6 +282,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -284,7 +290,7 @@ class SystemU {
     }
 
     //获取服务单月数据
-    public static function getUServiceMoney($start, $end, $city='',$printBool=false) {
+    public static function getUServiceMoney($start, $end, $city='',$printBool=false,$type=0) {
         $rtn = array('message'=>'', 'data'=>array());
         $key = self::generate_key();
         $root = Yii::app()->params['uCurlRootURL'];
@@ -293,6 +299,7 @@ class SystemU {
             "key"=>$key,
             "begin"=>$start,
             "end"=>$end,
+            "type"=>$type,
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
@@ -323,6 +330,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -330,7 +338,7 @@ class SystemU {
     }
 
     //获取服务单月数据 - 办事处
-    public static function getUServiceOfficeMoney($start, $end, $city='',$printBool=false) {
+    public static function getUServiceOfficeMoney($start, $end, $city='',$printBool=false,$type=0) {
         $rtn = array('message'=>'', 'data'=>array());
         $key = self::generate_key();
         $root = Yii::app()->params['uCurlRootURL'];
@@ -339,6 +347,7 @@ class SystemU {
             "key"=>$key,
             "begin"=>$start,
             "end"=>$end,
+            "type"=>$type,
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
@@ -369,6 +378,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -376,7 +386,7 @@ class SystemU {
     }
 
     //获取U系统的服务单数据(外包人员)-汇总
-    public static function getOutsourceCountMoney($start, $end, $staffList='', $city='',$printBool=false) {
+    public static function getOutsourceCountMoney($start, $end, $staffList='', $city='',$printBool=false,$type=0) {
         $rtn = array('message'=>'', 'data'=>array());
         $key = self::generate_key();
         $root = Yii::app()->params['uCurlRootURL'];
@@ -386,6 +396,7 @@ class SystemU {
             "begin"=>$start,
             "end"=>$end,
             "staffs"=>$staffList,
+            "type"=>$type,
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
@@ -416,6 +427,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -423,7 +435,7 @@ class SystemU {
     }
 
     //获取U系统的服务单数据(外包人员)-详情
-    public static function getOutsourceServiceMoney($start, $end, $staffList='', $city='',$printBool=false) {
+    public static function getOutsourceServiceMoney($start, $end, $staffList='', $city='',$printBool=false,$type=0) {
         $rtn = array('message'=>'', 'data'=>array());
         $key = self::generate_key();
         $root = Yii::app()->params['uCurlRootURL'];
@@ -433,6 +445,7 @@ class SystemU {
             "begin"=>$start,
             "end"=>$end,
             "staffs"=>$staffList,
+            "type"=>$type,
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
@@ -463,6 +476,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -470,7 +484,7 @@ class SystemU {
     }
 
     //获取服务单月数据（月為鍵名)
-    public static function getUServiceMoneyToMonth($start, $end, $city='',$printBool=false) {
+    public static function getUServiceMoneyToMonth($start, $end, $city='',$printBool=false,$type=0) {
         $rtn = array('message'=>'', 'data'=>array());
         $key = self::generate_key();
         $root = Yii::app()->params['uCurlRootURL'];
@@ -479,6 +493,7 @@ class SystemU {
             "key"=>$key,
             "begin"=>$start,
             "end"=>$end,
+            "type"=>$type,
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
@@ -509,6 +524,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -516,7 +532,7 @@ class SystemU {
     }
 
     //获取服务单月数据（周為鍵名)
-    public static function getUServiceMoneyToWeek($start, $end, $city='',$printBool=false) {
+    public static function getUServiceMoneyToWeek($start, $end, $city='',$printBool=false,$type=1) {
         $rtn = array('message'=>'', 'data'=>array());
         $key = self::generate_key();
         $root = Yii::app()->params['uCurlRootURL'];
@@ -525,6 +541,7 @@ class SystemU {
             "key"=>$key,
             "begin"=>$start,
             "end"=>$end,
+            "type"=>$type,
             "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
         );
         $data_string = json_encode($data);
@@ -555,6 +572,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -601,6 +619,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -647,6 +666,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -693,6 +713,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
@@ -738,6 +759,7 @@ class SystemU {
                 $rtn['data'] = array();
                 $rtn['message'] = isset($json["message"])?$json["message"]:$out;
                 $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
                 throw new CHttpException("派单系统异常",$out);
             }
         }
