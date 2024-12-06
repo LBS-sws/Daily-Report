@@ -784,12 +784,17 @@ class SummaryTable extends SummaryForm{
             ->where($whereSql." and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
         if($queryIARows){
             foreach ($queryIARows as $key=>$row){
-                $month_date = date("Y/m",strtotime($row['status_dt']));
+                $month_date = date_format(date_create($row['status_dt']),"Y/m");
+                if($row['month_date']<=CountSearch::$stop_new_dt){ //2024年12月后改版
+                    $next_end_dt=$month_date."/31";//修改下一条查询逻辑
+                }else{
+                    $next_end_dt=$endDate;//修改下一条查询逻辑
+                }
                 $nextRow= Yii::app()->db->createCommand()
                     ->select("status")->from("swo_service_contract_no")
                     ->where("contract_no='{$row["contract_no"]}' and 
                         id!='{$row["no_id"]}' and 
-                        status_dt BETWEEN '{$row['status_dt']}' and '{$endDate}'")
+                        status_dt BETWEEN '{$row['status_dt']}' and '{$next_end_dt}'")
                     ->order("status_dt asc")
                     ->queryRow();//查詢本月的後面一條數據
                 if($nextRow&&in_array($nextRow["status"],array("S","T"))){
@@ -822,12 +827,17 @@ class SummaryTable extends SummaryForm{
                 ->where($whereSql." and {$kaSqlPrx} and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
             if($queryKARows){
                 foreach ($queryKARows as $key=>$row){
-                    $month_date = date("Y/m",strtotime($row['status_dt']));
+                    $month_date = date_format(date_create($row['status_dt']),"Y/m");
+                    if($row['month_date']<=CountSearch::$stop_new_dt){ //2024年12月后改版
+                        $next_end_dt=$month_date."/31";//修改下一条查询逻辑
+                    }else{
+                        $next_end_dt=$endDate;//修改下一条查询逻辑
+                    }
                     $nextRow= Yii::app()->db->createCommand()
                         ->select("status")->from("swo_service_ka_no")
                         ->where("contract_no='{$row["contract_no"]}' and 
                         id!='{$row["no_id"]}' and 
-                        status_dt BETWEEN '{$row['status_dt']}' and '{$endDate}'")
+                        status_dt BETWEEN '{$row['status_dt']}' and '{$next_end_dt}'")
                         ->order("status_dt asc")
                         ->queryRow();//查詢本月的後面一條數據
                     if($nextRow&&in_array($nextRow["status"],array("S","T"))){
@@ -861,25 +871,34 @@ class SummaryTable extends SummaryForm{
         $returnList = array("goodList"=>array(),"notList"=>array());
         if($queryIARows){
             foreach ($queryIARows as $key=>$row){
-                $month_date = date("Y/m",strtotime($row['status_dt']));
+                $month_date = date_format(date_create($row['status_dt']),"Y/m");
+                if($month_date<=CountSearch::$stop_new_dt){ //2024年12月后改版
+                    $next_end_dt=$month_date."/31";//修改下一条查询逻辑
+                }else{
+                    $next_end_dt=$endDate;//修改下一条查询逻辑
+                }
                 $nextRow= Yii::app()->db->createCommand()
                     ->select("status")->from("swo_service_contract_no")
                     ->where("contract_no='{$row["contract_no"]}' and 
                         id!='{$row["no_id"]}' and 
-                        status_dt BETWEEN '{$row['status_dt']}' and '{$endDate}'")
+                        status_dt BETWEEN '{$row['status_dt']}' and '{$next_end_dt}'")
                     ->order("status_dt asc")
                     ->queryRow();//查詢本月的後面一條數據
                 if($nextRow&&in_array($nextRow["status"],array("S","T"))){
                     continue;
                 }else{
                     $prevRow= Yii::app()->db->createCommand()
-                        ->select("status")->from("swo_service_contract_no")
+                        ->select("status,DATE_FORMAT(status_dt,'%Y/%m') as month_date")->from("swo_service_contract_no")
                         ->where("contract_no='{$row["contract_no"]}' and 
                         id!='{$row["no_id"]}' and status_dt<='{$row['status_dt']}'")
                         ->order("status_dt desc")
                         ->queryRow();//查詢本月的前面一條數據
                     if($prevRow&&in_array($prevRow["status"],array("S","T"))){
-                        $returnList["notList"][] = $row;
+                        if($month_date>CountSearch::$stop_new_dt&&$prevRow['month_date']==$month_date){
+                            $returnList["goodList"][] = $row;
+                        }else{
+                            $returnList["notList"][] = $row;
+                        }
                     }else{
                         $returnList["goodList"][] = $row;
                     }
@@ -909,25 +928,34 @@ class SummaryTable extends SummaryForm{
                 ->where($whereSql." and {$kaSqlPrx} and n.id is not null")->order("a.city,a.status_dt desc")->queryAll();
             if($queryKARows){
                 foreach ($queryKARows as $key=>$row){
-                    $month_date = date("Y/m",strtotime($row['status_dt']));
+                    $month_date = date_format(date_create($row['status_dt']),"Y/m");
+                    if($month_date<=CountSearch::$stop_new_dt){ //2024年12月后改版
+                        $next_end_dt=$month_date."/31";//修改下一条查询逻辑
+                    }else{
+                        $next_end_dt=$endDate;//修改下一条查询逻辑
+                    }
                     $nextRow= Yii::app()->db->createCommand()
                         ->select("status")->from("swo_service_ka_no")
                         ->where("contract_no='{$row["contract_no"]}' and 
                         id!='{$row["no_id"]}' and 
-                        status_dt BETWEEN '{$row['status_dt']}' and '{$endDate}'")
+                        status_dt BETWEEN '{$row['status_dt']}' and '{$next_end_dt}'")
                         ->order("status_dt asc")
                         ->queryRow();//查詢本月的後面一條數據
                     if($nextRow&&in_array($nextRow["status"],array("S","T"))){
                         continue;
                     }else{
                         $prevRow= Yii::app()->db->createCommand()
-                            ->select("status")->from("swo_service_ka_no")
+                            ->select("status,DATE_FORMAT(status_dt,'%Y/%m') as month_date")->from("swo_service_ka_no")
                             ->where("contract_no='{$row["contract_no"]}' and 
                         id!='{$row["no_id"]}' and status_dt<='{$row['status_dt']}'")
                             ->order("status_dt desc")
                             ->queryRow();//查詢本月的前面一條數據
                         if($prevRow&&in_array($prevRow["status"],array("S","T"))){
-                            $returnList["notList"][] = $row;
+                            if($month_date>CountSearch::$stop_new_dt&&$prevRow['month_date']==$month_date){
+                                $returnList["goodList"][] = $row;
+                            }else{
+                                $returnList["notList"][] = $row;
+                            }
                         }else{
                             $returnList["goodList"][] = $row;
                         }

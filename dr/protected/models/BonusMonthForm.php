@@ -128,6 +128,7 @@ class BonusMonthForm extends CFormModel
                 $defMoreList["stop_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop"]:0;
                 $defMoreList["pause_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_pause"]:0;
                 $defMoreList["stop_sum_none"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop_none"]:0;
+                $defMoreList["stop_2024_11"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_stop_none"]:0;
                 //$defMoreList["stopSumOnly"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_month"]:0;
             }
             //恢复
@@ -186,6 +187,7 @@ class BonusMonthForm extends CFormModel
             "new_sum_n"=>0,//一次性服务+新增（产品）
             "stop_sum"=>0,//终止
             "stop_sum_none"=>0,//终止(本条终止的前一条、后一条没有暂停、终止)
+            "stop_2024_11"=>0,//终止(2024年12月份改版)
             "resume_sum"=>0,//恢复
             "pause_sum"=>0,//暂停
             "amend_sum"=>0,//更改
@@ -213,6 +215,10 @@ class BonusMonthForm extends CFormModel
             $list["num_growth"]+=$list["new_sum"]+$list["new_sum_n"]+$list["new_month_n"];
             $list["num_growth"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
             $list["num_growth"]+=$list["amend_sum"];
+            if(date_format(date_create($this->end_date),'Y/m')>CountSearch::$stop_new_dt){
+                //2024年12月份改版
+                //$list["num_growth"]+=$list["stop_2024_11"];
+            }
         }
 
         $list["comStopRate"] = $list["stop_sum_none"]+$list["resume_sum"]+$list["pause_sum"]+$list["amend_sum"];
@@ -408,7 +414,7 @@ class BonusMonthForm extends CFormModel
     protected function showServiceHtml($data){
         $bodyKey = $this->getDataAllKeyStr();
         $clickTdList = $this->getClickTdList();
-        $keyStrExp = array("two_net","stop_sum_none","resume_sum","pause_sum","amend_sum","new_month_n","last_u_actual");
+        $keyStrExp = array("two_net","stop_2024_11","stop_sum_none","resume_sum","pause_sum","amend_sum","new_month_n","last_u_actual");
         $html="";
         if(!empty($data)){
             $allRow = [];//总计(所有地区)

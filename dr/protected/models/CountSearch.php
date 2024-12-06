@@ -11,6 +11,8 @@ class CountSearch extends SearchForCurlU {
 
     protected static $system=0;//0:大陸 1:台灣 2:國際
 
+    public static $stop_new_dt="2024/10";//2024年11月后改版终止金额计算
+
     public static function getSystem(){
         return self::$system;
     }
@@ -75,11 +77,16 @@ class CountSearch extends SearchForCurlU {
                         "num_month"=>0,//停單金額（月金額）
                     );
                 }
+                if($row['month_date']<=self::$stop_new_dt){ //2024年12月后改版
+                    $next_end_dt=$row['month_date']."/31";//修改下一条查询逻辑
+                }else{
+                    $next_end_dt=$end_dt;//修改下一条查询逻辑
+                }
                 $nextRow= Yii::app()->db->createCommand()
                     ->select("status")->from("swo_service_contract_no")
                     ->where("contract_no='{$row["contract_no"]}' and 
                         id!='{$row["id"]}' and 
-                        status_dt BETWEEN '{$row['status_dt']}' and '{$end_dt}'")
+                        status_dt BETWEEN '{$row['status_dt']}' and '{$next_end_dt}'")
                     //DATE_FORMAT(status_dt,'%Y/%m')='{$row['month_date']}'
                     ->order("status_dt asc")
                     ->queryRow();//查詢本月的後面一條數據
@@ -89,12 +96,18 @@ class CountSearch extends SearchForCurlU {
                     $money = round($row["sum_money"],2);
                     if($row["status"]=="T"){
                         $prevRow= Yii::app()->db->createCommand()
-                            ->select("status")->from("swo_service_contract_no")
+                            ->select("status,DATE_FORMAT(status_dt,'%Y/%m') as month_date")
+                            ->from("swo_service_contract_no")
                             ->where("contract_no='{$row["contract_no"]}' and 
                         id!='{$row["id"]}' and status_dt<='{$row['status_dt']}'")
                             ->order("status_dt desc")
                             ->queryRow();//查詢本条的前面一條數據
-                        if($prevRow===false||!in_array($prevRow["status"],array("S","T"))){
+                        if($prevRow&&in_array($prevRow["status"],array("S","T"))){
+                            //如果有前一条，且为暂停或终止
+                            if($row['month_date']>self::$stop_new_dt&&$prevRow['month_date']==$row['month_date']){ //2024年12月后改版
+                                $list[$city]["num_stop_none"]+=$money;
+                            }
+                        }else{
                             $list[$city]["num_stop_none"]+=$money;
                         }
                         $list[$city]["num_stop"]+=$money;
@@ -161,11 +174,16 @@ class CountSearch extends SearchForCurlU {
                             "num_month"=>0,//停單金額（月金額）
                         );
                     }
+                    if($row['month_date']<=self::$stop_new_dt){ //2024年12月后改版
+                        $next_end_dt=$row['month_date']."/31";//修改下一条查询逻辑
+                    }else{
+                        $next_end_dt=$end_dt;//修改下一条查询逻辑
+                    }
                     $nextRow= Yii::app()->db->createCommand()
                         ->select("status")->from("swo_service_ka_no")
                         ->where("contract_no='{$row["contract_no"]}' and 
                         id!='{$row["id"]}' and 
-                        status_dt BETWEEN '{$row['status_dt']}' and '{$end_dt}'")
+                        status_dt BETWEEN '{$row['status_dt']}' and '{$next_end_dt}'")
                         ->order("status_dt asc")
                         ->queryRow();//查詢本月的後面一條數據
                     if($nextRow&&in_array($nextRow["status"],array("S","T"))){
@@ -174,12 +192,17 @@ class CountSearch extends SearchForCurlU {
                         $money = round($row["sum_money"],2);
                         if($row["status"]=="T"){
                             $prevRow= Yii::app()->db->createCommand()
-                                ->select("status")->from("swo_service_ka_no")
+                                ->select("status,DATE_FORMAT(status_dt,'%Y/%m') as month_date")->from("swo_service_ka_no")
                                 ->where("contract_no='{$row["contract_no"]}' and 
                                 id!='{$row["id"]}' and status_dt<='{$row['status_dt']}'")
                                 ->order("status_dt desc")
                                 ->queryRow();//查詢本条的前面一條數據
-                            if($prevRow===false||!in_array($prevRow["status"],array("S","T"))){
+                            if($prevRow&&in_array($prevRow["status"],array("S","T"))){
+                                //如果有前一条，且为暂停或终止
+                                if($row['month_date']>self::$stop_new_dt&&$prevRow['month_date']==$row['month_date']){ //2024年12月后改版
+                                    $list[$city]["num_stop_none"]+=$money;
+                                }
+                            }else{
                                 $list[$city]["num_stop_none"]+=$money;
                             }
                             $list[$city]["num_stop"]+=$money;
@@ -2097,13 +2120,13 @@ class CountSearch extends SearchForCurlU {
 
     //获取U系统的服务单数据(外包人员)-汇总
     public static function getOutsourceCountMoney($startDay,$endDay,$staffList,$city_allow="",$type=0){
-        $list = SystemU::getOutsourceCountMoney($startDay,$endDay,$staffList,$city_allow,$type);
+        $list = SystemU::getOutsourceCountMoney($startDay,$endDay,$staffList,$city_allow,false,$type);
         return isset($list["data"])?$list["data"]:array();
     }
 
     //获取U系统的服务单数据(外包人员)-详情
     public static function getOutsourceServiceMoney($startDay,$endDay,$staffList,$city_allow="",$type=0){
-        $list = SystemU::getOutsourceServiceMoney($startDay,$endDay,$staffList,$city_allow,$type);
+        $list = SystemU::getOutsourceServiceMoney($startDay,$endDay,$staffList,$city_allow,false,$type);
         return isset($list["data"])?$list["data"]:array();
     }
 }

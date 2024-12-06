@@ -12,8 +12,11 @@
         box-shadow: 0 2px 7px rgba(0,0,0,0.1);
     }
     .ranking-note-body{
-        max-height: 500px;
+        float: left;
+        width: 100%;
         padding: 5px 10px 0px 25px;
+        max-height: 400px;
+        overflow-y:auto;
     }
     .note-click{ position: absolute;top:0px;left:0px;display:table;width: 20px;height:100%;text-align: center;}
 

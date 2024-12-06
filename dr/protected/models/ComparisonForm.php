@@ -8,6 +8,7 @@ class ComparisonForm extends CFormModel
     public $search_type=3;//查詢類型 1：季度 2：月份 3：天
     public $search_year;//查詢年份
     public $search_month;//查詢月份
+    public $search_month_end;//查詢月份(结束)
     public $search_quarter;//查詢季度
 	public $start_date;
 	public $end_date;
@@ -55,7 +56,7 @@ class ComparisonForm extends CFormModel
     public function rules()
     {
         return array(
-            array('search_type,search_start_date,search_end_date,search_year,search_quarter,search_month','safe'),
+            array('search_type,search_start_date,search_end_date,search_year,search_quarter,search_month,search_month_end','safe'),
             array('search_type','required'),
             array('search_type','validateDate'),
         );
@@ -79,6 +80,7 @@ class ComparisonForm extends CFormModel
                 }else{
                     $dateTimer = strtotime($this->search_year."/".$this->search_month."/01");
                     $this->start_date = date("Y/m/01",$dateTimer);
+                    $dateTimer = strtotime($this->search_year."/".$this->search_month_end."/01");
                     $this->end_date = date("Y/m/t",$dateTimer);
                     $i = ceil($this->search_month/3);//向上取整
                     $this->month_type = 3*$i-2;
@@ -103,6 +105,14 @@ class ComparisonForm extends CFormModel
                 }
                 break;
         }
+        if($this->end_date<$this->start_date){
+            $this->addError($attribute, "查询时间异常");
+        }
+        $boolDate = CountSearch::$stop_new_dt."/01";
+        $boolDate = date("Y/m/01",strtotime($boolDate." + 1 month"));
+        if($this->start_date<$boolDate&&$this->end_date>=$boolDate){
+            $this->addError($attribute, "查询时间段不能跨过{$boolDate}");
+        }
     }
 
     public function setCriteria($criteria)
@@ -118,6 +128,7 @@ class ComparisonForm extends CFormModel
         return array(
             'search_year'=>$this->search_year,
             'search_month'=>$this->search_month,
+            'search_month_end'=>$this->search_month_end,
             'search_type'=>$this->search_type,
             'search_quarter'=>$this->search_quarter,
             'search_start_date'=>$this->search_start_date,
@@ -239,7 +250,7 @@ class ComparisonForm extends CFormModel
         //更改服务
         $serviceForA = CountSearch::getServiceForA($startDate,$endDate,$city_allow);
         //更改服务(上一年)
-        $lastServiceForA = CountSearch::getServiceForA($lastStartDate,$lastStartDate,$city_allow);
+        $lastServiceForA = CountSearch::getServiceForA($lastStartDate,$lastEndDate,$city_allow);
         //服务新增（一次性)(上月)
         $monthServiceAddForY = CountSearch::getServiceAddForY($monthStartDate,$monthEndDate,$city_allow);
         //服务新增（一次性)(上月)(上一年)
@@ -279,11 +290,13 @@ class ComparisonForm extends CFormModel
                 $defMoreList["stop_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop"]:0;
                 $defMoreList["pause_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_pause"]:0;
                 $defMoreList["stop_sum_none"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop_none"]:0;
+                $defMoreList["stop_2024_11"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_stop_none"]:0;
                 $defMoreList["stopSumOnly"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_month"]:0;
             }
             if(key_exists($city,$lastServiceForST)){
                 $defMoreList["stop_sum_last"]+=key_exists($city,$lastServiceForST)?-1*$lastServiceForST[$city]["num_stop"]:0;
                 $defMoreList["stop_sum_none_last"]+=key_exists($city,$lastServiceForST)?-1*$lastServiceForST[$city]["num_stop_none"]:0;
+                $defMoreList["stop_2024_11_last"]+=key_exists($city,$lastServiceForST)?$lastServiceForST[$city]["num_stop_none"]:0;
                 $defMoreList["pause_sum_last"]+=key_exists($city,$lastServiceForST)?-1*$lastServiceForST[$city]["num_pause"]:0;
             }
             //恢复
@@ -389,6 +402,8 @@ class ComparisonForm extends CFormModel
             "stop_sum_last"=>0,//终止（上一年）
             "stop_sum"=>0,//终止
             "stop_sum_none"=>0,//终止(本条终止的前一条、后一条没有暂停、终止)
+            "stop_2024_11"=>0,//终止(2024年12月份改版)
+            "stop_2024_11_last"=>0,//终止（上一年）(2024年12月份改版)
             "stop_sum_none_last"=>0,//终止（上一年）(本条终止的前一条、后一条没有暂停、终止)
             "stop_rate"=>0,//终止对比比例
 
@@ -428,12 +443,19 @@ class ComparisonForm extends CFormModel
         $list["net_sum"]=0;
         $list["net_sum"]+=$list["new_sum"]+$list["new_sum_n"]+$list["new_month_n"];
         //$list["net_sum"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
-        $list["net_sum"]+=$list["stop_sum_none"]+$list["resume_sum"]+$list["pause_sum"];
+        $list["net_sum"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
         $list["net_sum"]+=$list["amend_sum"];
+        if($this->end_date>CountSearch::$stop_new_dt){
+            //$list["net_sum"]+=$list["stop_2024_11"];
+        }
         $list["net_sum_last"]=0;
         $list["net_sum_last"]+=$list["new_sum_last"]+$list["new_sum_n_last"]+$list["new_month_n_last"];
-        $list["net_sum_last"]+=$list["stop_sum_none_last"]+$list["resume_sum_last"]+$list["pause_sum_last"];
+        $list["net_sum_last"]+=$list["stop_sum_last"]+$list["resume_sum_last"]+$list["pause_sum_last"];
         $list["net_sum_last"]+=$list["amend_sum_last"];
+        $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
+        if($lastEndDate>CountSearch::$stop_new_dt){
+            //$list["net_sum_last"]+=$list["stop_2024_11_last"];
+        }
         $list["new_rate"] = $this->nowAndLastRate($list["new_sum"],$list["new_sum_last"],true);
         $list["new_n_rate"] = $this->nowAndLastRate($list["new_sum_n"],$list["new_sum_n_last"],true);
         $list["new_month_rate"] = $this->nowAndLastRate($list["new_month_n"],$list["new_month_n_last"],true);
@@ -856,10 +878,10 @@ class ComparisonForm extends CFormModel
         $html="";
         if(!empty($data)){
             //last_u_all
-            $allRow = ["stopSumOnly"=>0,"last_u_all"=>0,"stop_sum_none_last"=>0];//总计(所有地区)
+            $allRow = ["stopSumOnly"=>0,"last_u_all"=>0,"stop_sum_none_last"=>0,"stop_2024_11"=>0,"stop_2024_11_last"=>0];//总计(所有地区)
             foreach ($data as $regionList){
                 if(!empty($regionList["list"])) {
-                    $regionRow = ["stopSumOnly"=>0,"last_u_all"=>0,"stop_sum_none_last"=>0];//地区汇总
+                    $regionRow = ["stopSumOnly"=>0,"last_u_all"=>0,"stop_sum_none_last"=>0,"stop_2024_11"=>0,"stop_2024_11_last"=>0];//地区汇总
                     foreach ($regionList["list"] as $cityList) {
                         $regionRow["stopSumOnly"]+=$cityList["stopSumOnly"];
                         $regionRow["last_u_all"]+=$cityList["last_u_all"];
@@ -1095,10 +1117,13 @@ class ComparisonForm extends CFormModel
                     $officeRow["stop_sum"]+=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_stop"]:0;
                     $officeRow["pause_sum"]+=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_pause"]:0;
                     $officeRow["stop_sum_none"]+=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_stop_none"]:0;
+                    $officeRow["stop_2024_11"]+=isset($serviceForST[$city][$key])?$serviceForST[$city][$key]["num_stop_none"]:0;
                     $officeRow["stopSumOnly"]+=isset($serviceForST[$city][$key])?$serviceForST[$city][$key]["num_month"]:0;
                 }
                 if(isset($lastServiceForST[$city][$key])){
                     $officeRow["stop_sum_last"]+=isset($lastServiceForST[$city][$key])?-1*$lastServiceForST[$city][$key]["num_stop"]:0;
+                    $officeRow["stop_sum_none_last"]+=isset($lastServiceForST[$city][$key])?-1*$lastServiceForST[$city][$key]["num_stop_none"]:0;
+                    $officeRow["stop_2024_11_last"]+=isset($lastServiceForST[$city][$key])?$lastServiceForST[$city][$key]["num_stop_none"]:0;
                     $officeRow["pause_sum_last"]+=isset($lastServiceForST[$city][$key])?-1*$lastServiceForST[$city][$key]["num_pause"]:0;
                 }
                 //恢复
@@ -1139,10 +1164,16 @@ class ComparisonForm extends CFormModel
         $list["net_sum"]+=$list["new_sum"]+$list["new_sum_n"]+$list["new_month_n"];
         $list["net_sum"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
         $list["net_sum"]+=$list["amend_sum"];
+        if($this->end_date>CountSearch::$stop_new_dt){
+            //$list["net_sum"]+=$list["stop_2024_11"];
+        }
         $list["net_sum_last"]=0;
         $list["net_sum_last"]+=$list["new_sum_last"]+$list["new_sum_n_last"]+$list["new_month_n_last"];
         $list["net_sum_last"]+=$list["stop_sum_last"]+$list["resume_sum_last"]+$list["pause_sum_last"];
         $list["net_sum_last"]+=$list["amend_sum_last"];
+        if($this->end_date>CountSearch::$stop_new_dt){
+            //$list["net_sum_last"]+=$list["stop_2024_11_last"];
+        }
         $list["new_rate"] = $this->nowAndLastRate($list["new_sum"],$list["new_sum_last"],true);
         $list["new_n_rate"] = $this->nowAndLastRate($list["new_sum_n"],$list["new_sum_n_last"],true);
         $list["new_month_rate"] = $this->nowAndLastRate($list["new_month_n"],$list["new_month_n_last"],true);

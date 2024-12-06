@@ -85,6 +85,7 @@ class SummaryController extends Controller
         }else{
             $model->search_year = date("Y");
             $model->search_month = date("n");
+            $model->search_month_end = $model->search_month;
             $model->search_start_date = date("Y/m/01");
             $model->search_end_date = date("Y/m/d");
             $i = ceil($model->search_month/3);//向上取整

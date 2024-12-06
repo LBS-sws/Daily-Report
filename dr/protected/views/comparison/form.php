@@ -94,9 +94,21 @@ $this->pageTitle=Yii::app()->name . ' - Comparison Form';
                                 <div class="form-group">
                                     <?php echo $form->labelEx($model,'search_month',array('class'=>"col-lg-5 control-label")); ?>
                                     <div class="col-lg-5">
-                                        <?php echo $form->dropDownList($model, 'search_month',SummarySetList::getSelectMonth(),
-                                            array('readonly'=>true)
-                                        ); ?>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <?php echo $form->dropDownList($model, 'search_month',SummarySetList::getSelectMonth(),
+                                                    array('readonly'=>true)
+                                                ); ?>
+                                            </div>
+                                            <div class="col-lg-1" style="width: 0px;overflow: visible;padding: 0px;">
+                                                <span class="form-control-static">-</span>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <?php echo $form->dropDownList($model, 'search_month_end',SummarySetList::getSelectMonth(),
+                                                    array('readonly'=>true)
+                                                ); ?>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -35,8 +35,8 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 
 			<div class="form-group">
-				<?php echo $form->labelEx($model,'search_type',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-10">
+				<?php echo $form->labelEx($model,'search_type',array('class'=>"col-lg-2 control-label")); ?>
+				<div class="col-lg-10">
 					<?php echo $form->inlineRadioButtonList($model, 'search_type',SummarySetList::getSelectType(),
 						array('readonly'=>false,'id'=>'search_type')
 					); ?>
@@ -45,16 +45,16 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
             <div id="search_div">
                 <div data-id="1" <?php if ($model->search_type!=1){ echo "style='display:none'"; } ?>>
                     <div class="form-group">
-                        <?php echo $form->labelEx($model,'search_year',array('class'=>"col-sm-2 control-label")); ?>
-                        <div class="col-sm-2">
+                        <?php echo $form->labelEx($model,'search_year',array('class'=>"col-lg-2 control-label")); ?>
+                        <div class="col-lg-2">
                             <?php echo $form->dropDownList($model, 'search_year',SummarySetList::getSelectYear(),
                                 array('readonly'=>false,'id'=>'year_one')
                             ); ?>
                         </div>
                     </div>
                     <div class="form-group">
-                        <?php echo $form->labelEx($model,'search_quarter',array('class'=>"col-sm-2 control-label")); ?>
-                        <div class="col-sm-2">
+                        <?php echo $form->labelEx($model,'search_quarter',array('class'=>"col-lg-2 control-label")); ?>
+                        <div class="col-lg-2">
                             <?php echo $form->dropDownList($model, 'search_quarter',SummarySetList::getSummaryMonthList(),
                                 array('readonly'=>false)
                             ); ?>
@@ -63,34 +63,42 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
                 </div>
                 <div data-id="2" <?php if ($model->search_type!=2){ echo "style='display:none'"; } ?>>
                     <div class="form-group">
-                        <?php echo $form->labelEx($model,'search_year',array('class'=>"col-sm-2 control-label")); ?>
-                        <div class="col-sm-2">
+                        <?php echo $form->labelEx($model,'search_year',array('class'=>"col-lg-2 control-label")); ?>
+                        <div class="col-lg-2">
                             <?php echo $form->dropDownList($model, 'search_year',SummarySetList::getSelectYear(),
                                 array('readonly'=>false,'id'=>'year_two')
                             ); ?>
                         </div>
                     </div>
                     <div class="form-group">
-                        <?php echo $form->labelEx($model,'search_month',array('class'=>"col-sm-2 control-label")); ?>
-                        <div class="col-sm-2">
+                        <?php echo $form->labelEx($model,'search_month',array('class'=>"col-lg-2 control-label")); ?>
+                        <div class="col-lg-1">
                             <?php echo $form->dropDownList($model, 'search_month',SummarySetList::getSelectMonth(),
-                                array('readonly'=>false)
+                                array('readonly'=>false,'id'=>'search_month')
+                            ); ?>
+                        </div>
+                        <div class="col-lg-1" style="width: 0px;overflow: visible;padding: 0px;">
+                            <span class="form-control-static">-</span>
+                        </div>
+                        <div class="col-lg-1">
+                            <?php echo $form->dropDownList($model, 'search_month_end',SummarySetList::getSelectMonth(),
+                                array('readonly'=>false,'id'=>'search_month_end')
                             ); ?>
                         </div>
                     </div>
                 </div>
                 <div data-id="3" <?php if ($model->search_type!=3){ echo "style='display:none'"; } ?>>
                     <div class="form-group">
-                        <?php echo $form->labelEx($model,'search_start_date',array('class'=>"col-sm-2 control-label")); ?>
-                        <div class="col-sm-2">
+                        <?php echo $form->labelEx($model,'search_start_date',array('class'=>"col-lg-2 control-label")); ?>
+                        <div class="col-lg-2">
                             <?php echo $form->textField($model, 'search_start_date',
                                 array('readonly'=>false,'prepend'=>"<span class='fa fa-calendar'></span>")
                             ); ?>
                         </div>
                     </div>
                     <div class="form-group">
-                        <?php echo $form->labelEx($model,'search_end_date',array('class'=>"col-sm-2 control-label")); ?>
-                        <div class="col-sm-2">
+                        <?php echo $form->labelEx($model,'search_end_date',array('class'=>"col-lg-2 control-label")); ?>
+                        <div class="col-lg-2">
                             <?php echo $form->textField($model, 'search_end_date',
                                 array('readonly'=>false,'prepend'=>"<span class='fa fa-calendar'></span>")
                             ); ?>
@@ -98,6 +106,8 @@ $this->pageTitle=Yii::app()->name . ' - Task Form';
                     </div>
                 </div>
             </div>
+            <!--查询說明-->
+            <?php $this->renderPartial('//comparison/indexNote'); ?>
 		</div>
 	</div>
 </section>

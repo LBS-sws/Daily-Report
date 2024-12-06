@@ -8,6 +8,7 @@ class SummaryForm extends CFormModel
     public $search_type=3;//查詢類型 1：季度 2：月份 3：天
     public $search_year;//查詢年份
     public $search_month;//查詢月份
+    public $search_month_end;//查詢月份(结束)
     public $search_quarter;//查詢季度
 	public $start_date;
 	public $end_date;
@@ -52,7 +53,7 @@ class SummaryForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('search_type,search_start_date,search_end_date,search_year,search_quarter,search_month','safe'),
+            array('search_type,search_start_date,search_end_date,search_year,search_quarter,search_month,search_month_end','safe'),
 			array('search_type','required'),
             array('search_type','validateDate'),
 		);
@@ -76,6 +77,7 @@ class SummaryForm extends CFormModel
                 }else{
                     $dateTimer = strtotime($this->search_year."/".$this->search_month."/01");
                     $this->start_date = date("Y/m/01",$dateTimer);
+                    $dateTimer = strtotime($this->search_year."/".$this->search_month_end."/01");
                     $this->end_date = date("Y/m/t",$dateTimer);
                     $i = ceil($this->search_month/3);//向上取整
                     $this->month_type = 3*$i-2;
@@ -100,6 +102,14 @@ class SummaryForm extends CFormModel
                 }
                 break;
         }
+        if($this->end_date<$this->start_date){
+            $this->addError($attribute, "查询时间异常");
+        }
+        $boolDate = CountSearch::$stop_new_dt."/01";
+        $boolDate = date("Y/m/01",strtotime($boolDate." + 1 month"));
+        if($this->start_date<$boolDate&&$this->end_date>=$boolDate){
+            $this->addError($attribute, "查询时间段不能跨过{$boolDate}");
+        }
         //上月的開始及結束時間
         $this->last_month_start = CountSearch::computeLastMonth($this->start_date);
         $this->last_month_end = CountSearch::computeLastMonth($this->end_date);
@@ -118,6 +128,7 @@ class SummaryForm extends CFormModel
         return array(
             'search_year'=>$this->search_year,
             'search_month'=>$this->search_month,
+            'search_month_end'=>$this->search_month_end,
             'search_type'=>$this->search_type,
             'search_quarter'=>$this->search_quarter,
             'search_start_date'=>$this->search_start_date,
@@ -216,10 +227,13 @@ class SummaryForm extends CFormModel
 	    $list["num_growth"]+=$list["num_new"];
 	    $list["num_growth"]+=$list["u_invoice_sum"];
 	    $list["num_growth"]+=$list["last_month_sum"];
-	    $list["num_growth"]+=$list["num_stop_none"];//2024年11月29日09:42:21净增长金额改成正常的终止服务
+	    $list["num_growth"]+=$list["num_stop"];
 	    $list["num_growth"]+=$list["num_restore"];
 	    $list["num_growth"]+=$list["num_pause"];
 	    $list["num_growth"]+=$list["num_update"];
+        if($this->end_date>CountSearch::$stop_new_dt){
+            $list["net_2024_11"]=$list["num_growth"]+$list["stop_2024_11"];
+        }
 
         if(SummaryForm::targetReadyBase()){
             $list["start_two_gross"] = $bool?$list["start_two_gross"]:ComparisonForm::resetNetOrGross($list["start_two_gross"],$this->day_num,$this->search_type);
@@ -266,10 +280,13 @@ class SummaryForm extends CFormModel
 	    $list["num_growth"]+=$list["num_new"];
 	    $list["num_growth"]+=$list["u_invoice_sum"];
 	    $list["num_growth"]+=$list["last_month_sum"];
-	    $list["num_growth"]+=$list["num_stop_none"];//2024年11月29日09:42:21净增长金额改成正常的终止服务
+	    $list["num_growth"]+=$list["num_stop"];
 	    $list["num_growth"]+=$list["num_restore"];
 	    $list["num_growth"]+=$list["num_pause"];
 	    $list["num_growth"]+=$list["num_update"];
+	    if($this->end_date>CountSearch::$stop_new_dt){
+            $list["net_2024_11"]=$list["num_growth"]+$list["stop_2024_11"];
+        }
     }
 
     //顯示提成表的表格內容
@@ -283,22 +300,37 @@ class SummaryForm extends CFormModel
     }
 
     private function getTopArr(){
+        if($this->end_date<=CountSearch::$stop_new_dt){
+            $stopTopArr = array(
+                array("name"=>Yii::t("summary","New(not single)")),//新增服务(除一次性服务)
+                array("name"=>Yii::t("summary","New(single) + New(INV)")),//一次性服务+新增（产品）
+                array("name"=>Yii::t("summary","Last Month Single + New(INV)")),//上月一次性服务+新增产品
+                array("name"=>Yii::t("summary","Terminate service")),//终止服务
+                array("name"=>Yii::t("summary","Resume service")),//恢复服务
+                array("name"=>Yii::t("summary","Suspended service")),//暂停服务
+                array("name"=>Yii::t("summary","Amendment service")),//更改服务
+                array("name"=>Yii::t("summary","Net growth")),//净增长
+                array("name"=>Yii::t("summary","num stop show")),//暂停后终止服务金额
+            );
+        }else{
+            $stopTopArr = array(
+                array("name"=>Yii::t("summary","New(not single)")),//新增服务(除一次性服务)
+                array("name"=>Yii::t("summary","New(single) + New(INV)")),//一次性服务+新增（产品）
+                array("name"=>Yii::t("summary","Last Month Single + New(INV)")),//上月一次性服务+新增产品
+                array("name"=>Yii::t("summary","Terminate service")),//终止服务
+                array("name"=>Yii::t("summary","Resume service")),//恢复服务
+                array("name"=>Yii::t("summary","Suspended service")),//暂停服务
+                array("name"=>Yii::t("summary","Amendment service")),//更改服务
+                array("name"=>Yii::t("summary","Net growth")),//净增长
+                array("name"=>Yii::t("summary","stop 2024 11")),//历史暂停转终止
+                array("name"=>Yii::t("summary","net 2024 11")),//净增长（剔除暂停转终止）
+            );
+        }
         $topList=array(
             array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
             array("name"=>Yii::t("summary","Actual monthly amount"),"rowspan"=>2),//服务生意额
             array("name"=>Yii::t("summary","Signing status"),"background"=>"#f7fd9d",
-                "colspan"=>array(
-                    array("name"=>Yii::t("summary","New(not single)")),//新增服务(除一次性服务)
-                    array("name"=>Yii::t("summary","New(single) + New(INV)")),//一次性服务+新增（产品）
-                    array("name"=>Yii::t("summary","Last Month Single + New(INV)")),//上月一次性服务+新增产品
-                    array("name"=>Yii::t("summary","Terminate service")),//终止服务
-                    array("name"=>Yii::t("summary","Resume service")),//恢复服务
-                    array("name"=>Yii::t("summary","Suspended service")),//暂停服务
-                    array("name"=>Yii::t("summary","Amendment service")),//更改服务
-                    array("name"=>Yii::t("summary","Net growth")),//净增长
-                    array("name"=>Yii::t("summary","num stop none")),//暂停后终止服务金额
-                    array("name"=>Yii::t("summary","num stop show")),//暂停后终止服务金额
-                )
+                "colspan"=>$stopTopArr
             ),//签单情况
             array("name"=>Yii::t("summary","New customer(service)"),"background"=>"#fcd5b4",
                 "colspan"=>array(
@@ -441,8 +473,16 @@ class SummaryForm extends CFormModel
     private function getDataAllKeyStr(){
         $bodyKey = array(
             "city_name","u_actual_money","num_new","u_invoice_sum","last_month_sum","num_stop","num_restore","num_pause","num_update",
-            "num_growth","num_stop_none","num_stop_show","num_long","num_short","one_service","num_cate","num_not_cate","u_num_cate","u_num_not_cate"
+            "num_growth"
         );
+        if($this->end_date<=CountSearch::$stop_new_dt){
+            $bodyKey[]="num_stop_none";
+        }else{
+            $bodyKey[]="stop_2024_11";
+            $bodyKey[]="net_2024_11";
+        }
+        $bodyKeyTwo = array("num_stop_show","num_long","num_short","one_service","num_cate","num_not_cate","u_num_cate","u_num_not_cate");
+        $bodyKey = array_merge($bodyKey,$bodyKeyTwo);
         $bodyKey[]="last_one_service";
         $bodyKey[]="last_u_invoice_sum";
         if(SummaryForm::targetReadyUpside()){
@@ -742,6 +782,7 @@ class SummaryForm extends CFormModel
                 $officeRow["num_pause"]=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_pause"]:0;
                 $officeRow["num_stop"]=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_stop"]:0;
                 $officeRow["num_stop_none"]=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_stop_none"]:0;
+                $officeRow["stop_2024_11"]=isset($serviceForST[$city][$key])?$serviceForST[$city][$key]["num_stop_none"]:0;
                 $officeRow["num_restore"]=isset($serviceForR[$city][$key])?$serviceForR[$city][$key]:0;
                 $officeRow["num_update"]=isset($serviceForA[$city][$key])?$serviceForA[$city][$key]:0;
                 if(isset($serviceDetailForAdd[$city][$key])){

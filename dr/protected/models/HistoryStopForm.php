@@ -102,9 +102,9 @@ class HistoryStopForm extends CFormModel
 
         $this->u_load_data['u_load_end'] = time();
         //服务终止
-        $nowServiceList = CountSearch::getServiceForTypeToMonth($this->end_date,$city_allow,"T");
+        $nowServiceList = CountSearch::getServiceForSTToMonth($this->end_date,$city_allow,"T");
         //服务终止(上一年)
-        $lastServiceList = CountSearch::getServiceForTypeToMonth($this->last_end_date,$city_allow,"T");
+        $lastServiceList = CountSearch::getServiceForSTToMonth($this->last_end_date,$city_allow,"T");
 
         foreach ($citySetList as $cityRow){
             $city = $cityRow["code"];

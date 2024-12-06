@@ -71,10 +71,18 @@ $this->pageTitle=Yii::app()->name . ' - Outsource Form';
                         </div>
                     </div>
                     <div class="form-group">
-                        <?php echo $form->labelEx($model,'search_month',array('class'=>"col-sm-2 control-label")); ?>
-                        <div class="col-sm-2">
+                        <?php echo $form->labelEx($model,'search_month',array('class'=>"col-lg-2 control-label")); ?>
+                        <div class="col-lg-1">
                             <?php echo $form->dropDownList($model, 'search_month',SummarySetList::getSelectMonth(),
-                                array('readonly'=>false)
+                                array('readonly'=>false,'id'=>'search_month')
+                            ); ?>
+                        </div>
+                        <div class="col-lg-1" style="width: 0px;overflow: visible;padding: 0px;">
+                            <span class="form-control-static">-</span>
+                        </div>
+                        <div class="col-lg-1">
+                            <?php echo $form->dropDownList($model, 'search_month_end',SummarySetList::getSelectMonth(),
+                                array('readonly'=>false,'id'=>'search_month_end')
                             ); ?>
                         </div>
                     </div>
@@ -98,6 +106,8 @@ $this->pageTitle=Yii::app()->name . ' - Outsource Form';
                     </div>
                 </div>
             </div>
+            <!--查询說明-->
+            <?php $this->renderPartial('//comparison/indexNote'); ?>
 		</div>
 	</div>
 </section>

@@ -8,6 +8,7 @@ class OutsourceForm extends CFormModel
     public $search_type=3;//查詢類型 1：季度 2：月份 3：天
     public $search_year;//查詢年份
     public $search_month;//查詢月份
+    public $search_month_end;//查詢月份(结束)
     public $search_quarter;//查詢季度
 	public $start_date;
 	public $end_date;
@@ -57,7 +58,7 @@ class OutsourceForm extends CFormModel
     public function rules()
     {
         return array(
-            array('search_type,search_start_date,search_end_date,search_year,search_quarter,search_month','safe'),
+            array('search_type,search_start_date,search_end_date,search_year,search_quarter,search_month,search_month_end','safe'),
             array('search_type','required'),
             array('search_type','validateDate'),
         );
@@ -81,6 +82,7 @@ class OutsourceForm extends CFormModel
                 }else{
                     $dateTimer = strtotime($this->search_year."/".$this->search_month."/01");
                     $this->start_date = date("Y/m/01",$dateTimer);
+                    $dateTimer = strtotime($this->search_year."/".$this->search_month_end."/01");
                     $this->end_date = date("Y/m/t",$dateTimer);
                     $i = ceil($this->search_month/3);//向上取整
                     $this->month_type = 3*$i-2;
@@ -105,6 +107,9 @@ class OutsourceForm extends CFormModel
                 }
                 break;
         }
+        if($this->end_date<$this->start_date){
+            $this->addError($attribute, "查询时间异常");
+        }
     }
 
     public function setCriteria($criteria)
@@ -120,6 +125,7 @@ class OutsourceForm extends CFormModel
         return array(
             'search_year'=>$this->search_year,
             'search_month'=>$this->search_month,
+            'search_month_end'=>$this->search_month_end,
             'search_type'=>$this->search_type,
             'search_quarter'=>$this->search_quarter,
             'search_start_date'=>$this->search_start_date,
