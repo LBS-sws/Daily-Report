@@ -11,7 +11,7 @@ class CountSearch extends SearchForCurlU {
 
     protected static $system=0;//0:大陸 1:台灣 2:國際
 
-    public static $stop_new_dt="2024/10";//2024年11月后改版终止金额计算
+    public static $stop_new_dt="2024/11";//2024年11月后改版终止金额计算
 
     public static function getSystem(){
         return self::$system;
