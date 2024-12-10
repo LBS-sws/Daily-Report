@@ -476,12 +476,12 @@ class SummaryForm extends CFormModel
             "num_growth"
         );
         if(date_format(date_create($this->end_date),'Y/m')<=CountSearch::$stop_new_dt){
-            $bodyKey[]="num_stop_none";
+            $bodyKey[]="num_stop_show";
         }else{
             $bodyKey[]="stop_2024_11";
             $bodyKey[]="net_2024_11";
         }
-        $bodyKeyTwo = array("num_stop_show","num_long","num_short","one_service","num_cate","num_not_cate","u_num_cate","u_num_not_cate");
+        $bodyKeyTwo = array("num_long","num_short","one_service","num_cate","num_not_cate","u_num_cate","u_num_not_cate");
         $bodyKey = array_merge($bodyKey,$bodyKeyTwo);
         $bodyKey[]="last_one_service";
         $bodyKey[]="last_u_invoice_sum";
