@@ -129,6 +129,7 @@ class BonusMonthForm extends CFormModel
                 $defMoreList["pause_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_pause"]:0;
                 $defMoreList["stop_sum_none"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop_none"]:0;
                 $defMoreList["stop_2024_11"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_stop_none"]:0;
+                $defMoreList["stop_2024_11"] = -1*$defMoreList["stop_sum"]-$defMoreList["stop_2024_11"];
                 //$defMoreList["stopSumOnly"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_month"]:0;
             }
             //恢复

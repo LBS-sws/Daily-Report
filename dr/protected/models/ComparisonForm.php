@@ -291,12 +291,14 @@ class ComparisonForm extends CFormModel
                 $defMoreList["pause_sum"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_pause"]:0;
                 $defMoreList["stop_sum_none"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop_none"]:0;
                 $defMoreList["stop_2024_11"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_stop_none"]:0;
+                $defMoreList["stop_2024_11"] = -1*$defMoreList["stop_sum"]-$defMoreList["stop_2024_11"];
                 $defMoreList["stopSumOnly"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_month"]:0;
             }
             if(key_exists($city,$lastServiceForST)){
                 $defMoreList["stop_sum_last"]+=key_exists($city,$lastServiceForST)?-1*$lastServiceForST[$city]["num_stop"]:0;
                 $defMoreList["stop_sum_none_last"]+=key_exists($city,$lastServiceForST)?-1*$lastServiceForST[$city]["num_stop_none"]:0;
                 $defMoreList["stop_2024_11_last"]+=key_exists($city,$lastServiceForST)?$lastServiceForST[$city]["num_stop_none"]:0;
+                $defMoreList["stop_2024_11_last"] = -1*$defMoreList["stop_sum_last"]-$defMoreList["stop_2024_11_last"];
                 $defMoreList["pause_sum_last"]+=key_exists($city,$lastServiceForST)?-1*$lastServiceForST[$city]["num_pause"]:0;
             }
             //恢复
@@ -1118,12 +1120,14 @@ class ComparisonForm extends CFormModel
                     $officeRow["pause_sum"]+=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_pause"]:0;
                     $officeRow["stop_sum_none"]+=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_stop_none"]:0;
                     $officeRow["stop_2024_11"]+=isset($serviceForST[$city][$key])?$serviceForST[$city][$key]["num_stop_none"]:0;
+                    $officeRow["stop_2024_11"] = -1*$officeRow["stop_sum"]-$officeRow["stop_2024_11"];
                     $officeRow["stopSumOnly"]+=isset($serviceForST[$city][$key])?$serviceForST[$city][$key]["num_month"]:0;
                 }
                 if(isset($lastServiceForST[$city][$key])){
                     $officeRow["stop_sum_last"]+=isset($lastServiceForST[$city][$key])?-1*$lastServiceForST[$city][$key]["num_stop"]:0;
                     $officeRow["stop_sum_none_last"]+=isset($lastServiceForST[$city][$key])?-1*$lastServiceForST[$city][$key]["num_stop_none"]:0;
                     $officeRow["stop_2024_11_last"]+=isset($lastServiceForST[$city][$key])?$lastServiceForST[$city][$key]["num_stop_none"]:0;
+                    $officeRow["stop_2024_11_last"] = -1*$officeRow["stop_sum_last"]-$officeRow["stop_2024_11_last"];
                     $officeRow["pause_sum_last"]+=isset($lastServiceForST[$city][$key])?-1*$lastServiceForST[$city][$key]["num_pause"]:0;
                 }
                 //恢复

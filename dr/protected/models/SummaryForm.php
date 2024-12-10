@@ -783,6 +783,7 @@ class SummaryForm extends CFormModel
                 $officeRow["num_stop"]=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_stop"]:0;
                 $officeRow["num_stop_none"]=isset($serviceForST[$city][$key])?-1*$serviceForST[$city][$key]["num_stop_none"]:0;
                 $officeRow["stop_2024_11"]=isset($serviceForST[$city][$key])?$serviceForST[$city][$key]["num_stop_none"]:0;
+                $officeRow["stop_2024_11"] = -1*$officeRow["num_stop"]-$officeRow["stop_2024_11"];
                 $officeRow["num_restore"]=isset($serviceForR[$city][$key])?$serviceForR[$city][$key]:0;
                 $officeRow["num_update"]=isset($serviceForA[$city][$key])?$serviceForA[$city][$key]:0;
                 if(isset($serviceDetailForAdd[$city][$key])){

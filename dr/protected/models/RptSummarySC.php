@@ -64,6 +64,7 @@ class RptSummarySC extends ReportData2 {
             $defMoreList["num_stop"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop"]:0;
             $defMoreList["num_stop_none"]+=key_exists($city,$serviceForST)?-1*$serviceForST[$city]["num_stop_none"]:0;
             $defMoreList["stop_2024_11"]+=key_exists($city,$serviceForST)?$serviceForST[$city]["num_stop_none"]:0;
+            $defMoreList["stop_2024_11"] = -1*$defMoreList["num_stop"]-$defMoreList["stop_2024_11"];
             $defMoreList["num_restore"]+=key_exists($city,$serviceForR)?$serviceForR[$city]:0;
             $defMoreList["num_update"]+=key_exists($city,$serviceForA)?$serviceForA[$city]:0;
             if(key_exists($city,$serviceDetailForAdd)){
