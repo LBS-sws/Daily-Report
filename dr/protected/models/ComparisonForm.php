@@ -445,7 +445,7 @@ class ComparisonForm extends CFormModel
         //$list["net_sum"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
         $list["net_sum"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
         $list["net_sum"]+=$list["amend_sum"];
-        if($this->end_date>CountSearch::$stop_new_dt){
+        if(date_format(date_create($this->end_date),'Y/m')>CountSearch::$stop_new_dt){
             //$list["net_sum"]+=$list["stop_2024_11"];
         }
         $list["net_sum_last"]=0;
@@ -1164,14 +1164,14 @@ class ComparisonForm extends CFormModel
         $list["net_sum"]+=$list["new_sum"]+$list["new_sum_n"]+$list["new_month_n"];
         $list["net_sum"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
         $list["net_sum"]+=$list["amend_sum"];
-        if($this->end_date>CountSearch::$stop_new_dt){
+        if(date_format(date_create($this->end_date),'Y/m')>CountSearch::$stop_new_dt){
             //$list["net_sum"]+=$list["stop_2024_11"];
         }
         $list["net_sum_last"]=0;
         $list["net_sum_last"]+=$list["new_sum_last"]+$list["new_sum_n_last"]+$list["new_month_n_last"];
         $list["net_sum_last"]+=$list["stop_sum_last"]+$list["resume_sum_last"]+$list["pause_sum_last"];
         $list["net_sum_last"]+=$list["amend_sum_last"];
-        if($this->end_date>CountSearch::$stop_new_dt){
+        if(date_format(date_create($this->end_date),'Y/m')>CountSearch::$stop_new_dt){
             //$list["net_sum_last"]+=$list["stop_2024_11_last"];
         }
         $list["new_rate"] = $this->nowAndLastRate($list["new_sum"],$list["new_sum_last"],true);

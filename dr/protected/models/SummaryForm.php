@@ -231,7 +231,7 @@ class SummaryForm extends CFormModel
 	    $list["num_growth"]+=$list["num_restore"];
 	    $list["num_growth"]+=$list["num_pause"];
 	    $list["num_growth"]+=$list["num_update"];
-        if($this->end_date>CountSearch::$stop_new_dt){
+        if(date_format(date_create($this->end_date),'Y/m')>CountSearch::$stop_new_dt){
             $list["net_2024_11"]=$list["num_growth"]+$list["stop_2024_11"];
         }
 
@@ -284,7 +284,7 @@ class SummaryForm extends CFormModel
 	    $list["num_growth"]+=$list["num_restore"];
 	    $list["num_growth"]+=$list["num_pause"];
 	    $list["num_growth"]+=$list["num_update"];
-	    if($this->end_date>CountSearch::$stop_new_dt){
+        if(date_format(date_create($this->end_date),'Y/m')>CountSearch::$stop_new_dt){
             $list["net_2024_11"]=$list["num_growth"]+$list["stop_2024_11"];
         }
     }
@@ -300,7 +300,7 @@ class SummaryForm extends CFormModel
     }
 
     private function getTopArr(){
-        if($this->end_date<=CountSearch::$stop_new_dt){
+        if(date_format(date_create($this->end_date),'Y/m')<=CountSearch::$stop_new_dt){
             $stopTopArr = array(
                 array("name"=>Yii::t("summary","New(not single)")),//新增服务(除一次性服务)
                 array("name"=>Yii::t("summary","New(single) + New(INV)")),//一次性服务+新增（产品）
@@ -475,7 +475,7 @@ class SummaryForm extends CFormModel
             "city_name","u_actual_money","num_new","u_invoice_sum","last_month_sum","num_stop","num_restore","num_pause","num_update",
             "num_growth"
         );
-        if($this->end_date<=CountSearch::$stop_new_dt){
+        if(date_format(date_create($this->end_date),'Y/m')<=CountSearch::$stop_new_dt){
             $bodyKey[]="num_stop_none";
         }else{
             $bodyKey[]="stop_2024_11";
