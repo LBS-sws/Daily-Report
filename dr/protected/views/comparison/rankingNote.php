@@ -1,5 +1,7 @@
 <style>
     .ranking-note-body>dl>dd{ padding-left: 15px;}
+    .ranking-note-span{ position: relative;display: inline-block;padding-left: 25px;}
+    .ranking-note-span>.fa{ position: absolute; width: 0px;height: 0px;overflow: visible;left: 6px;top: 3px;}
     .ranking-note{
         position: fixed;
         background: #fff;
@@ -39,13 +41,20 @@
                     <p><?php echo Yii::t("summary","comparison_remark_tw_3");?></p>
                     <p><?php echo Yii::t("summary","comparison_remark_tw_4");?></p>
                 <?php else:?>
-                    <p><?php echo Yii::t("summary","comparison_remark_1");?></p>
+                    <p>
+                        <span><?php echo Yii::t("summary","comparison_remark_1");?></span><br>
+                        <span class="ranking-note-span"><span class="fa fa-circle"></span><?php echo Yii::t("summary","comparison_remark_1_1");?></span><br>
+                        <span class="ranking-note-span"><span class="fa fa-circle"></span><?php echo Yii::t("summary","comparison_remark_1_2");?></span>
+                    </p>
                     <p><?php echo Yii::t("summary","comparison_remark_2");?></p>
                     <p><?php echo Yii::t("summary","comparison_remark_3");?></p>
                     <p><?php echo Yii::t("summary","comparison_remark_4");?></p>
                 <?php endif ?>
                 <p><?php echo Yii::t("summary","comparison_remark_5");?></p>
-                <p><?php echo Yii::t("summary","comparison_remark_6");?></p>
+                <p>
+                    <span><?php echo Yii::t("summary","comparison_remark_6");?></span><br>
+                    <span class="ranking-note-span"><span class="fa fa-circle"></span><?php echo Yii::t("summary","comparison_remark_6_1");?></span>
+                </p>
                 <p><?php echo Yii::t("summary","comparison_remark_7");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_8");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_9_{$model->search_type}");?></p>
