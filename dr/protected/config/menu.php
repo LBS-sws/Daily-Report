@@ -329,6 +329,10 @@ return array(
                 'access'=>'G13',
                 'url'=>'/salesAverage/index',
             ),
+            'Insect and clean'=>array(//全国虫控、清洁停单率
+                'access'=>'G29',
+                'url'=>'/InsetClean/index',
+            ),
             'Lifeline Set'=>array(//生命线设置
                 'access'=>'G11',
                 'url'=>'/lifeline/index',

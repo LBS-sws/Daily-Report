@@ -196,5 +196,6 @@ return array(
     'KA Comparison'=>'KA合同同比分析',
     'Outsource'=>'外包數據分析',
     'KA signed report'=>'KA新簽報表',
+    'Insect and clean'=>'全國蟲控、清潔停單率',
 );
 ?>
