@@ -404,7 +404,8 @@ class SalesAnalysisForm extends CFormModel
                     //达标人数
                     $amt_sum = key_exists($staffRow["user_id"],$nowData)?$nowData[$staffRow["user_id"]]:array();
                     $amt_sum = key_exists($yearMonth,$amt_sum)?$amt_sum[$yearMonth]:0;
-                    $tar_num = key_exists($city,$lifelineList)?$lifelineList[$city]:80000;
+                    //$tar_num = key_exists($city,$lifelineList)?$lifelineList[$city]:80000;
+                    $tar_num = LifelineForm::getLineValueForC_O($lifelineList,$staffRow["city"],$staffRow["office_id"]);
                     if($amt_sum>$tar_num){
                         $data[$city]["list"]["max_num"]++;
                     }else{

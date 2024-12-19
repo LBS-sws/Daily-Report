@@ -5,11 +5,11 @@
  */
 class CountSearch extends SearchForCurlU {
 
-    protected static $whereSQL=" and not(f.rpt_cat='INV' and f.single=1)";
-    protected static $IDBool=true;//是否需要ID服務的查詢
-    protected static $KABool=true;//是否需要KA服務的查詢
+    public static $whereSQL=" and not(f.rpt_cat='INV' and f.single=1)";
+    public static $IDBool=true;//是否需要ID服務的查詢
+    public static $KABool=true;//是否需要KA服務的查詢
 
-    protected static $system=0;//0:大陸 1:台灣 2:國際
+    public static $system=0;//0:大陸 1:台灣 2:國際
 
     public static $stop_new_dt="2024/11";// 2024年11月后改版终止金额计算
 
