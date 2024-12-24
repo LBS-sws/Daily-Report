@@ -217,8 +217,7 @@ class BonusMonthForm extends CFormModel
             $list["num_growth"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
             $list["num_growth"]+=$list["amend_sum"];
             if(date_format(date_create($this->end_date),'Y/m')>CountSearch::$stop_new_dt){
-                //2024年12月份改版
-                //$list["num_growth"]+=$list["stop_2024_11"];
+                $list["num_growth"]=$list["num_growth"]+$list["stop_2024_11"];
             }
         }
 
@@ -241,6 +240,10 @@ class BonusMonthForm extends CFormModel
     }
 
     protected function getTopArr(){
+        $num_growth = Yii::t('summary',"Net growth");
+        if(date_format(date_create($this->end_date),'Y/m')>CountSearch::$stop_new_dt){
+            $num_growth = Yii::t("summary","net 2024 11");
+        }
         $topList=array(
             array("name"=>Yii::t('summary',"City"),"rowspan"=>3),//城市
             array("name"=>Yii::t('summary',"data from summary"),"background"=>"#f7fd9d",//来源系统-合同分析查询
@@ -250,7 +253,7 @@ class BonusMonthForm extends CFormModel
                         "colspan"=>array(
                             array("name"=>Yii::t('summary',"New(not single)")),//新增服务(除一次性服务)
                             array("name"=>Yii::t('summary',"Update(for add)")),//更改服务（只含新增）
-                            array("name"=>Yii::t('summary',"Net growth")),//净增长
+                            array("name"=>$num_growth),//净增长
                         )
                     ),
                     array(
