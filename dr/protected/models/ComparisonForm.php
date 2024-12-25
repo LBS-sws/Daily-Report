@@ -223,7 +223,7 @@ class ComparisonForm extends CFormModel
         //获取U系统的服务单数据(上月)
         $uServiceMoneyLast = CountSearch::getUServiceMoney($monthStartDate,$monthEndDate,$city_allow,$uServiceType);
         //获取U系统的服务单数据(上月)(整月)
-        $uServiceMoneyAllLast = CountSearch::getUServiceMoney($allMonthStartDate,$allMonthEndDate,$city_allow,$uServiceType);
+        $uServiceMoneyAllLast = CountSearch::getUServiceMoney($allMonthStartDate,$allMonthEndDate,$city_allow);
         //获取U系统的產品数据(上月)(整月)
         $monthUInvAllMoney = CountSearch::getUInvMoney($allMonthStartDate,$allMonthEndDate,$city_allow);
         //获取U系统的產品数据
