@@ -71,10 +71,10 @@ class ServiceKAList extends CListPageModel
 		$clause = "";
 		switch ($this->office_type) {
 			case 'office_one'://本部
-				$clause .= " and a.office_id is null";
+				$clause .= " and a.office_id is null ";
 				break;
 			case 'office_two'://办事处
-				$clause .= " and a.office_id is not null";
+				$clause .= " and a.office_id is not null ";
 				break;
 		}
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
