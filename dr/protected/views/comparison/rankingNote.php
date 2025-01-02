@@ -57,12 +57,12 @@
                 </p>
                 <p><?php echo Yii::t("summary","comparison_remark_7");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_8");?></p>
-                <p><?php echo Yii::t("summary","comparison_remark_9_{$model->search_type}");?></p>
-                <p><?php echo Yii::t("summary","comparison_remark_10_{$model->search_type}");?></p>
+                <p><?php echo Yii::t("summary","comparison_remark_9");?></p>
+                <p><?php echo Yii::t("summary","comparison_remark_10");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_11");?></p>
                 <p><?php echo Yii::t("summary","comparison_remark_12");?></p>
-                <p><?php echo Yii::t("summary","comparison_remark_13_new");?></p>
-                <p><?php echo Yii::t("summary","comparison_remark_14_new");?></p>
+                <p><?php echo Yii::t("summary","comparison_remark_13");?></p>
+                <p><?php echo Yii::t("summary","comparison_remark_14");?></p>
             </div>
         </div>
     </div>
