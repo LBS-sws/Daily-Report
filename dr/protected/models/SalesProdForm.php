@@ -50,7 +50,7 @@ class SalesProdForm extends CFormModel
         }else{
             $city_allow = Yii::app()->user->city_allow();
             $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
-            $this->td_list = $this->getSalesForDept($city_allow,$this->end_date);
+            $this->td_list = $this->getSalesForDept($city_allow,$this->start_date,$this->end_date);
         }
     }
 
@@ -69,9 +69,10 @@ class SalesProdForm extends CFormModel
         );
     }
 
-    public static function getSalesForDept($city_allow,$endDate=""){
+    public function getSalesForDept($city_allow,$startDate="",$endDate=""){
         $list = array();
         $suffix = Yii::app()->params['envSuffix'];
+        $startDate = empty($startDate)?date("Y/m/01"):date("Y/m/d",strtotime($endDate));
         $endDate = empty($endDate)?date("Y/m/d"):date("Y/m/d",strtotime($endDate));
         $rows = Yii::app()->db->createCommand()
             ->select("dept.name as dept_name")
@@ -82,7 +83,7 @@ class SalesProdForm extends CFormModel
             ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}' and (
                 (a.staff_status = 0)
                 or
-                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/31')>='{$endDate}')
+                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/%d')>='{$startDate}')
              ) AND a.city in ({$city_allow})"
             )->group("dept.name")->order("dept.name desc")->queryAll();
         if($rows){
@@ -96,6 +97,7 @@ class SalesProdForm extends CFormModel
     private function getSalesDeptCountForCity($city_allow){
         $list = array();
         $suffix = Yii::app()->params['envSuffix'];
+        $startDate = $this->start_date;
         $endDate = $this->end_date;
         $selectSql = "";
         foreach ($this->td_list as $key=>$item){
@@ -115,7 +117,7 @@ class SalesProdForm extends CFormModel
             ->where("f.system_id='sal' and f.a_read_write like '%HK01%' and date_format(a.entry_time,'%Y/%m/%d')<='{$endDate}' and (
                 (a.staff_status = 0)
                 or
-                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/31')>='{$endDate}')
+                (a.staff_status=-1 and date_format(a.leave_time,'%Y/%m/%d')>='{$startDate}')
              ) AND a.city in ({$city_allow})"
             )->group("a.city")->queryAll();
         if($rows){
