@@ -8,6 +8,7 @@ class CrossApplyForm extends CFormModel
 	public $cross_num=0;
 	public $service_id;
 	public $u_system_id;
+	public $office_id;
 	public $contract_no;
 	public $apply_date;
 	public $month_amt;
@@ -342,13 +343,14 @@ class CrossApplyForm extends CFormModel
             $tableNameOne="swo_service_ka";
             $tableNameTwo="swo_service_ka_no";
         }
-        $row = Yii::app()->db->createCommand()->select("a.city,a.u_system_id,b.contract_no,a.amt_paid")->from("{$tableNameOne} a")
+        $row = Yii::app()->db->createCommand()->select("a.city,a.u_system_id,b.contract_no,a.amt_paid,a.office_id")->from("{$tableNameOne} a")
             ->leftJoin("{$tableNameTwo} b","a.id=b.service_id")
             ->where("a.id=:id",array(":id"=>$this->service_id))->queryRow();
         if($row){
             $this->old_city = $row["city"];
             $this->contract_no = $row["contract_no"];
             $this->u_system_id = $row["u_system_id"];
+            $this->office_id = $row["office_id"];
             if($bool){
                 $this->old_month_amt = $row["amt_paid"];
             }

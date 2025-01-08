@@ -219,6 +219,7 @@ class CrossAuditForm extends CrossApplyForm
             "contract_number"=>$this->contract_no,//合约编号
             "send_money"=>$this->month_amt,//发包方金额
             "send_contract_id"=>$this->old_city,//发包方（城市代号：ZY）
+            "send_office_id"=>self::getHrOfficeUIDForID($this->office_id),//发包方办事处（U系统办事处id）
             "audit_user_name"=>self::getEmployeeStrForUsername(Yii::app()->user->id),//审核人名称+编号如：400002_沈超
             "audit_date"=>General::toMyDate($this->audit_date),//审核日期
             "contract_id"=>$this->u_system_id,//u_system_id
@@ -235,6 +236,17 @@ class CrossAuditForm extends CrossApplyForm
             "event"=>$event,//申请类型
         );
         return $data;
+    }
+
+    public static function getHrOfficeUIDForID($office_id){
+        $suffix = Yii::app()->params['envSuffix'];
+        $row = Yii::app()->db->createCommand()->select("u_id")->from("hr{$suffix}.hr_office")
+            ->where("id=:id",array(":id"=>$office_id))->queryRow();
+        if($row){
+            return $row["u_id"];
+        }else{
+            return null;
+        }
     }
 
     public static function getEmployeeStrForUsername($username){
