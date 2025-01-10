@@ -837,6 +837,7 @@ class SystemU {
             }
         }
 
+        $rtn["message"] = mb_strlen($rtn["message"],'UTF-8')>250?mb_substr($rtn["message"],0,250,'UTF-8'):$rtn["message"];
         $sqlData=array(
             "status_type"=>$rtn['code']==200?"C":"E",
             "info_type"=>"cross",
