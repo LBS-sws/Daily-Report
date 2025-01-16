@@ -72,5 +72,7 @@ return array(
     'Invalid file type.'=>'无效的文件类型.',
     'Send Email'=>'发送邮件',
 	'Advice'=>'温馨提示',
+    'Please reset password'=>'系统检测到当前账号的密码过于简单，请重新设置密码！！',
+    'The password entered twice is inconsistent'=>'两次输入密码不一致！！！',
 );
 ?>

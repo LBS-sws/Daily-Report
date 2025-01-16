@@ -602,7 +602,7 @@ class General {
         return $rtn;
     }
 
-    public function systemMapping() {
+    public static function systemMapping() {
         $rtn = require(Yii::app()->basePath.'/config/system.php');
         return $rtn;
     }

@@ -69,5 +69,6 @@ return array(
 'Saving' => '保存中',
 'Invalid file type.'=>'無效的文件類型.',
 'Advice'=>'温馨提示',
+'Please reset password'=>'系統檢測到當前帳號的密碼過於簡單，請重新設置密碼！！',
 );
 ?>

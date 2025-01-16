@@ -1389,8 +1389,8 @@ EOD;
 		// add a hidden field so that if a model only has a file field, we can
 		// still use isset($_POST[$modelClass]) to detect if the input is submitted
 		$hiddenOptions=isset($htmlOptions['id']) ? array('id'=>self::ID_PREFIX.$htmlOptions['id']) : array('id'=>false);
-		return self::hiddenField($htmlOptions['name'],'',$hiddenOptions)
-			. self::activeInputField('file',$model,$attribute,$htmlOptions);
+		return self::activeInputField('file',$model,$attribute,$htmlOptions)
+			. self::hiddenField($htmlOptions['name'],'',$hiddenOptions);
 	}
 
 	/**
@@ -2052,6 +2052,9 @@ EOD;
 				$url=CJavaScript::quote(self::normalizeUrl($htmlOptions['submit']));
 			else
 				$url='';
+			//禁用提交后的按鈕  開始
+            $handler.="$(this).css('pointer-events','none');";
+            //禁用提交后的按鈕  結束
 			$handler.="jQuery.yii.submitForm(this,'$url',$params);{$return};";
 		}
 

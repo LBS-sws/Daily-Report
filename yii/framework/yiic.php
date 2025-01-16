@@ -11,7 +11,7 @@
  * @license http://www.yiiframework.com/license/
  * @version $Id$
  */
-
+var_dump(3);die();
 // fix for fcgi
 defined('STDIN') or define('STDIN', fopen('php://stdin', 'r'));
 

@@ -606,8 +606,9 @@ class CWebUser extends CApplicationComponent implements IWebUser
 		$n=strlen($prefix);
 		foreach($keys as $key)
 		{
-			if(!strncmp($key,$prefix,$n))
-				unset($_SESSION[$key]);
+			if(!strncmp($key,$prefix,$n)){
+                unset($_SESSION[$key]);
+            }
 		}
 	}
 
@@ -697,7 +698,7 @@ class CWebUser extends CApplicationComponent implements IWebUser
 	 */
 	protected function changeIdentity($id,$name,$states)
 	{
-		Yii::app()->getSession()->regenerateID(true);
+		//Yii::app()->getSession()->regenerateID(true);
 		$this->setId($id);
 		$this->setName($name);
 		$this->loadIdentityStates($states);

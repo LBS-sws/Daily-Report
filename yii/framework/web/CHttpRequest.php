@@ -1,4 +1,6 @@
 <?php
+
+define('MAGIC_QUOTES_GPC',ini_set("magic_quotes_runtime",0)?True:False);
 /**
  * CHttpRequest and CCookieCollection class file.
  *

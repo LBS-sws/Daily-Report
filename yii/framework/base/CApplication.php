@@ -671,18 +671,18 @@ abstract class CApplication extends CModule
 	}
 
 	/**
-	 * Handles uncaught PHP exceptions.
-	 *
-	 * This method is implemented as a PHP exception handler. It requires
-	 * that constant YII_ENABLE_EXCEPTION_HANDLER be defined true.
-	 *
-	 * This method will first raise an {@link onException} event.
-	 * If the exception is not handled by any event handler, it will call
-	 * {@link getErrorHandler errorHandler} to process the exception.
-	 *
-	 * The application will be terminated by this method.
-	 *
-	 * @param Exception $exception exception that is not caught
+     * Handles uncaught PHP exceptions.
+     *
+     * This method is implemented as a PHP exception handler. It requires
+     * that constant YII_ENABLE_EXCEPTION_HANDLER be defined true.
+     *
+     * This method will first raise an {@link onException} event.
+     * If the exception is not handled by any event handler, it will call
+     * {@link getErrorHandler errorHandler} to process the exception.
+     *
+     * The application will be terminated by this method.
+     *
+     * @param Exception $exception exception that is not caught
 	 */
 	public function handleException($exception)
 	{

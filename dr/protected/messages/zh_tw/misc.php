@@ -3,6 +3,7 @@
 return array(
 'User ID'=>'帳戶名稱',
 'Password'=>'密碼',
+'Again New Password'=>'再次輸入新密碼',
 'New Password' => '新密碼',
 'Old Password' => '舊密碼',
 'Confirm Password' => '確認密碼',
