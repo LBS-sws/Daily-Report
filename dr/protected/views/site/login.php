@@ -48,6 +48,7 @@ $this->pageTitle=Yii::app()->name . ' - Login';
             ?>
             <?php $this->endWidget(); ?>
         </div>
+        <div style="clear: both;"></div>
     </div>
 </div>
 

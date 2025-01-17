@@ -1,6 +1,8 @@
 body {
   font-family: Arial, sans-serif;
   background-image:url(../images/bg.png);
+  background-repeat: no-repeat;
+  background-size: cover;
   margin: 0;
   padding: 0;
   display: flex;
@@ -10,6 +12,12 @@ body {
 }
 .login-container {
   width: 67%;
+  max-width: 1400px;
+  min-width: 900px;
+  position:fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .header {
   margin: 0 auto;
@@ -38,8 +46,9 @@ body {
   text-align: center;
   clear: both;
   width: 93%;
-  height: 700px;
+  height: auto;
   margin: 0 auto;
+  max-height: 700px;
 }
 .content_left {
   width: 50%;
@@ -56,6 +65,7 @@ body {
 }
 .content_left img {
   width: 100%;
+  height: auto;
 }
 .content_left_size {
   font-size: 20px;
