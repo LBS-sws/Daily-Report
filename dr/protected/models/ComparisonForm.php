@@ -111,7 +111,7 @@ class ComparisonForm extends CFormModel
         $boolDate = CountSearch::$stop_new_dt."/01";
         $boolDate = date("Y/m/01",strtotime($boolDate." + 1 month"));
         if($this->start_date<$boolDate&&$this->end_date>=$boolDate){
-            $this->addError($attribute, "查询时间段不能跨过{$boolDate}");
+            $this->addError($attribute, Yii::t("summary","index_note_3"));
         }
     }
 
@@ -1027,6 +1027,7 @@ class ComparisonForm extends CFormModel
     public function ajaxOfficeForData(){
         $cityList = key_exists("cityList",$_GET)?$_GET["cityList"]:array();
         $city_allow = "'".implode("','",$cityList)."'";
+        $this->search_type = key_exists("searchType",$_GET)?$_GET["searchType"]:"";
         $this->start_date = key_exists("startDate",$_GET)?$_GET["startDate"]:"";
         $this->end_date = key_exists("endDate",$_GET)?$_GET["endDate"]:"";
         $defaultList = self::defMoreCity("none","none");
@@ -1049,10 +1050,11 @@ class ComparisonForm extends CFormModel
         $allMonthStartDate = date("Y/m/01",strtotime($allMonthStartDate." - 1 months"));
         $allMonthEndDate = date("Y/m/01",strtotime($this->end_date));
         $allMonthEndDate = date("Y/m/t",strtotime($allMonthEndDate." - 1 months"));
+		$serviceType = $this->search_type=="3"?1:0;
         //获取U系统的服务单数据
-        $uServiceMoney = CountOfficeSearch::getUServiceOfficeMoneyOne($startDate,$endDate,$city_allow);
+        $uServiceMoney = CountOfficeSearch::getUServiceOfficeMoneyOne($startDate,$endDate,$city_allow,false,$serviceType);
         //获取U系统的服务单数据(上月)
-        $uServiceMoneyLast = CountOfficeSearch::getUServiceOfficeMoneyOne($monthStartDate,$monthEndDate,$city_allow);
+        $uServiceMoneyLast = CountOfficeSearch::getUServiceOfficeMoneyOne($monthStartDate,$monthEndDate,$city_allow,false,$serviceType);
         //获取U系统的服务单数据(上月)(整月)
         $uServiceMoneyAllLast = CountOfficeSearch::getUServiceOfficeMoneyOne($allMonthStartDate,$allMonthEndDate,$city_allow);
         //获取U系统的產品数据(上月)(整月)

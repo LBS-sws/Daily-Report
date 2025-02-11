@@ -297,6 +297,7 @@ $(function(){
         url: '{$ajaxUrl}',
         data: {
             'cityList':cityList,
+            'searchType':'{$model->search_type}',
             'startDate':'{$model->start_date}',
             'endDate':'{$model->end_date}'
         },

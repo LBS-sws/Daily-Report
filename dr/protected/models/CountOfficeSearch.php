@@ -6,8 +6,8 @@
 class CountOfficeSearch extends CountSearch{
 
     //获取服务单月数据 - 办事处
-    public static function getUServiceOfficeMoneyOne($startDay,$endDay,$city_allow="",$type=0){
-        $list = SystemU::getUServiceOfficeMoney($startDay,$endDay,$city_allow,$type);
+    public static function getUServiceOfficeMoneyOne($startDay,$endDay,$city_allow="",$printBool=false,$type=0){
+        $list = SystemU::getUServiceOfficeMoney($startDay,$endDay,$city_allow,$printBool,$type);
         $arr = array();
         if(isset($list["data"])&&is_array($list["data"])){
             foreach ($list["data"] as $city=>$rows){

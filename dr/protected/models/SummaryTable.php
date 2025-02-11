@@ -785,7 +785,7 @@ class SummaryTable extends SummaryForm{
         if($queryIARows){
             foreach ($queryIARows as $key=>$row){
                 $month_date = date_format(date_create($row['status_dt']),"Y/m");
-                if($row['month_date']<=CountSearch::$stop_new_dt){ //2024年12月后改版
+                if($month_date<=CountSearch::$stop_new_dt){ //2024年12月后改版
                     $next_end_dt=$month_date."/31";//修改下一条查询逻辑
                 }else{
                     $next_end_dt=$endDate;//修改下一条查询逻辑
@@ -828,7 +828,7 @@ class SummaryTable extends SummaryForm{
             if($queryKARows){
                 foreach ($queryKARows as $key=>$row){
                     $month_date = date_format(date_create($row['status_dt']),"Y/m");
-                    if($row['month_date']<=CountSearch::$stop_new_dt){ //2024年12月后改版
+                    if($month_date<=CountSearch::$stop_new_dt){ //2024年12月后改版
                         $next_end_dt=$month_date."/31";//修改下一条查询逻辑
                     }else{
                         $next_end_dt=$endDate;//修改下一条查询逻辑
