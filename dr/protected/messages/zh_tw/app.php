@@ -197,5 +197,6 @@ return array(
     'Outsource'=>'外包數據分析',
     'KA signed report'=>'KA新簽報表',
     'Insect and clean'=>'全國蟲控、清潔停單率',
+    'Retention rate'=>'保留率',
 );
 ?>

@@ -303,6 +303,12 @@ return array(
     'Year month'=>'年月',
     'One Service'=>'一次性服務',
     'U INV'=>'派單系統產品',
-    'U service'=>'派單系統服務'
+    'U service'=>'派單系統服務',
+
+    'YTD '=>'YTD',
+    'stop contract amt'=>'終止合同金額',
+    'all month length'=>'月份數',
+    'all month amt'=>'月初合同總額',
+    'retention rate'=>'保留率',
 );
 ?>

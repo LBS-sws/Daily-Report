@@ -245,6 +245,10 @@ return array(
                 'access'=>'G02',
                 'url'=>'/comprehensive/index',
             ),
+            'Retention rate'=>array( //保留率
+                'access'=>'G30',
+                'url'=>'/retentionRate/index',
+            ),
             'Outsource'=>array( //外包数据分析
                 'access'=>'G28',
                 'url'=>'/outsource/index',

@@ -2129,4 +2129,45 @@ class CountSearch extends SearchForCurlU {
         $list = SystemU::getOutsourceServiceMoney($startDay,$endDay,$staffList,$city_allow,false,$type);
         return isset($list["data"])?$list["data"]:array();
     }
+
+    //获取服务合约最后不是终止的所有合约金额
+    public static function getRetentionAmt($endDate,$city_allow){
+        $sum_money = "case b.paid_type when 'M' then b.amt_paid * b.ctrt_period else b.amt_paid end";
+
+        $sql = "
+            select b.city,sum({$sum_money}) as sum_money from swo_service_contract_no a
+            JOIN (
+              select contract_no,max(id) as max_id from swo_service_contract_no WHERE status_dt<='{$endDate}' GROUP BY contract_no
+            ) f ON a.id=f.max_id and a.contract_no=f.contract_no 
+            LEFT JOIN swo_service b ON a.service_id=b.id
+            WHERE b.city in ({$city_allow}) GROUP BY b.city
+        ";
+        $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        $rows = $rows?$rows:array();
+        if(self::$IDBool){
+        }
+        if(self::$KABool){
+            $kaSql = "
+            select b.city,sum({$sum_money}) as sum_money from swo_service_ka_no a
+            JOIN (
+              select contract_no,max(id) as max_id from swo_service_ka_no WHERE status_dt<='{$endDate}' GROUP BY contract_no
+            ) f ON a.id=f.max_id and a.contract_no=f.contract_no 
+            LEFT JOIN swo_service_ka b ON a.service_id=b.id
+            WHERE b.city in ({$city_allow}) GROUP BY b.city
+        ";
+            $kaRow = Yii::app()->db->createCommand($kaSql)->queryAll();
+            $kaRow = $kaRow?$kaRow:array();
+            $rows = array_merge($rows,$kaRow);
+        }
+
+        $data=array();
+        foreach ($rows as $row){
+            $city = $row["city"];
+            if(!key_exists($city,$data)){
+                $data[$city]=0;
+            }
+            $data[$city]+=$row["sum_money"];
+        }
+        return $data;
+    }
 }
