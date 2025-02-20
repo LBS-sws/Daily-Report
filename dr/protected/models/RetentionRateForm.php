@@ -142,7 +142,7 @@ class RetentionRateForm extends CFormModel
 
     protected function resetTdRow(&$list,$bool=false){
         $monthLength = $this->search_month_end-$this->search_month_start+1;
-        $list["ytd_month_length"]="{$monthLength}个月";
+        $list["ytd_month_length"]=$monthLength;
         $list["ytd_stop_amt"]=0;
         for ($i=$this->search_month_start;$i<=$this->search_month_end;$i++){
             $month = $i<10?"0{$i}":$i;
@@ -290,6 +290,9 @@ class RetentionRateForm extends CFormModel
     }
     //設置百分比顏色
     public static function showNum($keyStr,$num){
+        if($keyStr=="ytd_month_length"){
+            return $num;
+        }
         if (strpos($num,'%')!==false){
             $number = floatval($num);
             $number=sprintf("%.1f",$number)."%";
