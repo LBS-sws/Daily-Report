@@ -150,7 +150,7 @@ class RetentionRateForm extends CFormModel
             $list["ytd_stop_amt"]+=key_exists($keyStr,$list)?$list[$keyStr]:0;
         }
         if(!empty($list["all_month_amt"])){
-            $list["retention_rate"] = ($list["ytd_stop_amt"]/$monthLength)/12;
+            $list["retention_rate"] = ($list["ytd_stop_amt"]/$monthLength)*12;
             $list["retention_rate"]/= $list["all_month_amt"];
             $list["retention_rate"] = 1-$list["retention_rate"];
             $list["retention_rate"] = round($list["retention_rate"],4);
