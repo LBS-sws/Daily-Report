@@ -2140,7 +2140,7 @@ class CountSearch extends SearchForCurlU {
               select contract_no,max(id) as max_id from swo_service_contract_no WHERE status_dt<='{$endDate}' GROUP BY contract_no
             ) f ON a.id=f.max_id and a.contract_no=f.contract_no 
             LEFT JOIN swo_service b ON a.service_id=b.id
-            WHERE b.city in ({$city_allow}) GROUP BY b.city
+            WHERE a.status!='T' AND b.city in ({$city_allow}) GROUP BY b.city
         ";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         $rows = $rows?$rows:array();
