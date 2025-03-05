@@ -219,8 +219,12 @@ class ManageMonthBonusForm extends CFormModel
         $list["month_royalty"]=floatval($list["royalty_rate"])*floatval($list["stop_rate_coe"])*floatval($list["month_new_amt"])*0.01;
         $list["month_royalty"] = round($list["month_royalty"],2);
         //目标达成奖奖金
-        $list["goal_ach_bonus"]=floatval($list["month_net_amt"])*0.01;
-        $list["goal_ach_bonus"] = $list["goal_ach_bonus"]<$list["max_bonus"]?round($list["goal_ach_bonus"],2):$list["max_bonus"];
+        if($list["month_net_amt"]>=$list["two_net"]){
+            $list["goal_ach_bonus"]=floatval($list["month_net_amt"])*0.01;
+            $list["goal_ach_bonus"] = $list["goal_ach_bonus"]<$list["max_bonus"]?round($list["goal_ach_bonus"],2):$list["max_bonus"];
+        }else{
+            $list["goal_ach_bonus"]=0;
+        }
         switch ($list["job_key"]){
             case 1://副总监
             case 2://高级总经理
@@ -463,6 +467,8 @@ class ManageMonthBonusForm extends CFormModel
                 $width=70;
             }elseif ($i==2){
                 $width=130;
+            }elseif ($i==3){
+                $width=110;
             }else{
                 $width=90;
             }

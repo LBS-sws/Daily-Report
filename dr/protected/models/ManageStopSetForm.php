@@ -50,7 +50,7 @@ class ManageStopSetForm extends CFormModel
             $this->id = $row['id'];
             $this->start_date = General::toDate($row['start_date']);
             $this->set_name = $row['set_name'];
-            $sql = "select * from swo_manage_stop_hdl where hdr_id=$index ";
+            $sql = "select * from swo_manage_stop_hdl where hdr_id=$index ORDER BY stop_rate asc";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             if (count($rows) > 0) {
                 $this->detail = array();
@@ -62,6 +62,34 @@ class ManageStopSetForm extends CFormModel
                     $temp['stopRate'] = floatval($row['stop_rate']);
                     $temp['coefficient'] = floatval($row['coefficient']);
                     $temp['uflag'] = 'N';
+                    $this->detail[] = $temp;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public function newData($index)
+    {
+        $sql = "select * from swo_manage_stop_hdr where id=".$index."";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        if ($row){
+            $this->id = 0;
+            $this->start_date = General::toDate($row['start_date']);
+            $this->set_name = $row['set_name'];
+            $sql = "select * from swo_manage_stop_hdl where hdr_id=$index ORDER BY stop_rate asc";
+            $rows = Yii::app()->db->createCommand($sql)->queryAll();
+            if (count($rows) > 0) {
+                $this->detail = array();
+                foreach ($rows as $row) {
+                    $temp = array();
+                    $temp['id'] = 0;
+                    $temp['hdrId'] = $row['hdr_id'];
+                    $temp['operator'] = $row['operator'];
+                    $temp['stopRate'] = floatval($row['stop_rate']);
+                    $temp['coefficient'] = floatval($row['coefficient']);
+                    $temp['uflag'] = 'Y';
                     $this->detail[] = $temp;
                 }
             }

@@ -30,6 +30,8 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type Form';
 			if ($model->scenario!='new' && $model->scenario!='view') {
 				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Another'), array(
 					'submit'=>Yii::app()->createUrl('manageStopSet/new')));
+				echo TbHtml::button('<span class="fa fa-copy"></span> '.Yii::t('misc','Copy'), array(
+					'submit'=>Yii::app()->createUrl('manageStopSet/new',array("index"=>$model->id))));
 			}
 		?>
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(

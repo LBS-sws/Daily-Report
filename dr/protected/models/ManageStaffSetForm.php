@@ -16,7 +16,7 @@ class ManageStaffSetForm extends CFormModel
     public $condition_type;
     public $condition_money;
     public $max_bonus=4000;
-    public $z_index=1;
+    public $z_index=100;
     /**
      * Declares customized attribute labels.
      * If not declared here, an attribute would have a label that is
@@ -207,7 +207,7 @@ class ManageStaffSetForm extends CFormModel
             $command->bindParam(':name_allow_city',$city_allow_name,PDO::PARAM_INT);
         }
         if (strpos($sql,':person_type')!==false){
-            $this->person_type = empty($this->person_type)?0:$this->person_type;
+            $this->person_type = empty($this->person_type)?1:$this->person_type;
             $command->bindParam(':person_type',$this->person_type,PDO::PARAM_INT);
         }
         if (strpos($sql,':person_money')!==false){
@@ -215,7 +215,7 @@ class ManageStaffSetForm extends CFormModel
             $command->bindParam(':person_money',$this->person_money,PDO::PARAM_INT);
         }
         if (strpos($sql,':condition_type')!==false){
-            $this->condition_type = empty($this->condition_type)?0:$this->condition_type;
+            $this->condition_type = empty($this->condition_type)?1:$this->condition_type;
             $command->bindParam(':condition_type',$this->condition_type,PDO::PARAM_INT);
         }
         if (strpos($sql,':condition_money')!==false){

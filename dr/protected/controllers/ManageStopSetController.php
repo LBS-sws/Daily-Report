@@ -83,9 +83,12 @@ class ManageStopSetController extends Controller
 		}
 	}
 	
-	public function actionNew()
+	public function actionNew($index=0)
 	{
 		$model = new ManageStopSetForm('new');
+		if(!empty($index)){
+            $model->newData($index);
+        }
 		$this->render('form',array('model'=>$model,));
 	}
 	
