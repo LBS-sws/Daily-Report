@@ -200,5 +200,10 @@ return array(
     'KA signed report'=>'KA新签报表',
     'Insect and clean'=>'全国虫控、清洁停单率',
     'Retention rate'=>'保留率',
+
+    'Management Bonus'=>'管理层月度奖金',
+    'Management Month Bonus'=>'管理层月度奖金计算',
+    'Management Staff Setting'=>'奖金人员设置',
+    'Management Stop Setting'=>'停单率提成设置',
 );
 ?>

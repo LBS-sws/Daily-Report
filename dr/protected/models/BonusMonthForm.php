@@ -66,10 +66,10 @@ class BonusMonthForm extends CFormModel
         );
     }
 
-    public function retrieveData() {
+    public function retrieveData($city_allow="") {
         $this->u_load_data['load_start'] = time();
         $data = array();
-        $city_allow = Yii::app()->user->city_allow();
+        $city_allow = empty($city_allow)?Yii::app()->user->city_allow():$city_allow;
         $city_allow = SalesAnalysisForm::getCitySetForCityAllow($city_allow);
         $startDate = $this->start_date;
         $endDate = $this->end_date;

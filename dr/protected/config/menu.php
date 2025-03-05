@@ -233,6 +233,24 @@ return array(
 			),
 		),
 	),
+	'Management Bonus'=>array(//管理层月度奖金计算
+		'access'=>'MM',
+		'icon'=>'fa-user-secret',
+		'items'=>array(
+			'Management Month Bonus'=>array(//管理层月度奖金计算
+				'access'=>'MM01',
+				'url'=>'/manageMonthBonus/index',
+			),
+			'Management Staff Setting'=>array(//管理层人员设置
+				'access'=>'MM02',
+				'url'=>'/manageStaffSet/index',
+			),
+			'Management Stop Setting'=>array(//停单率提成设置
+				'access'=>'MM03',
+				'url'=>'/manageStopSet/index',
+			),
+        )
+    ),
 	'Management'=>array(
 		'access'=>'G',
 		'icon'=>'fa-user-secret',
