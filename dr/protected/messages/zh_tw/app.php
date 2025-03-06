@@ -203,5 +203,6 @@ return array(
     'Management Month Bonus'=>'管理層月度獎金計算',
     'Management Staff Setting'=>'獎金人員設置',
     'Management Stop Setting'=>'停單率提成設置',
+    'Retention KA rate'=>'KA保留率',
 );
 ?>

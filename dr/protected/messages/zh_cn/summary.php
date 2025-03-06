@@ -328,7 +328,7 @@ return array(
     'General Manager of First tier Cities'=>'一线城市总经理',
     'General Manager of Non First tier Cities'=>'非一线城市总经理',
     'Regional Director'=>'地区主管',
-    'Deputy Director (Frontline)'=>'副总监（一线）',
+    'Deputy Director (Frontline)'=>'副总经理（一线）',
     'monthly amount'=>'当月新生意额',
     'monthly net amount'=>'当月净增长额',
     'monthly net target'=>'当月净增长目标达成',
@@ -342,5 +342,10 @@ return array(
     'fit in'=>'符合',
     'fit out'=>'不符合',
     'end bonus'=>'对应副总监/高级总经理管理提成',
+
+    'person '=>'个人',
+    'manager '=>'主管',
+    'KA team '=>'KA团队',
+    'Group Name'=>'组别',
 );
 ?>

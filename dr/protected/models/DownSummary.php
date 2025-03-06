@@ -309,6 +309,92 @@ class DownSummary{
         $this->setSummaryWidth();
     }
 
+    public function setKAHeader($headerArr){
+        $this->setKAWidth();
+        if(!empty($headerArr)){
+            $maxTh = 1;
+            for ($i=0;$i<$this->colTwo;$i++){
+                $startStr = $this->getColumn($i);
+                $this->objPHPExcel->getActiveSheet()->mergeCells($startStr.$this->current_row.':'.$startStr.($this->current_row+2));
+            }
+            $colOne = 0;
+            foreach ($headerArr as $list){
+                $background="FFFFFF";
+                $textColor="000000";
+                $oneStr = $this->getColumn($colOne);
+                if(key_exists("background",$list)){
+                    $background = $list["background"];
+                    $background = end(explode("#",$background));
+                }
+                if(key_exists("color",$list)){
+                    $textColor = $list["color"];
+                    $textColor = end(explode("#",$textColor));
+                }
+                $this->objPHPExcel->getActiveSheet()
+                    ->setCellValueByColumnAndRow($colOne, $this->current_row, $list["name"]);
+                if(isset($list["colspan"])){
+                    $twoStr = $this->getColumn($colOne);
+                    if(key_exists("colspan",$list)){
+                        $maxTh=2;
+                        foreach ($list["colspan"] as $col){
+                            $threeCol=key_exists("colspan",$col)?$col['colspan']:array();
+                            $this->objPHPExcel->getActiveSheet()
+                                ->setCellValueByColumnAndRow($colOne, $this->current_row+1, $col["name"]);
+                            if(!empty($threeCol)){
+                                $maxTh=3;
+                                $startStr = $this->getColumn($colOne);
+                                foreach ($threeCol as $three){
+                                    $this->objPHPExcel->getActiveSheet()
+                                        ->setCellValueByColumnAndRow($colOne, $this->current_row+2, $three["name"]);
+                                    $colOne++;
+                                    $this->th_num++;
+                                }
+                                $endStr = $this->getColumn($colOne-1);
+                                $this->objPHPExcel->getActiveSheet()
+                                    ->mergeCells($startStr.($this->current_row+1).':'.$endStr.($this->current_row+1));
+                            }else{
+                                $startStr = $this->getColumn($colOne);
+                                $this->objPHPExcel->getActiveSheet()
+                                    ->mergeCells($startStr.($this->current_row+1).':'.$startStr.($this->current_row+2));
+                                $colOne++;
+                            }
+                        }
+                    }else{
+                        $colOne++;
+                        $this->th_num++;
+                    }
+                    $endStr = $this->getColumn($colOne-1);
+                    $this->objPHPExcel->getActiveSheet()
+                        ->mergeCells($twoStr.$this->current_row.':'.$endStr.$this->current_row);
+                }else{
+                    $colOne++;
+                    $this->th_num++;
+                }
+                $endStr = $this->getColumn($colOne-1);
+                $this->setHeaderStyleTwo("{$oneStr}{$this->current_row}:{$endStr}".($this->current_row+2),$background,$textColor);
+                //$colOne++;
+                $this->objPHPExcel->getActiveSheet()->getStyle("A{$this->current_row}:{$endStr}".($this->current_row+2))->applyFromArray(
+                    array(
+                        'font'=>array(
+                            'bold'=>true,
+                        ),
+                        'alignment'=>array(
+                            'horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                            'vertical'=>PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                        ),
+                        'borders'=>array(
+                            'allborders'=>array(
+                                'style'=>PHPExcel_Style_Border::BORDER_THIN,
+                            ),
+                        )
+                    )
+                );
+            }
+
+            $this->current_row+=$maxTh;
+        }
+    }
+
     private function setSummaryWidth(){
         for ($col=0;$col<$this->th_num;$col++){
             $width = 13;
@@ -720,6 +806,50 @@ class DownSummary{
         }
     }
 
+    public function setKAData($data){
+        if(!empty($data)){
+            $endStr = $this->getColumn($this->th_num-1);
+            foreach ($data as $city=>$staffList){
+                foreach ($staffList as $staff_id =>$list){
+                    $col = 0;
+                    foreach ($list as $text){
+                        if(is_array($text)){
+                            $groupLen = key_exists("groupLen",$text)?$text["groupLen"]:1;
+                            $groupLen-=1;
+                            $groupStr = $this->getColumn($col);
+                            $text = key_exists("text",$text)?$text["text"]:"";
+                            $this->setCellValueForSummary($col, $this->current_row, $text);
+                            $this->objPHPExcel->getActiveSheet()
+                                ->mergeCells($groupStr.$this->current_row.':'.$groupStr.($this->current_row+$groupLen));
+                        }else{
+                            $this->setCellValueForSummary($col, $this->current_row, $text);
+                        }
+                        $col++;
+                    }
+                    if($staff_id==="count"){
+                        $this->objPHPExcel->getActiveSheet()->getRowDimension($this->current_row)->setRowHeight(20);
+                        $this->objPHPExcel->getActiveSheet()
+                            ->getStyle("A{$this->current_row}:{$endStr}{$this->current_row}")
+                            ->applyFromArray(
+                                array(
+                                    'font'=>array(
+                                        'bold'=>true,
+                                    ),
+                                    'borders' => array(
+                                        'top' => array(
+                                            'style' => PHPExcel_Style_Border::BORDER_THIN
+                                        )
+                                    )
+                                )
+                            );
+                        $this->current_row++;
+                    }
+                    $this->current_row++;
+                }
+            }
+        }
+    }
+
     private function setCellValueForSummary($col,$row,$text,$keyStr=""){
         $this->objPHPExcel->getActiveSheet()
             ->setCellValueByColumnAndRow($col, $row, $text);
@@ -745,6 +875,17 @@ class DownSummary{
                     )
                 )
             );
+    }
+
+    private function setKAWidth(){
+        for ($col=0;$col<18;$col++){
+            if($col==0){
+                $width=20;
+            }else{
+                $width = 13;
+            }
+            $this->objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($col)->setWidth($width);
+        }
     }
 
     protected function setReportFormat() {

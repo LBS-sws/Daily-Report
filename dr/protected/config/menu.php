@@ -267,6 +267,10 @@ return array(
                 'access'=>'G30',
                 'url'=>'/retentionRate/index',
             ),
+            'Retention KA rate'=>array( //KA保留率
+                'access'=>'G31',
+                'url'=>'/retentionKARate/index',
+            ),
             'Outsource'=>array( //外包数据分析
                 'access'=>'G28',
                 'url'=>'/outsource/index',

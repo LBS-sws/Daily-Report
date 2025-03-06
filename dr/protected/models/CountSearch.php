@@ -2170,4 +2170,99 @@ class CountSearch extends SearchForCurlU {
         }
         return $data;
     }
+
+    //获取服务合约最后不是终止的所有合约金额
+    public static function getRetentionAmtForSales($endDate,$salesman_str){
+        $sum_money = "case b.paid_type when 'M' then b.amt_paid * b.ctrt_period else b.amt_paid end";
+
+        $sql = "
+            select b.salesman_id,sum({$sum_money}) as sum_money from swo_service_contract_no a
+            JOIN (
+              select contract_no,max(id) as max_id from swo_service_contract_no WHERE status_dt<='{$endDate}' GROUP BY contract_no
+            ) f ON a.id=f.max_id and a.contract_no=f.contract_no 
+            LEFT JOIN swo_service b ON a.service_id=b.id
+            WHERE a.status!='T' AND b.salesman_id in ({$salesman_str}) GROUP BY b.salesman_id
+        ";
+        $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        $rows = $rows?$rows:array();
+        if(self::$IDBool){
+        }
+        if(self::$KABool){
+            $kaSql = "
+            select b.salesman_id,sum({$sum_money}) as sum_money from swo_service_ka_no a
+            JOIN (
+              select contract_no,max(id) as max_id from swo_service_ka_no WHERE status_dt<='{$endDate}' GROUP BY contract_no
+            ) f ON a.id=f.max_id and a.contract_no=f.contract_no 
+            LEFT JOIN swo_service_ka b ON a.service_id=b.id
+            WHERE b.salesman_id in ({$salesman_str}) GROUP BY b.salesman_id
+        ";
+            $kaRow = Yii::app()->db->createCommand($kaSql)->queryAll();
+            $kaRow = $kaRow?$kaRow:array();
+            $rows = array_merge($rows,$kaRow);
+        }
+
+        $data=array();
+        foreach ($rows as $row){
+            $salesman_id = "".$row["salesman_id"];
+            if(!key_exists($salesman_id,$data)){
+                $data[$salesman_id]=0;
+            }
+            $data[$salesman_id]+=$row["sum_money"];
+        }
+        return $data;
+    }
+
+    //客户服务查询(根據服務類型)(销售员id为键名)（月為鍵名)
+    public static function getServiceForTypeToMonthAndSales($startDate,$endDate,$salesman_str,$type="N"){
+        $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        $whereSql.= " and a.salesman_id in ({$salesman_str})";
+        $whereSql .= self::$whereSQL;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();//
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+        if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and {$kaSqlPrx}")
+                ->group("a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            $salesman_id = "".$row["salesman_id"];
+            if(!key_exists($salesman_id,$list)){
+                $list[$salesman_id]=array();
+            }
+            if(!key_exists($row["month_dt"],$list[$salesman_id])){
+                $list[$salesman_id][$row["month_dt"]]=0;
+            }
+            $list[$salesman_id][$row["month_dt"]]+=$row["sum_amount"];
+        }
+        return $list;
+    }
 }
