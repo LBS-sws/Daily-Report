@@ -163,6 +163,18 @@ $('.td_detail').on('click',function(){
         }
     });
 });
+
+resetEndBonus();
+function resetEndBonus(){
+    var jsonData = $('#excel').val();
+    jsonData = JSON.parse(jsonData);
+    jsonData = jsonData['excel'];
+    $.each(jsonData,function(staff_id,row){
+        if(row['end_bonus']!=''){
+            $('td[data-type=\"end_bonus\"][data-id=\"'+staff_id+'\"]').html('<span>'+row['end_bonus']+'</span>');
+        }
+    });
+}
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

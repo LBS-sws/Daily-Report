@@ -109,7 +109,7 @@ class ManageMonthBonusForm extends CFormModel
         $this->u_load_data['load_start'] = time();
         $data = array();
         $city_allow = empty($city_allow)?Yii::app()->user->city_allow():$city_allow;
-        $staffCityList = ManageStaffSetForm::getStaffAndCityListForCityAllow($city_allow);
+        $staffCityList = ManageStaffSetForm::getStaffAndCityListForCityAllow($city_allow,$this->search_year,$this->search_month);
         $staffLists = $staffCityList["staffRow"];
         $bonusModel = new BonusMonthForm();
         $bonusModel->search_year = $this->search_year;

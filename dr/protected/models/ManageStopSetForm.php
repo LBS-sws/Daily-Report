@@ -78,7 +78,7 @@ class ManageStopSetForm extends CFormModel
             $this->id = 0;
             $this->start_date = General::toDate($row['start_date']);
             $this->set_name = $row['set_name'];
-            $sql = "select * from swo_manage_stop_hdl where hdr_id=$index ORDER BY stop_rate asc";
+            $sql = "select * from swo_manage_stop_hdl where hdr_id=$index ORDER BY stop_rate asc,operator desc";
             $rows = Yii::app()->db->createCommand($sql)->queryAll();
             if (count($rows) > 0) {
                 $this->detail = array();

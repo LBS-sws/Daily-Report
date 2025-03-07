@@ -78,9 +78,10 @@ class ManageStaffSetForm extends CFormModel
         return false;
     }
 
-    public static function getStaffAndCityListForCityAllow($city_allow){
+    public static function getStaffAndCityListForCityAllow($city_allow,$year,$month){
+        $startDate = date("Y-m-01",strtotime("{$year}-{$month}-01"));
         $suffix = Yii::app()->params['envSuffix'];
-        $whereSql = " a.city in ({$city_allow})";
+        $whereSql = "a.start_date<='$startDate' and a.city in ({$city_allow})";
         if(empty($city_allow)){
             $whereSql = "1=1";
         }
@@ -88,14 +89,17 @@ class ManageStaffSetForm extends CFormModel
             ->select("a.*,b.code as employee_code,b.name as employee_name")
             ->from("swo_manage_staff a")
             ->leftJoin("hr{$suffix}.hr_employee b","a.employee_id=b.id")
-            ->where($whereSql)->order("a.z_index desc,a.id")->queryAll();
+            ->where($whereSql)->order("a.z_index desc,a.start_date desc,a.id")->queryAll();
         $list = array("staffRow"=>array(),"cityAllow"=>array());
         if($rows){
             foreach ($rows as $row){
-                $row["dept_name"] = self::getJobStrForKey($row["job_key"]);
-                $list["staffRow"][]=$row;
-                if(!key_exists($row["city"],$list["cityAllow"])){
-                    $list["cityAllow"][]=$row["city"];
+                $employeeID = "".$row["employee_id"];
+                if(!key_exists($employeeID,$list["staffRow"])){
+                    $row["dept_name"] = self::getJobStrForKey($row["job_key"]);
+                    $list["staffRow"][$employeeID]=$row;
+                    if(!key_exists($row["city"],$list["cityAllow"])){
+                        $list["cityAllow"][]=$row["city"];
+                    }
                 }
             }
         }
@@ -120,7 +124,7 @@ class ManageStaffSetForm extends CFormModel
             '3'=>Yii::t("summary","General Manager of First tier Cities"),//一线城市总经理
             '4'=>Yii::t("summary","General Manager of Non First tier Cities"),//非一线城市总经理
             '5'=>Yii::t("summary","Regional Director"),//地区主管
-            '6'=>Yii::t("summary","Deputy Director (Frontline)"),//副总监（一线）
+            '6'=>Yii::t("summary","Deputy Director (Frontline)"),//副总经理（一线）
         ),"options"=>array(
             '1'=>array("data-team_rate"=>0.6,"data-person_type"=>1,"data-person_money"=>0,"data-condition_type"=>1,"data-condition_money"=>0,"data-max_bonus"=>4000,),
             '2'=>array("data-team_rate"=>0.6,"data-person_type"=>1,"data-person_money"=>0,"data-condition_type"=>1,"data-condition_money"=>0,"data-max_bonus"=>4000,),

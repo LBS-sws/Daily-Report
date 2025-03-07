@@ -83,9 +83,13 @@ class ManageStaffSetController extends Controller
 		}
 	}
 	
-	public function actionNew()
+	public function actionNew($index='')
 	{
 		$model = new ManageStaffSetForm('new');
+		if(!empty($index)){
+		    $model->retrieveData($index);
+		    $model->id =0;
+        }
 		$this->render('form',array('model'=>$model,));
 	}
 	
