@@ -172,19 +172,19 @@ class RetentionRateForm extends CFormModel
 
     private function getTopArr(){
         $topList=array(
-            array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
+            array("name"=>Yii::t("summary","City")),//城市
         );
         for ($i=$this->search_month_start;$i<=$this->search_month_end;$i++){
-            $topList[]=array("name"=>$i.Yii::t("summary"," month"),"rowspan"=>2);
+            $topList[]=array("name"=>$i.Yii::t("summary"," month"));
         }
         //YTD终止合同金额
-        $topList[]=array("name"=>Yii::t("summary","YTD ").Yii::t("summary","stop contract amt"),"rowspan"=>2);
+        $topList[]=array("name"=>Yii::t("summary","YTD ").Yii::t("summary","stop contract amt"));
         //YTD月份数
-        $topList[]=array("name"=>Yii::t("summary","YTD ").Yii::t("summary","all month length"),"rowspan"=>2);
+        $topList[]=array("name"=>Yii::t("summary","YTD ").Yii::t("summary","all month length"));
         //月初合同总额
-        $topList[]=array("name"=>Yii::t("summary","YTD ").Yii::t("summary","all month amt"),"rowspan"=>2);
+        $topList[]=array("name"=>Yii::t("summary","YTD ").Yii::t("summary","all month amt"));
         //保留率
-        $topList[]=array("name"=>Yii::t("summary","YTD ").Yii::t("summary","retention rate"),"rowspan"=>2);
+        $topList[]=array("name"=>Yii::t("summary","YTD ").Yii::t("summary","retention rate"));
 
         return $topList;
     }

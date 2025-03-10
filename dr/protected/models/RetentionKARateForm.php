@@ -306,28 +306,28 @@ class RetentionKARateForm extends CFormModel
 
     private function getTopArr(){
         $topList=array(
-            array("name"=>Yii::t("summary","Group Name"),"rowspan"=>2),//组别
-            array("name"=>Yii::t("summary","Employee Name"),"rowspan"=>2),//姓名
+            array("name"=>Yii::t("summary","Group Name")),//组别
+            array("name"=>Yii::t("summary","Employee Name")),//姓名
         );
         for ($i=$this->search_month_start;$i<=$this->search_month_end;$i++){
-            $topList[]=array("name"=>$i.Yii::t("summary"," month"),"rowspan"=>2);
+            $topList[]=array("name"=>$i.Yii::t("summary"," month"));
         }
         //YTD终止合同金额
-        $topList[]=array("name"=>Yii::t("summary","person ").Yii::t("summary","YTD ").Yii::t("summary","stop contract amt"),"rowspan"=>2);
+        $topList[]=array("name"=>Yii::t("summary","person ").Yii::t("summary","YTD ").Yii::t("summary","stop contract amt"));
         //YTD月份数
-        $topList[]=array("name"=>Yii::t("summary","YTD ").Yii::t("summary","all month length"),"rowspan"=>2);
+        $topList[]=array("name"=>Yii::t("summary","YTD ").Yii::t("summary","all month length"));
         //月初合同总额
-        $topList[]=array("name"=>Yii::t("summary","all month amt"),"rowspan"=>2);
+        $topList[]=array("name"=>Yii::t("summary","all month amt"));
         //个人保留率
-        $topList[]=array("name"=>Yii::t("summary","person ").Yii::t("summary","retention rate"),"rowspan"=>2);
+        $topList[]=array("name"=>Yii::t("summary","person ").Yii::t("summary","retention rate"));
         //主管YTD终止合同金额
-        $topList[]=array("name"=>Yii::t("summary","manager ").Yii::t("summary","YTD ").Yii::t("summary","stop contract amt"),"rowspan"=>2);
+        $topList[]=array("name"=>Yii::t("summary","manager ").Yii::t("summary","YTD ").Yii::t("summary","stop contract amt"));
         //主管保留率
-        $topList[]=array("name"=>Yii::t("summary","manager ").Yii::t("summary","retention rate"),"rowspan"=>2);
+        $topList[]=array("name"=>Yii::t("summary","manager ").Yii::t("summary","retention rate"));
         //KA团队YTD 终止合同金额
-        $topList[]=array("name"=>Yii::t("summary","KA team ").Yii::t("summary","YTD ").Yii::t("summary","stop contract amt"),"rowspan"=>2);
+        $topList[]=array("name"=>Yii::t("summary","KA team ").Yii::t("summary","YTD ").Yii::t("summary","stop contract amt"));
         //KA团队保留率
-        $topList[]=array("name"=>Yii::t("summary","KA team ").Yii::t("summary","retention rate"),"rowspan"=>2);
+        $topList[]=array("name"=>Yii::t("summary","KA team ").Yii::t("summary","retention rate"));
 
         return $topList;
     }
@@ -584,8 +584,7 @@ class RetentionKARateForm extends CFormModel
         $excel->SetHeaderTitle($titleName);
         $excel->SetHeaderString($this->start_date." ~ ".$this->end_date);
         $excel->init();
-        $excel->colTwo=0;
-        $excel->setKAHeader($headList);
+        $excel->setUServiceHeader($headList);
         $excel->setKAData($excelData);
         $excel->outExcel($titleName);
     }
