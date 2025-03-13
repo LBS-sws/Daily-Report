@@ -2,31 +2,31 @@
 
 class RetentionKARateForm extends CFormModel
 {
-	/* User Fields */
+    /* User Fields */
     public $search_year;//查詢年份
     public $search_month;//查詢月份
     public $search_month_start;//查詢月份(开始)
     public $search_month_end;//查詢月份(结束)
-	public $start_date;
-	public $end_date;
-	public $employee_id;
+    public $start_date;
+    public $end_date;
+    public $employee_id;
 
     public $data=array();
 
-	public $th_sum=0;//所有th的个数
+    public $th_sum=0;//所有th的个数
 
     public $downJsonText='';
 
     protected $class_type="NONE";//类型 NONE:普通  KA:KA
     public $u_load_data=array();//查询时长数组
-	/**
-	 * Declares customized attribute labels.
-	 * If not declared here, an attribute would have a label that is
-	 * the same as its name with the first letter in upper case.
-	 */
-	public function attributeLabels()
-	{
-		return array(
+    /**
+     * Declares customized attribute labels.
+     * If not declared here, an attribute would have a label that is
+     * the same as its name with the first letter in upper case.
+     */
+    public function attributeLabels()
+    {
+        return array(
             'start_date'=>Yii::t('summary','start date'),
             'end_date'=>Yii::t('summary','end date'),
             'day_num'=>Yii::t('summary','day num'),
@@ -36,8 +36,8 @@ class RetentionKARateForm extends CFormModel
             'search_year'=>Yii::t('summary','search year'),
             'search_quarter'=>Yii::t('summary','search quarter'),
             'search_month'=>Yii::t('summary','search month'),
-		);
-	}
+        );
+    }
 
     /**
      * Declares the validation rules.
@@ -82,9 +82,10 @@ class RetentionKARateForm extends CFormModel
 
         $this->start_date = date("Y/m/d",strtotime("{$this->search_year}/{$this->search_month_start}/01"));
         $this->end_date = date("Y/m/t",strtotime("{$this->search_year}/{$this->search_month_end}/01"));
+        $this->employee_id = self::getEmployeeIDForUsername();
     }
 
-    private function getGroupIDStrForEmployeeID($employee_id){
+    public static function getGroupIDStrForEmployeeID($employee_id){
         $suffix = Yii::app()->params['envSuffix'];
         $employee_id = empty($employee_id)||!is_numeric($employee_id)?0:$employee_id;
         $list = array($employee_id);
@@ -108,7 +109,7 @@ class RetentionKARateForm extends CFormModel
         return "'".implode("','",$list)."'";
     }
 
-    private function validAccessForSS($accessStr,$system_id=""){
+    public static function validAccessForSS($accessStr,$system_id=""){
         $system_id = empty($system_id)?$systemId = Yii::app()->params['systemId']:$system_id;
         $suffix = Yii::app()->params['envSuffix'];
         $row = Yii::app()->db->createCommand()
@@ -121,20 +122,29 @@ class RetentionKARateForm extends CFormModel
         return $row?true:false;
     }
 
+    public static function getEmployeeIDForUsername($username=""){
+        $suffix = Yii::app()->params['envSuffix'];
+        $username = empty($username)?Yii::app()->user->id:$username;
+        $row = Yii::app()->db->createCommand()
+            ->select("employee_id")->from("hr{$suffix}.hr_binding")
+            ->where("user_id=:uid",array(":uid"=>$username))->queryRow();
+        return $row?$row["employee_id"]:null;
+    }
+
     //获取KA所有员工
-    protected function getKaManForKaBot(){
-        $maxYear = $this->search_year;
+    public static function getKaManForKaBot($searchYear,$employee_id){
+        $maxYear = $searchYear;
         $suffix = Yii::app()->params['envSuffix'];
         $systemId = "sal";
         $city_allow = Yii::app()->user->city_allow();
         $whereSql = "f.a_read_write like '%KA01%'";
-        if($this->validAccessForSS('CN15',$systemId)){
+        if(self::validAccessForSS('CN15',$systemId)){
             $whereSql.= " and (h.staff_status!=-1 or (h.staff_status=-1 and DATE_FORMAT(h.leave_time,'%Y')>={$maxYear}))";//2023/06/16 改為可以看的所有記錄
-        }elseif($this->validAccessForSS('CN19',$systemId)){
-            $idSQL = $this->getGroupIDStrForEmployeeID($this->employee_id);
+        }elseif(self::validAccessForSS('CN19',$systemId)){
+            $idSQL = self::getGroupIDStrForEmployeeID($employee_id);
             $whereSql.= " and (h.id in ({$idSQL}) or h.id in ({$idSQL}) or h.city in ({$city_allow}))";
         }else{
-            $idSQL = $this->getGroupIDStrForEmployeeID($this->employee_id);
+            $idSQL = self::getGroupIDStrForEmployeeID($employee_id);
             $whereSql.= " and h.id in ({$idSQL})";
         }
         $rows = Yii::app()->db->createCommand()
@@ -181,7 +191,7 @@ class RetentionKARateForm extends CFormModel
         $this->computeDate();
         $startDate = $this->start_date;
         $endDate = $this->end_date;
-        $kaManList = $this->getKaManForKaBot();//KA所有员工
+        $kaManList = self::getKaManForKaBot($this->search_year,$this->employee_id);//KA所有员工
         $kaGroupList = $this->getKASalesGroup();//KA分组
 
         $salesman_str = $this->getSalesmanStr($kaManList);
@@ -269,6 +279,11 @@ class RetentionKARateForm extends CFormModel
     }
 
     protected function resetTdRow(&$list,$bool=false){
+        if($bool){
+            $list["ytd_month_length"]= $this->search_month_end-$this->search_month_start+1;//YTD月份数
+            $list["group_ytd_stop_amt"]= $list["ka_ytd_stop_amt"];
+            $list["group_retention_rate"]= $this->computeRetentionRate($list["ka_ytd_stop_amt"],$list["ka_month_amt"],$list["ytd_month_length"]);
+        }
         $monthLength = $list["ytd_month_length"];
         $list["per_ytd_stop_amt"]=0;
         for ($i=$this->search_month_start;$i<=$this->search_month_end;$i++){
@@ -324,11 +339,12 @@ class RetentionKARateForm extends CFormModel
         $topList[]=array("name"=>Yii::t("summary","manager ").Yii::t("summary","YTD ").Yii::t("summary","stop contract amt"));
         //主管保留率
         $topList[]=array("name"=>Yii::t("summary","manager ").Yii::t("summary","retention rate"));
+        /*
         //KA团队YTD 终止合同金额
         $topList[]=array("name"=>Yii::t("summary","KA team ").Yii::t("summary","YTD ").Yii::t("summary","stop contract amt"));
         //KA团队保留率
         $topList[]=array("name"=>Yii::t("summary","KA team ").Yii::t("summary","retention rate"));
-
+        */
         return $topList;
     }
 
@@ -421,8 +437,10 @@ class RetentionKARateForm extends CFormModel
 
         $bodyKey[]="group_ytd_stop_amt";//主管终止合同金额
         $bodyKey[]="group_retention_rate";//主管保留率
+        /*
         $bodyKey[]="ka_ytd_stop_amt";//KA团队终止合同金额
         $bodyKey[]="ka_retention_rate";//KA团队保留率
+        */
         return $bodyKey;
     }
 
@@ -514,16 +532,16 @@ class RetentionKARateForm extends CFormModel
 
                 if(strpos($html,":groupMoneyHtml:")!==false){
                     $regionRow["group_retention_rate"]= $this->computeRetentionRate($regionRow["group_ytd_stop_amt"],$regionRow["group_month_amt"],$monthLength);
-                    $groupHtml="<td rowspan='{$rowspan}'>".$regionRow["group_ytd_stop_amt"]."</td>";
+                    $groupHtml="<td rowspan='{$rowspan}'>".self::showNum("aaa",$regionRow["group_ytd_stop_amt"])."</td>";
                     $groupHtml.="<td rowspan='{$rowspan}'>".$regionRow["group_retention_rate"]."</td>";
-                    $groupHtml.=$allRow["staffID"]==$staff_id?":kaMoneyHtml:":"";
+                    //$groupHtml.=$allRow["staffID"]==$staff_id?":kaMoneyHtml:":"";
                     $html=str_replace(":groupMoneyHtml:", $groupHtml, $html);
                     $this->downJsonText["excel"][$city][$staff_id]['group_ytd_stop_amt']=array("groupLen"=>$rowspan,"text"=>$regionRow["group_ytd_stop_amt"]);
                     $this->downJsonText["excel"][$city][$staff_id]['group_retention_rate']=array("groupLen"=>$rowspan,"text"=>$regionRow["group_retention_rate"]);
                 }
             }
             //所有汇总
-            if(strpos($html,":kaMoneyHtml:")!==false){
+            if(strpos($html,":kaMoneyHtml:")!==false){ //2025年3月12日18:10:30删除本列
                 $rowspan = $allRow["rowspan"];
                 $city = $allRow["city"];
                 $staff_id = $allRow["staffID"];
@@ -534,6 +552,10 @@ class RetentionKARateForm extends CFormModel
                 $this->downJsonText["excel"][$city][$staff_id]['ka_ytd_stop_amt']=array("groupLen"=>$rowspan,"text"=>$allRow["ka_ytd_stop_amt"]);
                 $this->downJsonText["excel"][$city][$staff_id]['ka_retention_rate']=array("groupLen"=>$rowspan,"text"=>$allRow["ka_retention_rate"]);
             }
+            $allRow["group_name"]="";
+            $allRow["employee_name"]="Total";
+            $allRow["city"]="All";
+            $html.=$this->printTableTr($allRow,$bodyKey);
             $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
             $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
         }
@@ -554,9 +576,9 @@ class RetentionKARateForm extends CFormModel
         $this->resetTdRow($data,true);
         $html="<tr class='tr-end click-tr'>";
         foreach ($bodyKey as $keyStr){
-            $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
+            $text = key_exists($keyStr,$data)?$data[$keyStr]:"";
             $tdClass = "";
-            $text = self::showNum($text,$keyStr);
+            $text = self::showNum($keyStr,$text);
             $this->downJsonText["excel"][$data['city']]["count"][]=$text;
             $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span></td>";
         }

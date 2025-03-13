@@ -64,6 +64,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('serviceLoss'),'expression'=>array('ReportController','allowServiceLoss')),
             array('allow','actions'=>array('cross'),'expression'=>array('ReportController','allowCross')),
             array('allow','actions'=>array('kaSigned'),'expression'=>array('ReportController','allowKaSigned')),
+            array('allow','actions'=>array('kaRetention'),'expression'=>array('ReportController','allowKaRetention')),
 			array('allow',
 				'actions'=>array('generate'),
 				'expression'=>array('ReportController','allowReadOnly'),
@@ -764,6 +765,29 @@ class ReportController extends Controller
             }
         }
         $this->render('chain',array('model'=>$model));
+	}
+
+// Report: KaRetention
+	protected static function allowKaRetention() {
+		return Yii::app()->user->validFunction('B41');
+	}
+
+	public function actionKaRetention($year='') {
+        $this->function_id = "B41";
+        Yii::app()->session['active_func'] = $this->function_id;
+        $model = new ReportKaRetentionForm();
+        $model->year = empty($year)?date("Y"):$year;
+        if (isset($_POST['ReportKaRetentionForm'])) {
+            $model->attributes = $_POST['ReportKaRetentionForm'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            }else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('kaRetention',array('model'=>$model));
 	}
 
 // Report: ActiveService

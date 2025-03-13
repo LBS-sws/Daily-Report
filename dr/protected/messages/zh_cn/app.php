@@ -206,5 +206,6 @@ return array(
     'Management Staff Setting'=>'奖金人员设置',
     'Management Stop Setting'=>'停单率提成设置',
     'Retention KA rate'=>'KA保留率',
+    'KA Retention report'=>'KA保留率明细报表',
 );
 ?>

@@ -81,5 +81,6 @@ return array(
     'Re signing amount'=>'重簽金額（暫停或終止3個月後新增的單）',
     'Cross report'=>'交叉派單報表',
     'KA signed report'=>'KA新簽報表',
+    'KA Retention report'=>'KA保留率明細報表',
 );
 ?>

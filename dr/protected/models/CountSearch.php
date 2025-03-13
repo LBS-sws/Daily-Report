@@ -2194,7 +2194,7 @@ class CountSearch extends SearchForCurlU {
               select contract_no,max(id) as max_id from swo_service_ka_no WHERE status_dt<='{$endDate}' GROUP BY contract_no
             ) f ON a.id=f.max_id and a.contract_no=f.contract_no 
             LEFT JOIN swo_service_ka b ON a.service_id=b.id
-            WHERE b.salesman_id in ({$salesman_str}) GROUP BY b.salesman_id
+            WHERE a.status!='T' AND b.salesman_id in ({$salesman_str}) GROUP BY b.salesman_id
         ";
             $kaRow = Yii::app()->db->createCommand($kaSql)->queryAll();
             $kaRow = $kaRow?$kaRow:array();
@@ -2215,7 +2215,7 @@ class CountSearch extends SearchForCurlU {
     //客户服务查询(根據服務類型)(销售员id为键名)（月為鍵名)
     public static function getServiceForTypeToMonthAndSales($startDate,$endDate,$salesman_str,$type="N"){
         $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
-        $whereSql.= " and a.salesman_id in ({$salesman_str})";
+        $whereSql.= " and a.salesman_id in ({$salesman_str}) and (a.reason!='【系统自动触发】:合同已到期' or a.reason is null)";
         $whereSql .= self::$whereSQL;
         $list=array();
         $rows = Yii::app()->db->createCommand()
@@ -2239,7 +2239,7 @@ class CountSearch extends SearchForCurlU {
             $rows = array_merge($rows,$IDRows);
         }
         if(self::$KABool){
-            $kaSqlPrx = self::getServiceKASQL("a.");
+            //$kaSqlPrx = self::getServiceKASQL("a.");
             $KARows = Yii::app()->db->createCommand()
                 ->select("sum(case a.paid_type
 							when 'M' then a.amt_paid * a.ctrt_period
@@ -2248,7 +2248,7 @@ class CountSearch extends SearchForCurlU {
 					) as sum_amount,a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
                 ->from("swo_service_ka a")
                 ->leftJoin("swo_customer_type f","a.cust_type=f.id")
-                ->where($whereSql." and {$kaSqlPrx}")
+                ->where($whereSql)
                 ->group("a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
             $KARows = $KARows?$KARows:array();
             $rows = array_merge($rows,$KARows);

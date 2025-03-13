@@ -91,6 +91,10 @@ return array(
 		'access'=>'B',
 		'icon'=>'fa-file-text-o',
 		'items'=>array(
+            'KA Retention report'=>array( //KA保留率详情报表
+                'access'=>'B41',
+                'url'=>'/report/kaRetention',
+            ),
 			'KA signed report'=>array( //KA新签报表
 				'access'=>'B40',
 				'url'=>'/report/kaSigned',
