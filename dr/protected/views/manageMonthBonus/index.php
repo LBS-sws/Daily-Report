@@ -25,16 +25,20 @@ $this->pageTitle=Yii::app()->name . ' - Bonus Month Form';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
         <?php
-        if(isset($_GET['refresh'])){
-            $submit = Yii::app()->createUrl('manageMonthBonus/view',array('refresh'=>true));
-        }else{
-            $submit = Yii::app()->createUrl('manageMonthBonus/view');
-        }
         echo TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('summary','Enquiry'), array(
-            'submit'=>$submit));
+            'submit'=> Yii::app()->createUrl('manageMonthBonus/view')));
         ?>
 	</div>
-	</div></div>
+            <?php if (Yii::app()->user->validFunction('CN31')): ?>
+                <div class="btn-group pull-right" role="group">
+                    <?php
+                    echo TbHtml::button('<span class="fa fa-search"></span> '."实时查询", array(
+                        'submit'=> Yii::app()->createUrl('manageMonthBonus/view',array("refresh"=>1))));
+                    ?>
+                </div>
+            <?php endif ?>
+	</div>
+    </div>
 
 	<div class="box box-info">
 		<div class="box-body">
