@@ -24,8 +24,14 @@ $this->pageTitle=Yii::app()->name . ' - Bonus Month Form';
 <section class="content">
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
-        <?php echo TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('summary','Enquiry'), array(
-            'submit'=>Yii::app()->createUrl('manageMonthBonus/view')));
+        <?php
+        if(isset($_GET['refresh'])){
+            $submit = Yii::app()->createUrl('manageMonthBonus/view',array('refresh'=>true));
+        }else{
+            $submit = Yii::app()->createUrl('manageMonthBonus/view');
+        }
+        echo TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('summary','Enquiry'), array(
+            'submit'=>$submit));
         ?>
 	</div>
 	</div></div>

@@ -50,7 +50,7 @@ class ManageStaffSetForm extends CFormModel
     public function rules()
     {
         return array(
-            array('start_date,end_date,city,city_allow,job_key','required'),
+            array('start_date,end_date,city_allow,job_key','required'),
             array('id,start_date,employee_id,employee_name,city,city_allow,job_key,team_rate,person_type,person_money,
             condition_type,condition_money,max_bonus,z_index','safe'),
         );
@@ -206,8 +206,10 @@ class ManageStaffSetForm extends CFormModel
             $this->employee_id = empty($this->employee_id)?null:$this->employee_id;
             $command->bindParam(':employee_id',$this->employee_id,PDO::PARAM_INT);
         }
-        if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$this->city,PDO::PARAM_INT);
+        if (strpos($sql,':city')!==false){
+            $city = empty($this->city)?current($this->city_allow):$this->city;
+            $command->bindParam(':city',$city,PDO::PARAM_INT);
+        }
         if (strpos($sql,':job_key')!==false)
             $command->bindParam(':job_key',$this->job_key,PDO::PARAM_INT);
         if (strpos($sql,':team_rate')!==false){

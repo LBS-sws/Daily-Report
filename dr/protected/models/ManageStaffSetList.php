@@ -55,7 +55,7 @@ class ManageStaffSetList extends CListPageModel
 			$order .= " order by ".$this->orderField." ";
 			if ($this->orderType=='D') $order .= "desc ";
 		}else{
-            $order .= " order by start_date desc";
+            $order .= " order by a.z_index desc,a.start_date desc,a.id";
         }
 
 		$sql = $sql2.$clause;

@@ -67,13 +67,13 @@ class ManageMonthBonusController extends Controller
 		$this->render('index',array('model'=>$model));
 	}
 
-	public function actionView()
+	public function actionView($refresh=false)
 	{
         $model = new ManageMonthBonusForm('view');
         if (isset($_POST['ManageMonthBonusForm'])) {
             $model->attributes = $_POST['ManageMonthBonusForm'];
             if ($model->validate()) {
-                $model->retrieveData();
+                $model->retrieveData('',$refresh);
                 $this->render('form',array('model'=>$model));
             } else {
                 $message = CHtml::errorSummary($model);
