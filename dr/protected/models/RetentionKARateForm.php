@@ -177,13 +177,13 @@ class RetentionKARateForm extends CFormModel
     }
 
     private function getSalesmanStr($list){
-        $arr = array();
+        $arr = array(-1);
         if(!empty($list)){
             foreach ($list as $row){
                 $arr[]=$row["id"];
             }
         }
-        return "-1,".implode(",",$arr);
+        return implode(",",$arr);
     }
 
     public function retrieveData() {
