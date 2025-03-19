@@ -28,8 +28,10 @@ class ManageStaffSetList extends CListPageModel
 				LEFT JOIN security{$suffix}.sec_city f ON a.city=f.code
 				where 1=1 
 			";
-		$sql2 = "select count(id)
+		$sql2 = "select count(a.id)
 				from swo_manage_staff a
+				LEFT JOIN hr{$suffix}.hr_employee b ON a.employee_id=b.id
+				LEFT JOIN security{$suffix}.sec_city f ON a.city=f.code
 				where 1=1 
 			";
 		$clause = "";
@@ -37,12 +39,12 @@ class ManageStaffSetList extends CListPageModel
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
 				case 'employee_code':
-					$clause .= General::getSqlConditionClause('employee_code',$svalue);
+					$clause .= General::getSqlConditionClause('b.code',$svalue);
 					break;
 				case 'employee_name':
-					$clause .= General::getSqlConditionClause('employee_name',$svalue);
+					$clause .= General::getSqlConditionClause('b.name',$svalue);
 					break;
-				case 'city_allow_name':
+				case 'city_name':
 					$clause .= General::getSqlConditionClause('city_allow_name',$svalue);
 					break;
 			}
