@@ -31,6 +31,10 @@ class ManageMonthBonusController extends Controller
 				'actions'=>array('index','view','downExcel','ajaxDetail'),
 				'expression'=>array('ManageMonthBonusController','allowReadOnly'),
 			),
+			array('allow',
+				'actions'=>array('saveCache'),
+				'expression'=>array('ManageMonthBonusController','allowCache'),
+			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
@@ -82,6 +86,25 @@ class ManageMonthBonusController extends Controller
         }
 	}
 
+	public function actionSaveCache()
+	{
+        $model = new ManageMonthBonusForm('view');
+        if (isset($_POST['ManageMonthBonusForm'])) {
+            $model->attributes = $_POST['ManageMonthBonusForm'];
+            if ($model->validate()) {
+                $model->saveCache();
+                Dialog::message(Yii::t('dialog','Validation Message'), "强制刷新成功");
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+            $this->render('index',array('model'=>$model));
+        }else{
+            $model->setScenario("index");
+            $this->render('index',array('model'=>$model));
+        }
+	}
+
 	public function actionDownExcel()
 	{
         $model = new ManageMonthBonusForm('view');
@@ -101,5 +124,9 @@ class ManageMonthBonusController extends Controller
 	
 	public static function allowReadOnly() {
 		return Yii::app()->user->validFunction('MM01');
+	}
+
+	public static function allowCache() {
+		return Yii::app()->user->validFunction('CN31');
 	}
 }

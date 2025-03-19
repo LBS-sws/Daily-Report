@@ -422,7 +422,7 @@ class SalesAnalysisForm extends CFormModel
     public static function getCitySetForCityAllow($city_allow){
         $rows = Yii::app()->db->createCommand()
             ->select("code")->from("swo_city_set")
-            ->where("code in ({$city_allow}) or region_code in ({$city_allow})")
+            ->where("show_type =1 and (code in ({$city_allow}) or region_code in ({$city_allow}))")
             ->queryAll();
         if($rows){
             foreach ($rows as $row){

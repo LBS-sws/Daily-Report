@@ -17,4 +17,5 @@ return array(
     'Quarter U Service'=>array('access'=>'CN18',),//季度技术员生产力分析
     'Month U Service'=>array('access'=>'CN19',),//月度技术员生产力分析
     'Cross Delete'=>array('access'=>'CN30',),//删除交叉派单
+    'Refresh Month Bonus'=>array('access'=>'CN31',),//强制刷新管理层月度奖金计算
 );

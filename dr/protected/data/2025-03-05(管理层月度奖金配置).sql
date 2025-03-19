@@ -22,7 +22,8 @@ DROP TABLE IF EXISTS `swo_manage_staff`;
 CREATE TABLE `swo_manage_staff` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `start_date` date NOT NULL COMMENT '生效时间',
-  `employee_id` int(11) NOT NULL COMMENT '员工id',
+  `end_date`  date NOT NULL COMMENT '失效日期' ,
+  `employee_id` int(11) NULL DEFAULT NULL COMMENT '员工id',
   `city` varchar(255) NOT NULL COMMENT '员工归属城市',
   `city_allow` text,
   `city_allow_name` text,

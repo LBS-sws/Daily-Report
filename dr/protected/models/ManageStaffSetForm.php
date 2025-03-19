@@ -5,6 +5,7 @@ class ManageStaffSetForm extends CFormModel
     /* User Fields */
     public $id;
     public $start_date;
+    public $end_date="2222/12/31";
     public $employee_id;
     public $employee_name;
     public $city;
@@ -26,6 +27,7 @@ class ManageStaffSetForm extends CFormModel
     {
         return array(
             'start_date'=>Yii::t('summary','Effective date'),
+            'end_date'=>"失效日期",
             'employee_id'=>Yii::t('summary','Employee Name'),
             'employee_code'=>Yii::t('summary','employee code'),
             'employee_name'=>Yii::t('summary','Employee Name'),
@@ -48,7 +50,7 @@ class ManageStaffSetForm extends CFormModel
     public function rules()
     {
         return array(
-            array('start_date,employee_id,city,city_allow,job_key','required'),
+            array('start_date,end_date,city,city_allow,job_key','required'),
             array('id,start_date,employee_id,employee_name,city,city_allow,job_key,team_rate,person_type,person_money,
             condition_type,condition_money,max_bonus,z_index','safe'),
         );
@@ -61,6 +63,7 @@ class ManageStaffSetForm extends CFormModel
         if ($row){
             $this->id = $row['id'];
             $this->start_date = General::toDate($row['start_date']);
+            $this->end_date = General::toDate($row['end_date']);
             $this->employee_id = $row['employee_id'];
             $this->employee_name = GetNameToId::getEmployeeNameForId($row['employee_id']);
             $this->city = $row['city'];
@@ -78,28 +81,32 @@ class ManageStaffSetForm extends CFormModel
         return false;
     }
 
-    public static function getStaffAndCityListForCityAllow($city_allow,$year,$month){
+    public static function getStaffListForCityAllow($city_allow,$year,$month){
         $startDate = date("Y-m-01",strtotime("{$year}-{$month}-01"));
         $suffix = Yii::app()->params['envSuffix'];
-        $whereSql = "a.start_date<='$startDate' and a.city in ({$city_allow})";
-        if(empty($city_allow)){
-            $whereSql = "1=1";
-        }
+        $whereSql = "a.start_date<='$startDate' and a.end_date>='{$startDate}'";
         $rows = Yii::app()->db->createCommand()
             ->select("a.*,b.code as employee_code,b.name as employee_name")
             ->from("swo_manage_staff a")
             ->leftJoin("hr{$suffix}.hr_employee b","a.employee_id=b.id")
             ->where($whereSql)->order("a.z_index desc,a.start_date desc,a.id")->queryAll();
-        $list = array("staffRow"=>array(),"cityAllow"=>array());
+        $list = array("staffRow"=>array());
         if($rows){
             foreach ($rows as $row){
-                $employeeID = "".$row["employee_id"];
-                if(!key_exists($employeeID,$list["staffRow"])){
-                    $row["dept_name"] = self::getJobStrForKey($row["job_key"]);
-                    $list["staffRow"][$employeeID]=$row;
-                    if(!key_exists($row["city"],$list["cityAllow"])){
-                        $list["cityAllow"][]=$row["city"];
+                $setID = "".$row["id"];
+                $okBool = true;
+                $cityList = explode(",",$row["city_allow"]);
+                if(!empty($cityList)){
+                    foreach ($cityList as $city){
+                        if (strpos($city_allow,"'{$city}'")===false){
+                            $okBool = false;
+                            break;
+                        }
                     }
+                }
+                if($okBool){
+                    $row["dept_name"] = self::getJobStrForKey($row["job_key"]);
+                    $list["staffRow"][$setID]=$row;
                 }
             }
         }
@@ -160,14 +167,15 @@ class ManageStaffSetForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into swo_manage_staff(
-						start_date, employee_id, city, job_key, team_rate, person_type, person_money,
+						start_date,end_date, employee_id, city, job_key, team_rate, person_type, person_money,
 						 condition_type,condition_money,max_bonus,z_index,city_allow,city_allow_name,luu, lcu) values (
-						:start_date,:employee_id,:city,:job_key,:team_rate,:person_type,:person_money,
+						:start_date,:end_date,:employee_id,:city,:job_key,:team_rate,:person_type,:person_money,
 						:condition_type,:condition_money,:max_bonus,:z_index,:allow_city,:name_allow_city, :luu, :lcu)";
                 break;
             case 'edit':
                 $sql = "update swo_manage_staff set 
 					start_date = :start_date, 
+					end_date = :end_date, 
 					employee_id = :employee_id,
 					city_allow = :allow_city,
 					city_allow_name = :name_allow_city,
@@ -192,8 +200,12 @@ class ManageStaffSetForm extends CFormModel
             $command->bindParam(':id',$this->id,PDO::PARAM_INT);
         if (strpos($sql,':start_date')!==false)
             $command->bindParam(':start_date',$this->start_date,PDO::PARAM_STR);
-        if (strpos($sql,':employee_id')!==false)
+        if (strpos($sql,':end_date')!==false)
+            $command->bindParam(':end_date',$this->end_date,PDO::PARAM_STR);
+        if (strpos($sql,':employee_id')!==false){
+            $this->employee_id = empty($this->employee_id)?null:$this->employee_id;
             $command->bindParam(':employee_id',$this->employee_id,PDO::PARAM_INT);
+        }
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$this->city,PDO::PARAM_INT);
         if (strpos($sql,':job_key')!==false)

@@ -71,13 +71,23 @@ $this->pageTitle=Yii::app()->name . ' - Customer Type Form';
 				</div>
 			</div>
 
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'end_date',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-2">
+					<?php echo $form->textField($model, 'end_date',
+						array('id'=>'end_date','readonly'=>($model->scenario=='view'))
+					); ?>
+				</div>
+			</div>
+
             <div class="form-group">
                 <?php echo $form->labelEx($model,'employee_id',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-4">
                     <?php
                     echo $form->textField($model, 'employee_name',
                         array('readonly'=>true,'class'=>'employeeName',
-                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('summary','Employee Name'),array('class'=>'searchUser','disabled'=>($model->scenario=='view'))),
+                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('summary','Employee Name'),array('class'=>'searchUser','color'=>'primary','disabled'=>($model->scenario=='view'))),
+                            'prepend'=>TbHtml::button('<span class="fa fa-close"></span> 清空',array('class'=>'closeUser','disabled'=>($model->scenario=='view'))),
                         ));
                     ?>
                     <?php echo $form->hiddenField($model, 'employee_id',array("class"=>"employeeID")); ?>
@@ -192,6 +202,7 @@ Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_R
 
 $js = Script::genDatePicker(array(
     'start_date',
+    'end_date',
 ));
 Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 
@@ -243,6 +254,11 @@ $('#city').change(function(){
     var city = $(this).val();
     $('.city_allow').prop('checked',false);
     $('.city_allow[value="'+city+'"]').prop('checked',true);
+});
+
+$('.closeUser').click(function(){
+    $(this).parents('.input-group:first').find('input').val('');
+    $(this).parents('.input-group:first').next('input').val('');
 });
 EOF;
 Yii::app()->clientScript->registerScript('lookupEmployee',$js,CClientScript::POS_READY);

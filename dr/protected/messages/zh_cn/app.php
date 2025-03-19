@@ -207,5 +207,6 @@ return array(
     'Management Stop Setting'=>'停单率提成设置',
     'Retention KA rate'=>'KA保留率',
     'KA Retention report'=>'KA保留率明细报表',
+    'Refresh Month Bonus'=>'强制刷新月度奖金',
 );
 ?>

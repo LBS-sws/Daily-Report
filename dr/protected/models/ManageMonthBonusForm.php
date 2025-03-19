@@ -7,6 +7,9 @@ class ManageMonthBonusForm extends CFormModel
 	public $search_month;
 	public $start_date;
 	public $end_date;
+	public $status_type;//1:已固定
+	public $update_user;//操作用户
+	public $update_date;//操作时间
 
 	public $data=array();
 	public $bonusData=array();
@@ -28,6 +31,7 @@ class ManageMonthBonusForm extends CFormModel
             'end_date'=>Yii::t('summary','end date'),
             'search_year'=>Yii::t('summary','search year'),
             'search_month'=>Yii::t('summary','search month'),
+            'status_type'=>Yii::t('misc','Status'),
 		);
 	}
 
@@ -105,37 +109,114 @@ class ManageMonthBonusForm extends CFormModel
         $list["month_net_tar"] = self::comparisonNetRate($list["num_growth"],$list["two_net"]);
     }
 
-    public function retrieveData($city_allow="") {
-        $this->u_load_data['load_start'] = time();
-        $data = array();
+    public function saveCache(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $update_user = Yii::app()->getComponent('user')===null?"admin":Yii::app()->user->id;
+        $update_date = date_format(date_create(),"Y/m/d H:i:s");
+        $cityList = array("11");
+        $cityRows = Yii::app()->db->createCommand()->select("code")->from("security{$suffix}.sec_city")
+            ->where("1=1")->queryAll();
+        if($cityRows){
+            foreach ($cityRows as $cityRow){
+                $cityList[]=$cityRow["code"];
+            }
+        }
+        $city_allow = "'".implode("','",$cityList)."'";
+        $this->setModelData($city_allow);
+        $cacheRow = Yii::app()->db->createCommand()->select("id")->from("swo_manage_cache")
+            ->where("year_no=:year and month_no=:month",array(
+                ":year"=>$this->search_year,
+                ":month"=>$this->search_month,
+            ))->queryRow();
+        if($cacheRow){
+            Yii::app()->db->createCommand()->update("swo_manage_cache",array(
+                "dataJson"=>json_encode($this->data),
+                "status_type"=>1,
+                "update_user"=>$update_user,
+                "update_date"=>$update_date,
+            ),"id=".$cacheRow["id"]);
+        }else{
+            Yii::app()->db->createCommand()->insert("swo_manage_cache",array(
+                "year_no"=>$this->search_year,
+                "month_no"=>$this->search_month,
+                "dataJson"=>json_encode($this->data),
+                "status_type"=>1,
+                "update_user"=>$update_user,
+                "update_date"=>$update_date,
+            ));
+        }
+    }
+
+    private function setModelData($city_allow){
+        $this->data = array();
         $city_allow = empty($city_allow)?Yii::app()->user->city_allow():$city_allow;
-        $staffCityList = ManageStaffSetForm::getStaffAndCityListForCityAllow($city_allow,$this->search_year,$this->search_month);
-        $staffLists = $staffCityList["staffRow"];
+        $staffSetList = ManageStaffSetForm::getStaffListForCityAllow($city_allow,$this->search_year,$this->search_month);
+        $staffLists = $staffSetList["staffRow"];
         $bonusModel = new BonusMonthForm();
         $bonusModel->search_year = $this->search_year;
         $bonusModel->search_month = $this->search_month;
         $bonusModel->start_date = $this->start_date;
         $bonusModel->end_date = $this->end_date;
         $bonusModel->retrieveData($city_allow);
+        $bonusData = $bonusModel->data;
         $this->u_load_data = $bonusModel->u_load_data;
-        $this->bonusData = $this->resetBonusData($bonusModel->data);
-
+        $this->bonusData = $this->resetBonusData($bonusData);
         foreach ($staffLists as $staffList){
-            $staffID = $staffList["employee_id"];
+            $setID = $staffList["id"];
             $cityList = explode(",",$staffList["city_allow"]);
             if(count($cityList)==1){
                 $city = $cityList[0];
-                $this->cityForStaffID[$city] = $staffID;
+                if(!key_exists($city,$this->cityForStaffID)){
+                    $this->cityForStaffID[$city] = $setID;
+                }
             }
             $defMoreList=$this->defMoreCity($cityList,$staffList["city_allow_name"]);
             $this->addDefListForArr($defMoreList,$staffList);
-            $defMoreList["employee_name"] = "{$staffList["employee_name"]} ({$staffList["employee_code"]})";
+            $employName = "{$staffList["employee_name"]} ({$staffList["employee_code"]})";
+            $defMoreList["employee_name"] = empty($staffList["employee_id"])?"-":$employName;
             $defMoreList["year_month"] = $this->search_year."/".$this->search_month;
 
-            $data[$staffID] = $defMoreList;
+            $this->resetTdRow($defMoreList);
+            $this->data[$setID] = $defMoreList;
+        }
+    }
+
+    public function retrieveData($city_allow="",$refresh=false) {
+        $this->u_load_data['load_start'] = time();
+        $city_allow = empty($city_allow)?Yii::app()->user->city_allow():$city_allow;
+        $row = Yii::app()->db->createCommand()->select("*")->from("swo_manage_cache")
+            ->where("status_type=1 and year_no=:year and month_no=:month",array(
+                ":year"=>$this->search_year,
+                ":month"=>$this->search_month,
+            ))->queryRow();
+        if($refresh===false&&$row){//查询固定数据
+            $this->status_type = $row["status_type"];
+            $this->update_date = $row["update_date"];
+            $this->update_user = $row["update_user"];
+            $this->data = array();
+            $data = json_decode($row["dataJson"],true);
+            if(!empty($data)&&is_array($data)){
+                foreach ($data as $row){
+                    $okBool = true;
+                    $cityList = $row["city_list"];
+                    if(!empty($cityList)){
+                        foreach ($cityList as $city){
+                            if (strpos($city_allow,"'{$city}'")===false){
+                                $okBool = false;
+                                break;
+                            }
+                        }
+                    }
+                    if($okBool){
+                        $setID = "".$row["id"];
+                        $this->data[$setID] = $row;
+                    }
+                }
+            }
+        }else{//实时刷新
+            $this->setModelData($city_allow);
         }
 
-        $this->data = $data;
         $session = Yii::app()->session;
         $session['manageMonthBonus_c01'] = $this->getCriteria();
         $this->u_load_data['load_end'] = time();
@@ -152,6 +233,7 @@ class ManageMonthBonusForm extends CFormModel
 
     protected function defMoreCity($city_list,$city_allow_name){
         return array(
+            "id"=>"",//配置的id(主键)
             "year_month"=>"",
             "city"=>"",
             "city_list"=>$city_list,
@@ -236,11 +318,11 @@ class ManageMonthBonusForm extends CFormModel
                 $list["month_royalty"]=0;
                 foreach ($list["city_list"] as $city){
                     if(key_exists($city,$this->cityForStaffID)){
-                        $staffID = "".$this->cityForStaffID[$city];
-                        $this->data[$staffID]["end_bonus"] = floatval($this->data[$staffID]["month_new_amt"])*floatval($this->data[$staffID]["stop_rate_coe"])*floatval($list["royalty_rate"])*0.01;
-                        $this->data[$staffID]["end_bonus"] = round($this->data[$staffID]["end_bonus"],2);
-                        $this->downJsonText["excel"][$staffID]["end_bonus"]=$this->data[$staffID]["end_bonus"];
-                        $list["month_royalty"]+=$this->data[$staffID]["end_bonus"];
+                        $setID = "".$this->cityForStaffID[$city];
+                        $this->data[$setID]["end_bonus"] = floatval($this->data[$setID]["month_new_amt"])*floatval($this->data[$setID]["stop_rate_coe"])*floatval($list["royalty_rate"])*0.01;
+                        $this->data[$setID]["end_bonus"] = ComparisonForm::showNum($this->data[$setID]["end_bonus"]);
+                        //$this->downJsonText["excel"][$setID]["end_bonus"]=$this->data[$setID]["end_bonus"];
+                        $list["month_royalty"]+=$this->data[$setID]["end_bonus"];
                     }
                 }
                 break;
@@ -520,19 +602,19 @@ class ManageMonthBonusForm extends CFormModel
         $html="";
         if(!empty($data)){
             foreach ($data as &$cityList){
-                $this->resetTdRow($cityList);
+                //$this->resetTdRow($cityList);
                 $html.="<tr>";
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                     $text = $text===""?"":ComparisonForm::showNum($text);
-                    $this->downJsonText["excel"][$cityList['employee_id']][$keyStr]=$text;
+                    $this->downJsonText["excel"][$cityList['id']][$keyStr]=$text;
                     $class = "";
                     $title="";
                     if(key_exists($keyStr,$clickTdList)){
                         $class.=" td_detail";
                         $title=$clickTdList[$keyStr]["title"];
                     }
-                    $html.="<td class='{$class}' data-title='{$title}' data-id='{$cityList["employee_id"]}' data-type='{$keyStr}' data-city='{$cityList['city']}'>";
+                    $html.="<td class='{$class}' data-title='{$title}' data-id='{$cityList["id"]}' data-type='{$keyStr}' data-city='{$cityList['city']}'>";
                     $html.="<span>{$text}</span></td>";
                     $html.="</td>";
                 }

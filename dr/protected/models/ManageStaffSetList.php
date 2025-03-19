@@ -11,6 +11,7 @@ class ManageStaffSetList extends CListPageModel
 	{
 		return array(	
 			'start_date'=>Yii::t('summary','Effective date'),
+            'end_date'=>"失效日期",
 			'employee_code'=>Yii::t('summary','employee code'),
 			'employee_name'=>Yii::t('summary','Employee Name'),
 			'city_name'=>Yii::t('summary','bonus city'),
@@ -72,6 +73,7 @@ class ManageStaffSetList extends CListPageModel
 					$this->attr[] = array(
 						'id'=>$record['id'],
 						'start_date'=>$record['start_date'],
+						'end_date'=>$record['end_date'],
 						'employee_code'=>$record['employee_code'],
 						'employee_name'=>$record['employee_name'],
 						'city_allow_name'=>$record['city_allow_name'],
