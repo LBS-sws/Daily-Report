@@ -150,8 +150,10 @@ class BonusMonthForm extends CFormModel
         }
 
         $this->data = $data;
-        $session = Yii::app()->session;
-        $session['bonusMonth_c01'] = $this->getCriteria();
+        if(Yii::app()->getComponent('user')!==null){
+            $session = Yii::app()->session;
+            $session['bonusMonth_c01'] = $this->getCriteria();
+        }
         $this->u_load_data['load_end'] = time();
         return true;
     }

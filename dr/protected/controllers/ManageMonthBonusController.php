@@ -92,8 +92,12 @@ class ManageMonthBonusController extends Controller
         if (isset($_POST['ManageMonthBonusForm'])) {
             $model->attributes = $_POST['ManageMonthBonusForm'];
             if ($model->validate()) {
-                $model->saveCache();
-                Dialog::message(Yii::t('dialog','Validation Message'), "强制刷新成功");
+                $arr = $model->saveCache();
+                if($arr["bool"]){
+                    Dialog::message(Yii::t('dialog','Information'), "强制刷新成功");
+                }else{
+                    Dialog::message(Yii::t('dialog','Validation Message'), $arr["message"]);
+                }
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);

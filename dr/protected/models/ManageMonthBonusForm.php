@@ -145,6 +145,52 @@ class ManageMonthBonusForm extends CFormModel
                 "update_date"=>$update_date,
             ));
         }
+
+        return $this->sendBsData();
+    }
+
+    private function sendBsData(){
+        $saveArr= array("bool"=>true,"message"=>"");
+        $bsCurlModel = new BsCurlModel();
+        $bsCurlModel->sendData = $this->getCurlData();
+        $curlData = $bsCurlModel->sendBsCurl();
+        if($curlData["code"]!=200){//curl异常，不继续执行
+            $bsCurlModel->logError($curlData);
+            $saveArr["bool"]=false;
+            $saveArr["message"]=$curlData["message"];
+        }
+        return $saveArr;
+    }
+
+    private function getCurlData(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $startDate = date("Y/m/01",strtotime("{$this->search_year}-{$this->search_month}-01"));
+        $stopDate = date("Y/m/t",strtotime($startDate));
+        $models = array();
+        if(!empty($this->data)){
+            foreach ($this->data as $row){
+                if(!empty($row["employee_id"])){
+                    $employee_id = "".$row["employee_id"];
+                    if(!key_exists($employee_id,$models)){
+                        $staffRow = Yii::app()->db->createCommand()->select("bs_staff_id")->from("hr{$suffix}.hr_employee")
+                            ->where("id=:id",array(":id"=>$employee_id))->queryRow();
+                        $models[$employee_id]=array(
+                            "staffId"=>$staffRow["bs_staff_id"],
+                            "itemName"=>6,//城市总&副总监提成
+                            "startDate"=>$startDate,
+                            "stopDate"=>$stopDate,
+                            "numericVal"=>0,
+                        );
+                    }
+                    $models[$employee_id]["numericVal"]+=empty($row["goal_all_bonus"])?0:floatval($row["goal_all_bonus"]);
+                }
+            }
+        }
+
+        return array(
+            "presetSalarySubsetCode"=>"PresetSalarySubset1",
+            "models"=>array_values($models)
+        );
     }
 
     private function setModelData($city_allow){
