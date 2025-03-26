@@ -32,4 +32,9 @@
 			;
 		?>
 	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('status').$this->drawOrderArrow('status'),'#',$this->createOrderLink('customer-list','status'))
+			;
+		?>
+	</th>
 </tr>

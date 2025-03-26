@@ -39,6 +39,7 @@ $this->pageTitle=Yii::app()->name . ' - Customer';
 						'full_name',
 						'cont_name',
 						'cont_phone',
+						'status',
 					);
 		$this->widget('ext.layout.ListPageWidget', array(
 			'title'=>Yii::t('customer','Customer List'),

@@ -8,4 +8,5 @@
 	<td><?php echo $this->record['full_name']; ?></td>
 	<td><?php echo $this->record['cont_name']; ?></td>
 	<td><?php echo $this->record['cont_phone']; ?></td>
+	<td><?php echo $this->record['status']; ?></td>
 </tr>

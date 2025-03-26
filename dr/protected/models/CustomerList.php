@@ -17,6 +17,7 @@ class CustomerList extends CListPageModel
 			'cont_name'=>Yii::t('customer','Contact Name'),
 			'cont_phone'=>Yii::t('customer','Contact Phone'),
 			'city_name'=>Yii::t('misc','City'),
+            'status'=>Yii::t('customer','Status'),
 		);
 	}
 	
@@ -54,6 +55,9 @@ class CustomerList extends CListPageModel
 				case 'cont_phone':
 					$clause .= General::getSqlConditionClause('a.cont_phone',$svalue);
 					break;
+				case 'status':
+					$clause .= self::getStatusSQL($svalue);
+					break;
 			}
 		}
 		
@@ -83,6 +87,7 @@ class CustomerList extends CListPageModel
 					'cont_name'=>$record['cont_name'],
 					'cont_phone'=>$record['cont_phone'],
 					'city_name'=>$record['city_name'],
+					'status'=>self::getStatusStr($record['status']),
 				);
 			}
 		}
@@ -91,4 +96,30 @@ class CustomerList extends CListPageModel
 		return true;
 	}
 
+	public static function getStatusStr($status){
+	    $model = new CustomerForm();
+	    $list = $model->getStatusList();
+        $status="".$status;
+	    if(key_exists($status,$list)){
+	        return $list[$status];
+        }else{
+	        return current($list);
+        }
+    }
+
+	public static function getStatusSQL($status){
+
+	    $model = new CustomerForm();
+	    $list = $model->getStatusList();
+        $status="".$status;
+        $idArr=array(-1);
+        foreach ($list as $key=>$value){
+            if (strpos($value,$status)!==false){
+                $idArr[]=$key;
+            }
+        }
+
+        $return = " and a.status in (".implode(",",$idArr).")";
+        return $return;
+    }
 }
