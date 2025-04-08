@@ -2265,4 +2265,72 @@ class CountSearch extends SearchForCurlU {
         }
         return $list;
     }
+
+    //客户服务查询(根據服務類型)（月為鍵名)
+    public static function getServiceForTypeToMonthSql($startDate,$endDate,$city_allow="",$type="N",$sql=''){
+        $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL;
+        $whereSql .= $sql;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();//
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+        if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and {$kaSqlPrx}")
+                ->group("a.city,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=array();
+            }
+            if(!key_exists($row["month_dt"],$list[$row["city"]])){
+                $list[$row["city"]][$row["month_dt"]]=0;
+            }
+            $list[$row["city"]][$row["month_dt"]]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
+    public static function getMarsCityAllow(){
+        $list=array(0);
+        $rows = Yii::app()->db->createCommand()->select("code")
+            ->from("swo_city_set")->where("region_code='Mars'")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $list[]=$row["code"];
+            }
+        }
+        return "'".implode("','",$list)."'";
+    }
 }

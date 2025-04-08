@@ -92,7 +92,9 @@ class RetentionRateForm extends CFormModel
         $startDate = $this->start_date;
         $endDate = $this->end_date;
 
-        $stopListAmt = CountSearch::getServiceForTypeToMonthEx($startDate,$endDate,$city_allow,"T");
+        $marsCityAllow = CountSearch::getMarsCityAllow();
+        $sql = " and !(a.reason='【系统自动触发】:合同已到期' and a.city in({$marsCityAllow}))";
+        $stopListAmt = CountSearch::getServiceForTypeToMonthSql($startDate,$endDate,$city_allow,"T",$sql);
         $retentionAmt = CountSearch::getRetentionAmt($endDate,$city_allow);
         $this->u_load_data['u_load_start'] = time();
         $this->u_load_data['u_load_end'] = time();
