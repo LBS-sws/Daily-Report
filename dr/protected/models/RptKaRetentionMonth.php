@@ -106,7 +106,7 @@ class RptKaRetentionMonth extends RptKaRetention {
                 if(!key_exists($row["company_id"],$companyList)){
                     $companyList[$row["company_id"]] = self::getCompanyListForID($row["company_id"]);
                 }
-                $temp["company_code"] = $companyList[$row["company_id"]]["code"];
+                $temp["company_code"] = $companyList[$row["company_id"]]["code"]."-".$row["city"];
                 $temp["company_name"] = $companyList[$row["company_id"]]["name"];
                 switch ($row["table_class"]){
                     case "IA":
