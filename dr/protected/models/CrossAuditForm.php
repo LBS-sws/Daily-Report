@@ -230,7 +230,7 @@ class CrossAuditForm extends CrossApplyForm
             "contract_type"=>$cross_type,//类型：4:长约 3：短约 2：资质借用
             "accept_audit_ratio"=>empty($cross_city)?null:$this->rate_num,//审核比例
             "accept_money"=>empty($cross_city)?null:$this->cross_amt,//承接方金额
-            "accept_contract_id"=>$cross_city,//承接方（城市代号：ZY）
+            "accept_contract_id"=>empty($cross_city)?null:$cross_city,//承接方（城市代号：ZY）
             "notice_object_id"=>$event==2||$this->cross_type==5?$this->send_city:null,//通知城市
             "qualification_audit_ratio"=>empty($this->qualification_city)?null:$this->qualification_ratio,//资质方比例
             "qualification_contract_id"=>empty($this->qualification_city)?null:$this->qualification_city,//资质方

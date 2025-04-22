@@ -40,7 +40,7 @@ $this->pageTitle=Yii::app()->name . ' - CrossAudit';
         </div>
     </div>
 
-    <div class="box">
+    <div class="box hide">
         <div class="box-body">
             <p class="text-danger">
                 <?php $this->renderPartial('//crossApply/crossNote'); ?>
