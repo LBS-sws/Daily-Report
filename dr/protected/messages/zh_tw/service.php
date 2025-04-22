@@ -231,5 +231,6 @@ return array(
     'ordinary'=>'普通合約',
     'KA'=>'KA合約',
     'send cross city'=>'通知城市',
+    'Cross treaty'=>'交叉合約',
 );
 ?>

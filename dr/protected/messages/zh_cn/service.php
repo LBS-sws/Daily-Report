@@ -232,5 +232,6 @@ return array(
     'ordinary'=>'普通合约',
     'KA'=>'KA合约',
     'send cross city'=>'通知城市',
+    'Cross treaty'=>'交叉合约',
 );
 ?>

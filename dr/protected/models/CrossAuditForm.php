@@ -13,6 +13,7 @@ class CrossAuditForm extends CrossApplyForm
 			array('service_id,apply_date,month_amt,cross_type','required'),
 			array('reject_note','required',"on"=>array("reject")),
 			array('id','validateID'),
+            array('send_city','validateCity'),
 		);
 	}
 
@@ -23,6 +24,7 @@ class CrossAuditForm extends CrossApplyForm
             (cross_city in ({$city_allow}) and cross_type not in (0,1))
             or (old_city in ({$city_allow}) and cross_type in (0,1))
             or (cross_type=5 and qualification_city in ({$city_allow}))
+            or (cross_type=13 and (cross_city in ({$city_allow}) or qualification_city in ({$city_allow})))
 		)";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if($row){
@@ -60,6 +62,7 @@ class CrossAuditForm extends CrossApplyForm
             (cross_city in ({$city_allow}) and cross_type not in (0,1))
             or (old_city in ({$city_allow}) and cross_type in (0,1))
             or (cross_type=5 and qualification_city in ({$city_allow}))
+            or (cross_type=13 and (cross_city in ({$city_allow}) or qualification_city in ({$city_allow})))
 		)";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		if ($row!==false) {
@@ -212,6 +215,7 @@ class CrossAuditForm extends CrossApplyForm
     protected function getCurlData(){
         $event = $this->apply_category==2&&in_array($this->cross_type,array(0,1,11,12))?2:1;
         $cross_city = $this->cross_city;//发包方自己做
+        $cross_type = $this->cross_type==13?11:$this->cross_type;//由于交叉合约和交叉普通共用11，所以特别转换
         $data=array(
             "lbs_id"=>$this->id,//唯一标识
             //"customer_code"=>$serviceModel->customer_code."-{$this->old_city}",//客户编号
@@ -223,7 +227,7 @@ class CrossAuditForm extends CrossApplyForm
             "audit_user_name"=>self::getEmployeeStrForUsername(Yii::app()->user->id),//审核人名称+编号如：400002_沈超
             "audit_date"=>General::toMyDate($this->audit_date),//审核日期
             "contract_id"=>$this->u_system_id,//u_system_id
-            "contract_type"=>$this->cross_type,//类型：4:长约 3：短约 2：资质借用
+            "contract_type"=>$cross_type,//类型：4:长约 3：短约 2：资质借用
             "accept_audit_ratio"=>empty($cross_city)?null:$this->rate_num,//审核比例
             "accept_money"=>empty($cross_city)?null:$this->cross_amt,//承接方金额
             "accept_contract_id"=>$cross_city,//承接方（城市代号：ZY）
@@ -277,7 +281,7 @@ class CrossAuditForm extends CrossApplyForm
 	            $modelObj = new CrossAuditForm();
                 $modelObj->id = $id;
                 $modelObj->audit_date = $auditDate;
-                if ($modelObj->validateID("id","")) {
+                if ($modelObj->validate()) {
                     $modelObjList[]=$modelObj;
                     $curlData[]=$modelObj->getCurlData();
                 }
@@ -289,7 +293,7 @@ class CrossAuditForm extends CrossApplyForm
                 //$rtn = array('message'=>'测试', 'code'=>200, 'outData'=>json_encode(array("errorData"=>array(array("lbs_id"=>22,"errorMsg"=>"ddddd")))));;
                 $this->curlBlack($rtn,$modelObjList,$curlData);
             }else{
-                Dialog::message(Yii::t('dialog','Information'), "数据异常，请刷新重试");
+                Dialog::message(Yii::t('dialog','Information'), "数据异常，请在详情内审核交叉派单");
             }
         }else{
             Dialog::message(Yii::t('dialog','Information'), "请选择审批的交叉派单");

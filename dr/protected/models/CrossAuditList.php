@@ -41,6 +41,7 @@ class CrossAuditList extends CListPageModel
                   (a.cross_city in ({$city_allow}) and a.cross_type not in (0,1))
                   or (a.old_city in ({$city_allow}) and a.cross_type in (0,1))
 				  or (a.cross_type=5 and a.qualification_city in ({$city_allow}))
+				  or (a.cross_type=13 and (a.qualification_city in ({$city_allow}) or a.cross_city in ({$city_allow})))
 				) and a.status_type=1 
 			";
 		$sql2 = "select count(a.id)
@@ -51,6 +52,7 @@ class CrossAuditList extends CListPageModel
                   (a.cross_city in ({$city_allow}) and a.cross_type not in (0,1))
                   or (a.old_city in ({$city_allow}) and a.cross_type in (0,1))
 				  or (a.cross_type=5 and a.qualification_city in ({$city_allow}))
+				  or (a.cross_type=13 and (a.qualification_city in ({$city_allow}) or a.cross_city in ({$city_allow})))
 				) and a.status_type=1 
 			";
 		$clause = "";

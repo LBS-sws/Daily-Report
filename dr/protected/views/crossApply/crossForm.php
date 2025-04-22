@@ -79,7 +79,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
                 ); ?>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="display: none;">
             <?php echo $form->labelEx($model,'apply_category',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
                 <?php
@@ -93,9 +93,10 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
         <div class="form-group">
             <?php echo $form->labelEx($model,'cross_type',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
-                <?php echo $form->dropDownList($model, 'cross_type',empty($endCrossList)?CrossApplyForm::getCrossTypeList():CrossApplyForm::getCrossTypeThreeList(),
-                    array('empty'=>'','readonly'=>$model->readonly(),'id'=>'cross_type')
-                ); ?>
+                <?php echo $form->hiddenField($model, 'cross_type',array("id"=>"cross_type")); ?>
+                <?php
+                echo TbHtml::textField("cross_type",CrossApplyForm::getCrossTypeStrToKey($model->cross_type),array('readonly'=>true));
+                ?>
             </div>
         </div>
         <?php
@@ -107,24 +108,24 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
             $qualificationBool = true;
         }
         ?>
-        <div class="qualification-div" style="<?php if($qualificationBool){ echo 'display: none';} ?>">
+        <div class="qualification-div">
             <div class="form-group">
                 <?php echo $form->labelEx($model,'qualification_city',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
-                    <?php echo $form->dropDownList($model, 'qualification_city',CrossApplyForm::getCityList(),
+                    <?php echo $form->dropDownList($model, 'qualification_city',CrossApplyForm::getCityOnlyList($model->qualification_city),
                         array('empty'=>'','id'=>'qualification_city','readonly'=>$model->readonly())
                     ); ?>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="<?php if($model->cross_type==13){ echo 'display: none;';} ?>" >
                 <?php echo $form->labelEx($model,'qualification_ratio',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
                     <?php echo $form->numberField($model, 'qualification_ratio',
-                        array('readonly'=>$model->readonly(),'id'=>'qualification_ratio','autocomplete'=>'off','append'=>"%","min"=>0,"max"=>"100")
+                        array('readonly'=>true,'id'=>'qualification_ratio','autocomplete'=>'off','append'=>"%","min"=>0,"max"=>"100")
                     ); ?>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="<?php if($model->cross_type==13){ echo 'display: none;';} ?>">
                 <?php echo $form->labelEx($model,'qualification_amt',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
                     <?php echo $form->textField($model, 'qualification_amt',
@@ -133,24 +134,24 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
                 </div>
             </div>
         </div>
-        <div class="accept-div" style="<?php if(in_array($model->cross_type,array(0,1,5))){ echo 'display: none';} ?>">
+        <div class="accept-div">
             <div class="form-group">
                 <?php echo $form->labelEx($model,'cross_city',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
-                    <?php echo $form->dropDownList($model, 'cross_city',CrossApplyForm::getCityList(),
+                    <?php echo $form->dropDownList($model, 'cross_city',CrossApplyForm::getCityOnlyList($model->cross_city),
                         array('empty'=>'','id'=>'cross_cross_city','readonly'=>$model->readonly())
                     ); ?>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="<?php if($model->cross_type==13){ echo 'display: none;';} ?>">
                 <?php echo $form->labelEx($model,'rate_num',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
                     <?php echo $form->numberField($model, 'rate_num',
-                        array('readonly'=>$model->readonly(),'id'=>'cross_rate_num','autocomplete'=>'off','append'=>"%","min"=>0,"max"=>"100")
+                        array('readonly'=>true,'id'=>'cross_rate_num','autocomplete'=>'off','append'=>"%","min"=>0,"max"=>"100")
                     ); ?>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="<?php if($model->cross_type==13){ echo 'display: none;';} ?>">
                 <?php echo $form->labelEx($model,'cross_amt',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
                     <?php echo $form->textField($model, 'cross_amt',
@@ -167,10 +168,10 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
                 ); ?>
             </div>
         </div>
-        <div class="form-group" id="send_city_div" style="<?php echo in_array($model->cross_type,array(11,12,0,1,5))?"":"display:none;";?>" >
+        <div class="form-group" id="send_city_div" >
             <?php echo Tbhtml::label(Yii::t("service","send cross city"),'',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
-                <?php echo $form->dropDownList($model, 'send_city',CrossApplyForm::getCityList(),
+                <?php echo $form->dropDownList($model, 'send_city',CrossApplyForm::getCityOnlyList($model->send_city),
                     array('empty'=>'','id'=>'send_city','readonly'=>$model->readonly())
                 ); ?>
             </div>
@@ -236,48 +237,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
 <?php
 if($model->status_type==2){
     $js="
-	$('#cross_rate_num,#cross_month_amt,#qualification_ratio').on('change keyup',function(){
-	    var qualification_ratio= $('#qualification_ratio').val();
-	    var rate_num= $('#cross_rate_num').val();
-	    var month_amt= $('#cross_month_amt').val();
-	    var rate_amt= 0;
-	    if(qualification_ratio!=''&&month_amt!=''){
-	        $('#qualification_amt').val(month_amt*(qualification_ratio/100));
-	    }else{
-	        $('#qualification_amt').val('');
-	    }
-	    if(rate_num!=''&&month_amt!=''){
-	        qualification_ratio = qualification_ratio==''?0:qualification_ratio;
-	        month_amt = month_amt*((100-qualification_ratio)/100);
-	        rate_amt = month_amt*(rate_num/100);
-	        rate_amt = rate_amt.toFixed(2);
-	        $('#cross_rate_amt').val(rate_amt);
-	    }else{
-	        $('#cross_rate_amt').val('');
-	    }
-	});
 	
-	$('#cross_type').change(function(){
-	    var cross_type = $(this).val();
-	    if(['5','6','7','8'].indexOf(cross_type)>=0){
-	        $('.qualification-div').slideDown(100);
-	    }else{
-	        $('#qualification_ratio').val('');
-	        $('#qualification_amt').val('');
-	        $('.qualification-div').slideUp(100);
-	    }
-        if(cross_type=='5'){
-            $('.accept-div').slideUp(100);
-        }else{
-	        $('.accept-div').slideDown(100);
-        }
-        if(['5','0','1','11','12'].indexOf(cross_type)>=0){
-            $('#send_city_div').show();
-        }else{
-            $('#send_city_div').hide();
-        }
-	    $('#cross_rate_num').trigger('change');
-	});
 	";
     Yii::app()->clientScript->registerScript('crossDialog',$js,CClientScript::POS_READY);
 

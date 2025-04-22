@@ -12,13 +12,13 @@ class CrossApplyForm extends CFormModel
 	public $contract_no;
 	public $apply_date;
 	public $month_amt;
-	public $rate_num;
+	public $rate_num=0;
 	public $old_city;
 	public $cross_city;
-	public $cross_amt;
-	public $qualification_ratio;
+	public $cross_amt=0;
+	public $qualification_ratio=0;
 	public $qualification_city;
-	public $qualification_amt;
+	public $qualification_amt=0;
 	public $status_type;
 	public $reject_note;
 	public $remark;
@@ -34,6 +34,8 @@ class CrossApplyForm extends CFormModel
     public $old_month_amt;
     public $u_update_user;
     public $u_update_date;
+
+    public static $not_city=array("CD","TJ","HZ");
 
 	/**
 	 * Declares customized attribute labels.
@@ -87,8 +89,29 @@ class CrossApplyForm extends CFormModel
             array('cross_city','validateCrossCity'),
             array('qualification_ratio,rate_num','numerical','min'=>0,'max'=>100),
             array('effective_date','validateEffective'),
+            array('send_city','validateCity'),
 		);
 	}
+
+    public function validateCity($attribute, $params) {
+	    if(in_array($this->old_city,self::$not_city)){
+            $this->addError($attribute, "城市({$this->old_city})不允许交叉派单");
+            return false;
+        }
+	    if(in_array($this->cross_city,self::$not_city)){
+            $this->addError($attribute, "承接城市不允许选择城市({$this->cross_city})");
+            return false;
+        }
+	    if(in_array($this->qualification_city,self::$not_city)){
+            $this->addError($attribute, "资质方不允许选择城市({$this->qualification_city})");
+            return false;
+        }
+	    if(in_array($this->send_city,self::$not_city)){
+            $this->addError($attribute, "通知城市不允许选择城市({$this->send_city})");
+            return false;
+        }
+        return true;
+    }
 
     public function validateEffective($attribute, $params) {
         if(empty($this->effective_date)){
@@ -115,8 +138,11 @@ class CrossApplyForm extends CFormModel
 	    $list = empty($endCrossList)?self::getCrossTypeList():self::getCrossTypeThreeList();
 	    $this->cross_type="".$this->cross_type;
 	    if(!key_exists($this->cross_type,$list)){
-            $this->addError($attribute, "业务场景不存在，请刷新重试");
-            return false;
+            $list = self::getCrossTypeEndList();
+            if(!key_exists($this->cross_type,$list)){
+                $this->addError($attribute, "业务场景不存在，请刷新重试");
+                return false;
+            }
         }else{
             if($endCrossList){
                 if(empty($this->apply_category)){
@@ -188,11 +214,12 @@ class CrossApplyForm extends CFormModel
     }
 
     public function validateCrossCity($attribute, $params) {
+        $list = self::getCrossTypeEndList();
         if($this->cross_type==5){//资质借用
             if($this->qualification_city==$this->old_city){
                 $this->addError($attribute, "资质方不能与合约城市一致");
             }
-        }elseif(!in_array($this->cross_type,array(0,1))){
+        }elseif(!in_array($this->cross_type,array(0,1))&&!key_exists("{$this->cross_type}",$list)){
             if(empty($this->rate_num)){
                 $this->addError($attribute, "承接比例不能为空");
             }
@@ -200,6 +227,11 @@ class CrossApplyForm extends CFormModel
                 $this->addError($attribute, "承接城市不能为空");
             }elseif(!in_array($this->cross_type,array(0,1,11,12))&&$this->cross_city==$this->old_city){
                 $this->addError($attribute, "承接城市不能与合约城市一致");
+            }
+        }elseif(key_exists("{$this->cross_type}",$list)){
+            if(empty($this->qualification_city)&&empty($this->cross_city)){
+                $this->addError($attribute, "资质方或承接城市必须填一项");
+                return false;
             }
         }
         return true;
@@ -373,6 +405,22 @@ class CrossApplyForm extends CFormModel
         return $list;
     }
 
+    public static function getCityOnlyList($city=''){
+        $notCitySql = implode("','",self::$not_city);
+        $suffix = Yii::app()->params['envSuffix'];
+        $list=array();
+        $rows = Yii::app()->db->createCommand()->select("code,name")
+            ->from("security{$suffix}.sec_city")
+            ->where("(ka_bool in (0,1) and code not in ('{$notCitySql}')) or code =:city",array(":city"=>$city))
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $list[$row["code"]] = $row["name"];
+            }
+        }
+        return $list;
+    }
+
     public static function getApplyCategoryList(){
         return array(
             "1"=>Yii::t("service","amount adjustment"),//合约金额调整
@@ -411,13 +459,24 @@ class CrossApplyForm extends CFormModel
         );
     }
 
+    public static function getCrossTypeEndList(){
+        return array(
+            "13"=>Yii::t("service","Cross treaty"),//交叉合约
+        );
+    }
+
     public static function getCrossTypeStrToKey($key){
         $list = self::getCrossTypeThreeList();
         $key="".$key;
         if (key_exists($key,$list)){
             return $list[$key];
         }else{
-            return $key;
+            $list = self::getCrossTypeEndList();
+            if (key_exists($key,$list)){
+                return $list[$key];
+            }else{
+                return $key;
+            }
         }
     }
 	
@@ -568,7 +627,9 @@ class CrossApplyForm extends CFormModel
         $message.="<p>客户类别：".$serviceModel->cust_type."</p>";
         $message.="<p>服务內容：".$serviceModel->service."</p>";
         $message.="<p>合约城市：".General::getCityName($serviceModel->city)."</p>";
-        $message.="<p>承接城市：".General::getCityName($this->cross_city)."</p>";
+        if(!empty($this->cross_city)){
+            $message.="<p>承接城市：".General::getCityName($this->cross_city)."</p>";
+        }
         $message.="<p>月金额：".$this->month_amt."</p>";
         $message.="<p>比例：".$this->rate_num."%"."</p>";
         $message.="<p>比例后金额：".$this->cross_amt."</p>";
@@ -633,6 +694,9 @@ class CrossApplyForm extends CFormModel
                 }
                 if($row["amt_paid"]===""||$row["amt_paid"]===null){
                     $row["error"] = "合约的月金额不能为空";
+                }
+                if(in_array($row["city"],self::$not_city)){
+                    $row["error"] = "城市({$row["city"]})不允许交叉派单";
                 }
                 if($endCross){
                     if($this->cross_type!=$endCross["cross_type"]){

@@ -67,6 +67,7 @@ class Counter {
             (cross_city in ({$city_allow}) and cross_type not in (0,1))
             or (old_city in ({$city_allow}) and cross_type in (0,1))
             or (cross_type=5 and qualification_city in ({$city_allow}))
+            or (cross_type=13 and (qualification_city in ({$city_allow}) or cross_city in ({$city_allow})))
         )";
         $rtn = Yii::app()->db->createCommand($sql)->queryScalar();
 
