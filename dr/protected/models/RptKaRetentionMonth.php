@@ -8,11 +8,13 @@ class RptKaRetentionMonth extends RptKaRetention {
 
     public function fields() {
         return array(
+            'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'C'),
             'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
             'office_name'=>array('label'=>"归属",'width'=>12,'align'=>'C'),
             'table_class'=>array('label'=>"菜单名称",'width'=>12,'align'=>'C'),
             'lcd'=>array('label'=>"输入日期",'width'=>18,'align'=>'C'),
             'company_code'=>array('label'=>"客户编号",'width'=>12,'align'=>'C'),
+            'company_code_pre'=>array('label'=>"客户编号(含尾缀)",'width'=>12,'align'=>'C'),
             'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'C'),
             'cust_type'=>array('label'=>Yii::t('service','Customer Type'),'width'=>12,'align'=>'C'),
             'nature_type'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
@@ -106,7 +108,8 @@ class RptKaRetentionMonth extends RptKaRetention {
                 if(!key_exists($row["company_id"],$companyList)){
                     $companyList[$row["company_id"]] = self::getCompanyListForID($row["company_id"]);
                 }
-                $temp["company_code"] = $companyList[$row["company_id"]]["code"]."-".$row["city"];
+                $temp["company_code"] = $companyList[$row["company_id"]]["code"];
+                $temp["company_code_pre"] = $companyList[$row["company_id"]]["code"]."-".$row["city"];
                 $temp["company_name"] = $companyList[$row["company_id"]]["name"];
                 switch ($row["table_class"]){
                     case "IA":
@@ -120,6 +123,7 @@ class RptKaRetentionMonth extends RptKaRetention {
 
                 }
 
+                $temp['id'] = $row["id"];
                 $temp["cust_type"] = $row["description"];
                 $temp["lcd"] = empty($row["lcd"])?"":General::toMyDate($row["lcd"]);
                 $temp["status_dt"] = empty($row["status_dt"])?"":General::toMyDate($row["status_dt"]);

@@ -3,11 +3,13 @@ class RptKaRetention extends ReportData2 {
     public $chain_num;//KA销售
     public function fields() {
         return array(
+            'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'C'),
             'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
             'office_name'=>array('label'=>"归属",'width'=>12,'align'=>'C'),
             'table_class'=>array('label'=>"菜单名称",'width'=>12,'align'=>'C'),
             'status_dt'=>array('label'=>"新增日期",'width'=>18,'align'=>'C'),
             'company_code'=>array('label'=>"客户编号",'width'=>12,'align'=>'C'),
+            'company_code_pre'=>array('label'=>"客户编号(含尾缀)",'width'=>12,'align'=>'C'),
             'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'C'),
             'cust_type'=>array('label'=>Yii::t('service','Customer Type'),'width'=>12,'align'=>'C'),
             'nature_type'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
@@ -67,6 +69,7 @@ class RptKaRetention extends ReportData2 {
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $temp = array();
+                $temp['id'] = $row["id"];
                 if(!key_exists($row["office_id"],$officeList)){
                     $officeList[$row["office_id"]] = GetNameToId::getOfficeNameForID($row['office_id']);
                 }
@@ -95,7 +98,8 @@ class RptKaRetention extends ReportData2 {
                 if(!key_exists($row["company_id"],$companyList)){
                     $companyList[$row["company_id"]] = self::getCompanyListForID($row["company_id"]);
                 }
-                $temp["company_code"] = $companyList[$row["company_id"]]["code"]."-".$row["city"];
+                $temp["company_code"] = $companyList[$row["company_id"]]["code"];
+                $temp["company_code_pre"] = $companyList[$row["company_id"]]["code"]."-".$row["city"];
                 $temp["company_name"] = $companyList[$row["company_id"]]["name"];
                 switch ($row["table_class"]){
                     case "IA":

@@ -11,10 +11,12 @@ class RptCustomerKA extends ReportData2 {
         switch ($this->customerType){
             case 'N'://N:新增
                 return array(
+                    'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'L'),
                     'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
                     'office_name'=>array('label'=>Yii::t('service','office of'),'width'=>12,'align'=>'C'),
                     'status_dt'=>array('label'=>Yii::t('service','New Date'),'width'=>18,'align'=>'C'),
                     'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
+                    'company_code_city'=>array('label'=>"客户编号(后缀)",'width'=>20,'align'=>'L'),
                     'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'L'),
                     'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
                     'cust_type_name_two'=>array('label'=>Yii::t('service','Layer 2'),'width'=>20,'align'=>'L'),
@@ -39,10 +41,12 @@ class RptCustomerKA extends ReportData2 {
                 );
             case 'C'://C:續約
                 return array(
+                    'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'L'),
                     'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
                     'office_name'=>array('label'=>Yii::t('service','office of'),'width'=>12,'align'=>'C'),
                     'status_dt'=>array('label'=>Yii::t('service','Renew Date'),'width'=>18,'align'=>'C'),
                     'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
+                    'company_code_city'=>array('label'=>"客户编号(后缀)",'width'=>20,'align'=>'L'),
                     'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'L'),
                     'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
                     'service'=>array('label'=>Yii::t('service','Service'),'width'=>40,'align'=>'L'),
@@ -65,10 +69,12 @@ class RptCustomerKA extends ReportData2 {
                 );
             case 'A'://A:更改
                 return array(
+                    'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'L'),
                     'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
                     'office_name'=>array('label'=>Yii::t('service','office of'),'width'=>12,'align'=>'C'),
                     'status_dt'=>array('label'=>Yii::t('service','New Date'),'width'=>18,'align'=>'C'),
                     'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
+                    'company_code_city'=>array('label'=>"客户编号(后缀)",'width'=>20,'align'=>'L'),
                     'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'L'),
                     'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
                     'b4_service'=>array('label'=>Yii::t('service','Service'),'width'=>30,'align'=>'L'),
@@ -89,10 +95,12 @@ class RptCustomerKA extends ReportData2 {
                 );
             case 'S'://A:暫停
                 return array(
+                    'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'L'),
                     'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
                     'office_name'=>array('label'=>Yii::t('service','office of'),'width'=>12,'align'=>'C'),
                     'lud'=>array('label'=>Yii::t('service','Entry Date'),'width'=>18,'align'=>'C'),
                     'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
+                    'company_code_city'=>array('label'=>"客户编号(后缀)",'width'=>20,'align'=>'L'),
                     'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'L'),
                     'contact_name'=>array('label'=>Yii::t('customer','Contact Name'),'width'=>30,'align'=>'L'),
                     'contact_phone'=>array('label'=>Yii::t('customer','Contact Phone'),'width'=>20,'align'=>'L'),
@@ -117,10 +125,12 @@ class RptCustomerKA extends ReportData2 {
                 );
             case 'R'://A:恢復
                 return array(
+                    'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'L'),
                     'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
                     'office_name'=>array('label'=>Yii::t('service','office of'),'width'=>12,'align'=>'C'),
                     'lud'=>array('label'=>Yii::t('service','Entry Date'),'width'=>18,'align'=>'C'),
                     'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
+                    'company_code_city'=>array('label'=>"客户编号(后缀)",'width'=>20,'align'=>'L'),
                     'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'L'),
                     'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
                     'service'=>array('label'=>Yii::t('service','Service'),'width'=>40,'align'=>'L'),
@@ -138,10 +148,12 @@ class RptCustomerKA extends ReportData2 {
                 );
             case 'T'://A:終止
                 return array(
+                    'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'L'),
                     'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
                     'office_name'=>array('label'=>Yii::t('service','office of'),'width'=>12,'align'=>'C'),
                     'lud'=>array('label'=>Yii::t('service','Entry Date'),'width'=>18,'align'=>'C'),
                     'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
+                    'company_code_city'=>array('label'=>"客户编号(后缀)",'width'=>20,'align'=>'L'),
                     'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'L'),
                     'contact_name'=>array('label'=>Yii::t('customer','Contact Name'),'width'=>30,'align'=>'L'),
                     'contact_phone'=>array('label'=>Yii::t('customer','Contact Phone'),'width'=>20,'align'=>'L'),
@@ -173,10 +185,12 @@ class RptCustomerKA extends ReportData2 {
         //N:新增 C:續約 A:更改 S:暫停 R:恢復 T:終止
         if($this->customerType=="A") {
             return array(
+                'id',
                 'city_name',
                 'office_name',
                 'status_dt',
                 'company_code',
+                'company_code_city',
                 'company_name',
                 'nature',
                 array(
@@ -262,6 +276,7 @@ class RptCustomerKA extends ReportData2 {
                     $officeList[$row["office_id"]] = GetNameToId::getOfficeNameForID($row['office_id']);
                 }
 				$temp = array();
+				$temp['id'] = $row["id"];
 				$temp['city_name'] = General::getCityName($row["city"]);
 				$temp['office_name'] = $officeList[$row["office_id"]];
 				$temp['type'] = $row['customer_type'];
@@ -270,6 +285,7 @@ class RptCustomerKA extends ReportData2 {
 				$temp['contact_phone'] = $row['cont_phone'];
 				$temp['status_dt'] = General::toDate($row['status_dt']);
 				$temp['company_code'] = $row['com_code'];
+				$temp['company_code_city'] = $row['com_code']."-".$row["city"];
 				$temp['company_name'] = empty($row['com_name'])?$row['company_name']:$row['com_name'];
 				$temp['nature'] = $row['nature'];
                 $temp['cust_type'] = $row['cust_type'];
