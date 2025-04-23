@@ -106,7 +106,7 @@ class ManageMonthBonusForm extends CFormModel
         $list["month_net_amt"] = $list["num_growth"];
         $list["city_month_new_amt"]=$list["city_num_new"]+$list["city_update_add"]+$list["city_one_service"];
         $list["month_new_amt"]=$list["new_sum"]+$list["num_update_add"]+$list["one_service"];
-        $list["month_net_tar"] = self::comparisonNetRate($list["num_growth"],$list["two_net"]);
+        //$list["month_net_tar"] = self::comparisonNetRate($list["num_growth"],$list["two_net"]);
     }
 
     public function saveCache(){
@@ -290,13 +290,13 @@ class ManageMonthBonusForm extends CFormModel
             "month_new_amt"=>0,//当月新生意额
             "month_net_amt"=>0,//当月净增长额
             "comStopRate"=>0,//综合停單率
-            "month_net_tar"=>"",//当月净增长目标达成
+            //"month_net_tar"=>"",//当月净增长目标达成
             "sign_tar"=>"",//新签金额达标
             "royalty_rate"=>"",//提成率
             "stop_rate_coe"=>"",//停单率调节系数
             "month_royalty"=>"",//月新生意额提成
             "person_royalty"=>"",//个人提成
-            "goal_ach_bonus"=>"",//目标达成奖奖金
+            //"goal_ach_bonus"=>"",//目标达成奖奖金
             "goal_all_bonus"=>"",//合计月度提成奖金
             "end_bonus"=>"",//对应副总监/高级总经理管理提成
 
@@ -332,7 +332,7 @@ class ManageMonthBonusForm extends CFormModel
         }
         $list["comStopRate"] = ComparisonForm::comparisonRate($list["comStopRate_top"],$list["comStopRate_bottom"]);
         //当月净增长目标达成
-        $list["month_net_tar"] = self::comparisonNetRate($list["month_net_amt"],$list["two_net"]);
+        //$list["month_net_tar"] = self::comparisonNetRate($list["month_net_amt"],$list["two_net"]);
         //停单调解系数
         $list["stop_rate_coe"] = $this->getStopRateCoeForStopRate($list["comStopRate"]);
         $list["person_royalty"]=$list["person_money"];//个人提成
@@ -347,20 +347,22 @@ class ManageMonthBonusForm extends CFormModel
         $list["month_royalty"]=floatval($list["royalty_rate"])*floatval($list["stop_rate_coe"])*floatval($list["month_new_amt"])*0.01;
         $list["month_royalty"] = round($list["month_royalty"],2);
         //目标达成奖奖金
+        /*
         if($list["month_net_amt"]>=$list["two_net"]){
             $list["goal_ach_bonus"]=floatval($list["month_net_amt"])*0.01;
             $list["goal_ach_bonus"] = $list["goal_ach_bonus"]<$list["max_bonus"]?round($list["goal_ach_bonus"],2):$list["max_bonus"];
         }else{
             $list["goal_ach_bonus"]=0;
         }
+        */
         switch ($list["job_key"]){
             case 1://副总监
             case 2://高级总经理
                 $list["comStopRate"]="";
                 $list["month_net_amt"]="";
-                $list["month_net_tar"]="";
+                //$list["month_net_tar"]="";
                 $list["stop_rate_coe"]="";
-                $list["goal_ach_bonus"]="";
+                //$list["goal_ach_bonus"]="";
                 $list["month_royalty"]=0;
                 foreach ($list["city_list"] as $city){
                     if(key_exists($city,$this->cityForStaffID)){
@@ -383,7 +385,8 @@ class ManageMonthBonusForm extends CFormModel
                 break;
         }
         //目标达成奖奖金
-        $list["goal_all_bonus"] = empty($list["goal_ach_bonus"])?0:$list["goal_ach_bonus"];
+        $list["goal_all_bonus"] = 0;
+        //$list["goal_all_bonus"] = empty($list["goal_ach_bonus"])?0:$list["goal_ach_bonus"];
         $list["goal_all_bonus"]+= empty($list["person_royalty"])?0:$list["person_royalty"];
         $list["goal_all_bonus"]+= empty($list["month_royalty"])?0:$list["month_royalty"];
     }
@@ -507,13 +510,13 @@ class ManageMonthBonusForm extends CFormModel
             array("name"=>Yii::t('summary',"monthly amount"),"background"=>"#00B0F0","color"=>"#ffffff"),//当月新生意额
             array("name"=>Yii::t('summary',"Composite Stop Rate"),"background"=>"#00B0F0","color"=>"#ffffff"),//综合停单率
             array("name"=>Yii::t('summary',"monthly net amount"),"background"=>"#00B0F0","color"=>"#ffffff"),//当月净增长额
-            array("name"=>Yii::t('summary',"monthly net target"),"background"=>"#00B0F0","color"=>"#ffffff"),//当月净增长目标达成
+            //array("name"=>Yii::t('summary',"monthly net target"),"background"=>"#00B0F0","color"=>"#ffffff"),//当月净增长目标达成
             array("name"=>Yii::t('summary',"new sign target"),"background"=>"#808080","color"=>"#ffffff"),//提成发放条件：新签金额达标
             array("name"=>Yii::t('summary',"royalty rate"),"background"=>"#808080","color"=>"#ffffff"),//提成率
             array("name"=>Yii::t('summary',"stop rate coefficient"),"background"=>"#808080","color"=>"#ffffff"),//停单率调节系数
             array("name"=>Yii::t('summary',"monthly royalty"),"background"=>"#808080","color"=>"#ffffff"),//月新生意额提成
             array("name"=>Yii::t('summary',"person royalty"),"background"=>"#808080","color"=>"#ffffff"),//个人提成(仅地区主管)
-            array("name"=>Yii::t('summary',"goal achievement bonus"),"background"=>"#808080","color"=>"#ffffff"),//目标达成奖奖金
+            //array("name"=>Yii::t('summary',"goal achievement bonus"),"background"=>"#808080","color"=>"#ffffff"),//目标达成奖奖金
             array("name"=>Yii::t('summary',"goal all bonus"),"background"=>"#808080","color"=>"#ffffff"),//合计月度提成奖金
             array("name"=>Yii::t('summary',"end bonus"),"background"=>"#44546A","color"=>"#ffffff"),//对应副总监/高级总经理管理提成
         );
@@ -620,8 +623,8 @@ class ManageMonthBonusForm extends CFormModel
     protected function getDataAllKeyStr(){
         $bodyKey = array(
             "year_month","employee_name","city_name","dept_name","month_new_amt","comStopRate",
-            "month_net_amt","month_net_tar","sign_tar","royalty_rate","stop_rate_coe","month_royalty",
-            "person_royalty","goal_ach_bonus","goal_all_bonus","end_bonus"
+            "month_net_amt","sign_tar","royalty_rate","stop_rate_coe","month_royalty",
+            "person_royalty","goal_all_bonus","end_bonus"
         );
         return $bodyKey;
     }
