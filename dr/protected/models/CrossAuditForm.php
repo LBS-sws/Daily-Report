@@ -212,10 +212,42 @@ class CrossAuditForm extends CrossApplyForm
         return $this->curlBlack($rtn,$modelObjList,$data["data"]);
     }
 
+    protected function getCurlDataNew(){
+        $event = $this->apply_category==2&&in_array($this->cross_type,array(0,1,11,12))?2:1;
+        $cross_type = $this->cross_type==13?11:$this->cross_type;//由于交叉合约和交叉普通共用11，所以特别转换
+        $data=array(
+            "lbs_id"=>$this->id,//唯一标识
+            //"customer_code"=>$serviceModel->customer_code."-{$this->old_city}",//客户编号
+            //"customer_name"=>$serviceModel->customer_name,//客户名称
+            "contract_number"=>$this->contract_no,//合约编号
+            "send_money"=>null,//发包方金额
+            "send_contract_id"=>$this->old_city,//发包方（城市代号：ZY）
+            "send_office_id"=>self::getHrOfficeUIDForID($this->office_id),//发包方办事处（U系统办事处id）
+            "audit_user_name"=>self::getEmployeeStrForUsername(Yii::app()->user->id),//审核人名称+编号如：400002_沈超
+            "audit_date"=>General::toMyDate($this->audit_date),//审核日期
+            "contract_id"=>$this->u_system_id,//u_system_id
+            "contract_type"=>$cross_type,//类型：4:长约 3：短约 2：资质借用
+            "accept_audit_ratio"=>null,//审核比例
+            "accept_money"=>null,//承接方金额
+            "accept_contract_id"=>empty($this->cross_city)?null:$this->cross_city,//承接方（城市代号：ZY）
+            "notice_object_id"=>empty($this->send_city)?null:$this->send_city,//通知城市
+            "qualification_audit_ratio"=>null,//资质方比例
+            "qualification_contract_id"=>empty($this->qualification_city)?null:$this->qualification_city,//资质方
+            "qualification_money"=>null,//资质方金额
+            "effective_date"=>General::toMyDate($this->effective_date),//生效日期
+            "apply_category"=>empty($this->apply_category)?2:$this->apply_category,//申请类型
+            "event"=>$event,//申请类型
+        );
+        return $data;
+    }
+
     protected function getCurlData(){
+        if($this->cross_type==13){//由于交叉合约和交叉普通共用11，所以特别转换
+            return $this->getCurlDataNew();
+        }
+
         $event = $this->apply_category==2&&in_array($this->cross_type,array(0,1,11,12))?2:1;
         $cross_city = $this->cross_city;//发包方自己做
-        $cross_type = $this->cross_type==13?11:$this->cross_type;//由于交叉合约和交叉普通共用11，所以特别转换
         $data=array(
             "lbs_id"=>$this->id,//唯一标识
             //"customer_code"=>$serviceModel->customer_code."-{$this->old_city}",//客户编号
@@ -227,7 +259,7 @@ class CrossAuditForm extends CrossApplyForm
             "audit_user_name"=>self::getEmployeeStrForUsername(Yii::app()->user->id),//审核人名称+编号如：400002_沈超
             "audit_date"=>General::toMyDate($this->audit_date),//审核日期
             "contract_id"=>$this->u_system_id,//u_system_id
-            "contract_type"=>$cross_type,//类型：4:长约 3：短约 2：资质借用
+            "contract_type"=>$this->cross_type,//类型：4:长约 3：短约 2：资质借用
             "accept_audit_ratio"=>empty($cross_city)?null:$this->rate_num,//审核比例
             "accept_money"=>empty($cross_city)?null:$this->cross_amt,//承接方金额
             "accept_contract_id"=>empty($cross_city)?null:$cross_city,//承接方（城市代号：ZY）
