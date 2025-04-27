@@ -236,6 +236,11 @@ class ManageMonthBonusForm extends CFormModel
                 ":month"=>$this->search_month,
             ))->queryRow();
         if($refresh===false&&$row){//查询固定数据
+            $employeeID=CountSearch::getEmployeeIDForUsername(Yii::app()->user->id);
+            $cityOnly = false;
+            if(Yii::app()->user->validFunction('CN32')){//查询本城市所有人员
+                $cityOnly=true;
+            }
             $this->status_type = $row["status_type"];
             $this->update_date = $row["update_date"];
             $this->update_user = $row["update_user"];
@@ -253,7 +258,8 @@ class ManageMonthBonusForm extends CFormModel
                             }
                         }
                     }
-                    if($okBool){
+                    $staffBool = $cityOnly||$employeeID==$row["employee_id"];
+                    if($okBool&&$staffBool){
                         $setID = "".$row["id"];
                         $this->data[$setID] = $row;
                     }

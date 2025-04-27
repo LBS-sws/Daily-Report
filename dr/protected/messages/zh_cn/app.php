@@ -208,5 +208,6 @@ return array(
     'Retention KA rate'=>'KA保留率',
     'KA Retention report'=>'KA保留率明细报表',
     'Refresh Month Bonus'=>'强制刷新月度奖金',
+    'Only Month Bonus'=>'本城市所有月度奖金',
 );
 ?>

@@ -18,4 +18,5 @@ return array(
     'Month U Service'=>array('access'=>'CN19',),//月度技术员生产力分析
     'Cross Delete'=>array('access'=>'CN30',),//删除交叉派单
     'Refresh Month Bonus'=>array('access'=>'CN31',),//强制刷新管理层月度奖金计算
+    'Only Month Bonus'=>array('access'=>'CN32',),//查询本城市所有人员
 );
