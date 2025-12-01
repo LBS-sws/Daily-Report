@@ -324,13 +324,14 @@ class UServiceForm extends CFormModel
     }
 
     protected function printTableTr($data,$bodyKey){
+        $regionKey = $data["region"];
         $colspan = $this->th_sum-2;
         $html="<tr class='tr-end click-tr'>";
         $html.="<td colspan='{$colspan}' style='font-weight: bold'>".$data["region"]."</td>";
         $html.="<td style='font-weight: bold'>".$data["entry_month"]."</td>";
         $html.="<td style='font-weight: bold'>".self::showNum($data["amt"],"amt")."</td>";
         $html.="</tr>";
-        $this->downJsonText["excel"]["count_{$data['region']}"]=array(
+        $this->downJsonText["excel"]["count_{$regionKey}"]=array(
             "region"=>$data["region"],
             "entry_month"=>$data["entry_month"],
             "amt"=>$data["amt"],
@@ -339,11 +340,19 @@ class UServiceForm extends CFormModel
         $data["month_average"] = round($data["entry_month"]/$data["staff_num"]);
         $data["amt_average"] = self::showNum(($data["amt"]/$data["staff_num"]),"amt");
         $html.="<tr class='tr-end'>";
-        $html.="<td colspan='{$colspan}' style='font-weight: bold'>".$data["region"]."</td>";
+        $html.="<td style='font-weight: bold'>&nbsp;</td>";
+        $html.="<td style='font-weight: bold'>&nbsp;</td>";
+        $html.="<td style='font-weight: bold'>总人数</td>";
+        $html.="<td style='font-weight: bold;color:red;'>".$data["staff_num"]."</td>";
+        $html.="<td style='font-weight: bold'>".$data["region"]."</td>";
         $html.="<td style='font-weight: bold;color:red;'>".$data["month_average"]."</td>";
         $html.="<td style='font-weight: bold;color:red;'>".$data["amt_average"]."</td>";
         $html.="</tr>";
-        $this->downJsonText["excel"]["average_{$data['region']}"]=array(
+        $this->downJsonText["excel"]["average_{$regionKey}"]=array(
+            "none1"=>"",
+            "none2"=>"",
+            "none3"=>"总人数",
+            "none4"=>$data["staff_num"],
             "region"=>$data["region"],
             "entry_month"=>$data["month_average"],
             "amt"=>$data["amt_average"],

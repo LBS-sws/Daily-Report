@@ -121,10 +121,17 @@ class FollowupController extends Controller
 		$model = new FollowupForm('delete');
 		if (isset($_POST['FollowupForm'])) {
 			$model->attributes = $_POST['FollowupForm'];
-			$model->saveData();
-			Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+            if ($model->validate()) {
+                $model->saveData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+                $this->redirect(Yii::app()->createUrl('followup/index'));
+            }else{
+                $model->setScenario("edit");
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->render('form',array('model'=>$model,));
+            }
 		}
-		$this->redirect(Yii::app()->createUrl('followup/index'));
 	}
 	
 	/**

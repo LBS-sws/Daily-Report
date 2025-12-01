@@ -9,7 +9,7 @@ if (isset($model->u_load_data)&&is_array($model->u_load_data)){
 }
 ?>
 
-<?php if ($load_length>=100): ?>
+<?php if ($load_length>=1): ?>
     <small>
         <span>查询总时长：</span>
         <span><?php echo $load_length;?></span>

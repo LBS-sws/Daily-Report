@@ -19,6 +19,7 @@ class CustomerForm extends CFormModel
 	public $city;
 	public $email;
 	public $u_customer_id;
+	public $u_customer_code;
 	public $jd_customer_id;
 
 	public $service = array();
@@ -44,6 +45,7 @@ class CustomerForm extends CFormModel
             'email'=>Yii::t('customer','Email'),
 			'status'=>Yii::t('customer','Status'),
 			'u_customer_id'=>Yii::t('customer','u customer id'),
+			'u_customer_code'=>Yii::t('customer','u customer code'),
 			'jd_customer_id'=>Yii::t('customer','jd customer id'),
 		);
 	}
@@ -54,7 +56,7 @@ class CustomerForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, jd_customer_id, u_customer_id, jd_set, full_name, cont_name, cont_phone, address, tax_reg_no, group_id, group_name, status,email','safe'),
+			array('id, jd_customer_id, u_customer_id,u_customer_code, jd_set, full_name, cont_name, cont_phone, address, tax_reg_no, group_id, group_name, status,email','safe'),
 			array('name, code','required'),
 /*
 			array('code','unique','allowEmpty'=>true,
@@ -72,9 +74,10 @@ class CustomerForm extends CFormModel
 	    if($this->scenario!="new"){
             $index = $this->id;
             $city = Yii::app()->user->city_allow();
-            $sql = "select city from swo_company where id='{$index}' and city in ($city)";
+            $sql = "select city,u_customer_code from swo_company where id='{$index}' and city in ($city)";
             $row = Yii::app()->db->createCommand($sql)->queryRow();
             if($row){
+                $this->u_customer_code = $row["u_customer_code"];
                 $this->city = $row["city"];
             }else{
                 $this->addError($attribute, "数据异常，请刷新重试");
@@ -127,6 +130,7 @@ class CustomerForm extends CFormModel
 				$this->status = $row['status'];
                 $this->email = $row['email'];
                 $this->u_customer_id = $row['u_customer_id'];
+                $this->u_customer_code = $row['u_customer_code'];
                 $this->jd_customer_id = $row['jd_customer_id'];
 				break;
 			}
@@ -181,14 +185,14 @@ class CustomerForm extends CFormModel
 	//发送所有客户资料到金蝶系统
     public function sendAllTrimCustomer(){
         $pageMax = 100;//最大数量
-        $sqlCount = "select count(id) from swo_company where code LIKE '% %'";
+        $sqlCount = "select count(id) from swo_company where trim(name)<>name";
         $totalRow = Yii::app()->db->createCommand($sqlCount)->queryScalar();
         if($totalRow>0){
             echo "max number:{$totalRow}<br/>\r\n";
-            $sql = "select * from swo_company where code LIKE '% %'";
+            $sql = "select * from swo_company where trim(name)<>name ";
             $this->sendCustomerToJDPage($sql,$totalRow,$pageMax);
         }
-        $updateSql = "UPDATE swo_company SET code = REPLACE(code, ' ', '')";
+        $updateSql = "UPDATE swo_company SET name = trim(name) where trim(name)<>name";
         Yii::app()->db->createCommand($updateSql)->execute();
     }
 
@@ -213,6 +217,7 @@ class CustomerForm extends CFormModel
                 $this->group_id = $row['group_id'];
                 $this->group_name = $row['group_name'];
                 $this->status = $row['status'];
+                $this->u_customer_code = $row['u_customer_code'];
                 $this->email = $row['email'];
                 $data[] = $curlModel->getDataForCustomerModel($this);
             }
@@ -239,11 +244,11 @@ class CustomerForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_company(
-							code, name, full_name, tax_reg_no, cont_name, cont_phone, address,
+							code, name, full_name, tax_reg_no, cont_name, cont_phone, address,u_customer_code,
 							group_id, group_name, status,
 							city, luu, lcu
 						) values (
-							:code, :name, :full_name, :tax_reg_no, :cont_name, :cont_phone, :address,
+							:code, :name, :full_name, :tax_reg_no, :cont_name, :cont_phone, :address, :u_customer_code,
 							:group_id, :group_name, :status,
 							:city, :luu, :lcu
 						)";
@@ -289,6 +294,8 @@ class CustomerForm extends CFormModel
             $command->bindParam(':email',$this->email,PDO::PARAM_STR);
 		if (strpos($sql,':address')!==false)
 			$command->bindParam(':address',$this->address,PDO::PARAM_STR);
+		if (strpos($sql,':u_customer_code')!==false)
+			$command->bindParam(':u_customer_code',$this->u_customer_code,PDO::PARAM_STR);
 		if (strpos($sql,':city')!==false)
 			$command->bindParam(':city',$this->city,PDO::PARAM_STR);
 		if (strpos($sql,':group_id')!==false)

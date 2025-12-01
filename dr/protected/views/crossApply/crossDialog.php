@@ -49,12 +49,24 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
     </div>
 </div>
 <div class="form-group">
-    <?php echo Tbhtml::label(Yii::t("service","Cross type"),'',array('class'=>"col-lg-3 control-label")); ?>
+    <?php echo Tbhtml::label(Yii::t("service","apply category"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
-        <?php echo Tbhtml::dropDownList('CrossApply[cross_type]','',CrossApplyForm::getCrossTypeEndList(),array('empty'=>'',"id"=>"cross_type",'data-type'=>"")); ?>
+        <?php
+        $apply_category = empty($endCrossList)?2:1;
+        ?>
+        <?php echo Tbhtml::dropDownList('CrossApply[apply_category]',$apply_category,CrossApplyForm::getApplyCategoryList(),array("id"=>"apply_category",'readonly'=>$apply_category==2)); ?>
     </div>
 </div>
-<div class="qualification-div">
+<div class="form-group">
+    <?php echo Tbhtml::label(Yii::t("service","Cross type"),'',array('class'=>"col-lg-3 control-label")); ?>
+    <div class="col-lg-5">
+        <?php
+        $crossTypeDownList = $endCrossList?CrossApplyForm::getCrossTypeEndEndList():CrossApplyForm::getCrossTypeEndList();
+        echo Tbhtml::dropDownList('CrossApply[cross_type]','',$crossTypeDownList,array('empty'=>'',"id"=>"cross_type",'data-type'=>$endCrossList?$endCrossList["cross_type"]:""));
+        ?>
+    </div>
+</div>
+<div class="qualification-div hide">
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","Qualification city"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
@@ -103,7 +115,53 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($table_type,$model->
 	    $('#effective_date').attr('value','{$nowDateOne}').trigger('change');
 	    $('#cross_month_amt').attr('value',month_amt);
 	    
+	    $('#apply_category').trigger('change');
 	    changeCity();
+	});
+	$('#apply_category').on('change',function(){
+	    var apply_category=$('#apply_category').val();
+	    var pre_cross_month_amt=$('#cross_month_amt').data('amt');
+	    var pre_cross_city=$('#cross_cross_city').data('city');
+	    var pre_old_city=$('#cross_cross_city').data('old');
+	    var pre_qualification_city=$('#qualification_city').data('city');
+	    var pre_cross_type=$('#cross_type').data('type');
+	    var pre_qualification_ratio=$('#qualification_ratio').data('val');
+	    var pre_cross_rate_num=$('#cross_rate_num').data('val');
+	    switch(apply_category){
+	        case '1'://合约金额调整
+                if(pre_cross_city!=''&&pre_cross_city!=undefined){
+                    $('#cross_cross_city').attr('readonly','readonly').addClass('readonly').prop('disabled',true).val(pre_cross_city).trigger('change');
+                }
+                if(pre_cross_type!=''&&pre_cross_type!=undefined){
+                    $('#cross_type').attr('readonly','readonly').addClass('readonly').val(13).trigger('change');
+                }
+                $('#cross_month_amt').removeAttr('readonly').removeClass('readonly');
+	            break;
+	        case '3'://调整合约内容
+                if(pre_cross_type!=''&&pre_cross_type!=undefined){
+                    $('#cross_type').attr('readonly','readonly').addClass('readonly').val(13).trigger('change');
+                }
+                if(pre_cross_month_amt!=''&&pre_cross_month_amt!=undefined){
+                    $('#cross_month_amt').attr('readonly','readonly').addClass('readonly').val(pre_cross_month_amt).trigger('change');
+                }
+                $('#cross_cross_city').removeAttr('readonly').removeClass('readonly').prop('disabled',false).trigger('change');
+	            break;
+            default:
+                $('#cross_month_amt').removeAttr('readonly').removeClass('readonly');
+                $('#cross_cross_city').removeAttr('readonly').removeClass('readonly').prop('disabled',false).trigger('change');
+                $('#cross_type').removeAttr('readonly').removeClass('readonly');
+	            break;
+	    }
+	    $('#cross_type').trigger('change');
+	});
+	
+	$('#cross_type').on('change',function(){
+	    var cross_type=$('#cross_type').val();
+	    if(cross_type==''||cross_type==13){
+	        $('.accept-div').slideDown();
+	    }else{
+	        $('.accept-div').slideUp();
+	    }
 	});
 	
 	function changeCity(){

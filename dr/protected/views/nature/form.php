@@ -144,6 +144,7 @@ $('#btnAddRow').on('click',function() {
 			if (id.indexOf('_name') != -1) $(this).attr('value','');
 			if (id.indexOf('_rpt_u') != -1) $(this).attr('value','');
 			if (id.indexOf('_score_bool') != -1) $(this).val(0);
+			if (id.indexOf('_z_display') != -1) $(this).val(0);
 			if (id.indexOf('_id') != -1) $(this).attr('value',0);
 		});
 		if (nid != '') {

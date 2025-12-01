@@ -218,6 +218,8 @@ class ComparisonForm extends CFormModel
         $allMonthEndDate = date("Y/m/t",strtotime($allMonthEndDate." - 1 months"));
         $uServiceType = $this->search_type==3?1:0;//当日期查询时，根据日期查询
         $this->u_load_data['u_load_start'] = time();
+        //获取U系统的服务单数据(发包方、承接方、资质方)
+        $uServiceMoneyV3 = CountSearch::GetUServiceMoneyV3($startDate,$endDate,$city_allow,$uServiceType);
         //获取U系统的服务单数据
         $uServiceMoney = CountSearch::getUServiceMoney($startDate,$endDate,$city_allow,$uServiceType);
         //获取U系统的服务单数据(上月)
@@ -243,6 +245,10 @@ class ComparisonForm extends CFormModel
         $serviceForST = CountSearch::getServiceForST($startDate,$endDate,$city_allow);
         //终止服务、暂停服务(上一年)
         $lastServiceForST = CountSearch::getServiceForST($lastStartDate,$lastEndDate,$city_allow);
+        //利比斯新增服务
+        $lbsServiceForN = CountSearch::getLBSServiceForType($startDate,$endDate,$city_allow,"N");
+        //利比斯新增服务(上一年)
+        $lastLbsServiceForN = CountSearch::getLBSServiceForType($lastStartDate,$lastEndDate,$city_allow,"N");
         //恢復服务
         $serviceForR = CountSearch::getServiceForType($startDate,$endDate,$city_allow,"R");
         //恢復服务(上一年)
@@ -268,6 +274,14 @@ class ComparisonForm extends CFormModel
                 $defMoreList["new_sum"]+=$serviceAddForNY[$city]["num_new"];
                 $defMoreList["new_sum_n"]+=$serviceAddForNY[$city]["num_new_n"];
             }
+            $defMoreList["u_v3_send"]+=$defMoreList["u_sum"];//自有生意额
+            if(key_exists($city,$uServiceMoneyV3)){
+                $defMoreList["u_v3_send"]+=$uServiceMoneyV3[$city]["send"];//自有生意额
+                $defMoreList["u_v3_accept"]+=$uServiceMoneyV3[$city]["accept"];//承接生意额
+                $defMoreList["u_v3_sum"]+=$uServiceMoneyV3[$city]["sum"];//接口内的sum
+            }
+            $defMoreList["u_v3_total"]+=$defMoreList["u_v3_send"]+$defMoreList["u_v3_accept"];//服务生意额汇总
+
             $defMoreList["new_sum_n"]+=$defMoreList["u_sum"];//一次性新增需要加上U系统产品金额
             if(key_exists($city,$lastServiceAddForNY)){
                 $defMoreList["new_sum_last"]+=$lastServiceAddForNY[$city]["num_new"];
@@ -307,6 +321,9 @@ class ComparisonForm extends CFormModel
             //更改
             $defMoreList["amend_sum_last"]+=key_exists($city,$lastServiceForA)?$lastServiceForA[$city]:0;
             $defMoreList["amend_sum"]+=key_exists($city,$serviceForA)?$serviceForA[$city]:0;
+            //利比斯
+            $defMoreList["lbs_new_amt"]+=key_exists($city,$lbsServiceForN)?$lbsServiceForN[$city]:0;
+            $defMoreList["lbs_new_amt_last"]+=key_exists($city,$lastLbsServiceForN)?$lastLbsServiceForN[$city]:0;
 
             RptSummarySC::resetData($data,$cityRow,$citySetList,$defMoreList);
         }
@@ -381,6 +398,10 @@ class ComparisonForm extends CFormModel
         $arr=array(
             "city"=>$city,
             "city_name"=>$city_name,
+            "u_v3_send"=>0,//100%归属发包方→自有生意额
+            "u_v3_accept"=>0,//100%归属发包方→承接生意额
+            "u_v3_total"=>0,//100%归属发包方→服务生意额汇总
+            "u_v3_sum"=>0,//接口内的sum
             "last_u_actual"=>0,//服务生意额(上月)
             "last_u_all"=>0,//服务生意额(上月)(整月)
             "u_actual_money"=>0,//服务生意额
@@ -421,6 +442,10 @@ class ComparisonForm extends CFormModel
             "amend_sum"=>0,//更改
             "amend_rate"=>0,//更改对比比例
 
+            "lbs_new_amt_last"=>0,//利比斯（上一年）
+            "lbs_new_amt"=>0,//利比斯
+            "lbs_new_amt_rate"=>0,//利比斯对比比例
+
             "net_sum_last"=>0,//总和（上一年）
             "net_sum"=>0,//总和
             "net_rate"=>0,//总和对比比例
@@ -448,7 +473,9 @@ class ComparisonForm extends CFormModel
         $list["net_sum"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
         $list["net_sum"]+=$list["amend_sum"];
         if(date_format(date_create($this->end_date),'Y/m')>CountSearch::$stop_new_dt){
-            //$list["net_sum"]+=$list["stop_2024_11"];
+            $list["not_net_sum"]=$list["net_sum"]+$list["stop_2024_11"];
+        }else{
+            $list["not_net_sum"]=0;
         }
         $list["net_sum_last"]=0;
         $list["net_sum_last"]+=$list["new_sum_last"]+$list["new_sum_n_last"]+$list["new_month_n_last"];
@@ -456,7 +483,9 @@ class ComparisonForm extends CFormModel
         $list["net_sum_last"]+=$list["amend_sum_last"];
         $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
         if($lastEndDate>CountSearch::$stop_new_dt){
-            //$list["net_sum_last"]+=$list["stop_2024_11_last"];
+            $list["not_net_sum_last"]=$list["net_sum_last"]+$list["stop_2024_11_last"];
+        }else{
+            $list["not_net_sum_last"]=0;
         }
         $list["new_rate"] = $this->nowAndLastRate($list["new_sum"],$list["new_sum_last"],true);
         $list["new_n_rate"] = $this->nowAndLastRate($list["new_sum_n"],$list["new_sum_n_last"],true);
@@ -465,8 +494,10 @@ class ComparisonForm extends CFormModel
         $list["resume_rate"] = $this->nowAndLastRate($list["resume_sum"],$list["resume_sum_last"],true);
         $list["pause_rate"] = $this->nowAndLastRate($list["pause_sum"],$list["pause_sum_last"],true);
         $list["amend_rate"] = $this->nowAndLastRate($list["amend_sum"],$list["amend_sum_last"],true);
+        $list["lbs_new_amt_rate"] = $this->nowAndLastRate($list["lbs_new_amt"],$list["lbs_new_amt_last"],true);
 
         $list["net_rate"] = $this->nowAndLastRate($list["net_sum"],$list["net_sum_last"],true);
+        $list["not_net_rate"] = $this->nowAndLastRate($list["not_net_sum"],$list["not_net_sum_last"],true);
 
         if(SummaryForm::targetReadyBase()){
             $list["start_two_gross"] = $bool?$list["start_two_gross"]:ComparisonForm::resetNetOrGross($list["start_two_gross"],$this->day_num,$this->search_type);
@@ -570,12 +601,21 @@ class ComparisonForm extends CFormModel
         return $html;
     }
 
-    private function getTopArr(){
+    protected function getTopArr(){
         $monthStr = "（{$this->month_start_date} ~ {$this->month_end_date}）";
         $lastMonthStr = "（".date("m/d",strtotime($this->last_month_start_date))." ~ ".date("m/d",strtotime($this->last_month_end_date))."）";
         $topList=array(
             array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
-            array("name"=>Yii::t("summary","Actual monthly amount"),"rowspan"=>2),//服务生意额
+            array("name"=>Yii::t("summary","Cross and rate"),
+                "colspan"=>array(
+                    array("name"=>Yii::t("summary","Actual monthly amount")),//服务生意额
+                )),//带交叉比例
+            array("name"=>Yii::t("summary","u v3 total"),"rowspan"=>2),//服务生意额汇总
+            array("name"=>Yii::t("summary","u v3 title"),
+                "colspan"=>array(
+                    array("name"=>Yii::t("summary","u v3 send")),//自有生意额
+                    array("name"=>$this->class_type=="KA"?Yii::t("summary","u v3 accept"):Yii::t("summary","u v3 accept KA")),//承接生意额
+                )),//100%归属发包方
             array("name"=>Yii::t("summary","YTD New").$monthStr,"background"=>"#f7fd9d",
                 "colspan"=>array(
                     array("name"=>$this->comparison_year-1),//对比年份
@@ -634,6 +674,20 @@ class ComparisonForm extends CFormModel
                     array("name"=>Yii::t("summary","YoY change")),//YoY change
                 )
             ),//YTD Net
+            array("name"=>Yii::t("summary","YTD Not Net").$monthStr,"background"=>"#f2dcdb",
+                "colspan"=>array(
+                    array("name"=>$this->comparison_year-1),//对比年份
+                    array("name"=>$this->comparison_year),//查询年份
+                    array("name"=>Yii::t("summary","YoY change")),//YoY change
+                )
+            ),//YTD Net
+            array("name"=>Yii::t("summary","LBS Service New").$monthStr,"background"=>"#f8b0ad",
+                "colspan"=>array(
+                    array("name"=>$this->comparison_year-1),//对比年份
+                    array("name"=>$this->comparison_year),//查询年份
+                    array("name"=>Yii::t("summary","YoY change")),//YoY change
+                )
+            ),//利比斯lbs_new_amt
         );
         $colspan=array(
             array("name"=>Yii::t("summary","Start Gross")),//Start Gross
@@ -726,7 +780,11 @@ class ComparisonForm extends CFormModel
     private function tableHeaderWidth(){
         $html="<tr>";
         for($i=0;$i<$this->th_sum;$i++){
-            $width=90;
+            if($i==2){
+                $width=110;
+            }else{
+                $width=90;
+            }
             $html.="<th class='header-width' data-width='{$width}' width='{$width}px'>{$i}</th>";
         }
         return $html."</tr>";
@@ -751,14 +809,18 @@ class ComparisonForm extends CFormModel
     //获取td对应的键名
     private function getDataAllKeyStr(){
         $bodyKey = array(
-            "city_name","u_actual_money","new_sum_last","new_sum","new_rate",
+            "city_name","u_actual_money",
+            "u_v3_total","u_v3_send","u_v3_accept",
+            "new_sum_last","new_sum","new_rate",
             "new_sum_n_last","new_sum_n","new_n_rate",
             "new_month_n_last","new_month_n","new_month_rate",
             "stop_sum_last","stop_sum","stop_rate","monthStopRate","comStopRate",
             "resume_sum_last","resume_sum","resume_rate",
             "pause_sum_last","pause_sum","pause_rate",
             "amend_sum_last","amend_sum","amend_rate",
-            "net_sum_last","net_sum","net_rate"
+            "net_sum_last","net_sum","net_rate",
+            "not_net_sum_last","not_net_sum","not_net_rate",
+            "lbs_new_amt_last","lbs_new_amt","lbs_new_amt_rate",
         );
         if(SummaryForm::targetReadyUpside()){
             $bodyKey[]="start_one_gross";
@@ -888,10 +950,14 @@ class ComparisonForm extends CFormModel
                         $regionRow["stopSumOnly"]+=$cityList["stopSumOnly"];
                         $regionRow["last_u_all"]+=$cityList["last_u_all"];
                         $regionRow["stop_sum_none_last"]+=$cityList["stop_sum_none_last"];
+                        $regionRow["stop_2024_11"]+=$cityList["stop_2024_11"];
+                        $regionRow["stop_2024_11_last"]+=$cityList["stop_2024_11_last"];
                         if($cityList["add_type"]!=1){ //疊加的城市不需要重複統計
                             $allRow["stopSumOnly"]+=$cityList["stopSumOnly"];
                             $allRow["last_u_all"]+=$cityList["last_u_all"];
                             $allRow["stop_sum_none_last"]+=$cityList["stop_sum_none_last"];
+                            $allRow["stop_2024_11"]+=$cityList["stop_2024_11"];
+                            $allRow["stop_2024_11_last"]+=$cityList["stop_2024_11_last"];
                         }
                         $this->resetTdRow($cityList);
                         //last_u_all
@@ -984,6 +1050,7 @@ class ComparisonForm extends CFormModel
         }else{
             $titleName = Yii::t("app","Comparison");
         }
+        $excel->colTwo=1;
         $excel->SetHeaderTitle($titleName);
         $excel->SetHeaderString($this->start_date." ~ ".$this->end_date);
         $excel->init();
@@ -1008,6 +1075,8 @@ class ComparisonForm extends CFormModel
             "pause_sum"=>array("title"=>Yii::t("summary","YTD Pause"),"type"=>"ServicePause"),
             "amend_sum_last"=>array("title"=>Yii::t("summary","YTD Amend").Yii::t("summary"," (last year)"),"type"=>"ServiceAmendLast"),
             "amend_sum"=>array("title"=>Yii::t("summary","YTD Amend"),"type"=>"ServiceAmend"),
+            "lbs_new_amt_last"=>array("title"=>Yii::t("summary","LBS Service New").Yii::t("summary"," (last year)"),"type"=>"ServiceLBSNewLast"),
+            "lbs_new_amt"=>array("title"=>Yii::t("summary","LBS Service New"),"type"=>"ServiceLBSNew"),
         );
     }
 
@@ -1051,6 +1120,9 @@ class ComparisonForm extends CFormModel
         $allMonthEndDate = date("Y/m/01",strtotime($this->end_date));
         $allMonthEndDate = date("Y/m/t",strtotime($allMonthEndDate." - 1 months"));
 		$serviceType = $this->search_type=="3"?1:0;
+
+        //获取U系统的服务单数据(发包方、承接方、资质方)
+        $uServiceMoneyV3 = CountOfficeSearch::getUServiceMoneyForOfficeV3($startDate,$endDate,$city_allow,false,$serviceType);
         //获取U系统的服务单数据
         $uServiceMoney = CountOfficeSearch::getUServiceOfficeMoneyOne($startDate,$endDate,$city_allow,false,$serviceType);
         //获取U系统的服务单数据(上月)
@@ -1075,6 +1147,10 @@ class ComparisonForm extends CFormModel
         $serviceForR = CountOfficeSearch::getServiceOfficeForType($startDate,$endDate,$city_allow,"R");
         //恢復服务(上一年)
         $lastServiceForR = CountOfficeSearch::getServiceOfficeForType($lastStartDate,$lastEndDate,$city_allow,"R");
+        //利比斯服务
+        $lbsServiceForN = CountOfficeSearch::getLBSServiceOfficeForType($startDate,$endDate,$city_allow,"N");
+        //利比斯服务(上一年)
+        $lastLbsServiceForN = CountOfficeSearch::getLBSServiceOfficeForType($lastStartDate,$lastEndDate,$city_allow,"N");
         //更改服务
         $serviceForA = CountOfficeSearch::getServiceOfficeForA($startDate,$endDate,$city_allow);
         //更改服务(上一年)
@@ -1099,6 +1175,14 @@ class ComparisonForm extends CFormModel
                     $officeRow["new_sum"]+=$serviceAddForNY[$city][$key]["num_new"];
                     $officeRow["new_sum_n"]+=$serviceAddForNY[$city][$key]["num_new_n"];
                 }
+                $officeRow["u_v3_send"]+=$officeRow["u_sum"];//自有生意额
+                if(key_exists($uKey,$uServiceMoneyV3)){
+                    $officeRow["u_v3_send"]+=$uServiceMoneyV3[$uKey]["send"];//自有生意额
+                    $officeRow["u_v3_accept"]+=$uServiceMoneyV3[$uKey]["accept"];//承接生意额
+                    $officeRow["u_v3_sum"]+=$uServiceMoneyV3[$uKey]["sum"];//接口内的sum
+                }
+                $officeRow["u_v3_total"]+=$officeRow["u_v3_send"]+$officeRow["u_v3_accept"];//服务生意额汇总
+
                 $officeRow["new_sum_n"]+=$officeRow["u_sum"];//一次性新增需要加上U系统产品金额
                 if(isset($lastServiceAddForNY[$city][$key])){
                     $officeRow["new_sum_last"]+=$lastServiceAddForNY[$city][$key]["num_new"];
@@ -1138,6 +1222,9 @@ class ComparisonForm extends CFormModel
                 //更改
                 $officeRow["amend_sum_last"]+=isset($lastServiceForA[$city][$key])?$lastServiceForA[$city][$key]:0;
                 $officeRow["amend_sum"]+=isset($serviceForA[$city][$key])?$serviceForA[$city][$key]:0;
+                //利比斯
+                $officeRow["lbs_new_amt_last"]+=isset($lastLbsServiceForN[$city][$key])?$lastLbsServiceForN[$city][$key]:0;
+                $officeRow["lbs_new_amt"]+=isset($lbsServiceForN[$city][$key])?$lbsServiceForN[$city][$key]:0;
 
                 self::resetOfficeTdRow($officeRow);
                 $htmlData=self::getOfficeHtmlTr($city,$key,$officeRow);
@@ -1171,14 +1258,19 @@ class ComparisonForm extends CFormModel
         $list["net_sum"]+=$list["stop_sum"]+$list["resume_sum"]+$list["pause_sum"];
         $list["net_sum"]+=$list["amend_sum"];
         if(date_format(date_create($this->end_date),'Y/m')>CountSearch::$stop_new_dt){
-            //$list["net_sum"]+=$list["stop_2024_11"];
+            $list["not_net_sum"]=$list["net_sum"]+$list["stop_2024_11"];
+        }else{
+            $list["not_net_sum"]=0;
         }
         $list["net_sum_last"]=0;
         $list["net_sum_last"]+=$list["new_sum_last"]+$list["new_sum_n_last"]+$list["new_month_n_last"];
         $list["net_sum_last"]+=$list["stop_sum_last"]+$list["resume_sum_last"]+$list["pause_sum_last"];
         $list["net_sum_last"]+=$list["amend_sum_last"];
-        if(date_format(date_create($this->end_date),'Y/m')>CountSearch::$stop_new_dt){
-            //$list["net_sum_last"]+=$list["stop_2024_11_last"];
+        $lastEndDate = ($this->comparison_year-1)."/".$this->month_end_date;
+        if($lastEndDate>CountSearch::$stop_new_dt){
+            $list["not_net_sum_last"]=$list["net_sum_last"] + $list["stop_2024_11_last"];
+        }else{
+            $list["not_net_sum_last"]=0;
         }
         $list["new_rate"] = $this->nowAndLastRate($list["new_sum"],$list["new_sum_last"],true);
         $list["new_n_rate"] = $this->nowAndLastRate($list["new_sum_n"],$list["new_sum_n_last"],true);
@@ -1187,8 +1279,10 @@ class ComparisonForm extends CFormModel
         $list["resume_rate"] = $this->nowAndLastRate($list["resume_sum"],$list["resume_sum_last"],true);
         $list["pause_rate"] = $this->nowAndLastRate($list["pause_sum"],$list["pause_sum_last"],true);
         $list["amend_rate"] = $this->nowAndLastRate($list["amend_sum"],$list["amend_sum_last"],true);
+        $list["lbs_new_amt"] = $this->nowAndLastRate($list["lbs_new_amt"],$list["lbs_new_amt_last"],true);
 
         $list["net_rate"] = $this->nowAndLastRate($list["net_sum"],$list["net_sum_last"],true);
+        $list["not_net_rate"] = $this->nowAndLastRate($list["not_net_sum"],$list["not_net_sum_last"],true);
     }
 
     protected function getOfficeHtmlTr($city,$office_id,$officeRow){
@@ -1202,7 +1296,7 @@ class ComparisonForm extends CFormModel
             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
             ComparisonForm::setTextColorForKeyStr($tdClass,$keyStr,$officeRow);
             $text = ComparisonForm::showNum($text);
-            $html.= "<td class='{$tdClass}'>".$text."</td>";
+            $html.= "<td class='{$tdClass}'><span>".$text."</span></td>";
             $data[]=$text;
         }
         $html.= "</tr>";

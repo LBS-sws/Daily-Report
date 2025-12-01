@@ -60,19 +60,19 @@ return array(
 		),
 	),
     'Cross dispatch'=>array(//交叉派单
-        'access'=>'CD',
+        'access'=>'CW',
         'icon'=>'fa-superpowers',
         'items'=>array(
             'Cross Apply'=>array(//交叉派单申请
-                'access'=>'CD01',
+                'access'=>'CW01',
                 'url'=>'/crossApply/index',
             ),
             'Cross Audit'=>array(//交叉派单审核
-                'access'=>'CD02',
+                'access'=>'CW02',
                 'url'=>'/crossAudit/index',
             ),
             'Cross Search'=>array(//交叉派单查询
-                'access'=>'CD03',
+                'access'=>'CW03',
                 'url'=>'/crossSearch/index',
             ),
         ),
@@ -118,6 +118,10 @@ return array(
 			'KA customer report'=>array( //ke客户报表
 				'access'=>'B34',
 				'url'=>'/report/customerKA',
+			),
+			'All customer report'=>array( //客户记录汇总表
+				'access'=>'B42',
+				'url'=>'/report/customerAll',
 			),
 			'Chain customer report'=>array( //连锁客户报表
 				'access'=>'B33',
@@ -267,6 +271,30 @@ return array(
                 'access'=>'G02',
                 'url'=>'/comprehensive/index',
             ),
+            'Update Service Count'=>array( //客户服务修改统计
+                'access'=>'G34',
+                'url'=>'/updateSeCount/index',
+            ),
+            'Check Week Staff'=>array( //周人效
+                'access'=>'G38',
+                'url'=>'/checkStaffWeek/index',
+            ),
+            'Check In Month'=>array( //签到签离月统计
+                'access'=>'G37',
+                'url'=>'/checkInMonth/index',
+            ),
+            'Check In Week'=>array( //签到签离周统计
+                'access'=>'G36',
+                'url'=>'/checkInWeek/index',
+            ),
+            'Check In Staff'=>array( //签到签离员工统计
+                'access'=>'G35',
+                'url'=>'/checkInStaff/index',
+            ),
+            'KA Tracking'=>array( //KA業績追蹤
+                'access'=>'G33',
+                'url'=>'/kATrack/index',
+            ),
             'Retention rate'=>array( //保留率
                 'access'=>'G30',
                 'url'=>'/retentionRate/index',
@@ -278,6 +306,10 @@ return array(
             'Outsource'=>array( //外包数据分析
                 'access'=>'G28',
                 'url'=>'/outsource/index',
+            ),
+            'Out Business'=>array( //业务承揽数据分析
+                'access'=>'G39',
+                'url'=>'/outBusiness/index',
             ),
             'Bonus Month'=>array( //月度提成奖金表
                 'access'=>'G24',
@@ -374,6 +406,10 @@ return array(
             'City Count Set'=>array(//城市统计设置
                 'access'=>'G14',
                 'url'=>'/citySet/index',
+            ),
+            'City Track Set'=>array(//城市统计设置
+                'access'=>'G32',
+                'url'=>'/cityTrack/index',
             ),
 		),
 	),

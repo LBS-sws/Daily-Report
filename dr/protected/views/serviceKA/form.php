@@ -28,16 +28,19 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 <section class="content">
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
-<?php if ($model->scenario!='new' && $model->scenario!='view'): ?>
+<?php if (!empty($model->id) && $model->scenario!='view'): ?>
 	<?php
 		echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Another'), array(
 			'name'=>'btnAdd','id'=>'btnAdd','data-toggle'=>'modal','data-target'=>'#addrecdialog',)
 		);
 	?>
-	<?php echo TbHtml::button('<span class="fa fa-clone"></span> '.Yii::t('misc','Copy'), array(
-			'name'=>'btnCopy','id'=>'btnCopy')
-		);
-	?>
+    <?php
+    if($model->scenario!='new'){
+        echo TbHtml::button('<span class="fa fa-clone"></span> '.Yii::t('misc','Copy'), array(
+                'name'=>'btnCopy','id'=>'btnCopy')
+        );
+    }
+    ?>
 <?php endif ?>
 	<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
 		'submit'=>Yii::app()->createUrl('serviceKA/index'))
@@ -60,7 +63,7 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 		);
 
 	?>
-<?php if ($model->status=='T'|| $model->status=='S'): ?>
+<?php if (!empty($model->id)&&($model->status=='T'|| $model->status=='S')): ?>
   <?php   if ($model->send=='Y'){
         echo TbHtml::button('<span class="fa fa-send"></span> '."重新发送", array('name'=>'btnSendemail','id'=>'btnSendemail','data-toggle'=>'modal','data-target'=>'#sendemail','color'=>TbHtml::BUTTON_COLOR_PRIMARY));
     }else{
@@ -71,10 +74,10 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 <?php endif ?>
 
 	</div>
-            <?php if ($model->scenario!='new'): ?>
+            <?php if (!empty($model->id)): ?>
                 <div class="btn-group pull-right" role="group">
                     <?php
-                    if (Yii::app()->user->validRWFunction('CD01')&&!empty($model->contract_no)&&$model->status=="N"){ //交叉派单
+                    if (Yii::app()->user->validRWFunction('CW01')&&!empty($model->contract_no)&&$model->status=="N"){ //交叉派单
                         echo TbHtml::button('<span class="fa fa-superpowers"></span> '.Yii::t('app','Cross dispatch'), array(
                                 'data-toggle'=>'modal','data-target'=>'#crossDialog',)
                         );
@@ -143,7 +146,7 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
                 <?php echo $form->labelEx($model,'contract_no',array('class'=>"col-sm-1 control-label")); ?>
                 <div class="col-sm-2">
                     <?php echo $form->textField($model, 'contract_no',
-                        array('class'=>'form-control','maxlength'=>30,));
+                        array('class'=>'form-control','maxlength'=>30,'readonly'=>($model->getReadonly())));
                     ?>
                 </div>
 			</div>
@@ -155,7 +158,7 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
                     echo $form->dropDownList($model, 'contract_type', GetNameToId::getContractTypeList('ka'), array('readonly'=>($model->getReadonly()),'empty'=>''));
                     ?>
                 </div>
-                <?php echo $form->labelEx($model,'office_id',array('class'=>"col-sm-2 control-label")); ?>
+                <?php echo $form->labelEx($model,'office_id',array('class'=>"col-sm-1 control-label")); ?>
                 <div class="col-sm-2">
                     <?php
                     $this_city = empty($model->city)?Yii::app()->user->city():$model->city;
@@ -192,13 +195,13 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
                     <?php echo $form->labelEx($model,'prepay_month',array('class'=>"col-sm-1 control-label")); ?>
                     <div class="col-sm-1">
                         <?php echo $form->numberField($model, 'prepay_month',
-                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                            array('size'=>4,'min'=>0,'readonly'=>($model->getReadonly()))
                         ); ?>
                     </div>
                     <?php echo $form->labelEx($model,'prepay_start',array('class'=>"col-sm-1 control-label")); ?>
                     <div class="col-sm-1">
                         <?php echo $form->numberField($model, 'prepay_start',
-                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                            array('size'=>4,'min'=>0,'readonly'=>($model->getReadonly()))
                         ); ?>
                     </div>
                 </div>
@@ -219,20 +222,20 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'cust_type',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php echo $form->dropDownList($model, 'cust_type', General::getCustTypeList(), array('disabled'=>($model->getReadonly())));
+					<?php echo $form->dropDownList($model, 'cust_type',General::getCustTypeList(), array('readonly'=>($model->getReadonly()),'empty'=>''));
 					?>
 				</div>
                 <div class="col-sm-2">
                     <?php
-                    $typelist = $model->getCustTypeList((empty($model->cust_type) ? 1 : $model->cust_type));
-                    echo $form->dropDownList($model, 'cust_type_name', $typelist, array('disabled'=>($model->getReadonly())));
+                    $typelist = $model->getCustTypeList((empty($model->cust_type) ? 0 : $model->cust_type));
+                    echo $form->dropDownList($model, 'cust_type_name', $typelist, array('readonly'=>($model->getReadonly())));
 
                     ?>
                 </div>
                 <?php echo $form->labelEx($model,'pieces',array('class'=>"col-sm-1 control-label"));   ?>
                 <div class="col-sm-2">
                      <?php echo $form->numberField($model, 'pieces',
-                        array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                        array('size'=>4,'min'=>0,'readonly'=>($model->getReadonly()))
                     ); ?>
                 </div>
 			</div>
@@ -240,13 +243,13 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'nature_type',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php echo $form->dropDownList($model, 'nature_type', NatureForm::getNatureList(), array('disabled'=>($model->scenario=='view'),'id'=>'nature_type'));
+					<?php echo $form->dropDownList($model, 'nature_type', NatureForm::getNatureList(), array('readonly'=>($model->getReadonly()),'id'=>'nature_type'));
 					?>
 				</div>
                 <div class="col-sm-2">
                     <?php
                     $natureTwoList = NatureForm::getNatureTwoList();
-                    echo $form->dropDownList($model, 'nature_type_two', $natureTwoList["select"], array('disabled'=>($model->scenario=='view'),'options'=>$natureTwoList["options"],'id'=>'nature_type_two'));
+                    echo $form->dropDownList($model, 'nature_type_two', $natureTwoList["select"], array('readonly'=>($model->getReadonly()),'options'=>$natureTwoList["options"],'id'=>'nature_type_two'));
                     ?>
 				</div>
 			</div>
@@ -272,7 +275,7 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 								'Y'=>Yii::t('service','Yearly'),
 								'1'=>Yii::t('service','One time'),
 							),
-							array('disabled'=>($model->getReadonly())));
+							array('readonly'=>($model->getReadonly())));
 					?>
 				</div>
 				<div class="col-sm-2">
@@ -300,17 +303,16 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 			</div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,(($model->status=='A') ? 'af_amt_paid' : 'amt_paid'),array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-3">
+				<div class="col-sm-2">
 					<?php
 						echo $form->dropDownList($model, 'paid_type',
 							array('M'=>Yii::t('service','Monthly'),
 								'Y'=>Yii::t('service','Yearly'),
 								'1'=>Yii::t('service','One time'),
-							), array('disabled'=>($model->getReadonly()))
+							), array('readonly'=>($model->getReadonly()))
 						);
 					?>
 				</div>
-
 				<div class="col-sm-2">
 					<?php
 						echo $form->numberField($model, 'amt_paid',
@@ -319,6 +321,12 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 						);
 					?>
 				</div>
+                <?php echo $form->labelEx($model,'external_source',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->textField($model, 'external_source',
+                        array('readonly'=>true)
+                    ); ?>
+                </div>
 
 			</div>
 <?php if (($model->status!='S') && ($model->status!='T')) : ?>
@@ -336,7 +344,7 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 				<?php echo $form->labelEx($model,'need_install',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
 					<?php echo $form->dropDownList($model, 'need_install', array(''=>Yii::t('misc','No'),'Y'=>Yii::t('misc','Yes')),
-								array('disabled'=>($model->scenario=='view'))
+								array('readonly'=>($model->getReadonly()))
 					); ?>
 				</div>
 			</div>
@@ -356,6 +364,14 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
                         array('size'=>4,'min'=>0,'readonly'=>($model->getReadonly()))
                     ); ?>
                 </div>
+                <?php endif; ?>
+                <?php if ($model->status=='T') : ?>
+                    <?php echo $form->labelEx($model,'surplus_amt',array('class'=>"col-sm-1 control-label")); ?>
+                    <div class="col-sm-2">
+                        <?php echo $form->numberField($model, 'surplus_amt',
+                            array('min'=>0,'readonly'=>($model->getReadonly()))
+                        ); ?>
+                    </div>
                 <?php endif; ?>
             </div>
             <?php if ($model->status=='T') : ?>
@@ -598,6 +614,9 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
                     </div>
                 </div>
             <?php endif ?>
+            <?php if ($model->status!='N'): ?>
+                <?php echo $form->hiddenField($model, 'u_system_id'); ?>
+            <?php endif ?>
 
             <?php if ($model->scenario!='new'): ?>
                 <div class="form-group">
@@ -646,7 +665,7 @@ $this->pageTitle=Yii::app()->name . ' - Service KA Form';
 
 
 <?php
-if (Yii::app()->user->validRWFunction('CD01')&&$model->status=="N"){ //交叉派单
+if (Yii::app()->user->validRWFunction('CW01')&&$model->status=="N"){ //交叉派单
     $this->renderPartial('//crossApply/crossDialog',array("model"=>$model));
 }
 ?>
@@ -754,14 +773,17 @@ $js = Script::genDeleteData(Yii::app()->createUrl('serviceKA/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 if ($model->scenario!='view') {
-    $js = Script::genDatePicker(array(
-        'ServiceKAForm_status_dt',
+    $dataArr = array(
         'ServiceKAForm_sign_dt',
         'ServiceKAForm_ctrt_end_dt',
         'ServiceKAForm_first_dt',
         'ServiceKAForm_equip_install_dt',
         'cross_apply_date',
-    ));
+    );
+    if(!$model->getReadonly()){
+        $dataArr[] = 'ServiceKAForm_status_dt';
+    }
+    $js = Script::genDatePicker($dataArr);
     Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 }
 

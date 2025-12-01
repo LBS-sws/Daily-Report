@@ -82,5 +82,6 @@ return array(
     'Cross report'=>'交叉派單報表',
     'KA signed report'=>'KA新簽報表',
     'KA Retention report'=>'KA保留率明細報表',
+    'All customer report'=>'客戶記錄匯總表',
 );
 ?>

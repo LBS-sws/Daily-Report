@@ -6,6 +6,8 @@ class PayWeekForm extends CFormModel
 	public $id;
 	public $code;
 	public $description;
+	public $z_display;
+	public $u_id;
 
 	/**
 	 * Declares customized attribute labels.
@@ -17,6 +19,8 @@ class PayWeekForm extends CFormModel
 		return array(
 			'code'=>Yii::t('code','Code'),
 			'description'=>Yii::t('code','Description'),
+            'u_id'=>"派单系统id",
+            'z_display'=>"是否显示",
 		);
 	}
 
@@ -32,7 +36,7 @@ class PayWeekForm extends CFormModel
 					'className'=>'PayWeek',
 					'on'=>'new',
 				),
-			array('description,code','required'),
+			array('description,code,u_id,z_display','required'),
 			array('id','safe'),
 		);
 	}
@@ -48,6 +52,8 @@ class PayWeekForm extends CFormModel
 				$this->id = $row['id'];
 				$this->code = $row['code'];
 				$this->description = $row['description'];
+				$this->u_id = $row['u_id'];
+				$this->z_display = $row['z_display'];
 				break;
 			}
 		}
@@ -93,13 +99,15 @@ class PayWeekForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into swo_payweek(
-						code, description, city, lcu, luu) values (
-						:code, :description, :city, :lcu, :luu)";
+						code, description, u_id, z_display, city, lcu, luu) values (
+						:code, :description, :u_id, :z_display, :city, :lcu, :luu)";
 				break;
 			case 'edit':
 				$sql = "update swo_payweek set 
 					code = :code,
 					description = :description, 
+					u_id = :u_id, 
+					z_display = :z_display, 
 					luu = :luu,
 					city = :city
 					where id = :id";
@@ -116,6 +124,10 @@ class PayWeekForm extends CFormModel
 			$command->bindParam(':code',$this->code,PDO::PARAM_STR);
 		if (strpos($sql,':description')!==false)
 			$command->bindParam(':description',$this->description,PDO::PARAM_STR);
+		if (strpos($sql,':u_id')!==false)
+			$command->bindParam(':u_id',$this->u_id,PDO::PARAM_STR);
+		if (strpos($sql,':z_display')!==false)
+			$command->bindParam(':z_display',$this->z_display,PDO::PARAM_STR);
 		if (strpos($sql,':city')!==false)
 			$command->bindParam(':city',$city,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)

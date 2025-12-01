@@ -79,14 +79,14 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
                 ); ?>
             </div>
         </div>
-        <div class="form-group" style="display: none;">
+        <div class="form-group">
             <?php echo $form->labelEx($model,'apply_category',array('class'=>"col-lg-2 control-label")); ?>
             <div class="col-lg-3">
                 <?php
                 $model->apply_category = empty($endCrossList)?2:$model->apply_category;
                 ?>
                 <?php echo $form->dropDownList($model, 'apply_category',CrossApplyForm::getApplyCategoryList(),
-                    array('readonly'=>$model->readonly(),'id'=>'apply_category','empty'=>'')
+                    array('readonly'=>true,'id'=>'apply_category','empty'=>'')
                 ); ?>
             </div>
         </div>
@@ -108,7 +108,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
             $qualificationBool = true;
         }
         ?>
-        <div class="qualification-div">
+        <div class="qualification-div" style="<?php if($qualificationBool){ echo 'display: none;';} ?>">
             <div class="form-group">
                 <?php echo $form->labelEx($model,'qualification_city',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
@@ -117,7 +117,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
                     ); ?>
                 </div>
             </div>
-            <div class="form-group" style="<?php if($model->cross_type==13){ echo 'display: none;';} ?>" >
+            <div class="form-group" >
                 <?php echo $form->labelEx($model,'qualification_ratio',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
                     <?php echo $form->numberField($model, 'qualification_ratio',
@@ -125,7 +125,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
                     ); ?>
                 </div>
             </div>
-            <div class="form-group" style="<?php if($model->cross_type==13){ echo 'display: none;';} ?>">
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'qualification_amt',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">
                     <?php echo $form->textField($model, 'qualification_amt',
@@ -134,7 +134,7 @@ $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($model->table_type,$
                 </div>
             </div>
         </div>
-        <div class="accept-div">
+        <div class="accept-div" style="<?php if(in_array($model->cross_type,array(0,1))){ echo 'display: none;';} ?>">
             <div class="form-group">
                 <?php echo $form->labelEx($model,'cross_city',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-3">

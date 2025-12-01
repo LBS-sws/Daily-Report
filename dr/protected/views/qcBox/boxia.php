@@ -53,10 +53,15 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 <?php endif ?>
 	</div>
 	<div class="btn-group pull-right" role="group">
-        <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('misc','xiazai'), array(
-            'data-href'=>Yii::app()->createUrl('qcBox/downs',array("index"=>$model->id)),'id'=>'xiazai'));
+        <?php
+        if($model->scenario!='new'){
+            echo TbHtml::button('<span class="fa fa-download"></span> 下载pdf', array(
+                'data-href'=>Yii::app()->createUrl('qcBox/downs',array("index"=>$model->id)),'class'=>'xiazai'));
+            echo TbHtml::button('<span class="fa fa-download"></span> 下载excel', array(
+                'data-href'=>Yii::app()->createUrl('qcBox/downExcel',array("index"=>$model->id)),'class'=>'xiazai'));
+        }
         ?>
-<?php 
+<?php
 		$counter = ($model->no_of_attm['qc'] > 0) ? ' <span id="docqc" class="label label-info">'.$model->no_of_attm['qc'].'</span>' : ' <span id="docqc"></span>';
 		echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
 			'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadqc',)
@@ -91,7 +96,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php
-                    echo $form->dropDownList($model,'city',QcForm::getCityList(),array('readonly'=>$model->readonly()));
+                    echo $form->dropDownList($model,'city',QcForm::getCityList(),array('readonly'=>$model->readonly()||$model->ltNowDate));
 
 					?>
 				</div>
@@ -102,10 +107,10 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-7">
 					<?php
 						echo $form->textField($model, 'qc_staff',
-							array('size'=>50,'maxlength'=>500,'readonly'=>'',
+							array('size'=>50,'maxlength'=>500,'readonly'=>true,
 							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','QC Staff'),
 											array('name'=>'btnStaffQc','id'=>'btnStaffQc',
-												'disabled'=>($model->readonly())
+												'disabled'=>($model->readonly()||$model->ltNowDate)
 											))
 						));
 					?>
@@ -119,7 +124,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 					<?php echo $form->hiddenField($model, 'company_id'); ?>
 					<?php echo $form->textField($model, 'company_name', 
 						array('maxlength'=>500,'readonly'=>'readonly',
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->readonly())))
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->readonly()||$model->ltNowDate)))
 					)); ?>
 				</div>
 			</div>
@@ -128,8 +133,8 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'job_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
 					<?php echo $form->textField($model, 'job_staff',
-						array('maxlength'=>500,'readonly'=>($model->readonly()),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->readonly())))
+						array('maxlength'=>500,'readonly'=>(true),
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->readonly()||$model->ltNowDate)))
 					)); ?>
 				</div>
 			</div>
@@ -143,7 +148,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 						</div>
 						<?php 
 							echo TbHtml::textField('QcBoxForm[info][service_dt]',$model->info['service_dt'],
-								array('class'=>'form-control pull-right','readonly'=>($model->readonly()),)); 
+								array('class'=>'form-control pull-right','readonly'=>($model->readonly()||$model->ltNowDate),));
 						?>
 					</div>
 				</div>
@@ -155,7 +160,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 							<i class="fa fa-calendar"></i>
 						</div>
 						<?php echo $form->textField($model, 'qc_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->readonly()),)); 
+							array('class'=>'form-control pull-right','readonly'=>($model->readonly()||$model->ltNowDate),));
 						?>
 					</div>
 				</div>
@@ -171,7 +176,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 
             <div class="form-group">
                 <div class="col-lg-10 col-lg-offset-1">
-                    <div class="table-responsive">
+                    <div class=""><!--table-responsive-->
                         <?php
                         echo $model->printInfoHtml();
                         ?>
@@ -180,12 +185,16 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
             </div>
 
 			<div class="form-group">
-				<?php echo $form->labelEx($model,'cust_sfn',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-7">
+				<?php echo $form->labelEx($model,'cust_sfn',array('class'=>"col-lg-2 control-label")); ?>
+				<div class="col-lg-2">
 					<?php
-                    echo TbHtml::inlineRadioButtonList('QcBoxForm[info][cust_sfn]',$model->info['cust_sfn'],QcBoxForm::CustSfnList(),
-                        array('readonly'=>($model->readonly()),));
+                    $model->info['cust_sfn'] = isset($model->info['cust_sfn'])?$model->info['cust_sfn']:null;
+                    echo TbHtml::numberField('QcBoxForm[info][cust_sfn]',$model->info['cust_sfn'],
+                        array('readonly'=>$model->readonly(),'min'=>0,'max'=>10,'id'=>'cust_sfn'));
                      ?>
+				</div>
+				<div class="col-lg-8">
+                    <p style="margin-bottom: 0px;"><?php echo Yii::t("qc","cust_sfn_note");?></p>
 				</div>
 			</div>
 
@@ -267,6 +276,62 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 <?php $this->renderPartial('//qc/_type',array('model'=>$model)); ?>
 <?php $this->renderPartial('//qc/_sign'); ?>
 
+<!-- Modal -->
+<div class="modal fade" id="visibleXSModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">评分弹窗 - <span id="visibleXSSmall"></span></h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">评分说明：</label>
+                    <div class="col-lg-10">
+                        <p class="form-control-static" id="visibleXSName"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">最大分值：<span id="visibleXSMax"></span></label>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">评分：</label>
+                    <div class="col-lg-10">
+                        <input type="number" min="0" class="form-control" id="visibleXSVal">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">备注：</label>
+                    <div class="col-lg-10">
+                        <textarea rows="3" class="form-control" id="visibleXSRemark"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="visibleXSOK">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="numberErrorModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">验证</h4>
+            </div>
+            <div class="modal-body" id="numberErrorBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
 $baseUrl = Yii::app()->baseUrl;
 Yii::app()->clientScript->registerScriptFile($baseUrl.'/js/signature_pad.min.js',CClientScript::POS_HEAD);
@@ -280,7 +345,7 @@ Yii::app()->clientScript->registerScriptFile($baseUrl.'/js/dms-lookup.js', CClie
 
 $js = <<<EOF
 $('#btnStaffResp').on('click',function() {
-	opendialog('staff', '', 'job_staff', false, {}, { city:$('#QcBoxForm_city').val()});
+	opendialog('staff', '', 'job_staff', false, {}, { city:''});
 });
 
 $('#btnCompany').on('click',function() {
@@ -288,7 +353,7 @@ $('#btnCompany').on('click',function() {
 });
 
 $('#btnStaffQc').on('click',function() {
-	opendialog('staff', '', 'qc_staff', false, {}, { city:$('#QcBoxForm_city').val()});
+	opendialog('staff', '', 'qc_staff', false, {}, { city:''});
 });
 
 
@@ -366,17 +431,94 @@ $('#yt1').on('click',function(){
 document.getElementById('yt1').removeAttribute("style");
 });
 
-	$('#xiazai').on('click',function(){
+	$('.xiazai').on('click',function(){
 	    var href = $(this).data('href');
 	    $('#qc-form').attr('action',href).submit();
 	});
 
+$('.click-xs').click(function(){
+    if($(this).children(".visible-xs:first").is(':visible')){
+        var visibleXSName = $(this).children('td').eq(0).text();
+        var visibleXSMax = $(this).children('td').eq(1).text();
+        var visibleXSVal = $(this).find('.changeAmt:first').val();
+        var visibleXSRemark = $(this).find('textarea:first').val();
+        var dataOff = $(this).find('.changeAmt:first').attr('readonly');//=='readonly'
+        $('#visibleXSName').text(visibleXSName);
+        $('#visibleXSMax').text(visibleXSMax);
+        $('#visibleXSVal').val(visibleXSVal).attr('max',visibleXSMax);
+        $('#visibleXSRemark').val(visibleXSRemark);
+        $('#visibleXSSmall').text($(this).data('title'));
+        $('#visibleXSOK').data('id',$(this).data('id'));
+        if(dataOff=='readonly'){
+            $('#visibleXSVal').prop('readonly',true);
+            $('#visibleXSRemark').prop('readonly',true);
+        }else{
+            $('#visibleXSVal').prop('readonly',false);
+            $('#visibleXSRemark').prop('readonly',false);
+        }
+        $('#visibleXSModal').modal('show');
+    }
+});
+
+$('#visibleXSOK').click(function(){
+    var id = $(this).data('id');
+    var visibleXSVal = $('#visibleXSVal').val();
+    var visibleXSRemark = $('#visibleXSRemark').val();
+    var trObj = $('.click-xs[data-id="'+id+'"]');
+    var text = '';
+    if(visibleXSVal!=''){
+        text+='<b>评分：'+visibleXSVal+'</b>';
+    }
+    if(visibleXSRemark!=''){
+        text+='<br/><b>备注：</b>'+visibleXSRemark;
+    }
+    trObj.find('.mark-text').html(text);
+    trObj.find('.changeAmt:first').val(visibleXSVal);
+    trObj.find('textarea:first').val(visibleXSRemark);
+    
+    $('#visibleXSModal').modal('hide');
+    changeAmt();
+});
+
+$('.changeAmt,#visibleXSVal,#cust_sfn').blur(function(){
+    var maxNum = $(this).attr('max');
+    var minNum = $(this).attr('min');
+    var thisVal = $(this).val();
+    if($(this).val()!=''){
+        thisVal = parseFloat(thisVal);
+        maxNum = parseFloat(maxNum);
+        minNum = minNum==''||minNum==undefined?0:parseFloat(minNum);
+        if(thisVal>maxNum){
+            $('#numberErrorBody').html('<p>数值不能大于'+maxNum+'</p>');
+            $('#numberErrorModal').data('max',maxNum).data('obj',$(this).attr('id')).modal('show');
+        }
+        if(thisVal<minNum){
+            $('#numberErrorBody').html('<p>数值不能小于'+minNum+'</p>');
+            $('#numberErrorModal').data('max',minNum).data('obj',$(this).attr('id')).modal('show');
+        }
+    }
+});
+$('#numberErrorModal').on('hidden.bs.modal', function (e) {
+    var maxNum = $(this).data('max');
+    var obj = $(this).data('obj');
+    $('#'+obj).val(maxNum).trigger('change');
+    if(obj=='visibleXSVal'){
+        $('#visibleXSOK').trigger('click');
+    }
+})
 EOF;
 Yii::app()->clientScript->registerScript('calculate',$js,CClientScript::POS_READY);
+if(!empty($model->errorID)){
+    $js=" 
+    setTimeout(function(){
+        $('#{$model->errorID}').focus();
+    },500);
+    ";
+    Yii::app()->clientScript->registerScript('errorIDShow',$js,CClientScript::POS_READY);
+}
 
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
 ?>
 
 <?php $this->endWidget(); ?>
-

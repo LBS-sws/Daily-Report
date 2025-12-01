@@ -9,6 +9,9 @@
 
 		$sfile = Yii::app()->baseUrl.'/js/dms.js';
 		Yii::app()->clientScript->registerScriptFile($sfile,CClientScript::POS_HEAD);
+        //加载js文件
+        $sfile = Yii::app()->baseUrl.'/js/table2excel.js?2';
+        Yii::app()->clientScript->registerScriptFile($sfile,CClientScript::POS_HEAD);
 	?>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

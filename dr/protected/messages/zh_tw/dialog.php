@@ -70,5 +70,7 @@ return array(
 'Invalid file type.'=>'無效的文件類型.',
 'Advice'=>'温馨提示',
 'Please reset password'=>'系統檢測到當前帳號的密碼過於簡單，請重新設置密碼！！',
+'The password entered twice is inconsistent'=>'两次输入密码不一致！！！',
+'The password requires 8-20 characters, consisting of numbers, letters, and symbols'=>'密碼强度至少需要達到一般！！！',
 );
 ?>

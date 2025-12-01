@@ -3,6 +3,7 @@
     .select2-container--default .select2-selection--single .select2-selection__rendered {
         line-height: 24px;
     }
+    select.readonly{ pointer-events: none;}
 </style>
 <form class="form-horizontal" id="crossForm" method="post">
 <?php
@@ -35,13 +36,19 @@ $table_type = $modelForm=="ServiceList"?0:1;
         <?php echo Tbhtml::textField('CrossApply[apply_date]','',array('id'=>'cross_apply_date','autocomplete'=>'off','prepend'=>"<span class='fa fa-calendar'></span>")); ?>
     </div>
 </div>
+    <div class="form-group">
+        <?php echo Tbhtml::label(Yii::t("service","apply category"),'',array('class'=>"col-lg-3 control-label")); ?>
+        <div class="col-lg-5">
+            <?php echo Tbhtml::dropDownList('CrossApply[apply_category]',2,CrossApplyForm::getApplyCategoryList(),array("id"=>"apply_category")); ?>
+        </div>
+    </div>
 <div class="form-group">
     <?php echo Tbhtml::label(Yii::t("service","Cross type"),'',array('class'=>"col-lg-3 control-label")); ?>
     <div class="col-lg-5">
-        <?php echo Tbhtml::dropDownList('CrossApply[cross_type]','',CrossApplyForm::getCrossTypeEndList(),array('empty'=>'',"id"=>"cross_type")); ?>
+        <?php echo Tbhtml::dropDownList('CrossApply[cross_type]',13,CrossApplyForm::getCrossTypeEndEndList(),array('empty'=>'',"id"=>"cross_type")); ?>
     </div>
 </div>
-<div class="qualification-div">
+<div class="qualification-div hide">
     <div class="form-group">
         <?php echo Tbhtml::label(Yii::t("service","Qualification city"),'',array('class'=>"col-lg-3 control-label")); ?>
         <div class="col-lg-5">
@@ -124,17 +131,21 @@ $('#crossFullOk').on('click',function(){
     });
     list = list.join(',');
     $('#attrStr').val(list);
+    var apply_category = $('#apply_category').val();
     var cross_type = $('#cross_type').val();
     var cross_city = $('#cross_cross_city').val();
     var rate_num = $('#cross_rate_num').val();
     var qualification_city = $('#qualification_city').val();
     var qualification_ratio = $('#qualification_ratio').val();
     var html='';
+    if(apply_category==''){
+        html+='<p>申请类型不能为空</p>';
+    }
     if(cross_type==''){
         html+='<p>业务场景不能为空</p>';
     }
-    if(cross_city==''&&qualification_city==''){
-        html+='<p>资质方、承接城市至少填写一项</p>';
+    if(cross_type==13&&cross_city==''){
+        html+='<p>承接城市不能为空</p>';
     }
     
     if(html!=''){
@@ -159,6 +170,24 @@ $('#crossFullOk').on('click',function(){
         });
     }
 });
+	
+	$('#apply_category').on('change',function(){
+	    var apply_category=$('#apply_category').val();
+	    if(apply_category==1||apply_category==3){
+	        $('#cross_type').attr('readonly','readonly').addClass('readonly').val(13).trigger('change');
+	    }else{
+	        $('#cross_type').removeAttr('readonly').removeClass('readonly');
+	    }
+	});
+	
+	$('#cross_type').on('change',function(){
+	    var cross_type=$('#cross_type').val();
+	    if(cross_type==''||cross_type==13){
+	        $('.accept-div').slideDown();
+	    }else{
+	        $('.accept-div').slideUp();
+	    }
+	});
 
 $('#effective_date').datepicker({autoclose: true,language: 'zh_cn', format: 'yyyy/mm/01', minViewMode: 1});
 ";
@@ -192,10 +221,7 @@ Yii::app()->clientScript->registerScript('searchCityInput',$js,CClientScript::PO
                             <th>申请日期</th>
                             <th>月金额</th>
                             <th>业务场景</th>
-                            <th>资质方</th>
-                            <th>资质方比例</th>
                             <th>承接城市</th>
-                            <th>承接比例</th>
                             <th>说明</th>
                         </tr>
                         </thead>

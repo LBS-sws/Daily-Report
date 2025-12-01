@@ -10,4 +10,5 @@
 	<td><?php echo $this->record['cont_info']; ?></td>
 	<td><?php echo $this->record['resp_staff']; ?></td>
 	<td><?php echo $this->record['resp_tech']; ?></td>
+	<td><?php echo $this->record['fp_fin_dt']; ?></td>
 </tr>

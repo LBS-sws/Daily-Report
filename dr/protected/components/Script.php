@@ -35,7 +35,7 @@ function lookupselect() {
 				if (field.length > 0) {
 					var fldId = 'otherfld_'+codeval+'_'+field[0];
 					var fldVal = $('#'+fldId).val();
-					$('#'+field[1]).val(fldVal);
+					$('#'+field[1]).val(fldVal).trigger('change');
 				}
 			});
 		}

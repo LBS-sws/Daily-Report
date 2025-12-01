@@ -193,7 +193,7 @@ class ManageMonthBonusForm extends CFormModel
         );
     }
 
-    private function setModelData($city_allow){
+    private function setModelData($city_allow,$cityOnly=true,$employeeID=0){
         $this->data = array();
         $city_allow = empty($city_allow)?Yii::app()->user->city_allow():$city_allow;
         $staffSetList = ManageStaffSetForm::getStaffListForCityAllow($city_allow,$this->search_year,$this->search_month);
@@ -208,6 +208,9 @@ class ManageMonthBonusForm extends CFormModel
         $this->u_load_data = $bonusModel->u_load_data;
         $this->bonusData = $this->resetBonusData($bonusData);
         foreach ($staffLists as $staffList){
+            if($cityOnly===false&&$employeeID!=$staffList["employee_id"]){
+                continue;
+            }
             $setID = $staffList["id"];
             $cityList = explode(",",$staffList["city_allow"]);
             if(count($cityList)==1){
@@ -235,12 +238,12 @@ class ManageMonthBonusForm extends CFormModel
                 ":year"=>$this->search_year,
                 ":month"=>$this->search_month,
             ))->queryRow();
+        $employeeID=CountSearch::getEmployeeIDForUsername(Yii::app()->user->id);
+        $cityOnly = false;
+        if(Yii::app()->user->validFunction('CN32')){//查询本城市所有人员
+            $cityOnly=true;
+        }
         if($refresh===false&&$row){//查询固定数据
-            $employeeID=CountSearch::getEmployeeIDForUsername(Yii::app()->user->id);
-            $cityOnly = false;
-            if(Yii::app()->user->validFunction('CN32')){//查询本城市所有人员
-                $cityOnly=true;
-            }
             $this->status_type = $row["status_type"];
             $this->update_date = $row["update_date"];
             $this->update_user = $row["update_user"];
@@ -266,7 +269,7 @@ class ManageMonthBonusForm extends CFormModel
                 }
             }
         }else{//实时刷新
-            $this->setModelData($city_allow);
+            $this->setModelData($city_allow,$cityOnly,$employeeID);
         }
 
         $session = Yii::app()->session;

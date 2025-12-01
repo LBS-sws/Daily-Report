@@ -2,10 +2,13 @@
 class RptCustresume extends ReportData2 {
 	public function fields() {
 		return array(
+            'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'L'),
             'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
             'office_name'=>array('label'=>"归属",'width'=>12,'align'=>'C'),
 			'lud'=>array('label'=>Yii::t('service','Entry Date'),'width'=>18,'align'=>'C'),
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
+            'group_code'=>array('label'=>"KA/集团编号",'width'=>18,'align'=>'L'),
+            'group_name'=>array('label'=>"KA/集团名称",'width'=>18,'align'=>'L'),
 			'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
 			'service'=>array('label'=>Yii::t('service','Service'),'width'=>40,'align'=>'L'),
 			'amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C'),
@@ -39,10 +42,13 @@ class RptCustresume extends ReportData2 {
             $city_allow = json_decode($city,true);
             $city_allow = "'".implode("','",$city_allow)."'";
         }
-		$sql = "select a.*, b.description as nature, c.description as customer_type
+		$sql = "select a.*,
+					h.code as com_code,h.name as com_name,h.group_id as group_code,h.group_name,
+					 b.description as nature, c.description as customer_type
 					from swo_service a
 					left outer join swo_nature b on a.nature_type=b.id 
 					left outer join swo_customer_type c on a.cust_type=c.id
+                	left outer join swo_company h on a.company_id=h.id 
 				where a.status='R' and a.city in ({$city_allow}) 
 		";
 		if (isset($this->criteria)) {
@@ -63,11 +69,16 @@ class RptCustresume extends ReportData2 {
                     $officeList[$row["office_id"]] = GetNameToId::getOfficeNameForID($row['office_id']);
                 }
 				$temp = array();
+                $temp['id'] = $row['id'];
                 $temp['city_name'] = General::getCityName($row["city"]);
                 $temp['office_name'] = $officeList[$row["office_id"]];
 				$temp['type'] = $row['customer_type'];
 				$temp['status_dt'] = General::toDate($row['status_dt']);
-				$temp['company_name'] = $row['company_name'];
+                $temp['company_code'] = $row['com_code'];
+                $temp['company_code_city'] = $row['com_code']."-".$row["city"];
+                $temp['company_name'] = empty($row['com_name'])?$row['company_name']:$row['com_name'];
+                $temp['group_code'] = $row['group_code'];
+                $temp['group_name'] = $row['group_name'];
 				$temp['nature'] = $row['nature'];
 				$temp['service'] = $row['service'];
 				$temp['amt_month'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:

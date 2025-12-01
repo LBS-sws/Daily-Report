@@ -22,6 +22,16 @@
 			;
 		?>
 	</th>
+    <th>
+        <?php echo TbHtml::link($this->getLabelName('group_id').$this->drawOrderArrow('group_id'),'#',$this->createOrderLink('customer-list','group_id'))
+        ;
+        ?>
+    </th>
+    <th>
+        <?php echo TbHtml::link($this->getLabelName('group_name').$this->drawOrderArrow('group_name'),'#',$this->createOrderLink('customer-list','group_name'))
+        ;
+        ?>
+    </th>
 	<th>
 		<?php echo TbHtml::link($this->getLabelName('cont_name').$this->drawOrderArrow('cont_name'),'#',$this->createOrderLink('customer-list','cont_name'))
 			;

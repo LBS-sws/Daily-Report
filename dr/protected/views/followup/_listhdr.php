@@ -42,4 +42,9 @@
 			;
 		?>
 	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('fp_fin_dt').$this->drawOrderArrow('fp_fin_dt'),'#',$this->createOrderLink('followup-list','fp_fin_dt'))
+			;
+		?>
+	</th>
 </tr>

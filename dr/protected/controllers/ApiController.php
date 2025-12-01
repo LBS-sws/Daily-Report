@@ -9,7 +9,7 @@ class ApiController extends Controller
 	{
 		return array(
 			'accessControl', 
-			'postOnly + service, company, invoice', //  allow via POST request
+			'postOnly + service, company', //  allow via POST request
 		);
 	}
 

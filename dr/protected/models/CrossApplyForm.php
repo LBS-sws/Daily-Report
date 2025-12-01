@@ -26,7 +26,7 @@ class CrossApplyForm extends CFormModel
 	public $audit_user;
 	public $luu;
 	public $lcu;
-	public $apply_category;
+	public $apply_category=2;
 	public $effective_date;
 	public $send_city;//额外收到邮件的城市
 
@@ -35,7 +35,8 @@ class CrossApplyForm extends CFormModel
     public $u_update_user;
     public $u_update_date;
 
-    public static $not_city=array("CD","TJ","HZ");
+    //public static $not_city=array("CD","TJ","HZ");
+    public static $not_city=array();
 
 	/**
 	 * Declares customized attribute labels.
@@ -135,16 +136,17 @@ class CrossApplyForm extends CFormModel
 
     public function validateCrossType($attribute, $params) {
         $endCrossList = CrossApplyForm::getEndCrossListForTypeAndId($this->table_type,$this->service_id,$this->id);
-	    $list = empty($endCrossList)?self::getCrossTypeList():self::getCrossTypeThreeList();
+	    $list = empty($endCrossList)?self::getCrossTypeList():self::getCrossTypeEndEndList();
+        $listEnd = self::getCrossTypeEndList();
 	    $this->cross_type="".$this->cross_type;
 	    if(!key_exists($this->cross_type,$list)){
-            $list = self::getCrossTypeEndList();
-            if(!key_exists($this->cross_type,$list)){
+            if(!key_exists($this->cross_type,$listEnd)){
                 $this->addError($attribute, "业务场景不存在，请刷新重试");
                 return false;
             }
         }else{
             if($endCrossList){
+                $endCrossList["cross_type"] = 13;//由于业务场景全部合并，所以强制转换
                 if(empty($this->apply_category)){
                     $this->addError($attribute, "申请类型不能为空");
                     return false;
@@ -154,11 +156,12 @@ class CrossApplyForm extends CFormModel
                         $this->addError($attribute, "业务场景与上一次不一致");
                         return false;
                     }else{
-                        $this->qualification_city = $endCrossList["qualification_city"];
-                        $this->qualification_ratio = $endCrossList["qualification_ratio"];
-                        $this->rate_num = $endCrossList["rate_num"];
+                        $this->qualification_city = null;
+                        $this->qualification_ratio = null;
+                        $this->rate_num = null;
                     }
                 }elseif ($this->apply_category==3){//调整内容
+                    $this->month_amt = $endCrossList["month_amt"];
                     if($this->cross_type!=$endCrossList["cross_type"]){
                         $this->addError($attribute, "业务场景与上一次不一致");
                         return false;
@@ -174,8 +177,8 @@ class CrossApplyForm extends CFormModel
                         $this->qualification_amt = $endCrossList["qualification_amt"];
                     }elseif($this->cross_type==0||$this->cross_type==1){//普通合约、KA合约
                         $this->cross_city=null;
-                        $this->cross_amt=0;
-                        $this->rate_num=0;
+                        $this->cross_amt=null;
+                        $this->rate_num=null;
                         $this->qualification_city = null;
                         $this->qualification_ratio = null;
                         $this->qualification_amt = null;
@@ -201,10 +204,14 @@ class CrossApplyForm extends CFormModel
                     $this->qualification_city=null;
                     $this->qualification_amt=null;
                 }
-                $this->cross_amt=$this->month_amt*($this->rate_num/100);
-                $this->cross_amt = round($this->cross_amt,2);
+                if($this->rate_num===null){
+                    $this->cross_amt = null;
+                }else{
+                    $this->cross_amt=$this->month_amt*($this->rate_num/100);
+                    $this->cross_amt = round($this->cross_amt,2);
+                }
             }
-            if($this->cross_type==5){//资质借用、普通合约、KA合约
+            if(in_array($this->cross_type,array(5,0,1))){//资质借用、普通合约、KA合约
                 $this->cross_city=null;
                 $this->cross_amt=null;
                 $this->rate_num=null;
@@ -465,6 +472,14 @@ class CrossApplyForm extends CFormModel
         );
     }
 
+    public static function getCrossTypeEndEndList(){//2025年5月21日09:55:13又增加了选项
+        return array(
+            "0"=>Yii::t("service","ordinary"),//普通合约
+            "1"=>Yii::t("service","KA"),//KA合约
+            "13"=>Yii::t("service","Cross treaty"),//交叉合约
+        );
+    }
+
     public static function getCrossTypeStrToKey($key){
         $list = self::getCrossTypeThreeList();
         $key="".$key;
@@ -637,15 +652,15 @@ class CrossApplyForm extends CFormModel
         $message.="<p>申请时间：".$this->apply_date."</p>";
         $emailModel = new Email($title,$message,$title);
         $city = empty($this->cross_city)?$this->qualification_city:$this->cross_city;
-        $emailModel->addEmailToPrefixAndCity("CD02",$city);
+        $emailModel->addEmailToPrefixAndCity("CW02",$city);
         $emailModel->sent();
         if(in_array($this->cross_type,array(11,12,0,1,5))&&!empty($this->send_city)){//普通合约、KA合约
             $title = "交叉派单 - ".CrossApplyForm::getCrossTypeStrToKey($this->cross_type);
             $emailModel->setSubject($title);
             $emailModel->setDescription($title);
             $emailModel->resetToAddr();
-            $emailModel->addEmailToPrefixAndCity("CD01",$this->send_city);
-            $emailModel->addEmailToPrefixAndCity("CD02",$this->send_city);
+            $emailModel->addEmailToPrefixAndCity("CW01",$this->send_city);
+            $emailModel->addEmailToPrefixAndCity("CW02",$this->send_city);
             $emailModel->addEmailToCity($this->send_city);
             $emailModel->sent();
         }
@@ -698,18 +713,25 @@ class CrossApplyForm extends CFormModel
                 if(in_array($row["city"],self::$not_city)){
                     $row["error"] = "城市({$row["city"]})不允许交叉派单";
                 }
-                if($endCross){
-                    if($this->cross_type!=$endCross["cross_type"]){
-                        $row["error"] = "业务场景不一致";
-                    }elseif (!empty($endCross["cross_city"])&&$this->cross_city!=$endCross["cross_city"]){
-                        $row["error"] = "承接城市不一致";
-                    }elseif (!empty($endCross["rate_num"])&&floatval($this->rate_num)!=floatval($endCross["rate_num"])){
-                        $row["error"] = "承接比例不一致";
-                    }elseif (!empty($endCross["qualification_city"])&&$this->qualification_city!=$endCross["qualification_city"]){
-                        $row["error"] = "资质方不一致";
-                    }elseif (!empty($endCross["qualification_ratio"])&&floatval($this->qualification_ratio)!=floatval($endCross["qualification_ratio"])){
-                        $row["error"] = "资质方比例不一致";
-                    }
+                switch ($this->apply_category){
+                    case 1://合约金额调整
+                        if(in_array($this->cross_type,array(0,1))||empty($endCross)){
+                            $row["error"] = "申请类型异常";
+                        }
+                        if ($endCross&&!empty($endCross["cross_city"])&&$this->cross_city!=$endCross["cross_city"]){
+                            $row["error"] = "承接城市不一致";
+                        }
+                        break;
+                    case 2://合约类型调整(增加子合约)
+                        if(in_array($this->cross_type,array(0,1))&&empty($endCross)){
+                            $row["error"] = "业务场景异常";
+                        }
+                        break;
+                    case 3://合约内容修正
+                        if(in_array($this->cross_type,array(0,1))||empty($endCross)){
+                            $row["error"] = "申请类型异常";
+                        }
+                        break;
                 }
                 $flowCross = $this->getFlowCross($this->table_type,$id);
                 if($flowCross){
@@ -765,10 +787,7 @@ class CrossApplyForm extends CFormModel
                 $html.="<td>".$this->apply_date."</td>";
                 $html.="<td>".$row["amt_paid"]."</td>";
                 $html.="<td>".$cross_type_name."</td>";
-                $html.="<td>".$qualification_city_name."</td>";
-                $html.="<td>".$qualification_rate."</td>";
                 $html.="<td>".$cross_city_name."</td>";
-                $html.="<td>".$cross_rate."</td>";
                 $html.="<td>".$error."</td>";
                 $html.="</tr>";
             }

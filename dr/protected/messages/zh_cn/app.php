@@ -209,5 +209,15 @@ return array(
     'KA Retention report'=>'KA保留率明细报表',
     'Refresh Month Bonus'=>'强制刷新月度奖金',
     'Only Month Bonus'=>'本城市所有月度奖金',
+    'City Track Set'=>'业绩追踪城市配置',
+    'KA Tracking'=>'KA业绩追踪',
+    'All Area Track'=>'查询区域KA业绩追踪',
+    'Update Service Count'=>'客户服务修改统计',
+    'Check Week Staff'=>'周人效',
+    'Check In Month'=>'签到签离月统计',
+    'Check In Week'=>'签到签离周统计',
+    'Check In Staff'=>'签到签离员工统计',
+    'All customer report'=>'客户记录汇总表',
+    'Out Business'=>'业务承揽数据分析',
 );
 ?>

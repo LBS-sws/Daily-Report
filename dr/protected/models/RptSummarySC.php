@@ -1,6 +1,7 @@
 <?php
 class RptSummarySC extends ReportData2 {
     public $u_load_data=array();//查询时长数组
+    public $uServiceType=0;//默认根据月份查询 1：日期查询
     public function retrieveData() {
 //		$city = Yii::app()->user->city();
         if(!isset($this->criteria->start_dt)){
@@ -13,6 +14,7 @@ class RptSummarySC extends ReportData2 {
         $this->criteria->end_dt = General::toDate($this->criteria->end_dt);
         $startDate = $this->criteria->start_dt;
         $endDate = $this->criteria->end_dt;
+        $search_year = date("Y",strtotime($startDate));
         $lastStartDate = CountSearch::computeLastMonth($startDate);
         $lastEndDate = CountSearch::computeLastMonth($endDate);
         $data = array();
@@ -29,19 +31,23 @@ class RptSummarySC extends ReportData2 {
         }
         $citySetList = CitySetForm::getCitySetList($city_allow);
         $this->u_load_data['u_load_start'] = time();
+        //获取U系统的服务单数据(发包方、承接方、资质方)
+        $uServiceMoneyV3 = CountSearch::GetUServiceMoneyV3($startDate,$endDate,$city_allow,$this->uServiceType);
+        //获取U系统的服务单数据
+        $uServiceMoney = CountSearch::getUServiceMoney($startDate,$endDate,$city_allow,$this->uServiceType);
         //获取U系统的產品数据
         $uInvMoney = CountSearch::getUInvMoney($startDate,$endDate,$city_allow);
         //获取U系统的產品数据(上月)
         $lastUInvMoney = CountSearch::getUInvMoney($lastStartDate,$lastEndDate,$city_allow);
         $this->u_load_data['u_load_end'] = time();
-        //获取U系统的服务单数据(報表不需要生意額數據)
-        //$uServiceMoney = CountSearch::getUServiceMoney($startDate,$endDate,$city_allow);
         //服务新增（非一次性 和 一次性)
         $serviceAddForNY = CountSearch::getServiceAddForNY($startDate,$endDate,$city_allow);
         //终止服务、暂停服务
         $serviceForST = CountSearch::getServiceForST($startDate,$endDate,$city_allow);
         //恢復服务
         $serviceForR = CountSearch::getServiceForType($startDate,$endDate,$city_allow,"R");
+        //利比斯新增服务
+        $lbsServiceForN = CountSearch::getLBSServiceForType($startDate,$endDate,$city_allow,"N");
         //更改服务
         $serviceForA = CountSearch::getServiceForA($startDate,$endDate,$city_allow);
         //新增服務的詳情
@@ -52,8 +58,19 @@ class RptSummarySC extends ReportData2 {
             $city = $cityRow["code"];
             $defMoreList=self::defMoreCity($city,$cityRow["city_name"]);
             $defMoreList["add_type"] = $cityRow["add_type"];
-            //$defMoreList["u_actual_money"]+=key_exists($city,$uServiceMoney)?$uServiceMoney[$city]:0;
+            ComparisonForm::setComparisonConfig($defMoreList,$search_year,$startDate,$city);
             $defMoreList["u_invoice_num"]+=key_exists($city,$uInvMoney)?$uInvMoney[$city]["sum_money"]:0;
+            $defMoreList["u_actual_money"]+=key_exists($city,$uServiceMoney)?$uServiceMoney[$city]:0;
+            $defMoreList["u_actual_money"]+=$defMoreList["u_invoice_num"];
+
+            $defMoreList["u_v3_send"]+=$defMoreList["u_invoice_num"];//自有生意额
+            if(key_exists($city,$uServiceMoneyV3)){
+                $defMoreList["u_v3_send"]+=$uServiceMoneyV3[$city]["send"];//自有生意额
+                $defMoreList["u_v3_accept"]+=$uServiceMoneyV3[$city]["accept"];//承接生意额
+                $defMoreList["u_v3_sum"]+=$uServiceMoneyV3[$city]["sum"];//接口内的sum
+            }
+            $defMoreList["u_v3_total"]+=$defMoreList["u_v3_send"]+$defMoreList["u_v3_accept"];//服务生意额汇总
+
             $defMoreList["u_num_cate"]+=key_exists($city,$uInvMoney)?$uInvMoney[$city]["u_num_cate"]:0;
             $defMoreList["u_num_not_cate"]+=key_exists($city,$uInvMoney)?$uInvMoney[$city]["u_num_not_cate"]:0;
             $defMoreList["num_new"]+=key_exists($city,$serviceAddForNY)?$serviceAddForNY[$city]["num_new"]:0;
@@ -67,6 +84,7 @@ class RptSummarySC extends ReportData2 {
             $defMoreList["stop_2024_11"] = -1*$defMoreList["num_stop"]-$defMoreList["stop_2024_11"];
             $defMoreList["num_restore"]+=key_exists($city,$serviceForR)?$serviceForR[$city]:0;
             $defMoreList["num_update"]+=key_exists($city,$serviceForA)?$serviceForA[$city]:0;
+            $defMoreList["lbs_new_amt"]+=key_exists($city,$lbsServiceForN)?$lbsServiceForN[$city]:0;
             if(key_exists($city,$serviceDetailForAdd)){
                 $defMoreList["num_long"]+=$serviceDetailForAdd[$city]["num_long"];
                 $defMoreList["num_short"]+=$serviceDetailForAdd[$city]["num_short"];
@@ -129,6 +147,10 @@ class RptSummarySC extends ReportData2 {
         return array(
             "city"=>$city,
             "city_name"=>$cityName,
+            "u_v3_send"=>0,//100%归属发包方→自有生意额
+            "u_v3_accept"=>0,//100%归属发包方→承接生意额
+            "u_v3_total"=>0,//100%归属发包方→服务生意额汇总
+            "u_v3_sum"=>0,//接口内的sum
             "u_actual_money"=>0,//实际月金额
             "num_new"=>0,//新增（非一次性）
             "num_new_n"=>0,//新增（一次性）
@@ -147,6 +169,7 @@ class RptSummarySC extends ReportData2 {
             "num_long"=>0,//长约（>=12月）
             "num_short"=>0,//短约
             "one_service"=>0,//一次性服務
+            "lbs_new_amt"=>0,//利比斯新增金额
             "num_cate"=>0,//餐饮客户
             "num_not_cate"=>0,//非餐饮客户
             "u_num_cate"=>0,//餐饮客户(U系统同步数据)

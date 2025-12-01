@@ -1,10 +1,10 @@
-<tr class='clickable-row <?php echo $this->record['color']; ?>' data-href='<?php echo $this->getLink('CD02', 'crossAudit/edit', 'crossAudit/view', array('index'=>$this->record['id']));?>'>
+<tr class='clickable-row <?php echo $this->record['color']; ?>' data-href='<?php echo $this->getLink('CW02', 'crossAudit/edit', 'crossAudit/view', array('index'=>$this->record['id']));?>'>
     <td class="che">
         <?php if ($this->record['cross_bool']): ?>
             <input value="<?php echo $this->record['id']; ?>"  type="checkbox" class="checkOne">
         <?php endif ?>
     </td>
-    <td><?php echo $this->drawEditButton('CD02', 'crossAudit/edit', 'crossAudit/view', array('index'=>$this->record['id'])); ?></td>
+    <td><?php echo $this->drawEditButton('CW02', 'crossAudit/edit', 'crossAudit/view', array('index'=>$this->record['id'])); ?></td>
 
     <td><?php echo $this->record['old_city']; ?></td>
     <td><?php echo $this->record['table_type']; ?></td>

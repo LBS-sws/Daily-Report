@@ -2,6 +2,7 @@
 class RptCustterall extends ReportData2 {
 	public function fields() {
 		return array(
+            'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'L'),
             'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
 		    //狀態
 			'status_desc'=>array('label'=>Yii::t('service','Record Type'),'width'=>12,'align'=>'C'),
@@ -9,6 +10,8 @@ class RptCustterall extends ReportData2 {
             'status_dt'=>array('label'=>Yii::t('customer','Date'),'width'=>14,'align'=>'C'),
             //客户编号及名称
             'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>26,'align'=>'C'),
+            'group_code'=>array('label'=>"KA/集团编号",'width'=>18,'align'=>'L'),
+            'group_name'=>array('label'=>"KA/集团名称",'width'=>18,'align'=>'L'),
             //客户类别
             'type'=>array('label'=>Yii::t('customer','Customer Type'),'width'=>14,'align'=>'C'),
             //客户联系
@@ -54,7 +57,7 @@ class RptCustterall extends ReportData2 {
             $city_allow = json_decode($city,true);
             $city_allow = "'".implode("','",$city_allow)."'";
         }
-		$sql = "select a.*, b.description as nature, c.description as customer_type, d.cont_name, d.cont_phone, d.address
+		$sql = "select a.*, b.description as nature, c.description as customer_type, d.cont_name, d.cont_phone, d.address,d.group_id as group_code,d.group_name 
 					from swo_service a
 					left outer join swo_nature b on a.nature_type=b.id 
 					left outer join swo_customer_type c on a.cust_type=c.id
@@ -94,11 +97,14 @@ class RptCustterall extends ReportData2 {
 				}
 
 				$temp = array();
+                $temp['id'] = $row['id'];
                 $temp['city_name'] = General::getCityName($row["city"]);
 				$temp['status_desc'] = self::statusDesc($row['status']);
 				$temp['type'] = $row['customer_type'];
 				$temp['status_dt'] = General::toDate($row['status_dt']);
 				$temp['company_name'] = $row['company_name'];
+                $temp['group_code'] = $row['group_code'];
+                $temp['group_name'] = $row['group_name'];
 				$temp['contact_name'] = $contact_name;
 				$temp['contact_phone'] = $contact_phone;
 				$temp['address'] = $address;
@@ -108,6 +114,7 @@ class RptCustterall extends ReportData2 {
 				$temp['amt_year'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:($row['paid_type']=='M'?$row['amt_paid']*($row['ctrt_period']<12&&!empty($row['ctrt_period'])?$row['ctrt_period']:12):$row['amt_paid'])),2,'.','');
                 $temp['all_number'] = $row['all_number'];
                 $temp['surplus'] = $row['surplus'];
+                $temp['surplus_amt'] = $row['surplus_amt'];
 				$temp['salesman'] = $row['salesman'];
                 $temp['othersalesman'] = $row['othersalesman'];
                 $temp['technician'] = $row['technician'];

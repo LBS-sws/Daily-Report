@@ -92,7 +92,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php
-                    echo $form->dropDownList($model,'city',QcForm::getCityList(),array('readonly'=>$model->readonly()));
+                    echo $form->dropDownList($model,'city',QcForm::getCityList(),array('readonly'=>$model->readonly()||$model->ltNowDate));
 
 					?>
 				</div>
@@ -103,10 +103,10 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-7">
 					<?php
 						echo $form->textField($model, 'qc_staff',
-							array('size'=>50,'maxlength'=>500,'readonly'=>'',
+							array('size'=>50,'maxlength'=>500,'readonly'=>true,
 							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','QC Staff'),
 											array('name'=>'btnStaffQc','id'=>'btnStaffQc',
-												'disabled'=>($model->readonly())
+												'disabled'=>($model->readonly()||$model->ltNowDate)
 											))
 						));
 					?>
@@ -120,7 +120,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 					<?php echo $form->hiddenField($model, 'company_id'); ?>
 					<?php echo $form->textField($model, 'company_name', 
 						array('maxlength'=>500,'readonly'=>'readonly',
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->readonly())))
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->readonly()||$model->ltNowDate)))
 					)); ?>
 				</div>
 			</div>
@@ -129,8 +129,8 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'job_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
 					<?php echo $form->textField($model, 'job_staff',
-						array('maxlength'=>500,'readonly'=>($model->readonly()),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->readonly())))
+						array('maxlength'=>500,'readonly'=>true,
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->readonly()||$model->ltNowDate)))
 					)); ?>
 				</div>
 			</div>
@@ -144,7 +144,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 						</div>
 						<?php 
 							echo TbHtml::textField('QcForm[info][service_dt]',$model->info['service_dt'], 
-								array('class'=>'form-control pull-right','readonly'=>($model->readonly()),)); 
+								array('class'=>'form-control pull-right','readonly'=>($model->readonly()||$model->ltNowDate),));
 						?>
 					</div>
 				</div>
@@ -156,7 +156,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 							<i class="fa fa-calendar"></i>
 						</div>
 						<?php echo $form->textField($model, 'qc_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->readonly()),)); 
+							array('class'=>'form-control pull-right','readonly'=>($model->readonly()||$model->ltNowDate),));
 						?>
 					</div>
 				</div>
@@ -193,7 +193,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 					<?php 
 //						echo TbHtml::dropDownList('QcForm[info][score_fan]', $model->info['score_fan'], General::getServiceTypeList(true),array('disabled'=>($model->scenario=='view')))
 						echo TbHtml::numberField('QcForm[info][score_machine]', $model->info['score_machine'], 
-							array('min'=>0,'max'=>14,'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>14,'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -204,7 +204,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_sink]', $model->info['score_sink'], 
-							array('min'=>0,'max'=>6,'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>6,'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -215,7 +215,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_toilet]', $model->info['score_toilet'], 
-							array('min'=>0,'max'=>50,'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>50,'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -228,7 +228,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_sticker]', $model->info['score_sticker'], 
-							array('min'=>0,'max'=>10,'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>10,'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -243,18 +243,18 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 //					?>
                     <?php
                     $listtype = array('1'=>Yii::t('qc','Missing'), '2'=>Yii::t('qc','Broken'));
-                    if ($model->readonly()) {
+                    if ($model->readonly()||$model->ltNowDate) {
                         echo TbHtml::hiddenField('QcForm[info][sticker_cltype]',$model->info['sticker_cltype'], array('id'=>'QcForm_info_sticker_cltype'));
                         echo TbHtml::textField('QcForm[info][sticker_cltype]', $listtype[$model->info['sticker_cltype']], array('readonly'=>true,'id'=>'QcForm_info_sticker_cltype'));
                     } else {
-                        echo TbHtml::dropDownList('QcForm[info][sticker_cltype]',$model->info['sticker_cltype'], $listtype,array('disabled'=>($model->readonly())));
+                        echo TbHtml::dropDownList('QcForm[info][sticker_cltype]',$model->info['sticker_cltype'], $listtype,array('disabled'=>($model->readonly()||$model->ltNowDate)));
                     }
                     ?>
 				</div>
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][sticker_clno]', $model->info['sticker_clno'], 
-							array('min'=>0,'max'=>999,'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>999,'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -262,11 +262,11 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'sticker_mano',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
 					<?php
-                    if ($model->readonly()) {
+                    if ($model->readonly()||$model->ltNowDate) {
                         echo TbHtml::hiddenField('QcForm[info][sticker_matype]',$model->info['sticker_matype'], array('id'=>'QcForm_info_sticker_matype'));
                         echo TbHtml::textField('QcForm[info][sticker_matype]', $listtype[$model->info['sticker_matype']], array('readonly'=>true,'id'=>'QcForm_info_sticker_matype'));
                     } else {
-                        echo TbHtml::dropDownList('QcForm[info][sticker_matype]',$model->info['sticker_matype'], $listtype,array('disabled'=>($model->readonly())));
+                        echo TbHtml::dropDownList('QcForm[info][sticker_matype]',$model->info['sticker_matype'], $listtype,array('disabled'=>($model->readonly()||$model->ltNowDate)));
                     }
 
 					?>
@@ -274,7 +274,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][sticker_mano]', $model->info['sticker_mano'], 
-							array('min'=>0,'max'=>999,'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>999,'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -284,7 +284,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'sticker_bgno',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-2">
 					<?php
-                    if ($model->readonly()) {
+                    if ($model->readonly()||$model->ltNowDate) {
                         echo TbHtml::hiddenField('QcForm[info][sticker_bgtype]',$model->info['sticker_bgtype'], array('id'=>'QcForm_info_sticker_bgtype'));
                         echo TbHtml::textField('QcForm[info][sticker_bgtype]', $listtype[$model->info['sticker_bgtype']], array('readonly'=>true,'id'=>'QcForm_info_sticker_bgtype'));
                     } else {
@@ -295,7 +295,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][sticker_bgno]', $model->info['sticker_bgno'], 
-							array('min'=>0,'max'=>999,'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>999,'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -311,7 +311,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][sticker_reqno]', $model->info['sticker_reqno'], 
-							array('min'=>0,'max'=>999,'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>999,'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -320,7 +320,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][sticker_actno]', $model->info['sticker_actno'], 
-							array('min'=>0,'max'=>999,'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>999,'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -332,7 +332,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_enzyme]', $model->info['score_enzyme'], 
-							array('min'=>0,'max'=>5,'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>5,'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -341,7 +341,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_bluecard]', $model->info['score_bluecard'], 
-							array('min'=>0,'max'=>5,'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>5,'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -351,7 +351,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'cust_score1',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-1">
 					<?php echo $form->numberField($model, 'cust_score', 
-						array('min'=>0,'max'=>10,'readonly'=>($model->readonly()))
+						array('min'=>0,'max'=>10,'readonly'=>($model->readonly()||$model->ltNowDate))
 					); ?>
 				</div>
 

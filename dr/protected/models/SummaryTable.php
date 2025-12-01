@@ -149,6 +149,12 @@ class SummaryTable extends SummaryForm{
         return self::getTableForTab($listGood,$listNot);
     }
 
+    //利比斯新增
+    private function ServiceLBSNew(){
+        $rows = self::getLBSServiceRows($this->start_date,$this->end_date,$this->city_allow,"N");
+        return self::getTableForRows($rows,$this->city_allow);
+    }
+
     public static function getTableForTab($listGood,$listNot){
         $tabs = array();
         $tabs[] = array(
@@ -189,9 +195,10 @@ class SummaryTable extends SummaryForm{
     }
 
     public static function getTableForRows($rows,$city_allow,$invTable=array(),$week_day=1,$month_day=0){
-        $companyList = GetNameToId::getCompanyList($city_allow);
+        //$companyList = GetNameToId::getCompanyList($city_allow);
+        $companyList = array();
         $html="";
-        if(!empty($invTable)){
+        if(!empty($invTable)&&isset($invTable["html"])){
             $html.=$invTable["html"];
             $html.="<p>&nbsp;</p>";
         }
@@ -234,7 +241,12 @@ class SummaryTable extends SummaryForm{
                         $menuStr = Yii::t("app","Customer Service");//菜單名稱
                         $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
                 }
-                $companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
+                if(key_exists($row["company_id"],$companyList)){
+                    $companyName = $companyList[$row["company_id"]];
+                }else{
+                    $companyName = GetNameToId::getCompanyNameForId($row["company_id"]);
+                    $companyList[$row["company_id"]] = $companyName;
+                }
                 $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
                 $row["ctrt_period"] = is_numeric($row["ctrt_period"])?floatval($row["ctrt_period"]):0;
 
@@ -266,7 +278,7 @@ class SummaryTable extends SummaryForm{
             $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
             $html.="<td colspan='2'>".$sum."</td>";
             $html.="</tr>";
-            if(!empty($invTable)){
+            if(!empty($invTable)&&isset($invTable["count"])&&isset($invTable["sum"])){
                 $html.="<tr><td colspan='10'>&nbsp;</td></tr>";
                 $count+=$invTable["count"];
                 $sum+=$invTable["sum"];
@@ -286,6 +298,7 @@ class SummaryTable extends SummaryForm{
                 $html.="<td>&nbsp;</td>";
                 $html.="</tr>";
             }
+            $html.=self::printTable2Excel(10);
             $html.="</tfoot>";
         }else{
             $html.="<tbody><tr><td colspan='10'>".Yii::t("summary","none data")."</td></tr></tbody>";
@@ -294,8 +307,17 @@ class SummaryTable extends SummaryForm{
         return $html;
     }
 
+    public static function printTable2Excel($colspan=10){
+        //table2excel
+        $html = "<tr class='noExl'><td colspan='{$colspan}' class='text-right'>";
+        $html.= TbHtml::button("下载",array("class"=>"table2excel"));
+        $html.="</td></tr>";
+        return $html;
+    }
+
     public static function getTableListForRows($rows,$city_allow){
-        $companyList = GetNameToId::getCompanyList($city_allow);
+        //$companyList = GetNameToId::getCompanyList($city_allow);
+        $companyList = array();
         $html="";
         $html.= "<table class='table table-bordered table-striped table-condensed table-hover'>";
         $html.="<thead><tr>";
@@ -336,7 +358,13 @@ class SummaryTable extends SummaryForm{
                         $menuStr = Yii::t("app","Customer Service");//菜單名稱
                         $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
                 }
-                $companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
+                if(key_exists($row["company_id"],$companyList)){
+                    $companyName = $companyList[$row["company_id"]];
+                }else{
+                    $companyName = GetNameToId::getCompanyNameForId($row["company_id"]);
+                    $companyList[$row["company_id"]] = $companyName;
+                }
+                //$companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
                 $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
                 $row["ctrt_period"] = is_numeric($row["ctrt_period"])?floatval($row["ctrt_period"]):0;
 
@@ -368,7 +396,7 @@ class SummaryTable extends SummaryForm{
             $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
             $html.="<td colspan='2'>".$sum."</td>";
             $html.="</tr>";
-            if(!empty($invTable)){
+            if(!empty($invTable)&&isset($invTable["count"])&&isset($invTable["sum"])){
                 $html.="<tr><td colspan='10'>&nbsp;</td></tr>";
                 $count+=$invTable["count"];
                 $sum+=$invTable["sum"];
@@ -379,6 +407,7 @@ class SummaryTable extends SummaryForm{
                 $html.="<td colspan='2'>".$sum."</td>";
                 $html.="</tr>";
             }
+            $html.=self::printTable2Excel(10);
             $html.="</tfoot>";
         }else{
             $html.="<tbody><tr><td colspan='10'>".Yii::t("summary","none data")."</td></tr></tbody>";
@@ -388,7 +417,8 @@ class SummaryTable extends SummaryForm{
     }
 
     public static function getTableListForRowsEx($rows,$city_allow,$typeStr=""){
-        $companyList = GetNameToId::getCompanyList($city_allow);
+        //$companyList = GetNameToId::getCompanyList($city_allow);
+        $companyList = array();
         $html="";
         $html.= "<table class='table table-bordered table-striped table-condensed table-hover'>";
         $html.="<thead><tr>";
@@ -432,7 +462,13 @@ class SummaryTable extends SummaryForm{
                         $menuStr = Yii::t("app","Customer Service");//菜單名稱
                         $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
                 }
-                $companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
+                if(key_exists($row["company_id"],$companyList)){
+                    $companyName = $companyList[$row["company_id"]];
+                }else{
+                    $companyName = GetNameToId::getCompanyNameForId($row["company_id"]);
+                    $companyList[$row["company_id"]] = $companyName;
+                }
+                //$companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
                 $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
                 $row["ctrt_period"] = is_numeric($row["ctrt_period"])?floatval($row["ctrt_period"]):0;
 
@@ -467,7 +503,7 @@ class SummaryTable extends SummaryForm{
             $html.="<td colspan='3' class='text-right'>".Yii::t("summary","total amt:")."</td>";
             $html.="<td colspan='2'>".$sum."</td>";
             $html.="</tr>";
-            if(!empty($invTable)){
+            if(!empty($invTable)&&isset($invTable["count"])&&isset($invTable["sum"])){
                 $html.="<tr><td colspan='10'>&nbsp;</td></tr>";
                 $count+=$invTable["count"];
                 $sum+=$invTable["sum"];
@@ -478,6 +514,7 @@ class SummaryTable extends SummaryForm{
                 $html.="<td colspan='2'>".$sum."</td>";
                 $html.="</tr>";
             }
+            $html.=self::printTable2Excel(10);
             $html.="</tfoot>";
         }else{
             $html.="<tbody><tr><td colspan='10'>".Yii::t("summary","none data")."</td></tr></tbody>";
@@ -526,6 +563,7 @@ class SummaryTable extends SummaryForm{
             $html.="<td class='text-right'>".Yii::t("summary","total amt:")."</td>";
             $html.="<td>".$sum."</td>";
             $html.="</tr>";
+            $html.=self::printTable2Excel(6);
             $html.="</tfoot>";
         }else{
             $html.="<tbody><tr><td colspan='6'>".Yii::t("summary","none data")."</td></tr></tbody>";
@@ -535,7 +573,8 @@ class SummaryTable extends SummaryForm{
     }
 
     public static function getTableForRowsTwo($rows,$city_allow){
-        $companyList = GetNameToId::getCompanyList($city_allow);
+        //$companyList = GetNameToId::getCompanyList($city_allow);
+        $companyList = array();
 
         $html = "<table class='table table-bordered table-striped table-condensed table-hover'>";
         $html.="<thead><tr>";
@@ -577,7 +616,13 @@ class SummaryTable extends SummaryForm{
                         $menuStr = Yii::t("app","Customer Service");//菜單名稱
                         $link = self::drawEditButton('A02', 'service/edit', 'service/view', array('index'=>$row['id']));
                 }
-                $companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
+                if(key_exists($row["company_id"],$companyList)){
+                    $companyName = $companyList[$row["company_id"]];
+                }else{
+                    $companyName = GetNameToId::getCompanyNameForId($row["company_id"]);
+                    $companyList[$row["company_id"]] = $companyName;
+                }
+                //$companyName = key_exists($row["company_id"],$companyList)?$companyList[$row["company_id"]]["codeAndName"]:$row["company_id"];
                 $row["b4_amt_paid"] = is_numeric($row["b4_amt_paid"])?floatval($row["b4_amt_paid"]):0;
                 $row["amt_paid"] = is_numeric($row["amt_paid"])?floatval($row["amt_paid"]):0;
                 $row["ctrt_period"] = is_numeric($row["ctrt_period"])?floatval($row["ctrt_period"]):0;
@@ -618,6 +663,7 @@ class SummaryTable extends SummaryForm{
             $html.="<td colspan='4' class='text-right'>".Yii::t("summary","total amt:")."</td>";
             $html.="<td colspan='2'>".$sum."</td>";
             $html.="</tr>";
+            $html.=self::printTable2Excel(11);
             $html.="</tfoot>";
         }else{
             $html.="<tbody><tr><td colspan='11'>".Yii::t("summary","none data")."</td></tr></tbody>";
@@ -629,7 +675,9 @@ class SummaryTable extends SummaryForm{
     //客户服务查询(新增非一次性)
     public static function getServiceRowsForAdd($startDate,$endDate,$city_allow,$sqlExpr=""){
         $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
-        $whereSql.= " and a.city in ({$city_allow})";
+        if(!empty($city_allow)){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
         $whereSql .= self::$whereSQL.$sqlExpr;
         $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
@@ -654,7 +702,11 @@ class SummaryTable extends SummaryForm{
             $queryIDRows=array();
         }
         if(self::$KABool){
-            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
+            if (strpos($sqlExpr,'salesman_id')!==false){//查询销售时不需要区分KA城市
+                $kaSqlPrx = " a.id>0 ";
+            }else{
+                $kaSqlPrx = CountSearch::getServiceKASQL("a.");
+            }
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")
@@ -669,8 +721,56 @@ class SummaryTable extends SummaryForm{
     }
 
     //客户服务查询
-    public static function getServiceRows($startDate,$endDate,$city_allow,$type){
+    public static function getServiceRows($startDate,$endDate,$city_allow,$type,$sqlExpr=''){
         $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($city_allow)){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL.$sqlExpr;
+        $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
+            f.description as cust_type_name";
+        $queryIARows = Yii::app()->db->createCommand()
+            ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('A') as sql_type_name")
+            ->from("swo_service a")
+            ->leftJoin("swo_service_contract_no n","a.id=n.service_id")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->leftJoin("swo_nature g","a.nature_type=g.id")
+            ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
+        $queryIARows = $queryIARows?$queryIARows:array();
+
+        if(self::$IDBool){
+            $queryIDRows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},CONCAT('ID服务') as contract_no,CONCAT('M') as paid_type,CONCAT('M') as b4_paid_type,CONCAT('D') as sql_type_name")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql)->order("a.city,a.status_dt desc")->queryAll();
+            $queryIDRows = $queryIDRows?$queryIDRows:array();
+        }else{
+            $queryIDRows=array();
+        }
+        if(self::$KABool){
+            if (strpos($sqlExpr,'salesman_id')!==false){//查询销售时不需要区分KA城市
+                $kaSqlPrx = " a.id>0 ";
+            }else{
+                $kaSqlPrx = CountSearch::getServiceKASQL("a.");
+            }
+            $queryKARows = Yii::app()->db->createCommand()
+                ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_service_ka_no n","a.id=n.service_id")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->leftJoin("swo_nature g","a.nature_type=g.id")
+                ->where($whereSql." and {$kaSqlPrx}")->order("a.city,a.status_dt desc")->queryAll();
+            $queryKARows = $queryKARows?$queryKARows:array();
+            $queryIARows = array_merge($queryIARows,$queryKARows);
+        }
+        return array_merge($queryIARows,$queryIDRows);
+    }
+
+    //利比斯客户服务查询
+    public static function getLBSServiceRows($startDate,$endDate,$city_allow,$type){
+        $whereSql = "a.status='{$type}' and a.external_source=5 and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         $whereSql.= " and a.city in ({$city_allow})";
         $whereSql .= self::$whereSQL;
         $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
@@ -769,10 +869,12 @@ class SummaryTable extends SummaryForm{
     }
 
     //客户服务查询(暫停、終止)
-    public static function getServiceSTForType($startDate,$endDate,$city_allow,$type){
+    public static function getServiceSTForType($startDate,$endDate,$city_allow,$type,$sqlExpr=''){
         $whereSql = "a.status='{$type}' and a.status in ('S','T') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
-        $whereSql.= " and a.city in ({$city_allow})";
-        $whereSql .= self::$whereSQL;
+        if(!empty($city_allow)){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL.$sqlExpr;
         $selectSql = "a.id,a.status,a.status_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
@@ -817,7 +919,11 @@ class SummaryTable extends SummaryForm{
             $queryIDRows=array();
         }
         if(self::$KABool){
-            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
+            if (strpos($sqlExpr,'salesman_id')!==false){//查询销售时不需要区分KA城市
+                $kaSqlPrx = " a.id>0 ";
+            }else{
+                $kaSqlPrx = CountSearch::getServiceKASQL("a.");
+            }
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")
@@ -855,10 +961,12 @@ class SummaryTable extends SummaryForm{
 
 
     //客户服务查询(暫停、終止)
-    public static function getServiceSTListForType($startDate,$endDate,$city_allow,$type){
+    public static function getServiceSTListForType($startDate,$endDate,$city_allow,$type,$sqlExpr=''){
         $whereSql = "a.status='{$type}' and a.status in ('S','T') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
-        $whereSql.= " and a.city in ({$city_allow})";
-        $whereSql .= self::$whereSQL;
+        if(!empty($city_allow)){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL.$sqlExpr;
         $selectSql = "a.id,a.status,a.status_dt,a.sign_dt,a.salesman,a.company_id,f.rpt_cat,a.city,g.rpt_cat as nature_rpt_cat,a.nature_type,a.amt_paid,a.ctrt_period,a.b4_amt_paid,
             f.description as cust_type_name";
         $queryIARows = Yii::app()->db->createCommand()
@@ -918,7 +1026,11 @@ class SummaryTable extends SummaryForm{
         }
 
         if(self::$KABool){
-            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
+            if (strpos($sqlExpr,'salesman_id')!==false){//查询销售时不需要区分KA城市
+                $kaSqlPrx = " a.id>0 ";
+            }else{
+                $kaSqlPrx = CountSearch::getServiceKASQL("a.");
+            }
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.id as no_id,n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")
@@ -1063,7 +1175,11 @@ class SummaryTable extends SummaryForm{
             ->where($whereSql." and a.paid_type=1 and a.ctrt_period<12")->queryAll();
         $queryIARows = $queryIARows?$queryIARows:array();
         if(self::$KABool){
-            $kaSqlPrx = CountSearch::getServiceKASQL("a.");
+            if (strpos($sqlExpr,'salesman_id')!==false){//查询销售时不需要区分KA城市
+                $kaSqlPrx = " a.id>0 ";
+            }else{
+                $kaSqlPrx = CountSearch::getServiceKASQL("a.");
+            }
             $queryKARows = Yii::app()->db->createCommand()
                 ->select("{$selectSql},n.contract_no,a.paid_type,a.b4_paid_type,CONCAT('KA') as sql_type_name")
                 ->from("swo_service_ka a")

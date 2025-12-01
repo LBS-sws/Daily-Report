@@ -40,6 +40,7 @@ class ComparisonController extends Controller
     //办事处列表的異步請求
     public function actionAjaxOffice(){
         if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+			set_time_limit(0);
             $model = new ComparisonForm('index');
             $data =$model->ajaxOfficeForData();
             echo CJSON::encode(array('status'=>1,'list'=>$data));//Yii 的方法将数组处理成json数据

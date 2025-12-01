@@ -602,7 +602,7 @@ class General {
         return $rtn;
     }
 
-    public static function systemMapping() {
+    public function systemMapping() {
         $rtn = require(Yii::app()->basePath.'/config/system.php');
         return $rtn;
     }
@@ -672,7 +672,8 @@ class General {
         $systemList = require(Yii::app()->basePath.'/config/system.php');
         foreach ($systemList as $row){
             if($row["name"]=="Daily Report"){//读取日报表系统的公共文件
-                $objName = end(explode("/",$row["webroot"]));
+                $objName =explode("/",$row["webroot"]);
+                $objName = end($objName);
                 $configPath = dirname(Yii::app()->basePath)."/../{$objName}/protected";
                 include_once($configPath."/components/SysBlock.php");
                 return true;

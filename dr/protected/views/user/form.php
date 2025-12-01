@@ -8,11 +8,6 @@ $this->pageTitle=Yii::app()->name . ' - User Form';
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 'htmlOptions'=>array('enctype'=>'multipart/form-data'),
 )); ?>
-<style>
-    input[readonly]{pointer-events: none;}
-    select[readonly]{pointer-events: none;}
-    .select2-container .select2-selection--single{ height: 34px;}
-</style>
 
 <section class="content-header">
 	<h1>

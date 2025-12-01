@@ -5,13 +5,6 @@ class TimerCommand extends CConsoleCommand {
     protected $city = "";//
 
     public function run() {
-        $date = date_format(date_create(),"Y-m-d H:i");
-echo $date."\n";
-        if($date=="2024-10-12 17:26"){
-            $model = new CustomerForm();
-            $model->sendAllTrimCustomer();
-            Yii::app()->end();
-        }
         //echo "start：\r\n";
         //$this->drServiceSendEmail();//日報表系統的服務提醒（新增、續約需要五天內添加附件）
 

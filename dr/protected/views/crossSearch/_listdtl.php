@@ -1,5 +1,5 @@
-<tr class='clickable-row <?php echo $this->record['color']; ?>' data-href='<?php echo $this->getLink('CD03', 'crossSearch/edit', 'crossSearch/view', array('index'=>$this->record['id']));?>'>
-	<td><?php echo $this->drawEditButton('CD03', 'crossSearch/edit', 'crossSearch/view', array('index'=>$this->record['id'])); ?></td>
+<tr class='clickable-row <?php echo $this->record['color']; ?>' data-href='<?php echo $this->getLink('CW03', 'crossSearch/edit', 'crossSearch/view', array('index'=>$this->record['id']));?>'>
+	<td><?php echo $this->drawEditButton('CW03', 'crossSearch/edit', 'crossSearch/view', array('index'=>$this->record['id'])); ?></td>
 
     <td><?php echo $this->record['old_city']; ?></td>
     <td><?php echo $this->record['table_type']; ?></td>

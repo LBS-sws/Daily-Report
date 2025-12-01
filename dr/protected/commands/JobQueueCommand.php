@@ -445,7 +445,29 @@ EOF;
 			case 'RptCustomerKAA': $model = new RptCustomerKA("A"); break;
 			case 'RptCustomerKAT': $model = new RptCustomerKA("T"); break;
 			case 'RptCustomerKAS': $model = new RptCustomerKA("S"); break;
+			case 'RptCustomerAll': $model = new RptCustomerAll("N"); break;
+			case 'RptCustomerAllC': $model = new RptCustomerAll("C"); break;
+			case 'RptCustomerAllR': $model = new RptCustomerAll("R"); break;
+			case 'RptCustomerAllA': $model = new RptCustomerAll("A"); break;
+			case 'RptCustomerAllT': $model = new RptCustomerAll("T"); break;
+			case 'RptCustomerAllS': $model = new RptCustomerAll("S"); break;
 			case 'RptChain': $model = new RptChain(); break;
+			case 'RptKaRetention': $model = new RptKaRetention(); break;
+			case 'RptKaRetentionMonth1':
+			case 'RptKaRetentionMonth2':
+			case 'RptKaRetentionMonth3':
+			case 'RptKaRetentionMonth4':
+			case 'RptKaRetentionMonth5':
+			case 'RptKaRetentionMonth6':
+			case 'RptKaRetentionMonth7':
+			case 'RptKaRetentionMonth8':
+			case 'RptKaRetentionMonth9':
+			case 'RptKaRetentionMonth10':
+			case 'RptKaRetentionMonth11':
+			case 'RptKaRetentionMonth12':
+            	$month = str_replace("RptKaRetentionMonth","",$rptid);
+				$model = new RptKaRetentionMonth($month);
+				break;
 			case 'RptContractCom': $model = new RptContractCom(); break;
 			case 'RptSupplier': $model = new RptSupplier(); break;
 			case 'RptServiceLoss': $model = new RptServiceLoss(); break;

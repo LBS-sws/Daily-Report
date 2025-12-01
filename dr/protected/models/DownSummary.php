@@ -202,15 +202,12 @@ class DownSummary{
     public function setSummaryHeader($headerArr,$bool=false){
         if(!empty($headerArr)){
             $this->th_num=0;
-            for ($i=0;$i<$this->colTwo;$i++){
-                $startStr = $this->getColumn($i);
-                $this->objPHPExcel->getActiveSheet()->mergeCells($startStr.$this->current_row.':'.$startStr.($this->current_row+1));
-            }
             $colOne = 0;
-            $colTwo = $this->colTwo;
+            $colTwo = 0;
             foreach ($headerArr as $list){
                 $startStr = $this->getColumn($colOne);
                 $colspan = key_exists("colspan",$list)?count($list["colspan"])-1:0;
+                $rowspan = key_exists("rowspan",$list)?$list["rowspan"]:1;
                 if($colspan<0){
                     continue;
                 }
@@ -221,6 +218,10 @@ class DownSummary{
                 $endStr = $this->getColumn($colOne-1);
                 if(!empty($colspan)){
                     $this->objPHPExcel->getActiveSheet()->mergeCells($startStr.$this->current_row.':'.$endStr.$this->current_row);
+                }
+                if($rowspan>1){
+                    $colTwo++;
+                    $this->objPHPExcel->getActiveSheet()->mergeCells($startStr.$this->current_row.':'.$startStr.($this->current_row+1));
                 }
                 if(key_exists("background",$list)){
                     $background = $list["background"];
@@ -470,6 +471,70 @@ class DownSummary{
         }
     }
 
+    public function setOutBusinessData($data){
+        if(!empty($data)){
+            $thEndStr = $this->getColumn($this->th_num-1);
+            $thStartRow = $this->current_row;
+            foreach ($data as $region=>$regionList){
+                if(isset($regionList["list"])&&!empty($regionList["list"])){
+                    foreach ($regionList["list"] as $city=>$cityList){
+                        $col = 0;
+                        foreach ($cityList as $keyStr=>$text){
+                            $this->objPHPExcel->getActiveSheet()
+                                ->setCellValueExplicitByColumnAndRow($col, $this->current_row, $text,PHPExcel_Cell_DataType::TYPE_STRING);
+                            $col++;
+                        }
+                        $this->current_row++;
+                    }
+                }
+                //合计
+                $col = 0;
+                if(isset($regionList["count"])){
+                    foreach ($regionList["count"] as $keyStr=>$text){
+                        $this->objPHPExcel->getActiveSheet()
+                            ->setCellValueExplicitByColumnAndRow($col, $this->current_row, $text,PHPExcel_Cell_DataType::TYPE_STRING);
+                            //->setCellValueByColumnAndRow($col, $this->current_row, $text);
+                        $col++;
+                    }
+                    $this->objPHPExcel->getActiveSheet()
+                        ->getStyle("A{$this->current_row}:{$thEndStr}{$this->current_row}")
+                        ->applyFromArray(
+                            array(
+                                'font'=>array(
+                                    'bold'=>true,
+                                ),
+                            )
+                        );
+                    $this->current_row++;
+                }
+                //平均值
+                $col = 0;
+                if(isset($regionList["average"])){
+                    foreach ($regionList["average"] as $keyStr=>$text){
+                        $this->objPHPExcel->getActiveSheet()
+                            ->setCellValueExplicitByColumnAndRow($col, $this->current_row, $text,PHPExcel_Cell_DataType::TYPE_STRING);
+                        $col++;
+                    }
+                    $this->objPHPExcel->getActiveSheet()
+                        ->getStyle("A{$this->current_row}:{$thEndStr}{$this->current_row}")
+                        ->applyFromArray(array('font'=>array('bold'=>true)));
+                    $this->current_row++;
+                }
+            }
+            if($this->current_row!=$thStartRow){
+                $this->objPHPExcel->getActiveSheet()->getStyle("A{$thStartRow}:{$thEndStr}".($this->current_row-1))->applyFromArray(
+                    array(
+                        'borders'=>array(
+                            'allborders'=>array(
+                                'style'=>PHPExcel_Style_Border::BORDER_THIN,
+                            ),
+                        )
+                    )
+                );
+            }
+        }
+    }
+
     public function setSummaryOfficeData($data,$officeData){
         if(key_exists("MO",$data)){//是否有澳門地區的數據
             $moData=$data["MO"];
@@ -607,9 +672,6 @@ class DownSummary{
                                 )
                             )
                         );
-                    if (strpos($keyStr,'average_')!==false){
-                        $this->current_row++;
-                    }
                 }else{
                     $col = 0;
                     foreach ($list as $item){
@@ -617,6 +679,24 @@ class DownSummary{
                             ->setCellValueByColumnAndRow($col, $this->current_row, $item);
                         $col++;
                     }
+                }
+                if (strpos($keyStr,'average_')!==false){
+                    $this->objPHPExcel->getActiveSheet()
+                        ->getStyle("A{$this->current_row}:{$endStr}{$this->current_row}")
+                        ->applyFromArray(
+                            array(
+                                'font'=>array(
+                                    'bold'=>true,
+                                    'color'=>array('rgb'=>strpos($keyStr,'average_')!==false?'FF0000':'000000')
+                                ),
+                                'borders' => array(
+                                    'top' => array(
+                                        'style' => PHPExcel_Style_Border::BORDER_THIN
+                                    )
+                                )
+                            )
+                        );
+                    $this->current_row++;
                 }
                 $this->current_row++;
             }
@@ -806,6 +886,75 @@ class DownSummary{
         }
     }
 
+
+    public function setCheckWeekData($data){
+        if(!empty($data)){
+            foreach ($data as $region=>$regionList){
+                if(isset($regionList["list"])&&!empty($regionList["list"])){
+                    foreach ($regionList["list"] as $city=>$cityList){
+                        $col = 0;
+                        foreach ($cityList as $keyStr=>$text){
+                            $this->setCellValueForCheck($col, $this->current_row, $text,$keyStr);
+                            $col++;
+                        }
+                        $this->current_row++;
+                    }
+                }
+                //合计
+                $col = 0;
+                if(isset($regionList["count"])){
+                    foreach ($regionList["count"] as $keyStr=>$text){
+                        $this->setCellValueForCheck($col, $this->current_row, $text,$keyStr);
+                        $col++;
+                    }
+                }
+                $thEndStr = $this->getColumn($this->th_num-1);
+                $this->objPHPExcel->getActiveSheet()
+                    ->getStyle("A{$this->current_row}:{$thEndStr}{$this->current_row}")
+                    ->applyFromArray(
+                        array(
+                            'font'=>array(
+                                'bold'=>true,
+                            ),
+                            'borders' => array(
+                                'top' => array(
+                                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                                )
+                            )
+                        )
+                    );
+                //平均值
+                $col = 0;
+                if(isset($regionList["average"])){
+                    $this->current_row++;
+                    foreach ($regionList["average"] as $keyStr=>$text){
+                        $this->setCellValueForCheck($col, $this->current_row, $text,$keyStr);
+                        $col++;
+                    }
+                    $this->objPHPExcel->getActiveSheet()
+                        ->getStyle("A{$this->current_row}:{$thEndStr}{$this->current_row}")
+                        ->applyFromArray(array('font'=>array('bold'=>true)));
+                }
+                $this->current_row++;
+                $this->current_row++;
+            }
+        }
+    }
+
+    public function setCheckWeekStaffData($data,$keyList){
+        if(!empty($data)){
+            foreach ($data as $cityList){
+                $col = 0;
+                foreach ($keyList as $keyStr){
+                    $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"";
+                    $this->setCellValueForSummary($col, $this->current_row, $text,$keyStr);
+                    $col++;
+                }
+                $this->current_row++;
+            }
+        }
+    }
+
     public function setKAData($data){
         if(!empty($data)){
             $endStr = $this->getColumn($this->th_num-1);
@@ -850,6 +999,74 @@ class DownSummary{
         }
     }
 
+    public function setQcData($data){
+        if(!empty($data)){
+            $startRow = $this->current_row;
+            foreach ($data as $rows){
+                foreach ($rows as $key=>$row){
+                    $background = isset($row["background"])?$row["background"]:"ffffff";//FDE9D9
+                    $bold = isset($row["bold"])?$row["bold"]:false;
+                    $colNum = isset($row["colNum"])?$row["colNum"]:$key;
+                    $width = isset($row["width"])?$row["width"]:0;
+                    $height = isset($row["height"])?$row["height"]:0;
+                    $float = isset($row["float"])?$row["float"]:"";
+                    $colLength = isset($row["colLength"])?$row["colLength"]:0;
+                    $topLength = isset($row["topLength"])?$row["topLength"]:0;
+                    $text = isset($row["text"])?$row["text"]:"";
+                    if(!empty($width)){
+                        $this->objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($colNum)->setWidth($width);
+                    }
+                    if(!empty($height)){
+                        $this->objPHPExcel->getActiveSheet()->getRowDimension($this->current_row)->setRowHeight($height);
+                    }
+                    if(!empty($float)){
+                        $this->objPHPExcel->getActiveSheet()->getStyleByColumnAndRow($colNum,$this->current_row)->getAlignment()->setHorizontal($float);
+                    }
+                    if(empty($text)){
+                        continue;
+                    }
+                    $this->setCellValueForSummary($colNum, $this->current_row, $text);
+                    $oneStr = $this->getColumn($colNum);
+                    $twoStr = $this->getColumn($colNum+$colLength);
+                    if($colLength>0||$topLength>0){
+                        $this->objPHPExcel->getActiveSheet()
+                            ->mergeCells($oneStr.$this->current_row.':'.$twoStr.($this->current_row+$topLength));
+                    }
+                    if($bold||$background!="ffffff"){
+                        $this->objPHPExcel->getActiveSheet()
+                            ->getStyle("{$oneStr}{$this->current_row}:{$twoStr}".($this->current_row+$topLength))
+                            ->applyFromArray(
+                                array(
+                                    'font'=>array(
+                                        'bold'=>$bold,
+                                    ),
+                                    'fill'=>array(
+                                        'type'=>PHPExcel_Style_Fill::FILL_SOLID,
+                                        'startcolor'=>array(
+                                            'rgb'=>$background,
+                                        ),
+                                    ),
+                                )
+                            );
+                    }
+                }
+                $this->current_row++;
+            }
+
+            $endStr = $this->getColumn($this->colTwo);
+            $endRow = $this->current_row;
+            $styleArray = array(
+                'borders'=>array(
+                    'allborders'=>array(
+                        'style'=>PHPExcel_Style_Border::BORDER_THIN,
+                    ),
+                ),
+            );
+            $this->objPHPExcel->getActiveSheet()->getStyle("A{$startRow}:{$endStr}{$endRow}")
+                ->applyFromArray($styleArray);
+        }
+    }
+
     private function setCellValueForSummary($col,$row,$text,$keyStr=""){
         $this->objPHPExcel->getActiveSheet()
             ->setCellValueByColumnAndRow($col, $row, $text);
@@ -877,6 +1094,46 @@ class DownSummary{
             );
     }
 
+    private function setCellValueForCheck($col,$row,$text,$keyStr=""){
+        if(is_array($text)){
+            $color = key_exists("color",$text)?$text["color"]:"";
+            $bg = key_exists("bg",$text)?$text["bg"]:"";
+            $text = key_exists("text",$text)?$text["text"]:"";
+            $this->objPHPExcel->getActiveSheet()
+                ->setCellValueByColumnAndRow($col, $row, $text);
+            if(!empty($color)){
+                //$color="000000";
+                $str = $this->getColumn($col);
+                $this->objPHPExcel->getActiveSheet()
+                    ->getStyle($str.$row)->applyFromArray(
+                        array(
+                            'font'=>array(
+                                'color'=>array('rgb'=>$color)
+                            )
+                        )
+                    );
+            }
+            if(!empty($bg)){
+                //$bg="000000";
+                $str = $this->getColumn($col);
+                $this->objPHPExcel->getActiveSheet()
+                    ->getStyle($str.$row)->applyFromArray(
+                        array(
+                            'fill'=>array(
+                                'type'=>PHPExcel_Style_Fill::FILL_SOLID,
+                                'startcolor'=>array(
+                                    'argb'=>$bg,
+                                ),
+                            ),
+                        )
+                    );
+            }
+        }else{
+            $this->objPHPExcel->getActiveSheet()
+                ->setCellValueByColumnAndRow($col, $row, $text);
+        }
+    }
+
     private function setKAWidth(){
         for ($col=0;$col<18;$col++){
             if($col==0){
@@ -897,6 +1154,11 @@ class DownSummary{
             ->setWrapText(true);
         $this->objPHPExcel->getActiveSheet()->getDefaultRowDimension()
             ->setRowHeight(-1);
+        $this->objPHPExcel->getDefaultStyle()->applyFromArray(array(
+            'numberformat' => array(
+                'code' => '@' // '@' 符号用于文本格式
+            )
+        ));
     }
 
     public function outHeader($sheetid=0){

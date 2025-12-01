@@ -176,6 +176,7 @@ class SummaryForm extends CFormModel
     public function retrieveData() {
         $load_start = time();
         $this->summary_year = date("Y",strtotime($this->start_date));
+        $uServiceType = $this->search_type==3?1:0;//当日期查询时，根据日期查询
 	    $rptModel = new RptSummarySC();
         $criteria = new ReportForm();
         $criteria->start_dt = $this->start_date;
@@ -184,28 +185,10 @@ class SummaryForm extends CFormModel
         $city_allow = self::getMyCityAllow();
         $criteria->city = $city_allow;
         $rptModel->criteria = $criteria;
+        $rptModel->uServiceType = $uServiceType;
         $rptModel->retrieveData();
         $this->u_load_data = $rptModel->u_load_data;
         $this->data = $rptModel->data;
-        $uServiceType = $this->search_type==3?1:0;//当日期查询时，根据日期查询
-        $u_load_start = time();
-        //获取U系统的服务单数据
-        $uActualMoneyList = CountSearch::getUServiceMoney($this->start_date,$this->end_date,$city_allow,$uServiceType);
-        $u_load_end = time();
-        $this->u_load_data["u_load_end"]+=$u_load_end-$u_load_start;
-        if($this->data){
-            foreach ($this->data as $regionKey=>$regionList){
-                if(!empty($regionList["list"])){
-                    foreach ($regionList["list"] as $cityKey=>$cityList){
-                        $this->data[$regionKey]["list"][$cityKey]["u_actual_money"]+=key_exists($cityKey,$uActualMoneyList)?$uActualMoneyList[$cityKey]:0;//实际月金额
-                        $this->data[$regionKey]["list"][$cityKey]["u_actual_money"]+=$this->data[$regionKey]["list"][$cityKey]["u_invoice_num"];//服务生意额需要加上产品金额
-                        $this->data[$regionKey]["list"][$cityKey]["num_growth"]=0;//净增长
-
-                        ComparisonForm::setComparisonConfig($this->data[$regionKey]["list"][$cityKey],$this->summary_year,$this->start_date,$cityKey);
-                    }
-                }
-            }
-        }
 
         $session = Yii::app()->session;
         if($this->class_type=="KA"){
@@ -328,7 +311,16 @@ class SummaryForm extends CFormModel
         }
         $topList=array(
             array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
-            array("name"=>Yii::t("summary","Actual monthly amount"),"rowspan"=>2),//服务生意额
+            array("name"=>Yii::t("summary","Cross and rate"),
+                "colspan"=>array(
+                    array("name"=>Yii::t("summary","Actual monthly amount")),//服务生意额
+                )),//带交叉比例
+            array("name"=>Yii::t("summary","u v3 total"),"rowspan"=>2),//服务生意额汇总
+            array("name"=>Yii::t("summary","u v3 title"),
+                "colspan"=>array(
+                    array("name"=>Yii::t("summary","u v3 send")),//自有生意额
+                    array("name"=>$this->class_type=="KA"?Yii::t("summary","u v3 accept"):Yii::t("summary","u v3 accept KA")),//承接生意额
+                )),//100%归属发包方
             array("name"=>Yii::t("summary","Signing status"),"background"=>"#f7fd9d",
                 "colspan"=>$stopTopArr
             ),//签单情况
@@ -341,6 +333,11 @@ class SummaryForm extends CFormModel
                     array("name"=>Yii::t("summary","not cate service")),//非餐饮客户
                 )
             ),//新增客户（服务）
+            array("name"=>Yii::t("summary","LBS Service"),"background"=>"#f8b0ad",
+                "colspan"=>array(
+                    array("name"=>Yii::t("summary","num add")),//新增
+                )
+            ),//利比斯服务
             array("name"=>Yii::t("summary","New customer(INV)"),"background"=>"#f2dcdb",
                 "colspan"=>array(
                     array("name"=>Yii::t("summary","cate service")),//餐饮客户
@@ -439,11 +436,11 @@ class SummaryForm extends CFormModel
     private function tableHeaderWidth(){
         $html="<tr>";
         for($i=0;$i<$this->th_sum;$i++){
-            if(in_array($i,array(2,9,5,6,7,8))){
+            if(in_array($i,array(12,8,9,10,11))){
                 $width=75;
-            }elseif($i==12){
+            }elseif(in_array($i,array(2,15))){
                 $width=110;
-            }elseif(in_array($i,array(1,3,15,17))){
+            }elseif(in_array($i,array(1,6,18,20))){
                 $width=90;
             }else{
                 $width=83;
@@ -472,7 +469,9 @@ class SummaryForm extends CFormModel
     //获取td对应的键名
     private function getDataAllKeyStr(){
         $bodyKey = array(
-            "city_name","u_actual_money","num_new","u_invoice_sum","last_month_sum","num_stop","num_restore","num_pause","num_update",
+            "city_name","u_actual_money",
+            "u_v3_total","u_v3_send","u_v3_accept",
+            "num_new","u_invoice_sum","last_month_sum","num_stop","num_restore","num_pause","num_update",
             "num_growth"
         );
         if(date_format(date_create($this->end_date),'Y/m')<=CountSearch::$stop_new_dt){
@@ -481,7 +480,7 @@ class SummaryForm extends CFormModel
             $bodyKey[]="stop_2024_11";
             $bodyKey[]="net_2024_11";
         }
-        $bodyKeyTwo = array("num_long","num_short","one_service","num_cate","num_not_cate","u_num_cate","u_num_not_cate");
+        $bodyKeyTwo = array("num_long","num_short","one_service","num_cate","num_not_cate","lbs_new_amt","u_num_cate","u_num_not_cate");
         $bodyKey = array_merge($bodyKey,$bodyKeyTwo);
         $bodyKey[]="last_one_service";
         $bodyKey[]="last_u_invoice_sum";
@@ -668,6 +667,7 @@ class SummaryForm extends CFormModel
         }else{
             $titleName = Yii::t("app","Summary");
         }
+        $excel->colTwo=1;
         $excel->SetHeaderTitle($titleName);
         $excel->SetHeaderString($this->start_date." ~ ".$this->end_date);
         $excel->init();
@@ -695,6 +695,7 @@ class SummaryForm extends CFormModel
             "num_pause"=>array("title"=>Yii::t("summary","Suspended service"),"type"=>"ServiceSuspended"),
             "num_restore"=>array("title"=>Yii::t("summary","Resume service"),"type"=>"ServiceRenewal"),
             "num_stop"=>array("title"=>Yii::t("summary","Terminate service"),"type"=>"ServiceStop"),
+            "lbs_new_amt"=>array("title"=>Yii::t("summary","LBS Service New"),"type"=>"ServiceLBSNew"),
         );
     }
 
@@ -749,6 +750,9 @@ class SummaryForm extends CFormModel
         $cityHtmlTr=array();
 
 		$serviceType = $this->search_type=="3"?1:0;
+        //获取U系统的服务单数据(发包方、承接方、资质方)
+        $uServiceMoneyV3 = CountOfficeSearch::getUServiceMoneyForOfficeV3($startDate,$endDate,$city_allow,false,$serviceType);
+
         //获取U系统的服务单数据(報表不需要生意額數據)
         $uServiceMoney = CountOfficeSearch::getUServiceOfficeMoneyOne($startDate,$endDate,$city_allow,false,$serviceType);
         //获取U系统的產品数据
@@ -759,6 +763,8 @@ class SummaryForm extends CFormModel
         $serviceForST = CountOfficeSearch::getServiceOfficeForST($startDate,$endDate,$city_allow);
         //恢復服务
         $serviceForR = CountOfficeSearch::getServiceOfficeForType($startDate,$endDate,$city_allow,"R");
+        //利比斯新增
+        $lbsServiceForN = CountOfficeSearch::getLBSServiceOfficeForType($startDate,$endDate,$city_allow,"N");
         //更改服务
         $serviceForA = CountOfficeSearch::getServiceOfficeForA($startDate,$endDate,$city_allow);
         //新增服務的詳情
@@ -772,9 +778,19 @@ class SummaryForm extends CFormModel
             $html = "";
             foreach ($row as $key=>$officeRow){//u_invoice_num
                 $uKey = key_exists($key,$resetOfficeId)?$resetOfficeId[$key]:$city;
+
                 $officeRow["u_invoice_num"]=isset($uInvMoney[$uKey])?$uInvMoney[$uKey]["sum_money"]:0;
                 $officeRow["u_actual_money"]=isset($uServiceMoney[$uKey])?$uServiceMoney[$uKey]:0;
                 $officeRow["u_actual_money"]+=$officeRow["u_invoice_num"];
+
+                $officeRow["u_v3_send"]=$officeRow["u_invoice_num"];//自有生意额
+                if(key_exists($uKey,$uServiceMoneyV3)){
+                    $officeRow["u_v3_send"]+=$uServiceMoneyV3[$uKey]["send"];//自有生意额
+                    $officeRow["u_v3_accept"]=$uServiceMoneyV3[$uKey]["accept"];//承接生意额
+                    $officeRow["u_v3_sum"]=$uServiceMoneyV3[$uKey]["sum"];//接口内的sum
+                }
+                $officeRow["u_v3_total"]+=$officeRow["u_v3_send"]+$officeRow["u_v3_accept"];//服务生意额汇总
+
                 $officeRow["u_num_cate"]=isset($uInvMoney[$uKey])?$uInvMoney[$uKey]["u_num_cate"]:0;
                 $officeRow["u_num_not_cate"]=isset($uInvMoney[$uKey])?$uInvMoney[$uKey]["u_num_not_cate"]:0;
                 $officeRow["num_new"]=isset($serviceAddForNY[$city][$key])?$serviceAddForNY[$city][$key]["num_new"]:0;
@@ -788,6 +804,7 @@ class SummaryForm extends CFormModel
                 $officeRow["stop_2024_11"] = -1*$officeRow["num_stop"]-$officeRow["stop_2024_11"];
                 $officeRow["num_restore"]=isset($serviceForR[$city][$key])?$serviceForR[$city][$key]:0;
                 $officeRow["num_update"]=isset($serviceForA[$city][$key])?$serviceForA[$city][$key]:0;
+                $officeRow["lbs_new_amt"]=isset($lbsServiceForN[$city][$key])?$lbsServiceForN[$city][$key]:0;
                 if(isset($serviceDetailForAdd[$city][$key])){
                     $officeRow["num_long"]=$serviceDetailForAdd[$city][$key]["num_long"];
                     $officeRow["num_short"]=$serviceDetailForAdd[$city][$key]["num_short"];
@@ -819,7 +836,7 @@ class SummaryForm extends CFormModel
             $keyStr = $item=="city_name"?"office_name":$item;
             $text = key_exists($keyStr,$officeRow)?$officeRow[$keyStr]:"";
             $text = ComparisonForm::showNum($text);
-            $html.= "<td>".$text."</td>";
+            $html.= "<td><span>".$text."</span></td>";
             $data[]=$text;
         }
         $html.= "</tr>";

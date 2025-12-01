@@ -1,5 +1,5 @@
 <tr>
-    <?php if (Yii::app()->user->validRWFunction('CD01')): ?>
+    <?php if (Yii::app()->user->validRWFunction('CW01')): ?>
         <!--交叉派单-->
         <th>  <input name="Fruit"  type="checkbox"  id="all"></th>
     <?php endif ?>

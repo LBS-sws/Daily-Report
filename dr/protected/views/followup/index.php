@@ -43,6 +43,7 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Cases';
 						'resp_staff',
 						'resp_tech',
 						'fp_comment',
+						'fp_fin_dt',
 					);
 		if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
 		$this->widget('ext.layout.ListPageWidget', array(

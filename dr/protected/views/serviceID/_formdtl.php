@@ -1,8 +1,14 @@
+<?php
+$thisDate = date("Y/m/01");
+$status_dt = date("Y/m/d",strtotime($this->record['back_date']));
+$trBool = $status_dt<$thisDate;
+?>
+
 <tr>
     <td>
         <?php
         echo TbHtml::textField($this->getFieldName('back_date'), $this->record['back_date'],
-            array('readonly'=>($this->model->isReadOnly()),
+            array('readonly'=>($this->model->isReadOnly()||$trBool),
                 'prepend'=>'<span class="fa fa-calendar"></span>',
                 'class'=>'deadline changeOutMonth',
                 'autocomplete'=>'off'
@@ -14,7 +20,7 @@
         <?php
         echo TbHtml::numberField($this->getFieldName('back_money'), $this->record['back_money'],
             array('size'=>10,'min'=>0,
-                'readonly'=>($this->model->isReadOnly()),
+                'readonly'=>($this->model->isReadOnly()||$trBool),
                 'prepend'=>'<span class="fa '.$this->model->sign.'"></span>',
                 'class'=>'changeOutMoney'
             )
@@ -25,7 +31,7 @@
         <?php
         echo TbHtml::numberField($this->getFieldName('put_month'), $this->record['put_month'],
             array('size'=>10,'min'=>0,
-                'readonly'=>($this->model->isReadOnly()),
+                'readonly'=>($this->model->isReadOnly()||$trBool),
                 'class'=>'changeOutMonth'
             )
         );
@@ -44,7 +50,7 @@
         <?php
         echo TbHtml::dropDownList($this->getFieldName('back_ratio'), $this->record['back_ratio'],array(50=>"50%",100=>"100%"),
             array(
-                'readonly'=>($this->model->isReadOnly()),
+                'readonly'=>($this->model->isReadOnly()||$trBool),
             )
         );
         ?>

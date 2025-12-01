@@ -3,7 +3,6 @@
 return array(
 	'User ID'=>'帐户名称',
 	'Password'=>'密码',
-    'Again New Password'=>'再次输入新密码',
 	'New Password' => '新密码',
 	'Old Password' => '旧密码',
 	'Confirm Password' => '确认密码',
@@ -99,6 +98,7 @@ return array(
 	'1 year'=>'1年內',
 	'Your ranking is:'=>'你当前的段位为:',
     'Send Email'=>'发送邮件',
+    'Again New Password'=>'再次输入新密码',
 );
 
 ?>

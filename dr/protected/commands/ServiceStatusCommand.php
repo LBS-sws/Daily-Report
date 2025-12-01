@@ -3,6 +3,7 @@ class ServiceStatusCommand extends CConsoleCommand {
 	protected $webroot;
 
 	public function actionSuspendToStop() {
+	    return false;//2025年7月2日16:46:22不需要自动终止暂停超3个月的服务
 		echo "Suspend to Stop ... \n";
 
 		$records = array();
@@ -77,7 +78,7 @@ class ServiceStatusCommand extends CConsoleCommand {
 	protected function addStopService(&$connection, $id, $dt) {
 		$sql = "
 			insert into swo_service(
-				service_no,	service_new_id,	company_id,	company_name, nature_type, cust_type, product_id,
+				service_no,contract_type,office_id,	service_new_id,	company_id,	company_name, nature_type, cust_type, product_id,
 				b4_product_id, b4_service, b4_freq, b4_paid_type, b4_amt_paid, b4_cust_type_end, b4_pieces, b4_amt_money,
 				service, freq, paid_type, amt_paid, amt_install, need_install, technician, technician_id, 
 				othersalesman, othersalesman_id, salesman, salesman_id, sign_dt, ctrt_end_dt, surplus,
@@ -89,7 +90,7 @@ class ServiceStatusCommand extends CConsoleCommand {
 				city, prepay_month, prepay_start, send, wage_type, change_money, lcu, luu 
 			)
 			select 
-				service_no, service_new_id, company_id, company_name, nature_type, cust_type, product_id,
+				service_no,contract_type,office_id, service_new_id, company_id, company_name, nature_type, cust_type, product_id,
 				b4_product_id, b4_service, b4_freq, b4_paid_type, b4_amt_paid, b4_cust_type_end, b4_pieces, b4_amt_money,
 				service, freq, paid_type, amt_paid, amt_install, need_install, technician, technician_id,
 				othersalesman, othersalesman_id, salesman, salesman_id, sign_dt, ctrt_end_dt, surplus,

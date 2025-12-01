@@ -18,6 +18,8 @@ class RptCustomerKA extends ReportData2 {
                     'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
                     'company_code_city'=>array('label'=>"客户编号(后缀)",'width'=>20,'align'=>'L'),
                     'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'L'),
+                    'group_code'=>array('label'=>"KA/集团编号",'width'=>18,'align'=>'L'),
+                    'group_name'=>array('label'=>"KA/集团名称",'width'=>18,'align'=>'L'),
                     'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
                     'cust_type_name_two'=>array('label'=>Yii::t('service','Layer 2'),'width'=>20,'align'=>'L'),
                     'service'=>array('label'=>Yii::t('service','Service'),'width'=>40,'align'=>'L'),
@@ -48,6 +50,8 @@ class RptCustomerKA extends ReportData2 {
                     'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
                     'company_code_city'=>array('label'=>"客户编号(后缀)",'width'=>20,'align'=>'L'),
                     'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'L'),
+                    'group_code'=>array('label'=>"KA/集团编号",'width'=>18,'align'=>'L'),
+                    'group_name'=>array('label'=>"KA/集团名称",'width'=>18,'align'=>'L'),
                     'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
                     'service'=>array('label'=>Yii::t('service','Service'),'width'=>40,'align'=>'L'),
                     'amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C'),
@@ -76,6 +80,8 @@ class RptCustomerKA extends ReportData2 {
                     'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
                     'company_code_city'=>array('label'=>"客户编号(后缀)",'width'=>20,'align'=>'L'),
                     'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'L'),
+                    'group_code'=>array('label'=>"KA/集团编号",'width'=>18,'align'=>'L'),
+                    'group_name'=>array('label'=>"KA/集团名称",'width'=>18,'align'=>'L'),
                     'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
                     'b4_service'=>array('label'=>Yii::t('service','Service'),'width'=>30,'align'=>'L'),
                     'b4_amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C'),
@@ -102,6 +108,8 @@ class RptCustomerKA extends ReportData2 {
                     'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
                     'company_code_city'=>array('label'=>"客户编号(后缀)",'width'=>20,'align'=>'L'),
                     'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'L'),
+                    'group_code'=>array('label'=>"KA/集团编号",'width'=>18,'align'=>'L'),
+                    'group_name'=>array('label'=>"KA/集团名称",'width'=>18,'align'=>'L'),
                     'contact_name'=>array('label'=>Yii::t('customer','Contact Name'),'width'=>30,'align'=>'L'),
                     'contact_phone'=>array('label'=>Yii::t('customer','Contact Phone'),'width'=>20,'align'=>'L'),
                     'address'=>array('label'=>Yii::t('customer','Address'),'width'=>40,'align'=>'L'),
@@ -132,6 +140,8 @@ class RptCustomerKA extends ReportData2 {
                     'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
                     'company_code_city'=>array('label'=>"客户编号(后缀)",'width'=>20,'align'=>'L'),
                     'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'L'),
+                    'group_code'=>array('label'=>"KA/集团编号",'width'=>18,'align'=>'L'),
+                    'group_name'=>array('label'=>"KA/集团名称",'width'=>18,'align'=>'L'),
                     'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
                     'service'=>array('label'=>Yii::t('service','Service'),'width'=>40,'align'=>'L'),
                     'amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C'),
@@ -155,6 +165,8 @@ class RptCustomerKA extends ReportData2 {
                     'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
                     'company_code_city'=>array('label'=>"客户编号(后缀)",'width'=>20,'align'=>'L'),
                     'company_name'=>array('label'=>"客户名称",'width'=>30,'align'=>'L'),
+                    'group_code'=>array('label'=>"KA/集团编号",'width'=>18,'align'=>'L'),
+                    'group_name'=>array('label'=>"KA/集团名称",'width'=>18,'align'=>'L'),
                     'contact_name'=>array('label'=>Yii::t('customer','Contact Name'),'width'=>30,'align'=>'L'),
                     'contact_phone'=>array('label'=>Yii::t('customer','Contact Phone'),'width'=>20,'align'=>'L'),
                     'address'=>array('label'=>Yii::t('customer','Address'),'width'=>40,'align'=>'L'),
@@ -166,6 +178,7 @@ class RptCustomerKA extends ReportData2 {
                     'amt_year'=>array('label'=>Yii::t('service','Yearly'),'width'=>15,'align'=>'C'),
                     'all_number'=>array('label'=>Yii::t('service','All Number'),'width'=>15,'align'=>'C'),
                     'surplus'=>array('label'=>Yii::t('service','Surplus'),'width'=>15,'align'=>'C'),
+                    'surplus_amt'=>array('label'=>"剩余金额",'width'=>15,'align'=>'C'),
                     'salesman'=>array('label'=>Yii::t('service','Resp. Sales'),'width'=>20,'align'=>'L'),
                     'othersalesman'=>array('label'=>Yii::t('service','OtherSalesman'),'width'=>20,'align'=>'L'),
                     'technician'=>array('label'=>Yii::t('service','Resp. Tech.'),'width'=>20,'align'=>'L'),
@@ -192,6 +205,8 @@ class RptCustomerKA extends ReportData2 {
                 'company_code',
                 'company_code_city',
                 'company_name',
+                'group_code',
+                'group_name',
                 'nature',
                 array(
                     'label'=>Yii::t('service','Before'),
@@ -249,7 +264,7 @@ class RptCustomerKA extends ReportData2 {
 
         $type = $this->customerType;
 		
-		$sql = "select a.*, b.description as nature,f.code as com_code,f.name as com_name, c.description as customer_type, d.cust_type_name as cust_type_name_two,
+		$sql = "select a.*, b.description as nature,f.code as com_code,f.name as com_name,f.group_id as group_code,f.group_name, c.description as customer_type, d.cust_type_name as cust_type_name_two,
                   f.address,f.cont_name,f.cont_phone 
                 from swo_service_ka a
                 left outer join swo_nature b on a.nature_type=b.id 
@@ -287,6 +302,8 @@ class RptCustomerKA extends ReportData2 {
 				$temp['company_code'] = $row['com_code'];
 				$temp['company_code_city'] = $row['com_code']."-".$row["city"];
 				$temp['company_name'] = empty($row['com_name'])?$row['company_name']:$row['com_name'];
+				$temp['group_code'] = $row['group_code'];
+				$temp['group_name'] = $row['group_name'];
 				$temp['nature'] = $row['nature'];
                 $temp['cust_type'] = $row['cust_type'];
 				$temp['cust_type_name_two'] = $row['cust_type_name_two'];
@@ -295,10 +312,10 @@ class RptCustomerKA extends ReportData2 {
                 $temp['b4_service'] = $row['b4_service'];
                 $temp['b4_amt_month'] = number_format(($row['b4_paid_type']=='1'?$row['b4_amt_paid']:($row['b4_paid_type']=='M'?$row['b4_amt_paid']:round($row['b4_amt_paid']/($row['ctrt_period']>0?$row['ctrt_period']:1),2))),2,'.','');
 
+                $period = empty($row['ctrt_period'])?0:$row['ctrt_period'];
                 $temp['amt_month'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:
 										($row['paid_type']=='M'?$row['amt_paid']:round($row['amt_paid']/($row['ctrt_period']>0?$row['ctrt_period']:1),2)))
 									,2,'.','');
-				$period = empty($row['ctrt_period'])?0:($row['ctrt_period']<12?$row['ctrt_period']:12);
 				$temp['amt_year'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:
 										($row['paid_type']=='M'?$row['amt_paid']*$period:$row['amt_paid']))
 									,2,'.','');
@@ -306,10 +323,11 @@ class RptCustomerKA extends ReportData2 {
 				$temp['need_install'] = ($row['need_install']=='Y') ? Yii::t('misc','Yes') : Yii::t('misc','No');
                 $temp['diff_amt_month'] = number_format(($temp['amt_month']-$temp['b4_amt_month']),2,'.','');
                 $temp['diff_amt_year'] = number_format((
-                    ($row['amt_paid']*($row['paid_type']=='M'?($row['ctrt_period']<12?$row['ctrt_period']:12):1))
-                    -($row['b4_amt_paid']*($row['b4_paid_type']=='M'?($row['ctrt_period']<12?$row['ctrt_period']:12):1))
+                    ($row['amt_paid']*($row['paid_type']=='M'?$period:1))
+                    -($row['b4_amt_paid']*($row['b4_paid_type']=='M'?$period:1))
                 ),2,'.','');
 				$temp['surplus'] = $row['surplus'];
+				$temp['surplus_amt'] = $row['surplus_amt'];
 				$temp['all_number'] = $row['all_number'];
 				$temp['salesman'] = $row['salesman'];
                 $temp['othersalesman'] = $row['othersalesman'];

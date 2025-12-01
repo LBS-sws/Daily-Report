@@ -54,14 +54,7 @@ class SupplierForm extends CListPageModel
     public $int_fee;
 
 	public $service = array();
-
-
-    public $jd_set = array();
-    public static $jd_set_list=array(
-        array("field_id"=>"jd_condition_code","field_type"=>"text","field_name"=>"jd condition code"),
-        array("field_id"=>"jd_condition_name","field_type"=>"text","field_name"=>"jd condition name"),
-        array("field_id"=>"jd_supplier_id","field_type"=>"text","field_name"=>"jd supplier id"),
-    );
+	
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -108,9 +101,10 @@ class SupplierForm extends CListPageModel
 //		);
         $a=parent::rules();
         $b=array(
-            array('id, jd_set, full_name, tax_reg_no, cont_name, cont_phone, address, bank, acct_no','safe'),
+            array('id, full_name, tax_reg_no, cont_name, cont_phone, address, bank, acct_no','safe'),
             array('name, code','required'),
-//			array('code','validateCode'),
+			array('code','validateCode'),
+
         );
         return array_merge($a,$b);
 	}
@@ -121,12 +115,12 @@ class SupplierForm extends CListPageModel
 		if (!empty($code)) {
 			switch ($this->scenario) {
 				case 'new':
-					if (Supplier::model()->exists('code=? and (city=? or local_bool=0)',array($code,$city))) {
+					if (Supplier::model()->exists('code=? and city=?',array($code,$city))) {
 						$this->addError($attribute, Yii::t('supplier','Code')." '".$code."' ".Yii::t('app','already used'));
 					}
 					break;
 				case 'edit':
-					if (Supplier::model()->exists('code=? and (city=? or local_bool=0) and id<>?',array($code,$city,$this->id))) {
+					if (Supplier::model()->exists('code=? and city=? and id<>?',array($code,$city,$this->id))) {
 						$this->addError($attribute, Yii::t('supplier','Code')." '".$code."' ".Yii::t('app','already used'));
 					}
 					break;
@@ -139,7 +133,7 @@ class SupplierForm extends CListPageModel
         $suffix = Yii::app()->params['envSuffix'];
         $user = Yii::app()->user->id;
 		$city = Yii::app()->user->city_allow();
-		$sql = "select * from swo_supplier where id=".$index." and (city in ($city) or local_bool=0)";
+		$sql = "select * from swo_supplier where id=".$index." and city in ($city)";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0)
 		{
@@ -156,18 +150,6 @@ class SupplierForm extends CListPageModel
 				$this->acct_no = $row['acct_no'];
 				$this->tax_reg_no = $row['tax_reg_no'];
                 $this->tax_reg_no = $row['tax_reg_no'];
-
-                $setRows = Yii::app()->db->createCommand()->select("field_id,field_value")
-                    ->from("swo_send_set_jd")->where("table_id=:table_id and set_type='supplier'",array(":table_id"=>$index))->queryAll();
-                $setList = array();
-                foreach ($setRows as $setRow){
-                    $setList[$setRow["field_id"]] = $setRow["field_value"];
-                }
-                $this->jd_set=array();
-                foreach (self::$jd_set_list as $item){
-                    $fieldValue = key_exists($item["field_id"],$setList)?$setList[$item["field_id"]]:null;
-                    $this->jd_set[$item["field_id"]] = $fieldValue;
-                }
 				break;
 			}
 		}
@@ -403,38 +385,13 @@ class SupplierForm extends CListPageModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->savesupplier($connection);
-            //保存金蝶要求的字段
-            $this->saveJDSetInfo($connection);
 			$transaction->commit();
 		}
 		catch(Exception $e) {
-		    var_dump($e);
 			$transaction->rollback();
 			throw new CHttpException(404,'Cannot update.');
 		}
 	}
-    //保存金蝶要求的字段
-    protected function saveJDSetInfo(&$connection) {
-        foreach (self::$jd_set_list as $list){
-            $field_value = key_exists($list["field_id"],$this->jd_set)?$this->jd_set[$list["field_id"]]:null;
-            $rs = Yii::app()->db->createCommand()->select("id,field_id")->from("swo_send_set_jd")
-                ->where("set_type ='supplier' and table_id=:table_id and field_id=:field_id",array(
-                    ':field_id'=>$list["field_id"],':table_id'=>$this->id,
-                ))->queryRow();
-            if($rs){
-                $connection->createCommand()->update('swo_send_set_jd',array(
-                    "field_value"=>$field_value,
-                ),"id=:id",array(':id'=>$rs["id"]));
-            }else{
-                $connection->createCommand()->insert('swo_send_set_jd',array(
-                    "table_id"=>$this->id,
-                    "set_type"=>'supplier',
-                    "field_id"=>$list["field_id"],
-                    "field_value"=>$field_value,
-                ));
-            }
-        }
-    }
 
 	protected function savesupplier(&$connection)
 	{
@@ -442,7 +399,7 @@ class SupplierForm extends CListPageModel
 		$sql = '';
 		switch ($this->scenario) {
 			case 'delete':
-				$sql = "delete from swo_supplier where id = :id";
+				$sql = "delete from swo_supplier where id = :id and city = :city";
 				break;
 			case 'new':
 				$sql = "insert into swo_supplier(
@@ -465,7 +422,7 @@ class SupplierForm extends CListPageModel
 							bank = :bank,
 							acct_no = :acct_no,
 							luu = :luu 
-						where id = :id
+						where id = :id and city = :city
 						";
 				break;
 		}

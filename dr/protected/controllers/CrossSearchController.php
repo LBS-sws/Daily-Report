@@ -2,7 +2,7 @@
 
 class CrossSearchController extends Controller
 {
-	public $function_id='CD03';
+	public $function_id='CW03';
 	
 	public function filters()
 	{
@@ -132,11 +132,11 @@ class CrossSearchController extends Controller
 	}
 	
 	public static function allowReadWrite() {
-		return Yii::app()->user->validRWFunction('CD03');
+		return Yii::app()->user->validRWFunction('CW03');
 	}
 	
 	public static function allowReadOnly() {
-		return Yii::app()->user->validFunction('CD03');
+		return Yii::app()->user->validFunction('CW03');
 	}
 
 	public static function allowDelete() {

@@ -34,7 +34,7 @@ class CountSearch extends SearchForCurlU {
     }
 
     //獲取暫停、終止的最後一條記錄(一条服务在一个月内只能存在一条暂停和终止)，特例：暫停→恢復→終止（三個都需要計算）
-    public static function getServiceForST($start_dt,$end_dt,$city_allow,$type="all"){
+    public static function getServiceForST($start_dt,$end_dt,$city_allow,$type="all",$sqlEpr=''){
         $list = array();
         $sum_money = "case b.paid_type when 'M' then b.amt_paid * b.ctrt_period else b.amt_paid end";
         switch ($type){
@@ -51,7 +51,7 @@ class CountSearch extends SearchForCurlU {
         if(!empty($city_allow)&&$city_allow!="all"){
             $whereSql.= " and b.city in ({$city_allow})";
         }
-        $whereSql.=self::$whereSQL;
+        $whereSql.=self::$whereSQL.$sqlEpr;
         $rows= Yii::app()->db->createCommand()
             ->select("a.id,a.status,a.status_dt,a.contract_no,a.service_id,
             b.city,({$sum_money}) as sum_money,
@@ -217,9 +217,300 @@ class CountSearch extends SearchForCurlU {
         return $list;
     }
 
+
+    //獲取暫停、終止的最後一條記錄(一条服务在一个月内只能存在一条暂停和终止)，特例：暫停→恢復→終止（三個都需要計算）
+    public static function getServiceForSalesST($start_dt,$end_dt,$sales_id_str,$type="all",$sqlEpr=''){
+        $list = array();
+        $sum_money = "case b.paid_type when 'M' then b.amt_paid * b.ctrt_period else b.amt_paid end";
+        switch ($type){
+            case "S"://暫停
+                $whereSql="b.status='S'";
+                break;
+            case "T"://終止
+                $whereSql="b.status='T'";
+                break;
+            default://暫停+終止
+                $whereSql="b.status in ('S','T')";
+        }
+        $whereSql.= " and b.status_dt BETWEEN '{$start_dt}' and '{$end_dt}'";
+        if(!empty($sales_id_str)){
+            $whereSql.= " and b.salesman_id in ({$sales_id_str})";
+        }
+        $whereSql.=self::$whereSQL.$sqlEpr;
+        $rows= Yii::app()->db->createCommand()
+            ->select("a.id,a.status,a.status_dt,a.contract_no,a.service_id,
+            b.salesman_id,({$sum_money}) as sum_money,
+            (case b.paid_type
+                    when 'M' then b.amt_paid
+                    else if(b.ctrt_period='' or b.ctrt_period is null,0,b.amt_paid/b.ctrt_period)
+                end
+            ) as num_month,
+            DATE_FORMAT(a.status_dt,'%Y/%m') as month_date")
+            ->from("swo_service_contract_no a")
+            ->leftJoin("swo_service b","b.id=a.service_id")
+            ->leftJoin("swo_customer_type f","b.cust_type=f.id")
+            ->where($whereSql)
+            ->queryAll();
+        if($rows){//
+            foreach ($rows as $row){
+                $salesman_id = $row["salesman_id"];
+                if(!key_exists($salesman_id,$list)){
+                    $list[$salesman_id]=array(
+                        "num_pause"=>0,//暫停金額（年金額）
+                        "num_stop"=>0,//停單金額（年金額）
+                        "num_stop_none"=>0,//停單金額（年金額）(本条终止的前一条、后一条没有暂停、终止)
+                        "num_month"=>0,//停單金額（月金額）
+                    );
+                }
+                if($row['month_date']<=self::$stop_new_dt){ //2024年12月后改版
+                    $next_end_dt=$row['month_date']."/31";//修改下一条查询逻辑
+                }else{
+                    $next_end_dt=$end_dt;//修改下一条查询逻辑
+                }
+                $nextRow= Yii::app()->db->createCommand()
+                    ->select("status")->from("swo_service_contract_no")
+                    ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["id"]}' and 
+                        status_dt BETWEEN '{$row['status_dt']}' and '{$next_end_dt}'")
+                    //DATE_FORMAT(status_dt,'%Y/%m')='{$row['month_date']}'
+                    ->order("status_dt asc")
+                    ->queryRow();//查詢本月的後面一條數據
+                if($nextRow&&in_array($nextRow["status"],array("S","T"))){
+                    continue;//如果下一條數據是暫停或者終止，則不統計本條數據
+                }else{
+                    $money = round($row["sum_money"],2);
+                    if($row["status"]=="T"){
+                        $prevRow= Yii::app()->db->createCommand()
+                            ->select("status,DATE_FORMAT(status_dt,'%Y/%m') as month_date")
+                            ->from("swo_service_contract_no")
+                            ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["id"]}' and status_dt<='{$row['status_dt']}'")
+                            ->order("status_dt desc")
+                            ->queryRow();//查詢本条的前面一條數據
+                        if($prevRow&&in_array($prevRow["status"],array("S","T"))){
+                            //如果有前一条，且为暂停或终止
+                            if($row['month_date']>self::$stop_new_dt&&$prevRow['month_date']==$row['month_date']){ //2024年12月后改版
+                                $list[$salesman_id]["num_stop_none"]+=$money;
+                            }
+                        }else{
+                            $list[$salesman_id]["num_stop_none"]+=$money;
+                        }
+                        $list[$salesman_id]["num_stop"]+=$money;
+                        $list[$salesman_id]["num_month"]+= empty($row["num_month"])?0:round($row["num_month"],2);
+                    }else{
+                        $list[$salesman_id]["num_pause"]+=$money;
+                    }
+                }
+            }
+        }
+
+        if(self::$IDBool){ //ID服務的暫停、終止
+            $rows = Yii::app()->db->createCommand()
+                ->select("sum(b.amt_paid*b.ctrt_period) as sum_amount,sum(b.amt_paid) as num_month,b.salesman_id,b.status")
+                ->from("swo_serviceid b")
+                ->leftJoin("swo_customer_type_id f","b.cust_type=f.id")
+                ->where($whereSql)->group("b.salesman_id,b.status")->queryAll();//
+            if($rows){
+                foreach ($rows as $row){
+                    if(!key_exists($row["salesman_id"],$list)){
+                        $list[$row["salesman_id"]]=array(
+                            "num_pause"=>0,//暫停金額（年金額）
+                            "num_stop"=>0,//停單金額（年金額）
+                            "num_stop_none"=>0,//停單金額（年金額）(本条终止的前一条、后一条没有暂停、终止)
+                            "num_month"=>0,//停單金額（月金額）
+                        );
+                    }
+                    $money = empty($row["sum_amount"])?0:round($row["sum_amount"],2);
+                    if($row["status"]=="S"){ //暫停
+                        $list[$row["salesman_id"]]["num_pause"]+= $money;
+                    }else{
+                        $list[$row["salesman_id"]]["num_stop_none"]+=$money;
+                        $list[$row["salesman_id"]]["num_stop"]+= $money;
+                        $list[$row["salesman_id"]]["num_month"]+= empty($row["num_month"])?0:round($row["num_month"],2);
+                    }
+                }
+            }
+        }
+
+        if(self::$KABool){ //KA服務的暫停、終止
+            //$kaSqlPrx = self::getServiceKASQL();
+            $KARows= Yii::app()->db->createCommand()
+                ->select("a.id,a.status,a.status_dt,a.contract_no,a.service_id,
+            b.salesman_id,({$sum_money}) as sum_money,
+            (case b.paid_type
+                    when 'M' then b.amt_paid
+                    else if(b.ctrt_period='' or b.ctrt_period is null,0,b.amt_paid/b.ctrt_period)
+                end
+            ) as num_month,
+            DATE_FORMAT(a.status_dt,'%Y/%m') as month_date")
+                ->from("swo_service_ka_no a")
+                ->leftJoin("swo_service_ka b","b.id=a.service_id")
+                ->leftJoin("swo_customer_type f","b.cust_type=f.id")
+                ->where($whereSql)
+                ->queryAll();
+            if($KARows){
+                foreach ($KARows as $row){
+                    $salesman_id = $row["salesman_id"];
+                    if(!key_exists($salesman_id,$list)){
+                        $list[$salesman_id]=array(
+                            "num_pause"=>0,//暫停金額（年金額）
+                            "num_stop"=>0,//停單金額（年金額）
+                            "num_stop_none"=>0,//停單金額（年金額）(本条终止的前一条、后一条没有暂停、终止)
+                            "num_month"=>0,//停單金額（月金額）
+                        );
+                    }
+                    if($row['month_date']<=self::$stop_new_dt){ //2024年12月后改版
+                        $next_end_dt=$row['month_date']."/31";//修改下一条查询逻辑
+                    }else{
+                        $next_end_dt=$end_dt;//修改下一条查询逻辑
+                    }
+                    $nextRow= Yii::app()->db->createCommand()
+                        ->select("status")->from("swo_service_ka_no")
+                        ->where("contract_no='{$row["contract_no"]}' and 
+                        id!='{$row["id"]}' and 
+                        status_dt BETWEEN '{$row['status_dt']}' and '{$next_end_dt}'")
+                        ->order("status_dt asc")
+                        ->queryRow();//查詢本月的後面一條數據
+                    if($nextRow&&in_array($nextRow["status"],array("S","T"))){
+                        continue;//如果下一條數據是暫停或者終止，則不統計本條數據
+                    }else{
+                        $money = round($row["sum_money"],2);
+                        if($row["status"]=="T"){
+                            $prevRow= Yii::app()->db->createCommand()
+                                ->select("status,DATE_FORMAT(status_dt,'%Y/%m') as month_date")->from("swo_service_ka_no")
+                                ->where("contract_no='{$row["contract_no"]}' and 
+                                id!='{$row["id"]}' and status_dt<='{$row['status_dt']}'")
+                                ->order("status_dt desc")
+                                ->queryRow();//查詢本条的前面一條數據
+                            if($prevRow&&in_array($prevRow["status"],array("S","T"))){
+                                //如果有前一条，且为暂停或终止
+                                if($row['month_date']>self::$stop_new_dt&&$prevRow['month_date']==$row['month_date']){ //2024年12月后改版
+                                    $list[$salesman_id]["num_stop_none"]+=$money;
+                                }
+                            }else{
+                                $list[$salesman_id]["num_stop_none"]+=$money;
+                            }
+                            $list[$salesman_id]["num_stop"]+=$money;
+                            $list[$salesman_id]["num_month"]+= empty($row["num_month"])?0:round($row["num_month"],2);
+                        }else{
+                            $list[$salesman_id]["num_pause"]+=$money;
+                        }
+                    }
+                }
+            }
+        }
+        return $list;
+    }
+
     //客户服务查询(根據服務類型)
-    public static function getServiceForType($startDate,$endDate,$city_allow="",$type="N"){
+    public static function getServiceForType($startDate,$endDate,$city_allow="",$type="N",$sqlEpr=''){
         $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL.$sqlEpr;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.city")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,a.city")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.city")->queryAll();//
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+
+        if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.city")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and {$kaSqlPrx}")
+                ->group("a.city")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["city"],$list)){
+                $list[$row["city"]]=0;
+            }
+            $list[$row["city"]]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
+    //客户服务查询(根據服務類型)
+    public static function getServiceForSalesType($startDate,$endDate,$sales_id_str="",$type="N",$sqlEpr=''){
+        $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($sales_id_str)){
+            $whereSql.= " and a.salesman_id in ({$sales_id_str})";
+        }
+        $whereSql .= self::$whereSQL.$sqlEpr;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.salesman_id")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.salesman_id")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,a.salesman_id")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.salesman_id")->queryAll();//
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+
+        if(self::$KABool){
+            //$kaSqlPrx = self::getServiceKASQL("a.");
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.salesman_id")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql)
+                ->group("a.salesman_id")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["salesman_id"],$list)){
+                $list[$row["salesman_id"]]=0;
+            }
+            $list[$row["salesman_id"]]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
+    //利比斯客户服务查询(根據服務類型)
+    public static function getLBSServiceForType($startDate,$endDate,$city_allow="",$type="N"){
+        $whereSql = "a.status='{$type}' and a.external_source=5 and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         if(!empty($city_allow)&&$city_allow!="all"){
             $whereSql.= " and a.city in ({$city_allow})";
         }
@@ -472,6 +763,66 @@ class CountSearch extends SearchForCurlU {
         return $list;
     }
 
+    //客户服务查询(更改)
+    public static function getServiceForSalesA($startDate,$endDate,$sales_id_str="",$sqlEpr=""){
+        $whereSql = "a.status='A' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($sales_id_str)){
+            $whereSql.= " and a.salesman_id in ({$sales_id_str})";
+        }
+        $whereSql .= self::$whereSQL.$sqlEpr;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,sum(case a.b4_paid_type
+							when 'M' then a.b4_amt_paid * a.ctrt_period
+							else a.b4_amt_paid
+						end
+					) as b4_sum_amount,a.salesman_id")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.salesman_id")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,sum(a.b4_amt_money) as b4_sum_amount,a.salesman_id")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.salesman_id")->queryAll();
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+        if(self::$KABool){
+            //$kaSqlPrx = self::getServiceKASQL("a.");
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,sum(case a.b4_paid_type
+							when 'M' then a.b4_amt_paid * a.ctrt_period
+							else a.b4_amt_paid
+						end
+					) as b4_sum_amount,a.salesman_id")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql)
+                ->group("a.salesman_id")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["salesman_id"],$list)){
+                $list[$row["salesman_id"]]=0;
+            }
+            $list[$row["salesman_id"]]+=$row["sum_amount"]-$row["b4_sum_amount"];
+        }
+        return $list;
+    }
+
     //客户服务查询(更改增加)
     public static function getServiceForAD($startDate,$endDate,$city_allow="",$sqlEpr=""){
         $whereSql = "a.status='A' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
@@ -686,6 +1037,64 @@ class CountSearch extends SearchForCurlU {
         return $list;
     }
 
+    //服务新增（非一次性 和 一次性)
+    public static function getServiceAddForSalesNY($startDay,$endDay,$sales_id_str='',$sqlEpr=''){
+        $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
+        if(!empty($sales_id_str)){
+            $whereSql.= " and a.salesman_id in ({$sales_id_str})";
+        }
+        $whereSql .= self::$whereSQL.$sqlEpr;
+        $sum_money = "case a.paid_type when 'M' then a.amt_paid * a.ctrt_period else a.amt_paid end";
+        $list = array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum({$sum_money}) as sum_amount,a.salesman_id,
+            sum(if(a.paid_type=1 and a.ctrt_period<12,({$sum_money}),0)) as num_new_n,
+            sum(if(a.paid_type=1 and a.ctrt_period<12,0,({$sum_money}))) as num_new
+            ")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.salesman_id")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,a.salesman_id,
+                sum(a.amt_paid*a.ctrt_period) as num_new,
+                CONCAT(0) as num_new_n")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                //->leftJoin("swo_customer_type_id g","a.cust_type_name=g.id")
+                ->where($whereSql)->group("a.salesman_id")->queryAll();//ID服務暫時全部為非一次性服務
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+        if(self::$KABool){
+            //$kaSqlPrx = self::getServiceKASQL("a.");
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum({$sum_money}) as sum_amount,a.salesman_id,
+            sum(if(a.paid_type=1 and a.ctrt_period<12,({$sum_money}),0)) as num_new_n,
+            sum(if(a.paid_type=1 and a.ctrt_period<12,0,({$sum_money}))) as num_new
+            ")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql)
+                ->group("a.salesman_id")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["salesman_id"],$list)){
+                $list[$row["salesman_id"]]=array(
+                    "num_new"=>0,
+                    "num_new_n"=>0,
+                );
+            }
+            $list[$row["salesman_id"]]["num_new"]+=$row["num_new"];
+            $list[$row["salesman_id"]]["num_new_n"]+=$row["num_new_n"];
+        }
+        return $list;
+    }
+
     //服务新增（非一次性)
     public static function getServiceAddForN($startDay,$endDay,$city_allow=""){
         $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
@@ -739,12 +1148,12 @@ class CountSearch extends SearchForCurlU {
     }
 
     //服务新增（一次性)
-    public static function getServiceAddForY($startDay,$endDay,$city_allow=""){
+    public static function getServiceAddForY($startDay,$endDay,$city_allow="",$sqlEpr=''){
         $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
         if(!empty($city_allow)&&$city_allow!="all"){
             $whereSql.= " and a.city in ({$city_allow})";
         }
-        $whereSql .= self::$whereSQL;
+        $whereSql .= self::$whereSQL.$sqlEpr;
         $list = array();
         $rows = Yii::app()->db->createCommand()
             ->select("sum(case a.paid_type
@@ -788,6 +1197,60 @@ class CountSearch extends SearchForCurlU {
                 $list[$row["city"]]=0;
             }
             $list[$row["city"]]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
+    //服务新增（一次性)
+    public static function getServiceAddForSalesY($startDay,$endDay,$sales_id_str="",$sqlEpr=''){
+        $whereSql = "a.status='N' and a.status_dt BETWEEN '{$startDay}' and '{$endDay}'";
+        if(!empty($sales_id_str)){
+            $whereSql.= " and a.salesman_id in ({$sales_id_str})";
+        }
+        $whereSql .= self::$whereSQL.$sqlEpr;
+        $list = array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.salesman_id")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql." and a.paid_type=1 and a.ctrt_period<12")->group("a.salesman_id")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            /* ID服務暫時全部為非一次性服務
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,a.salesman_id")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->leftJoin("swo_customer_type_id g","a.cust_type_name=g.id")
+                ->where($whereSql." and g.single=1")->group("a.salesman_id")->queryAll();
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+            */
+        }
+        if(self::$KABool){
+            //$kaSqlPrx = self::getServiceKASQL("a.");
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,a.salesman_id")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and a.paid_type=1 and a.ctrt_period<12")->group("a.salesman_id")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            if(!key_exists($row["salesman_id"],$list)){
+                $list[$row["salesman_id"]]=0;
+            }
+            $list[$row["salesman_id"]]+=$row["sum_amount"];
         }
         return $list;
     }
@@ -2130,6 +2593,12 @@ class CountSearch extends SearchForCurlU {
         return isset($list["data"])?$list["data"]:array();
     }
 
+    //获取U系统的服务单数据(业务承揽)-详情
+    public static function getOutBusinessServiceMoney($startDay,$endDay){
+        $list = SystemU::getOutBusinessServiceMoney($startDay,$endDay,false);
+        return isset($list["data"])?$list["data"]:array();
+    }
+
     //获取服务合约最后不是终止的所有合约金额
     public static function getRetentionAmt($endDate,$city_allow){
         $sum_money = "case b.paid_type when 'M' then b.amt_paid * b.ctrt_period else b.amt_paid end";
@@ -2181,7 +2650,7 @@ class CountSearch extends SearchForCurlU {
               select contract_no,max(id) as max_id from swo_service_contract_no WHERE status_dt<='{$endDate}' GROUP BY contract_no
             ) f ON a.id=f.max_id and a.contract_no=f.contract_no 
             LEFT JOIN swo_service b ON a.service_id=b.id
-            WHERE a.status!='T' AND b.salesman_id in ({$salesman_str}) GROUP BY b.salesman_id
+            WHERE a.status!='T' AND f.max_id is NOT null AND !(b.paid_type=1 AND b.ctrt_period<12) AND b.salesman_id in ({$salesman_str}) GROUP BY b.salesman_id
         ";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         $rows = $rows?$rows:array();
@@ -2194,7 +2663,7 @@ class CountSearch extends SearchForCurlU {
               select contract_no,max(id) as max_id from swo_service_ka_no WHERE status_dt<='{$endDate}' GROUP BY contract_no
             ) f ON a.id=f.max_id and a.contract_no=f.contract_no 
             LEFT JOIN swo_service_ka b ON a.service_id=b.id
-            WHERE a.status!='T' AND b.salesman_id in ({$salesman_str}) GROUP BY b.salesman_id
+            WHERE a.status!='T' AND f.max_id is NOT null AND !(b.paid_type=1 AND b.ctrt_period<12) AND b.salesman_id in ({$salesman_str}) GROUP BY b.salesman_id
         ";
             $kaRow = Yii::app()->db->createCommand($kaSql)->queryAll();
             $kaRow = $kaRow?$kaRow:array();
@@ -2212,10 +2681,76 @@ class CountSearch extends SearchForCurlU {
         return $data;
     }
 
+    //客户服务查询非终止(销售员id为键名)（月為鍵名)
+    public static function getServiceARSToMonthAndSales($startDate,$endDate,$salesman_str){
+        $yearAmt = "case a.paid_type when 'M' then a.amt_paid * a.ctrt_period else a.amt_paid end";
+        $b4yearAmt = "case a.b4_paid_type when 'M' then a.b4_amt_paid * a.ctrt_period else a.b4_amt_paid end";
+        $whereSql = "a.status in ('A','R','S') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        $whereSql.= " and a.salesman_id in ({$salesman_str})";
+        $whereSql .= self::$whereSQL;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(
+                  		case a.status
+							when 'A' then ({$yearAmt})-({$b4yearAmt})
+							when 'S' then ({$yearAmt})*-1
+							else ({$yearAmt})
+						end
+					) as sum_amount,a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(
+                      case a.status
+							when 'A' then (a.amt_paid*a.ctrt_period)-(a.b4_amt_paid*a.ctrt_period)
+							when 'S' then (a.amt_paid*a.ctrt_period)*-1
+							else (a.amt_paid*a.ctrt_period)
+						end
+                ) as sum_amount,a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();//
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+        if(self::$KABool){
+            //$kaSqlPrx = self::getServiceKASQL("a.");
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(
+                  		case a.status
+							when 'A' then ({$yearAmt})-({$b4yearAmt})
+							when 'S' then ({$yearAmt})*-1
+							else ({$yearAmt})
+						end
+					) as sum_amount,a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m') as month_dt")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql)
+                ->group("a.salesman_id,DATE_FORMAT(a.status_dt,'%Y/%m')")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            $salesman_id = "".$row["salesman_id"];
+            if(!key_exists($salesman_id,$list)){
+                $list[$salesman_id]=array();
+            }
+            if(!key_exists($row["month_dt"],$list[$salesman_id])){
+                $list[$salesman_id][$row["month_dt"]]=0;
+            }
+            $list[$salesman_id][$row["month_dt"]]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
     //客户服务查询(根據服務類型)(销售员id为键名)（月為鍵名)
     public static function getServiceForTypeToMonthAndSales($startDate,$endDate,$salesman_str,$type="N"){
         $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
-        $whereSql.= " and a.salesman_id in ({$salesman_str}) and (a.reason!='【系统自动触发】:合同已到期' or a.reason is null)";
+        $whereSql.= " and a.salesman_id in ({$salesman_str})";
         $whereSql .= self::$whereSQL;
         $list=array();
         $rows = Yii::app()->db->createCommand()

@@ -110,6 +110,7 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
 				</div>
 			</div>
             <div>
+			<!--
                 <div class="col-sm-offset-1" style="padding: 20px 0px;">
                     <ul class="nav nav-tabs" role="menu">
                         <li role="menuitem" class="active">
@@ -124,34 +125,25 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
                         </li>
                     </ul>
                 </div>
+			-->
                 <div class="tab-content">
                     <div id="tab_1" class="tab-pane fade active in">
                         <?php
-                        $placeText = "The data in this column is not up to the standard. Please explain";
-                        $placeText = Yii::t("feedback",$placeText);
-                        $model->validateLoad();
                         $cnt = 0;
                         $fldnames = $model->attributeLabels();
                         for($cnt=1;$cnt<=7;$cnt++){
                             $cat_field = 'cat_'.$cnt;
                             $fb_field = 'feedback_'.$cnt;
-                            $errorArray = $model->getErrors($cat_field);
-                            if(!empty($errorArray)){
-                                echo '<div class="form-group has-error">';
-                                $placeholder = implode("\n",$errorArray);
-                            }else{
-                                echo '<div class="form-group">';
-                                $placeholder = "";
-                            }
+                            echo '<div class="form-group">';
                             echo '<div class="col-sm-2 text-right">';
-                            echo $form->checkBox($model,$cat_field, array('class'=>'focus-box','label'=>$fldnames[$cat_field],'value'=>'Y','uncheckValue'=>'N','disabled'=>($model->scenario=='view')));
+                            echo $form->checkBox($model,$cat_field, array('label'=>$fldnames[$cat_field],'value'=>'Y','uncheckValue'=>'N','disabled'=>($model->scenario=='view')));
                             echo '</div>';
                             echo '<div class="col-sm-7">';
                             echo $form->textArea($model, $fb_field,
-                                array('rows'=>5,'cols'=>80,'placeholder'=>$placeholder,'maxlength'=>5000,'readonly'=>($model->scenario=='view' || $model->$cat_field!='Y'))
+                                array('rows'=>5,'cols'=>80,'maxlength'=>5000,'readonly'=>($model->scenario=='view' || $model->$cat_field!='Y'))
                             );
                             echo '</div>';
-                            if(!in_array($fb_field,array("feedback_7"))){ //其它没有详情
+                            if(false&&!in_array($fb_field,array("feedback_7"))){ //其它没有详情
                                 echo '<div class="col-sm-2">';
                                 echo TbHtml::link(Yii::t("feedback","click detail"),"javascript:void(0);",array("class"=>"link_detail","data-type"=>$fb_field,"data-title"=>$fldnames[$cat_field]));
                                 echo '</div>';
@@ -160,37 +152,6 @@ $this->pageTitle=Yii::app()->name . ' - Feedback Form';
                         }
                         ?>
                     </div>
-                    <div id="tab_2" class="tab-pane fade">
-                        <?php
-                        for($cnt=8;$cnt<=12;$cnt++){
-                            $cat_field = 'cat_'.$cnt;
-                            $fb_field = 'feedback_'.$cnt;
-                            $errorArray = $model->getErrors($cat_field);
-                            if(!empty($errorArray)){
-                                echo '<div class="form-group has-error">';
-                                $placeholder = implode("\n",$errorArray);
-                            }else{
-                                echo '<div class="form-group">';
-                                $placeholder = "";
-                            }
-                            echo '<div class="col-sm-2 text-right">';
-                            echo $form->checkBox($model,$cat_field, array('class'=>'focus-box','label'=>$fldnames[$cat_field],'value'=>'Y','uncheckValue'=>'N','disabled'=>($model->scenario=='view')));
-                            echo '</div>';
-                            echo '<div class="col-sm-7">';
-                            echo $form->textArea($model, $fb_field,
-                                array('rows'=>5,'cols'=>80,'placeholder'=>$placeholder,'maxlength'=>5000,'readonly'=>($model->scenario=='view' || $model->$cat_field!='Y'))
-                            );
-                            echo '</div>';
-                            if(!in_array($fb_field,array("feedback_7"))){ //其它没有详情
-                                echo '<div class="col-sm-2">';
-                                echo TbHtml::link(Yii::t("feedback","click detail"),"javascript:void(0);",array("class"=>"link_detail","data-type"=>$fb_field,"data-title"=>$fldnames[$cat_field]));
-                                echo '</div>';
-                            }
-                            echo '</div>';
-                        }
-                        ?>
-                    </div>
-
                 </div>
             </div>
 		</div>
@@ -256,10 +217,6 @@ Yii::app()->clientScript->registerScript('feedbackReadonly',$js,CClientScript::P
 
 $ajaxUrl = Yii::app()->createUrl('feedback/ajaxDetail');
 $js.= "
-$('.focus-box').on('focus',function(){
-    $(this).parents('.form-group:first').removeClass('has-error');
-});
-
 $('.link_detail').on('click',function(){
     var dateStr = $('#FeedbackForm_request_dt').val();
     $('#detailDialog').find('.modal-title').text($(this).data('title')+' ('+dateStr+')');

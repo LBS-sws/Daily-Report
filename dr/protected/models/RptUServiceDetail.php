@@ -20,6 +20,17 @@ class RptUServiceDetail extends ReportData2 {
 			'start_date'=>array('label'=>Yii::t('summary','start date'),'width'=>30,'align'=>'L'),
 			'end_date'=>array('label'=>Yii::t('summary','end date'),'width'=>30,'align'=>'L'),
 			'amt'=>array('label'=>Yii::t('summary','Paid Amt'),'width'=>18,'align'=>'R'),
+			'unit_price'=>array('label'=>"工单金额(unit_price)",'width'=>18,'align'=>'R'),
+			'fee'=>array('label'=>"费用(fee)",'width'=>18,'align'=>'R'),
+			'add_first'=>array('label'=>"首次加做金额(add_first)",'width'=>18,'align'=>'R'),
+			'revise_fee'=>array('label'=>"调整金额(revise_fee)",'width'=>18,'align'=>'R'),
+			'term_count'=>array('label'=>"期数(term_count)",'width'=>18,'align'=>'R'),
+			'staffListStr'=>array('label'=>"参与员工",'width'=>18,'align'=>'R'),
+			'staffCount'=>array('label'=>"参与员工人数",'width'=>18,'align'=>'R'),
+			'staff_ratio'=>array('label'=>"分配比例",'width'=>18,'align'=>'R'),
+			'staff_ratio_one'=>array('label'=>"分配比例(该员工)",'width'=>18,'align'=>'R'),
+			'amt_lbs'=>array('label'=>"LBS计算金额",'width'=>18,'align'=>'R'),
+			'amt_bool'=>array('label'=>"服务金额是否等于LBS计算金额",'width'=>20,'align'=>'C'),
 		);
 	}
 	
@@ -38,16 +49,33 @@ class RptUServiceDetail extends ReportData2 {
         $oldCity = "";
 		if ($rows) {
 			foreach ($rows as $row) {
+                $staff_ratio = key_exists("staff_ratio",$row)?$row["staff_ratio"]:array();//分配比例
+                $staffRatio = array();
+                if(!empty($staff_ratio)){
+                    $staffRatioStr="";
+                    foreach ($staff_ratio as $ratioRow){
+                        $staffRatioStr.=empty($staffRatioStr)?"":",";
+                        $staffRatioStr.=$ratioRow["code"].":".$ratioRow["ratio"];
+                        $staffRatio[$ratioRow["code"]] = $ratioRow["ratio"];
+                    }
+                }else{
+                    $staffRatioStr="";
+                }
                 $city = SummaryForm::resetCity($row["city_code"]);
                 if($oldCity!==$city){
                     $city_name = General::getCityName($city);
                     $oldCity = $city;
                 }
-                $money = empty($row["term_count"])?0:(floatval($row["fee"])+floatval($row["add_first"]))/floatval($row["term_count"]);
-
+                $amt_lbs_sum = empty($row["term_count"])?0:(floatval($row["fee"])+floatval($row["add_first"]))/floatval($row["term_count"]);
+                if(isset($row["unit_price"])&&($row["unit_price"]!==''||$row["unit_price"]!==null)){
+                    $countMoney = $row["unit_price"];//派单系统可以随意设置金额
+                }else{
+                    $countMoney = $amt_lbs_sum;
+                }
                 //revise_fee
                 if(key_exists("revise_fee",$row)){//调整服务单金额(2024-04-03)
-                    $money+=floatval($row["revise_fee"]);
+                    $amt_lbs_sum+=floatval($row["revise_fee"]);
+                    $countMoney+=floatval($row["revise_fee"]);
                 }
                 if(key_exists("staff_arr",$row)){//新版U系统有多个员工
                     $staffCount = count($row["staff_arr"]);
@@ -57,10 +85,21 @@ class RptUServiceDetail extends ReportData2 {
                     $staffCount+= empty($row["staff02"])?0:1;
                     $staffCount+= empty($row["staff03"])?0:1;
                 }
-                $money = $money/$staffCount;//如果多人，需要平分金額
+                $money = $countMoney/$staffCount;//如果多人，需要平分金額
                 $money = round($money,2);
+                $amt_lbs = $amt_lbs_sum/$staffCount;//如果多人，需要平分金額
+                $amt_lbs = round($amt_lbs,2);
                 foreach ($staffStrList as $staffStr){
                     $staff = key_exists("staff_arr",$row)?$staffStr:$row[$staffStr];//员工编号
+                    if(!empty($staffRatio)&&key_exists($staff,$staffRatio)){//自定义分配比例
+                        $staffRatioOne =$staffRatio[$staff];
+                        $money = empty($staffRatioOne)?0:$countMoney*$staffRatioOne;//自定义分配比例
+                        $money = round($money,2);
+                        $amt_lbs = $amt_lbs_sum/$staffCount;//自定义分配比例
+                        $amt_lbs = round($amt_lbs,2);
+                    }else{
+                        $staffRatioOne = "";
+                    }
                     $user = self::getUserListForCode($staff,$userList);
                     $username = $user["name"]." ({$user["code"]})".($user["staff_status"]==-1?Yii::t("summary"," - Leave"):"");
                     if(!empty($staff)){
@@ -78,6 +117,17 @@ class RptUServiceDetail extends ReportData2 {
                             "start_date"=>$row["start_date"],//（U系统）
                             "end_date"=>$row["end_date"],//（U系统）
                             "amt"=>$money,//服务金额
+                            "fee"=>$row["fee"],//费用
+                            "unit_price"=>$row["unit_price"],//工单金额
+                            "add_first"=>$row["add_first"],//首次加做金额
+                            "revise_fee"=>$row["revise_fee"],//调整金额
+                            "term_count"=>$row["term_count"],//期数
+                            "staffListStr"=>implode(",",$staffStrList),//参与员工
+                            "staffCount"=>$staffCount,//参与员工人数
+                            "staff_ratio"=>$staffRatioStr,//分配比例
+                            "staff_ratio_one"=>$staffRatioOne,//分配比例
+                            "amt_lbs"=>$amt_lbs,//LBS计算金额
+                            "amt_bool"=>$money==$amt_lbs?"是":"否",//服务金额是否等于LBS计算金额
                         );
                     }
                 }

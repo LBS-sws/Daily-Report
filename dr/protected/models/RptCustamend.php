@@ -2,10 +2,14 @@
 class RptCustamend extends ReportData2 {
 	public function fields() {
 		return array(
+            'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'L'),
             'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
             'office_name'=>array('label'=>"归属",'width'=>12,'align'=>'C'),
 			'status_dt'=>array('label'=>Yii::t('service','New Date'),'width'=>18,'align'=>'C'),
-			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
+            'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
+            'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
+            'group_code'=>array('label'=>"KA/集团编号",'width'=>18,'align'=>'L'),
+            'group_name'=>array('label'=>"KA/集团名称",'width'=>18,'align'=>'L'),
 			'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
 			'b4_service'=>array('label'=>Yii::t('service','Service'),'width'=>30,'align'=>'L'),
 			'b4_amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C'),
@@ -27,10 +31,14 @@ class RptCustamend extends ReportData2 {
 
 	public function header_structure() {
 		return array(
+			'id',
 			'city_name',
 			'office_name',
 			'status_dt',
-			'company_name',
+            'company_code',
+            'company_name',
+            'group_code',
+            'group_name',
 			'nature',
 			array(
 				'label'=>Yii::t('service','Before'),
@@ -82,8 +90,9 @@ class RptCustamend extends ReportData2 {
             $city_allow = json_decode($city,true);
             $city_allow = "'".implode("','",$city_allow)."'";
         }
-		$sql = "select a.*, b.description as nature, c.description as customer_type
+		$sql = "select a.*,f.code as com_code,f.name as com_name,f.group_id as group_code,f.group_name, b.description as nature, c.description as customer_type
 					from swo_service a
+                	left outer join swo_company f on a.company_id=f.id 
 					left outer join swo_nature b on a.nature_type=b.id 
 					left outer join swo_customer_type c on a.cust_type=c.id
 				where a.status='A' and a.city in ($city_allow) 
@@ -106,11 +115,15 @@ class RptCustamend extends ReportData2 {
                     $officeList[$row["office_id"]] = GetNameToId::getOfficeNameForID($row['office_id']);
                 }
 				$temp = array();
+                $temp['id'] = $row["id"];
                 $temp['city_name'] = General::getCityName($row["city"]);
                 $temp['office_name'] = $officeList[$row["office_id"]];
 				$temp['type'] = $row['customer_type'];
 				$temp['status_dt'] = General::toDate($row['status_dt']);
-				$temp['company_name'] = $row['company_name'];
+                $temp['company_code'] = $row['com_code'];
+                $temp['company_name'] = empty($row['com_name'])?$row['company_name']:$row['com_name'];
+                $temp['group_code'] = $row['group_code'];
+                $temp['group_name'] = $row['group_name'];
 				$temp['nature'] = $row['nature'];
 				$temp['b4_service'] = $row['b4_service'];
 				$temp['b4_amt_month'] = number_format(($row['b4_paid_type']=='1'?$row['b4_amt_paid']:($row['b4_paid_type']=='M'?$row['b4_amt_paid']:round($row['b4_amt_paid']/($row['ctrt_period']>0?$row['ctrt_period']:1),2))),2,'.','');

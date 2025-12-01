@@ -27,7 +27,7 @@ $this->pageTitle=Yii::app()->name . ' - CrossAudit';
         <div class="box-body">
             <div class="btn-group" role="group">
                 <?php
-                if (Yii::app()->user->validRWFunction('CD02')){
+                if (Yii::app()->user->validRWFunction('CW02')){
                     echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('service','Audit Full'), array(
                             'submit'=>Yii::app()->createUrl('crossAudit/auditFull'))
                     );

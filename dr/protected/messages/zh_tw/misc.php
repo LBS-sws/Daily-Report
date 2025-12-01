@@ -3,7 +3,6 @@
 return array(
 'User ID'=>'帳戶名稱',
 'Password'=>'密碼',
-'Again New Password'=>'再次輸入新密碼',
 'New Password' => '新密碼',
 'Old Password' => '舊密碼',
 'Confirm Password' => '確認密碼',
@@ -96,6 +95,7 @@ return array(
 '6 months'=>'6個月內',
 '1 year'=>'1年內',
 'Your ranking is:'=>'你當前的段位為:',
+'Again New Password'=>'再次輸入新密碼',
 );
 
 ?>

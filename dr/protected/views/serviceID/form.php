@@ -37,7 +37,9 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                             'name'=>'btnAdd','id'=>'btnAdd')
                     );
                     ?>
-                    <?php echo TbHtml::button('<span class="fa fa-clone"></span> '.Yii::t('misc','Copy'), array(
+
+                    <?php
+                    echo TbHtml::button('<span class="fa fa-clone"></span> '.Yii::t('misc','Copy'), array(
                             'name'=>'btnCopy','id'=>'btnCopy')
                     );
                     ?>
@@ -110,7 +112,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     echo $form->dropDownList($model, 'contract_type', GetNameToId::getContractTypeList('none'), array('readonly'=>($model->scenario=='view'),'empty'=>''));
                     ?>
                 </div>
-                <?php echo $form->labelEx($model,'office_id',array('class'=>"col-sm-2 control-label")); ?>
+                <?php echo $form->labelEx($model,'office_id',array('class'=>"col-sm-1 control-label")); ?>
                 <div class="col-sm-2">
                     <?php
                     $this_city = empty($model->city)?Yii::app()->user->city():$model->city;
@@ -158,7 +160,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php echo $form->textField($model, 'status_dt',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),'autocomplete'=>'off'));
+                            array('class'=>'form-control pull-right','readonly'=>($model->getReadonly()),'autocomplete'=>'off'));
                         ?>
                     </div>
                 </div>
@@ -166,13 +168,13 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php echo $form->labelEx($model,'prepay_month',array('class'=>"col-sm-1 control-label")); ?>
                     <div class="col-sm-1">
                         <?php echo $form->numberField($model, 'prepay_month',
-                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                            array('size'=>4,'min'=>0,'readonly'=>($model->getReadonly()))
                         ); ?>
                     </div>
                     <?php echo $form->labelEx($model,'prepay_start',array('class'=>"col-sm-1 control-label")); ?>
                     <div class="col-sm-1">
                         <?php echo $form->numberField($model, 'prepay_start',
-                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                            array('size'=>4,'min'=>0,'readonly'=>($model->getReadonly()))
                         ); ?>
                     </div>
                 </div>
@@ -186,7 +188,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     echo $form->textField($model, 'company_name',
                         array('class'=>'form-control','maxlength'=>15,'readonly'=>true,
                             'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Customer'),
-                                array('name'=>'btnCompany','id'=>'btnCompany','readonly'=>($model->scenario=='view'))),
+                                array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->getReadonly()))),
                         ));
                     ?>
                 </div>
@@ -258,7 +260,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <div class="col-sm-2">
                         <?php
                         echo $form->numberField($model, 'b4_amt_paid',
-                            array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'),
+                            array('size'=>6,'min'=>0,'readonly'=>($model->getReadonly()),
                                 'prepend'=>'<span class="fa '.$sign.'"></span>')
                         );
                         ?>
@@ -267,7 +269,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <div class="col-sm-2">
                         <?php
                         echo $form->numberField($model, 'b4_amt_money',
-                            array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'),
+                            array('size'=>6,'min'=>0,'readonly'=>($model->getReadonly()),
                                 'prepend'=>'<span class="fa '.$sign.'"></span>')
                         );
                         ?>
@@ -323,7 +325,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php echo $form->labelEx($model,'pieces',array('class'=>"col-sm-2 control-label"));   ?>
                     <div class="col-sm-2">
                         <?php echo $form->numberField($model, 'pieces',
-                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'))
+                            array('size'=>4,'min'=>0,'readonly'=>($model->getReadonly()))
                         ); ?>
                     </div>
                     <?php echo $form->labelEx($model,'cust_type_end',array('class'=>"col-sm-2 control-label"));   ?>
@@ -340,7 +342,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <div class="col-sm-2">
                         <?php
                         echo $form->numberField($model, 'all_number',
-                            array('size'=>6,'min'=>0,'readonly'=>($model->scenario=='view'))
+                            array('size'=>6,'min'=>0,'readonly'=>($model->getReadonly()))
                         );
                         ?>
                     </div>
@@ -348,7 +350,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <div class="col-sm-2">
                         <?php
                         echo $form->numberField($model, 'surplus',
-                            array('size'=>6,'min'=>0,'id'=>"surplus",'readonly'=>($model->scenario=='view'),
+                            array('size'=>6,'min'=>0,'id'=>"surplus",'readonly'=>($model->getReadonly()),
                                 "append"=>"<span>天</span>")
                         );
                         ?>
@@ -390,7 +392,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php echo $form->labelEx($model,'ctrt_period',array('class'=>"col-sm-2 control-label text-nowrap")); ?>
                     <div class="col-sm-2">
                         <?php echo $form->numberField($model, 'ctrt_period',
-                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'),'class'=>"changeOutMonth",'autocomplete'=>'off')
+                            array('size'=>4,'min'=>0,'readonly'=>($model->getReadonly()),'class'=>"changeOutMonth",'autocomplete'=>'off')
                         ); ?>
                     </div>
                 <?php endif ?>
@@ -452,7 +454,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php echo $form->labelEx($model,'freq',array('class'=>"col-sm-2 control-label text-nowrap")); ?>
                     <div class="col-sm-2">
                         <?php echo $form->numberField($model, 'freq',
-                            array('size'=>4,'min'=>0,'readonly'=>($model->scenario=='view'),'class'=>"changeOutMonth",'autocomplete'=>'off')
+                            array('size'=>4,'min'=>0,'readonly'=>($model->getReadonly()),'class'=>"changeOutMonth",'autocomplete'=>'off')
                         ); ?>
                     </div>
                 <?php endif ?>
@@ -463,7 +465,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php
                     echo $form->textField($model, 'salesman',
                         array('size'=>60,'maxlength'=>1000,'readonly'=>true,
-                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnSalesman','id'=>'btnSalesman','readonly'=>($model->scenario=='view'))),
+                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnSalesman','id'=>'btnSalesman','disabled'=>($model->getReadonly()))),
                         ));
                     ?>
                     <?php echo $form->hiddenField($model, 'salesman_id'); ?>
@@ -475,7 +477,7 @@ $this->pageTitle=Yii::app()->name . ' - Service Form';
                     <?php
                     echo $form->textField($model, 'othersalesman',
                         array('size'=>60,'maxlength'=>1000,'readonly'=>true,
-                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnOtherSalesman','id'=>'btnOtherSalesman','readonly'=>($model->scenario=='view'))),
+                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnOtherSalesman','id'=>'btnOtherSalesman','disabled'=>($model->getReadonly()))),
                         ));
                     ?>
                     <?php echo $form->hiddenField($model, 'othersalesman_id'); ?>
@@ -711,13 +713,14 @@ $('#btnAddRow').on('click',function() {
 
 		
 			if (id.indexOf('_back_date') != -1){
-			    $(this).attr('value','');
+			    $(this).attr('value','').removeAttr('readonly').removeClass('readonly');
 				$(this).datepicker({autoclose: true, format: 'yyyy/mm/dd',language: '$language'});
 			}
 			if (id.indexOf('_uflag') != -1) $(this).attr('value','Y');
-			if (id.indexOf('_back_money') != -1) $(this).attr('value','');
-			if (id.indexOf('_put_month') != -1) $(this).attr('value','');
+			if (id.indexOf('_back_money') != -1) $(this).attr('value','').removeAttr('readonly').removeClass('readonly');
+			if (id.indexOf('_put_month') != -1) $(this).attr('value','').removeAttr('readonly').removeClass('readonly');
 			if (id.indexOf('_out_month') != -1) $(this).attr('value','');
+			if (id.indexOf('_back_ratio') != -1) $(this).removeAttr('readonly').removeClass('readonly');
 			if (id.indexOf('_id') != -1) $(this).attr('value',0);
 		});
 		if (nid != '') {
@@ -766,10 +769,10 @@ Yii::app()->clientScript->registerScript('lookupService',$js,CClientScript::POS_
 
 $js = Script::genLookupButtonEx('btnSalesman', 'staff', 'ServiceIDForm_salesman_id', 'ServiceIDForm_salesman');
 Yii::app()->clientScript->registerScript('lookupSalesman',$js,CClientScript::POS_READY);
-/*
+
 $js = Script::genLookupButtonEx('btnOtherSalesman', 'staff', 'ServiceIDForm_othersalesman_id', 'ServiceIDForm_othersalesman');
 Yii::app()->clientScript->registerScript('lookupOtherSalesman',$js,CClientScript::POS_READY);
-*/
+
 $js = Script::genLookupButtonEx('btnTechnician', 'staff', 'ServiceIDForm_technician_id', 'ServiceIDForm_technician');
 Yii::app()->clientScript->registerScript('lookupTechnician',$js,CClientScript::POS_READY);
 

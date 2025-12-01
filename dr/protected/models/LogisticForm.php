@@ -35,6 +35,7 @@ class LogisticForm extends CFormModel
 	public $address;
 	public $repair;
 	public $remarks;
+    public $ltNowDate=false;//小于当前日期：true
 			
 	/**
 	 * Declares customized attribute labels.
@@ -96,7 +97,48 @@ class LogisticForm extends CFormModel
             ->where("a.commission=1 and a.log_id=:id",array(":id"=>$id))->queryRow();
         if($row){
             $this->addError($attribute, "{$row['description']} 已参加产品提成计算，无法修改");
+        }else{
+            $thisDate = ServiceForm::isVivienne()?"0000/00/00":date("Y/m/01");
+            $status_dt = date("Y/m/d",strtotime($this->log_dt));
+            $scenario = $this->getScenario();
+            if(in_array($scenario,array("new"))){
+                $this->ltNowDate = $status_dt<$thisDate;
+                //验证新增
+                if($status_dt<$thisDate){
+                    $this->addError($attribute, "无法新增({$status_dt})时间段的数据");
+                }
+            }else{
+                $id= empty($this->id)?0:$this->id;
+                $row = Yii::app()->db->createCommand()->select("a.*")->from("swo_logistic a")
+                    ->where("a.id=:id",array(":id"=>$id))->queryRow();
+                if($row){
+                    $row["log_dt"] = date("Y/m/d",strtotime($row["log_dt"]));
+                    $this->ltNowDate = $row["log_dt"]<$thisDate;
+                    if($scenario=="delete"){
+                        if($row["log_dt"]<$thisDate){
+                            $this->addError($attribute, "无法删除({$row["log_dt"]})时间段的数据");
+                        }
+                    }else{
+                        $updateBool = $status_dt<$thisDate;//验证修改后的时间
+                        $updateBool = $updateBool||$row["log_dt"]<$thisDate;//验证修改前的时间
+                        if($updateBool){
+                            $notUpdate=self::getNotUpdateList();
+                            foreach ($notUpdate as $item){
+                                $this->$item = $row[$item];
+                            }
+                        }
+                    }
+                }else{
+                    $this->addError($attribute, "数据异常，请刷新重试");
+                }
+            }
         }
+    }
+
+    public static function getNotUpdateList(){
+        return array("log_dt","company_id","company_name",
+            "salesman"
+        );
     }
 
 	public function validateDetailRecords($attribute, $params) {
@@ -124,11 +166,13 @@ class LogisticForm extends CFormModel
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0)
 		{
+            $thisDate = ServiceForm::isVivienne()?"0000/00/00":date("Y/m/01");
 			foreach ($rows as $row)
 			{
 				$this->id = $row['id'];
 				$this->seq = $row['seq'];
 				$this->log_dt = General::toDate($row['log_dt']);
+                $this->ltNowDate = $this->log_dt<$thisDate;
 				$this->company_id = $row['company_id'];
 				$this->company_name = $row['company_name'];
 				$this->follow_staff = $row['follow_staff'];
@@ -173,7 +217,9 @@ class LogisticForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveLogistic($connection);
-			$this->saveLogisticDtl($connection);
+			if(!$this->ltNowDate){
+                $this->saveLogisticDtl($connection);
+            }
 			$transaction->commit();
 		}
 		catch(Exception $e) {
@@ -375,4 +421,8 @@ class LogisticForm extends CFormModel
 		$max = Yii::app()->db->createCommand($sql)->queryScalar();
 		return ($max===false ? 0 : $max);
 	}
+
+    public function getReadonly(){
+        return $this->scenario=='view'||$this->ltNowDate;
+    }
 }

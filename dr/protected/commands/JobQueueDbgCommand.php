@@ -402,6 +402,7 @@ EOF;
 			case 'RptCustsuspend': $model = new RptCustsuspend(); break;
 			case 'RptCustresume': $model = new RptCustresume(); break;
 			case 'RptCustterminate': $model = new RptCustterminate(); break;
+			case 'RptCustterminatex': $model = new RptCustterminatex(); break;
 			case 'RptComplaint': $model = new RptComplaint(); break;
 			case 'RptQc': $model = new RptQc(); break;
 			case 'RptLogistic': $model = new RptLogistic(); break;

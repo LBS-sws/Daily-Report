@@ -44,7 +44,7 @@ class RptKaRetention extends ReportData2 {
               select contract_no,max(id) as max_id from swo_service_contract_no WHERE status_dt<='{$endDate}' GROUP BY contract_no
             ) f ON a.id=f.max_id and a.contract_no=f.contract_no 
             LEFT JOIN swo_service b ON a.service_id=b.id
-            WHERE a.status!='T' AND b.salesman_id in ({$sales_sql_str}) ORDER BY b.city,b.status_dt,b.salesman_id
+            WHERE a.status!='T' AND f.max_id is NOT null AND !(b.paid_type=1 AND b.ctrt_period<12) AND b.salesman_id in ({$sales_sql_str}) ORDER BY b.city,b.status_dt,b.salesman_id
         ";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         $rows = $rows?$rows:array();
@@ -54,7 +54,7 @@ class RptKaRetention extends ReportData2 {
               select contract_no,max(id) as max_id from swo_service_ka_no WHERE status_dt<='{$endDate}' GROUP BY contract_no
             ) f ON a.id=f.max_id and a.contract_no=f.contract_no 
             LEFT JOIN swo_service_ka b ON a.service_id=b.id
-            WHERE a.status!='T' AND b.salesman_id in ({$sales_sql_str}) ORDER BY b.city,b.status_dt,b.salesman_id
+            WHERE a.status!='T' AND f.max_id is NOT null AND !(b.paid_type=1 AND b.ctrt_period<12) AND b.salesman_id in ({$sales_sql_str}) ORDER BY b.city,b.status_dt,b.salesman_id
         ";
         $kaRow = Yii::app()->db->createCommand($kaSql)->queryAll();
         $kaRow = $kaRow?$kaRow:array();
@@ -81,7 +81,7 @@ class RptKaRetention extends ReportData2 {
                 $temp["city_name"] = $cityList[$row["city"]];
 
                 if(!key_exists($row["cust_type"],$custTypeList)){
-                    $custTypeList[$row["cust_type"]] = GetNameToId::getCustOneNameForId($row["table_class"]);
+                    $custTypeList[$row["cust_type"]] = GetNameToId::getCustOneNameForId($row["cust_type"]);
                 }
                 $temp["cust_type"] = $custTypeList[$row["cust_type"]];
 

@@ -33,7 +33,7 @@ class RptUService extends ReportData2 {
         $list = array();
         //$rows = CountSearch::getTechnicianMoney($startDay,$endDay,$city_allow);
         $this->u_load_data['u_load_start'] = time();
-        $rows = CountSearch::getTechnicianMoney($startDay,$endDay);//由于派单系统不做城市判断，所以查询所有城市
+        $rows = CountSearch::getTechnicianMoney($startDay,$endDay,$city_allow);//由于派单系统不做城市判断，所以查询所有城市
         $this->u_load_data['u_load_end'] = time();
         $UStaffCodeList = array_column($rows,"staff");
         $userList = $this->getUserList($UStaffCodeList,$endDay);

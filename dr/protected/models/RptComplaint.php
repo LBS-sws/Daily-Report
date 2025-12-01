@@ -34,6 +34,8 @@ class RptComplaint extends ReportData2 {
 			'mcard_remarks'=>array('label'=>Yii::t('followup','Contend of Update to Job Card'),'width'=>10,'align'=>'L'),
 			'mcard_staff'=>array('label'=>Yii::t('followup','Staff of Update Job Card'),'width'=>10,'align'=>'L'),
 			'date_diff'=>array('label'=>Yii::t('followup','Date Diff.'),'width'=>10,'align'=>'L'),
+			'cust_sfn'=>array('label'=>Yii::t('followup','cust sfn'),'width'=>10,'align'=>'L'),
+			'cust_vfn'=>array('label'=>Yii::t('followup','cust vfn'),'width'=>10,'align'=>'L'),
 		);
 	}
 
@@ -86,7 +88,9 @@ class RptComplaint extends ReportData2 {
 			'mcard_remarks',
 			'mcard_staff',
 			'date_diff',
-			
+			'cust_sfn',
+			'cust_vfn',
+
 		);
 	}
 	
@@ -119,9 +123,9 @@ class RptComplaint extends ReportData2 {
 		$where = "where a.city in ({$city_allow})";
 		if (isset($this->criteria)) {
 			if (isset($this->criteria->start_dt))
-				$where .= (($where=='where') ? " " : " and ")."a.entry_dt>='".General::toDate($this->criteria->start_dt)."'";
+				$where .= (($where=='where') ? " " : " and ")."a.entry_dt>='".General::toDate($this->criteria->start_dt)." 00:00:00'";
 			if (isset($this->criteria->end_dt))
-				$where .= (($where=='where') ? " " : " and ")."a.entry_dt<='".General::toDate($this->criteria->end_dt)."'";
+				$where .= (($where=='where') ? " " : " and ")."a.entry_dt<='".General::toDate($this->criteria->end_dt)." 23:59:59'";
 		}
 		if ($where!='where') $sql .= $where;	
 		$sql .= " order by a.city,a.entry_dt";
@@ -162,6 +166,8 @@ class RptComplaint extends ReportData2 {
 				$temp['svc_comment'] = $row['svc_comment'];
 				$temp['mcard_remarks'] = $row['mcard_remarks'];
 				$temp['mcard_staff'] = $row['mcard_staff'];
+				$temp['cust_sfn'] = FollowupList::getCustSfnStrByKey($row['cust_sfn']);
+				$temp['cust_vfn'] = $row['cust_vfn'];
 				$temp['date_diff'] = (empty($temp['fp_call_dt']) || empty($temp['entry_dt'])) ? '' : (strtotime($temp['fp_call_dt'])-strtotime($temp['entry_dt']))/86400;
 				$this->data[] = $temp;
 			}

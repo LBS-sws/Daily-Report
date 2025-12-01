@@ -104,6 +104,7 @@ class QcForm extends CFormModel
 							'score_afterwork'=>30,
 						);
 
+    public $ltNowDate=false;//小于当前日期：true
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -244,9 +245,53 @@ class QcForm extends CFormModel
 			array('service_score, qc_result, cust_score','numerical','allowEmpty'=>true,'integerOnly'=>false),
 			array('cust_score','numerical','allowEmpty'=>true,'integerOnly'=>true),
 			array('cust_score','in','range'=>range(0,$this->maxscore('cust_score'))),
+			array('id','validateID'),
 			array('info','validateDetailRecords'),
 		);
 	}
+
+    public function validateID($attribute, $params) {
+        $thisDate = date("Y/m/01");
+        $status_dt = date("Y/m/d",strtotime($this->qc_dt));
+        $scenario = $this->getScenario();
+        if(in_array($scenario,array("new"))){
+            $this->ltNowDate = $status_dt<$thisDate;
+            //验证新增
+            if($status_dt<$thisDate){
+                $this->addError($attribute, "无法新增({$status_dt})时间段的数据");
+            }
+        }else{
+            $id= empty($this->id)?0:$this->id;
+            $row = Yii::app()->db->createCommand()->select("a.*")->from("swo_qc a")
+                ->where("a.id=:id",array(":id"=>$id))->queryRow();
+            if($row){
+                $row["qc_dt"] = date("Y/m/d",strtotime($row["qc_dt"]));
+                $this->ltNowDate = $row["qc_dt"]<$thisDate;
+                if($scenario=="delete"){
+                    if($row["qc_dt"]<$thisDate){
+                        $this->addError($attribute, "无法删除({$row["qc_dt"]})时间段的数据");
+                    }
+                }else{
+                    $updateBool = $status_dt<$thisDate;//验证修改后的时间
+                    $updateBool = $updateBool||$row["qc_dt"]<$thisDate;//验证修改前的时间
+                    if($updateBool){
+                        $notUpdate=self::getNotUpdateList();
+                        foreach ($notUpdate as $item){
+                            $this->$item = $row[$item];
+                        }
+                    }
+                }
+            }else{
+                $this->addError($attribute, "数据异常，请刷新重试");
+            }
+        }
+    }
+
+    public static function getNotUpdateList(){
+        return array("city","qc_staff","company_id","company_name",
+            "job_staff","qc_dt","qc_result","service_score","cust_score"
+        );
+    }
 
 	public function validateDetailRecords($attribute, $params) {
 		$rows = $this->$attribute;
@@ -318,6 +363,7 @@ class QcForm extends CFormModel
 		$sql = "select *,docman$suffix.countdoc('QC',id) as no_of_attm, docman$suffix.countdoc('QCPHOTO',id) as no_of_photo from swo_qc where id=$index and city in ($city) $allcond ";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		if ($row!==false) {
+            $thisDate = date("Y/m/01");
 			$this->id = $row['id'];
 			$qid = $this->id;
 			$this->entry_dt = General::toDate($row['entry_dt']);
@@ -332,6 +378,7 @@ class QcForm extends CFormModel
 			$this->qc_result = $row['qc_result'];
 			$this->env_grade = $row['env_grade'];
 			$this->qc_dt = General::toDate($row['qc_dt']);
+            $this->ltNowDate = $this->qc_dt<$thisDate;
 			$this->cust_sign = $row['cust_sign'];
 			$this->qc_staff = $row['qc_staff'];
 			$this->remarks = $row['remarks'];
@@ -388,7 +435,7 @@ class QcForm extends CFormModel
 						}
 					}
 				}
-				$this->saveQcInfo($connection);
+                $this->saveQcInfo($connection);
 			}
 			$this->updateDocman($connection,'QC');
 			$this->updateDocman($connection,'QCPHOTO');
@@ -522,6 +569,9 @@ class QcForm extends CFormModel
 		$uid = Yii::app()->user->id;
 
 		foreach ($this->info as $key=>$value) {
+		    if($this->ltNowDate&&!in_array($key, $this->blob_fields)){
+		        continue;
+            }
 			$sql = '';
 			switch ($this->scenario) {
 				case 'delete':

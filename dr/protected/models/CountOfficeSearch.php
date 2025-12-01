@@ -6,6 +6,22 @@
 class CountOfficeSearch extends CountSearch{
 
     //获取服务单月数据 - 办事处
+    public static function getUServiceMoneyForOfficeV3($startDay,$endDay,$city_allow="",$printBool=false,$type=0){
+        $list = SystemU::getUServiceMoneyForOfficeV3($startDay,$endDay,$city_allow,$printBool,$type);
+        $arr = array();
+        if(isset($list["data"])&&is_array($list["data"])){
+            foreach ($list["data"] as $city=>$rows){
+                if(is_array($rows)){
+                    foreach ($rows as $office_id=>$number){
+                        $arr[$office_id]=$number;
+                    }
+                }
+            }
+        }
+        return $arr;
+    }
+
+    //获取服务单月数据 - 办事处
     public static function getUServiceOfficeMoneyOne($startDay,$endDay,$city_allow="",$printBool=false,$type=0){
         $list = SystemU::getUServiceOfficeMoney($startDay,$endDay,$city_allow,$printBool,$type);
         $arr = array();
@@ -287,6 +303,65 @@ class CountOfficeSearch extends CountSearch{
     //客户服务查询(根據服務類型)- 办事处
     public static function getServiceOfficeForType($startDate,$endDate,$city_allow="",$type="N"){
         $whereSql = "a.status='{$type}' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        if(!empty($city_allow)&&$city_allow!="all"){
+            $whereSql.= " and a.city in ({$city_allow})";
+        }
+        $whereSql .= self::$whereSQL;
+        $list=array();
+        $rows = Yii::app()->db->createCommand()
+            ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,
+            IF(a.office_id='' or a.office_id is NULL,a.city,a.office_id) as office_city,
+					a.city")
+            ->from("swo_service a")
+            ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+            ->where($whereSql)->group("office_city,a.city")->queryAll();
+        $rows = $rows?$rows:array();
+
+        if(self::$IDBool){
+            $IDRows = Yii::app()->db->createCommand()
+                ->select("sum(a.amt_paid*a.ctrt_period) as sum_amount,
+            IF(a.office_id='' or a.office_id is NULL,a.city,a.office_id) as office_city,
+                a.city")
+                ->from("swo_serviceid a")
+                ->leftJoin("swo_customer_type_id f","a.cust_type=f.id")
+                ->where($whereSql)->group("office_city,a.city")->queryAll();//
+            $IDRows = $IDRows?$IDRows:array();
+            $rows = array_merge($rows,$IDRows);
+        }
+
+        if(self::$KABool){
+            $kaSqlPrx = self::getServiceKASQL("a.");
+            $KARows = Yii::app()->db->createCommand()
+                ->select("sum(case a.paid_type
+							when 'M' then a.amt_paid * a.ctrt_period
+							else a.amt_paid
+						end
+					) as sum_amount,
+            IF(a.office_id='' or a.office_id is NULL,a.city,a.office_id) as office_city,
+					a.city")
+                ->from("swo_service_ka a")
+                ->leftJoin("swo_customer_type f","a.cust_type=f.id")
+                ->where($whereSql." and {$kaSqlPrx}")
+                ->group("office_city,a.city")->queryAll();
+            $KARows = $KARows?$KARows:array();
+            $rows = array_merge($rows,$KARows);
+        }
+        foreach ($rows as $row){
+            if(!isset($list[$row["city"]][$row["office_city"]])){
+                $list[$row["city"]][$row["office_city"]]=0;
+            }
+            $list[$row["city"]][$row["office_city"]]+=$row["sum_amount"];
+        }
+        return $list;
+    }
+
+    //利比斯客户服务查询(根據服務類型)- 办事处
+    public static function getLBSServiceOfficeForType($startDate,$endDate,$city_allow="",$type="N"){
+        $whereSql = "a.status='{$type}' and a.external_source=5 and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
         if(!empty($city_allow)&&$city_allow!="all"){
             $whereSql.= " and a.city in ({$city_allow})";
         }

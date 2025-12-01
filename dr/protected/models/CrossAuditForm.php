@@ -2,20 +2,20 @@
 
 class CrossAuditForm extends CrossApplyForm
 {
-	/**
-	 * Declares the validation rules.
-	 */
-	public function rules()
-	{
-		return array(
+    /**
+     * Declares the validation rules.
+     */
+    public function rules()
+    {
+        return array(
             array('id,table_type,apply_category,service_id,contract_no,apply_date,month_amt,rate_num,old_city,
             cross_city,cross_type,send_city,status_type,reject_note,remark,audit_date,audit_user','safe'),
-			array('service_id,apply_date,month_amt,cross_type','required'),
-			array('reject_note','required',"on"=>array("reject")),
-			array('id','validateID'),
+            //array('service_id,apply_date,month_amt,cross_type','required'),
+            array('reject_note','required',"on"=>array("reject")),
+            array('id','validateID'),
             array('send_city','validateCity'),
-		);
-	}
+        );
+    }
 
     public function validateID($attribute, $params) {
         $index = is_numeric($this->id)?$this->id:0;
@@ -36,6 +36,7 @@ class CrossAuditForm extends CrossApplyForm
             $this->old_city = $row["old_city"];
             $this->send_city = $row['send_city'];
             $this->cross_type = $row['cross_type'];
+            $this->status_type = $row['status_type'];
             $this->cross_city = $row['cross_city'];
             $this->lcu = $row["lcu"];
             $this->month_amt = $row['month_amt'];
@@ -51,29 +52,33 @@ class CrossAuditForm extends CrossApplyForm
             $this->addError($attribute, "交叉派单不存在，请刷新重试");
             return false;
         }
+        if(in_array($this->getScenario(),array("audit","reject"))&&!in_array($this->status_type,array(1,6))){
+            $this->addError($attribute, "交叉派单状态异常($this->status_type)");
+            return false;
+        }
         return true;
     }
 
-	public function retrieveData($index)
-	{
-		$suffix = Yii::app()->params['envSuffix'];
+    public function retrieveData($index)
+    {
+        $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
-		$sql = "select * from swo_cross where id='".$index."' and (
+        $sql = "select * from swo_cross where id='".$index."' and (
             (cross_city in ({$city_allow}) and cross_type not in (0,1))
             or (old_city in ({$city_allow}) and cross_type in (0,1))
             or (cross_type=5 and qualification_city in ({$city_allow}))
             or (cross_type=13 and (cross_city in ({$city_allow}) or qualification_city in ({$city_allow})))
 		)";
-		$row = Yii::app()->db->createCommand($sql)->queryRow();
-		if ($row!==false) {
-			$this->id = $row['id'];
-			$this->table_type = $row['table_type'];
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        if ($row!==false) {
+            $this->id = $row['id'];
+            $this->table_type = $row['table_type'];
             $this->cross_num = $row['cross_num'];
-			$this->service_id = $row['service_id'];
-			$this->contract_no = $row['contract_no'];
-			$this->apply_date = General::toDate($row['apply_date']);
-			$this->month_amt = $row['month_amt'];
-			$this->rate_num = floatval($row['rate_num']);
+            $this->service_id = $row['service_id'];
+            $this->contract_no = $row['contract_no'];
+            $this->apply_date = General::toDate($row['apply_date']);
+            $this->month_amt = $row['month_amt'];
+            $this->rate_num = floatval($row['rate_num']);
             $this->old_city = $row['old_city'];
             $this->cross_city = $row['cross_city'];
             $this->status_type = $row['status_type'];
@@ -95,57 +100,57 @@ class CrossAuditForm extends CrossApplyForm
             $this->effective_date = General::toDate($row['effective_date']);
             $this->resetContractNo();
             return true;
-		}else{
-		    return false;
+        }else{
+            return false;
         }
-	}
-	
-	public function saveData()
-	{
-		$connection = Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$bool = $this->saveDataForSql($connection);
-			$transaction->commit();
-			return $bool;
-		}
-		catch(Exception $e) {
-		    var_dump($e);
-			$transaction->rollback();
-			throw new CHttpException(404,'Cannot update.');
-		}
-	}
+    }
 
-	protected function saveDataForSql(&$connection)
-	{
-		$suffix = Yii::app()->params['envSuffix'];
-		$sql = '';
-		switch ($this->getScenario()) {
-			case "reject"://拒绝
+    public function saveData()
+    {
+        $connection = Yii::app()->db;
+        $transaction=$connection->beginTransaction();
+        try {
+            $bool = $this->saveDataForSql($connection);
+            $transaction->commit();
+            return $bool;
+        }
+        catch(Exception $e) {
+            var_dump($e);
+            $transaction->rollback();
+            throw new CHttpException(404,'Cannot update.');
+        }
+    }
+
+    protected function saveDataForSql(&$connection)
+    {
+        $suffix = Yii::app()->params['envSuffix'];
+        $sql = '';
+        switch ($this->getScenario()) {
+            case "reject"://拒绝
                 $sql = "update swo_cross set 
 					status_type = 2,
 					reject_note = :reject_note ,
 					audit_date = :audit_date,
 					luu = :luu
 					where id = :id";
-				break;
-			case "audit"://通过
+                break;
+            case "audit"://通过
                 $sql = "update swo_cross set 
 					audit_user = :audit_user, 
 					audit_date = :audit_date,
 					status_type = 3,
 					luu = :luu
 					where id = :id";
-			    break;
-		}
+                break;
+        }
 
-		$uid = Yii::app()->user->id;
+        $uid = Yii::app()->user->id;
 
-		$command=$connection->createCommand($sql);
-		if (strpos($sql,':id')!==false)
-			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
-		if (strpos($sql,':reject_note')!==false)
-			$command->bindParam(':reject_note',$this->reject_note,PDO::PARAM_STR);
+        $command=$connection->createCommand($sql);
+        if (strpos($sql,':id')!==false)
+            $command->bindParam(':id',$this->id,PDO::PARAM_INT);
+        if (strpos($sql,':reject_note')!==false)
+            $command->bindParam(':reject_note',$this->reject_note,PDO::PARAM_STR);
         if (strpos($sql,':audit_user')!==false)
             $command->bindParam(':audit_user',$uid,PDO::PARAM_STR);
         if (strpos($sql,':audit_date')!==false){
@@ -153,19 +158,19 @@ class CrossAuditForm extends CrossApplyForm
             $command->bindParam(':audit_date',$this->audit_date,PDO::PARAM_STR);
         }
 
-		if (strpos($sql,':luu')!==false)
-			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
-		$command->execute();
+        if (strpos($sql,':luu')!==false)
+            $command->bindParam(':luu',$uid,PDO::PARAM_STR);
+        $command->execute();
 
-		if(in_array($this->getScenario(),array("reject"))){
-		    $this->sendEmail();//审核的邮件由curl成功后再发送
+        if(in_array($this->getScenario(),array("reject"))){
+            $this->sendEmail();//审核的邮件由curl成功后再发送
         }
 
-		if($this->getScenario()=="audit"){
-             return $this->sendCurl();
+        if($this->getScenario()=="audit"){
+            return $this->sendCurl();
         }
-		return true;
-	}
+        return true;
+    }
 
     private function sendEmail(){
         if($this->table_type==0){
@@ -197,8 +202,8 @@ class CrossAuditForm extends CrossApplyForm
         $message.="<p>申请时间：".$this->apply_date."</p>";
         $emailModel = new Email($title,$message,$title);
         if(in_array($this->cross_type,array(0,1,5,11,12))&&!empty($this->send_city)){//普通合约、KA合约
-            $emailModel->addEmailToPrefixAndCity("CD01",$this->send_city);
-            $emailModel->addEmailToPrefixAndCity("CD02",$this->send_city);
+            $emailModel->addEmailToPrefixAndCity("CW01",$this->send_city);
+            $emailModel->addEmailToPrefixAndCity("CW02",$this->send_city);
             $emailModel->addEmailToCity($this->send_city);
         }
         $emailModel->addEmailToLcu($this->lcu);
@@ -220,7 +225,7 @@ class CrossAuditForm extends CrossApplyForm
             //"customer_code"=>$serviceModel->customer_code."-{$this->old_city}",//客户编号
             //"customer_name"=>$serviceModel->customer_name,//客户名称
             "contract_number"=>$this->contract_no,//合约编号
-            "send_money"=>null,//发包方金额
+            "send_money"=>$this->month_amt,//发包方金额
             "send_contract_id"=>$this->old_city,//发包方（城市代号：ZY）
             "send_office_id"=>self::getHrOfficeUIDForID($this->office_id),//发包方办事处（U系统办事处id）
             "audit_user_name"=>self::getEmployeeStrForUsername(Yii::app()->user->id),//审核人名称+编号如：400002_沈超
@@ -263,7 +268,7 @@ class CrossAuditForm extends CrossApplyForm
             "accept_audit_ratio"=>empty($cross_city)?null:$this->rate_num,//审核比例
             "accept_money"=>empty($cross_city)?null:$this->cross_amt,//承接方金额
             "accept_contract_id"=>empty($cross_city)?null:$cross_city,//承接方（城市代号：ZY）
-            "notice_object_id"=>$event==2||$this->cross_type==5?$this->send_city:null,//通知城市
+            "notice_object_id"=>empty($this->send_city)?null:$this->send_city,//通知城市
             "qualification_audit_ratio"=>empty($this->qualification_city)?null:$this->qualification_ratio,//资质方比例
             "qualification_contract_id"=>empty($this->qualification_city)?null:$this->qualification_city,//资质方
             "qualification_money"=>empty($this->qualification_city)?null:$this->qualification_amt,//资质方金额
@@ -297,25 +302,28 @@ class CrossAuditForm extends CrossApplyForm
         }
     }
 
-	public function readonly(){
+    public function readonly(){
         return true;
     }
 
     public function auditFull(){
-	    $idList = key_exists("attrStr",$_POST)?$_POST["attrStr"]:"";
+        $idList = key_exists("attrStr",$_POST)?$_POST["attrStr"]:"";
         $idList = explode(",",$idList);
         $uid = Yii::app()->user->id;
         $auditDate = date_format(date_create(),"Y/m/d H:i:s");
-	    if(!empty($idList)){
-	        $curlData = array();
-	        $modelObjList = array();
-	        foreach ($idList as $id){
-	            $modelObj = new CrossAuditForm();
+        if(!empty($idList)){
+            $curlData = array();
+            $modelObjList = array();
+            $errorMsg = "";
+            foreach ($idList as $id){
+                $modelObj = new CrossAuditForm('audit');
                 $modelObj->id = $id;
                 $modelObj->audit_date = $auditDate;
                 if ($modelObj->validate()) {
                     $modelObjList[]=$modelObj;
                     $curlData[]=$modelObj->getCurlData();
+                }else{
+                    $errorMsg.="<br/>交叉ID（{$id}）：".CHtml::errorSummary($modelObj);;
                 }
             }
 
@@ -325,7 +333,7 @@ class CrossAuditForm extends CrossApplyForm
                 //$rtn = array('message'=>'测试', 'code'=>200, 'outData'=>json_encode(array("errorData"=>array(array("lbs_id"=>22,"errorMsg"=>"ddddd")))));;
                 $this->curlBlack($rtn,$modelObjList,$curlData);
             }else{
-                Dialog::message(Yii::t('dialog','Information'), "数据异常，请在详情内审核交叉派单");
+                Dialog::message(Yii::t('dialog','Information'), "数据异常，请在详情内审核交叉派单".$errorMsg);
             }
         }else{
             Dialog::message(Yii::t('dialog','Information'), "请选择审批的交叉派单");
@@ -389,16 +397,16 @@ class CrossAuditForm extends CrossApplyForm
 
     public function rejectFull(){
         $rejectNote = key_exists("reject_note",$_POST)?$_POST["reject_note"]:"";
-	    $idList = key_exists("attrStr",$_POST)?$_POST["attrStr"]:"";
+        $idList = key_exists("attrStr",$_POST)?$_POST["attrStr"]:"";
         $idList = explode(",",$idList);
         $uid = Yii::app()->user->id;
         $auditDate = date_format(date_create(),"Y/m/d H:i:s");
         $this->audit_date = $auditDate;
         $this->reject_note = $rejectNote;
-	    if(!empty($idList)){
-	        foreach ($idList as $id){
-	            $this->id = $id;
-	            $this->clearErrors();
+        if(!empty($idList)){
+            foreach ($idList as $id){
+                $this->id = $id;
+                $this->clearErrors();
                 if ($this->validateID("id","")) {
                     Yii::app()->db->createCommand()->update("swo_cross",array(
                         "audit_user"=>$uid,

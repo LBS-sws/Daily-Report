@@ -115,6 +115,11 @@ class ExtsysQueueCommand extends CConsoleCommand {
 		$n_param = json_decode($nparam);
 		$o_param = json_decode($oparam);
 		
+		if (empty($userid)) {
+			$this->ok = false;
+			return;
+		}
+		
 		switch ($action) {
 			case 'new':
 				$n_param->right=='CN' && $this->onlibNewUser($userid, $n_param->disp_name, $n_param->email, $n_param->role);
@@ -122,7 +127,7 @@ class ExtsysQueueCommand extends CConsoleCommand {
 			case 'edit':
 				$userobj = $this->onlibGetUser($userid);
 				if ($userobj===false) {
-					$this->onlibNewUser($userid, $n_param->disp_name, $n_param->email, $n_param->role);
+					if ($n_param->right=='CN') $this->onlibNewUser($userid, $n_param->disp_name, $n_param->email, $n_param->role);
 				} else {
 					$n_param->right!=$o_param->right &&	$this->onlibSetUserStatus($userid, ($n_param->right!='CN'));
 					$n_param->role!=$o_param->role && $this->onlibChangeUserInGroup($userid, $n_param->role, $o_param->role);
@@ -147,7 +152,7 @@ class ExtsysQueueCommand extends CConsoleCommand {
 	}
 	
 	private function onlibAdminLogin() {
-		$data = "user=admin&pass=admin";
+		$data = "user=admin&pass=Swisher@1051";
 		$rtn = $this->restAPI('POST', $this->onlib_URL.'login', $data);
 		return $this->onlibCheckRtn($rtn);
 	}
@@ -166,6 +171,7 @@ class ExtsysQueueCommand extends CConsoleCommand {
 	
 	private function onlibNewUser($userid, $username, $email, $role) {
 		$pwd = md5($userid.'$1688');
+//		$pwd = md5('Lbs1688');
 		$data = "user=$userid&pass=$pwd&name=$username&email=$email&language=zh_CN&theme=bootstrap&comment=Created_by_DMS&role=user";
 
 		echo "New User\tDATA: $data\n";

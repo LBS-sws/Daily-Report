@@ -2,7 +2,6 @@
 
 class CalcLogistic extends Calculation {
 
-//今月应送皂液（桶）
 	public static function sumSoapPlanQty($year, $month) {
 		$rtn = array();
 		$sql = "select 
@@ -21,8 +20,7 @@ class CalcLogistic extends Calculation {
 		}
 		return $rtn;
 	}
-
-//今月实际送皂液（桶）	
+	
 	public static function sumSoapActualQty($year, $month) {
 		$rtn = array();
 		$sql = "select 
@@ -43,8 +41,7 @@ class CalcLogistic extends Calculation {
 		}
 		return $rtn;
 	}
-
-//今月应送纸品（箱）	
+	
 	public static function sumPaperPlanQty($year, $month) {
 		$rtn = array();
 		$sql = "select 
@@ -63,8 +60,7 @@ class CalcLogistic extends Calculation {
 		}
 		return $rtn;
 	}
-
-//今月实际送纸品（箱）	
+	
 	public static function sumPaperActualQty($year, $month) {
 		$rtn = array();
 		$sql = "select 
@@ -85,8 +81,7 @@ class CalcLogistic extends Calculation {
 		}
 		return $rtn;
 	}
-
-//今月应送洗地易（桶）	
+	
 	public static function sumFloorPlanQty($year, $month) {
 		$rtn = array();
 		$sql = "select 
@@ -105,8 +100,7 @@ class CalcLogistic extends Calculation {
 		}
 		return $rtn;
 	}
-
-//今月实际送洗地易（桶）	
+	
 	public static function sumFloorActualQty($year, $month) {
 		$rtn = array();
 		$sql = "select 

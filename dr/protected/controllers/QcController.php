@@ -702,10 +702,22 @@ class QcController extends Controller
 		$model = new QcForm('delete');
 		if (isset($_POST['QcForm'])) {
 			$model->attributes = $_POST['QcForm'];
-			$model->saveData();
-			Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+            if ($model->validate()) {
+                $model->saveData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+                $this->redirect(Yii::app()->createUrl('qc/index'));
+            }else {
+                $model->setScenario("edit");
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                switch ($model->service_type) {
+                    case 'IA': $formfile = $model->new_form ? 'formia' : 'form'; break;
+                    case 'IB' : $formfile = $model->new_form ? 'formib' : 'form'; break;
+                    default : $formfile = 'form';
+                }
+                $this->render($formfile,array('model'=>$model,));
+            }
 		}
-		$this->redirect(Yii::app()->createUrl('qc/index'));
 	}
 
     public function actionRemove()
@@ -716,7 +728,7 @@ class QcController extends Controller
 
         }
         $model->remove($model);
-        echo "<script>location.href='".$_SERVER["HTTP_REFERER"]."';</script>";
+        $this->redirect(Yii::app()->createUrl('qc/edit',array("index"=>$model->id)));
 //        if (! $model->remove($model)) {
 //            throw new CHttpException(404,'The requested page does not exist.');
 //        } else {

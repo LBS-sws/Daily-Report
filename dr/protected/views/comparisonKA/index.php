@@ -125,6 +125,9 @@ $js="
         $('#search_div').children('div').hide();
         $('#search_div').children('div[data-id='+id+']').show();
     });
+    $('button').click(function(){
+        Loading.show();
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDatePicker(array(

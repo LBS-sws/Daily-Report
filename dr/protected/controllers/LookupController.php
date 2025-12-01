@@ -27,7 +27,7 @@ class LookupController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('company','staff','product','companyex2','companyex','staffex','staffAndEx','staffex2','productex','template','userstaffex','reasonex',
-                    'citySearchex'),
+                    'citySearchex','employeeAllex'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -35,6 +35,30 @@ class LookupController extends Controller
 			),
 		);
 	}
+	
+
+    public function actionEmployeeAllex($search)
+    {
+        $suffix = Yii::app()->params['envSuffix'];
+        $result = array();
+        $searchx = str_replace("'","\'",$search);
+        $records = Yii::app()->db->createCommand()->select("id,code,name,city")
+            ->from("hr{$suffix}.hr_employee")
+            ->where("(name like '%$searchx%' or code like '%$searchx%') and staff_status!=-1")->queryAll();
+        $notArr = array();
+        if (count($records) > 0) {
+            foreach ($records as $k=>$record) {
+                if(!in_array($record['id'],$notArr)){
+                    $result[] = array(
+                        'id'=>$record['id'],
+                        'value'=>$record['name']." ({$record['code']})",
+                        'city'=>$record['city'],
+                    );
+                }
+            }
+        }
+        print json_encode($result);
+    }
 
 	/**
 	 * Lists all models.
@@ -238,13 +262,19 @@ class LookupController extends Controller
 	}
 
 	public function actionStaffEx2($search,$city='')	{
-		$city = empty($city)?Yii::app()->user->city():$city;
+	    if(empty($city)){
+	        $cityAllow = Yii::app()->user->city_allow();
+	        $citySql = "city in ({$cityAllow}) ";
+        }else{
+            $citySql = "city='{$city}' ";
+        }
+		$city = empty($city)?Yii::app()->user->city_allow():$city;
 		$result = array();
 		$searchx = str_replace("'","\'",$search);
 
 		$sql = "select id, concat(name, ' (', code, ')') as value from swo_staff_v
 				where (code like '%".$searchx."%' or name like '%".$searchx."%') 
-				and (city='".$city."' or (city='ZY' and department like '%技术%'))
+				and ({$citySql} or (city='ZY' and department like '%技术%'))
 				and (leave_dt is null or leave_dt=0 or leave_dt > now()) 
 			";
         $result1 = Yii::app()->db->createCommand($sql)->queryAll();
@@ -252,14 +282,14 @@ class LookupController extends Controller
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select a.id, concat(a.name, ' (', a.code, ')') as value from swo_staff_v a, hr$suffix.hr_plus_city b
 				where (a.code like '%".$searchx."%' or a.name like '%".$searchx."%') 
-				and b.city='".$city."'
+				and b.{$citySql}
 				and (a.leave_dt is null or a.leave_dt=0 or a.leave_dt > now())
 				and a.id=b.employee_id
 			";
 		$result3 = Yii::app()->db->createCommand($sql)->queryAll();
 
 		$sql = "select id, concat(name, ' (', code, ')',' ".Yii::t('app','(Resign)')."') as value from swo_staff_v
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
+				where (code like '%".$searchx."%' or name like '%".$searchx."%') and {$citySql}
 				and  leave_dt is not null and leave_dt<>0 and leave_dt <= now() ";
 		$result2 = Yii::app()->db->createCommand($sql)->queryAll();
 		

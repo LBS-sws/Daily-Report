@@ -12,6 +12,7 @@ class RptKaRetentionMonth extends RptKaRetention {
             'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
             'office_name'=>array('label'=>"归属",'width'=>12,'align'=>'C'),
             'table_class'=>array('label'=>"菜单名称",'width'=>12,'align'=>'C'),
+            'status'=>array('label'=>"合约类型",'width'=>12,'align'=>'C'),
             'lcd'=>array('label'=>"输入日期",'width'=>18,'align'=>'C'),
             'company_code'=>array('label'=>"客户编号",'width'=>12,'align'=>'C'),
             'company_code_pre'=>array('label'=>"客户编号(含尾缀)",'width'=>12,'align'=>'C'),
@@ -28,7 +29,7 @@ class RptKaRetentionMonth extends RptKaRetention {
             'salesman'=>array('label'=>"业务员",'width'=>20,'align'=>'C'),
             'othersalesman'=>array('label'=>"被跨区业务员",'width'=>20,'align'=>'C'),
             'technician'=>array('label'=>"负责技术员",'width'=>20,'align'=>'C'),
-            'status_dt'=>array('label'=>"终止日期",'width'=>20,'align'=>'C'),
+            'status_dt'=>array('label'=>"更改、续约、恢复、终止日期",'width'=>20,'align'=>'C'),
             'sign_dt'=>array('label'=>"签约日期",'width'=>12,'align'=>'C'),
             'ctrt_period'=>array('label'=>"合同年限(月)",'width'=>12,'align'=>'C'),
             'ctrt_end_dt'=>array('label'=>"合同终止日期",'width'=>12,'align'=>'C'),
@@ -46,8 +47,9 @@ class RptKaRetentionMonth extends RptKaRetention {
 
         $startDate = date("Y/m/01",strtotime("{$this->criteria->year}/{$this->month}/01"));
         $endDate = date("Y/m/t",strtotime("{$this->criteria->year}/{$this->month}/01"));
-        $whereSql = "a.status='T' and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
-        $whereSql.= " and a.salesman_id in ({$sales_sql_str}) and (a.reason!='【系统自动触发】:合同已到期' or a.reason is null)";
+        $whereSql = "a.status in ('A','R','S','T') and a.status_dt BETWEEN '{$startDate}' and '{$endDate}'";
+        $whereSql.= " and a.salesman_id in ({$sales_sql_str})";
+        // and (a.reason!='【系统自动触发】:合同已到期' or a.reason is null)
         $whereSql.= CountSearch::$whereSQL;
 
         $rows = Yii::app()->db->createCommand()
@@ -153,6 +155,35 @@ class RptKaRetentionMonth extends RptKaRetention {
                     $year_amt = empty($row["amt_paid"])?0:floatval($row["amt_paid"]);
                     $month_amt = empty($temp["ctrt_period"])?0:($year_amt/$temp["ctrt_period"]);
                     $month_amt = round($month_amt,2);
+                }
+                switch ($row["status"]){
+                    case "A":
+                        if($row["b4_paid_type"]=="M"){
+                            $b4_month_amt = empty($row["b4_amt_paid"])?0:floatval($row["b4_amt_paid"]);
+                            $b4_year_amt = $b4_month_amt*$temp["ctrt_period"];
+                        }else{
+                            $b4_year_amt = empty($row["b4_amt_paid"])?0:floatval($row["b4_amt_paid"]);
+                            $b4_month_amt = empty($temp["ctrt_period"])?0:($b4_year_amt/$temp["ctrt_period"]);
+                            $b4_month_amt = round($b4_month_amt,2);
+                        }
+                        $month_amt-=$b4_month_amt;
+                        $year_amt-=$b4_year_amt;
+                        $temp["status"]="更改";
+                        break;
+                    case "S":
+                        $temp["status"]="暂停";
+                        $year_amt*=-1;
+                        break;
+                    case "R":
+                        $temp["status"]="恢复";
+                        break;
+                    case "T":
+                        $temp["status"]="终止";
+                        $year_amt*=-1;
+                        break;
+                    default:
+                        $temp["status"]=$row["status"];
+
                 }
 
                 $temp["month_amt"] = $month_amt;

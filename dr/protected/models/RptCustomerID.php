@@ -10,7 +10,7 @@ class RptCustomerID extends ReportData2 {
             case 'N':
             	$dt_name = 'New Date';
                 $list = array(
-                	"city_name","status_dt","company_name","cust_type","nature","pieces","service","pay_week",
+                    "id","city_name","status_dt","company_name","group_code","group_name","cust_type","nature","pieces","service","pay_week",
                 	"prepay_month","amt_paid","ctrt_period","amt_money","need_install","amt_install","sign_dt",
                 	"ctrt_end_dt","equip_install_dt","freq","salesman","othersalesman","technician","cont_info",
                 	"remarks2","remarks","back_date","back_money","put_month","out_month"
@@ -19,7 +19,7 @@ class RptCustomerID extends ReportData2 {
             case 'C':
             	$dt_name = 'Renew Date';
                 $list = array(
-                    "city_name","status_dt","company_name","cust_type","nature","pieces","service","pay_week",
+                    "id","city_name","status_dt","company_name","group_code","group_name","cust_type","nature","pieces","service","pay_week",
                     "amt_paid","ctrt_period","amt_money","need_install","amt_install","sign_dt",
                     "ctrt_end_dt","equip_install_dt","freq","salesman","othersalesman","technician","cont_info",
                     "remarks2","remarks","back_date","back_money","put_month","out_month"
@@ -28,7 +28,7 @@ class RptCustomerID extends ReportData2 {
             case 'A':
             	$dt_name = 'Amend Date';
                 $list = array(
-                    "city_name","status_dt","company_name","cust_type","nature",
+                    "id","city_name","status_dt","company_name","group_code","group_name","cust_type","nature",
 					"amt_paid"=>"b4_amt_paid","amt_money"=>"b4_amt_money","pieces"=>"b4_pieces","cust_type_end"=>"b4_cust_type_end",
 					"amt_paid","amt_money","pieces","cust_type_end",
                     "amt_paid_diff","amt_year",
@@ -40,7 +40,7 @@ class RptCustomerID extends ReportData2 {
             case 'S':
             	$dt_name = 'Suspend Date';
                 $list = array(
-                    "city_name","status_dt","company_name","cust_type","nature","pieces","service","pay_week",
+                    "id","city_name","status_dt","company_name","group_code","group_name","cust_type","nature","pieces","service","pay_week",
                     "amt_paid","ctrt_period","amt_money","need_install","amt_install","sign_dt",
                     "ctrt_end_dt","equip_install_dt","salesman","othersalesman","technician","cont_info",
                     "remarks2","remarks"
@@ -49,7 +49,7 @@ class RptCustomerID extends ReportData2 {
             case 'R':
             	$dt_name = 'Resume Date';
                 $list = array(
-                    "city_name","status_dt","company_name","cust_type","nature","pieces","service","pay_week",
+                    "id","city_name","status_dt","company_name","group_code","group_name","cust_type","nature","pieces","service","pay_week",
                     "amt_paid","ctrt_period","amt_money","need_install","amt_install","sign_dt",
                     "ctrt_end_dt","equip_install_dt","salesman","othersalesman","technician","cont_info",
                     "remarks2","remarks"
@@ -58,8 +58,8 @@ class RptCustomerID extends ReportData2 {
             case 'T':
             	$dt_name = 'Terminate Date';
                 $list = array(
-                    "city_name","status_dt","company_name","cust_type","nature","pieces","service","pay_week",
-                    "amt_paid","ctrt_period","amt_money","all_number","surplus",
+                    "id","city_name","status_dt","company_name","group_code","group_name","cust_type","nature","pieces","service","pay_week",
+                    "amt_paid","ctrt_period","amt_money","all_number","surplus","surplus_amt",
 					"need_install","amt_install","sign_dt",
                     "ctrt_end_dt","equip_install_dt","salesman","othersalesman","technician","reason","tracking","cont_info",
                     "remarks2","remarks"
@@ -69,11 +69,15 @@ class RptCustomerID extends ReportData2 {
                 $dt_name = 'New Date';
 		}
         $arr=array();
+        $arr['id'] = array('label'=>"LBS系统ID",'width'=>12,'align'=>'L');
+        //日期
         $arr['city_name'] = array('label'=>Yii::t('app',"City"),'width'=>12,'align'=>'C');
         //日期
         $arr['status_dt'] = array('label'=>Yii::t('service',$dt_name),'width'=>18,'align'=>'C');
         //客户编号及名称
         $arr['company_name'] = array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L');
+        $arr['group_code'] = array('label'=>"KA/集团编号",'width'=>18,'align'=>'L');
+        $arr['group_name'] = array('label'=>"KA/集团名称",'width'=>18,'align'=>'L');
         //客户类别
         $arr['cust_type'] = array('label'=>Yii::t('service','Customer Type'),'width'=>40,'align'=>'L');
         //性质
@@ -102,6 +106,7 @@ class RptCustomerID extends ReportData2 {
         $arr['all_number'] = array('label'=>Yii::t('service','put month'),'width'=>15,'align'=>'C');
         //剩余月数
         $arr['surplus'] = array('label'=>Yii::t('service','surplus month'),'width'=>15,'align'=>'C');
+        $arr['surplus_amt'] = array('label'=>"剩余金额",'width'=>15,'align'=>'C');
         //是否收取押金
         $arr['need_install'] = array('label'=>Yii::t('service','Whether to charge deposit'),'width'=>20,'align'=>'C');
         //机器押金
@@ -158,7 +163,7 @@ class RptCustomerID extends ReportData2 {
         //N:新增 C:續約 A:更改 S:暫停 R:恢復 T:終止
         if($this->customerType=="A") {
             return array(
-                "city_name","status_dt","company_name","cust_type","nature",
+                "id","city_name","status_dt","company_name","group_code","group_name","cust_type","nature",
                 array(
                     'label'=>Yii::t('service','Before'),
                     'child'=>array(
@@ -258,7 +263,7 @@ class RptCustomerID extends ReportData2 {
 		
 		$sql = "select a.*,
 			j.code as product_code,j.description as product_name,
-			g.code as com_code,g.name as com_name,
+			g.code as com_code,g.name as com_name,g.group_id as group_code,g.group_name,
 			h.description as pay_week_name, b.description as nature,
 			 c.description as customer_type
 					from swo_serviceid a
@@ -283,9 +288,12 @@ class RptCustomerID extends ReportData2 {
 			foreach ($rows as $row) {
                 $this->resetRow($row);
 				$temp = array();
+                $temp['id'] = $row['id'];
 				$temp['city_name'] = General::getCityName($row['city']);
 				$temp['status_dt'] = General::toDate($row['status_dt']);
 				$temp['company_name'] = $row['com_code'].$row['com_name'];
+				$temp['group_code'] = $row['group_code'];
+				$temp['group_name'] = $row['group_name'];
 				$temp['cust_type'] = $row['cust_type'];
 				$temp['nature'] = $row['nature'];
 				$temp['pieces'] = $row['pieces'];
@@ -293,6 +301,7 @@ class RptCustomerID extends ReportData2 {
 				$temp['reason'] = $row['reason'];
 				$temp['tracking'] = $row['tracking'];
 				$temp['surplus'] = $row['surplus']."天";
+                $temp['surplus_amt'] = $row['surplus_amt'];
 				$temp['service'] = $row['product_code']." ".$row['product_name'];
 				$temp['pay_week'] = $row['pay_week_name'];
 				$temp['prepay_month'] = $row['prepay_month'];

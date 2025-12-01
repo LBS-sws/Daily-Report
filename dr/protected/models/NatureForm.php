@@ -12,6 +12,7 @@ class NatureForm extends CFormModel
             'name'=>'',
             'rpt_u'=>'',
             'score_bool'=>0,//是否計算積分0：不計算 1：計算
+            'z_display'=>0,//是否显示
             'uflag'=>'N',
         ),
     );
@@ -28,6 +29,7 @@ class NatureForm extends CFormModel
 			'rpt_cat'=>Yii::t('code','Report Category'),
 			'name'=>Yii::t('code','Description'),
 			'rpt_u'=>Yii::t('code','rpt u'),
+			'z_display'=>"是否显示",
 			'score_bool'=>Yii::t('code','score bool'),
 		);
 	}
@@ -68,6 +70,7 @@ class NatureForm extends CFormModel
                 $temp['name'] = $row['name'];
                 $temp['rpt_u'] = $row['rpt_u'];
                 $temp['score_bool'] = $row['score_bool'];
+                $temp['z_display'] = $row['z_display'];
                 $temp['uflag'] = 'N';
                 $this->detail[] = $temp;
             }
@@ -144,9 +147,9 @@ class NatureForm extends CFormModel
                 case 'new':
                     if ($row['uflag']=='Y') {
                         $sql = "insert into swo_nature_type(
-									name, nature_id, rpt_u, score_bool,lcu
+									name, nature_id, rpt_u, score_bool, z_display,lcu
 								) values (
-									:name, :nature_id, :rpt_u, :score_bool,:lcu
+									:name, :nature_id, :rpt_u, :score_bool, :z_display,:lcu
 								)";
                     }
                     break;
@@ -159,9 +162,9 @@ class NatureForm extends CFormModel
                             $sql = ($row['id']==0)
                                 ?
                                 "insert into swo_nature_type(
-										name, nature_id, rpt_u, score_bool,lcu
+										name, nature_id, rpt_u, score_bool, z_display,lcu
 									) values (
-										:name, :nature_id, :rpt_u, :score_bool,:lcu
+										:name, :nature_id, :rpt_u, :score_bool, :z_display,:lcu
 									)
 									"
                                 :
@@ -169,6 +172,7 @@ class NatureForm extends CFormModel
 										name = :name,
 										rpt_u = :rpt_u, 
 										score_bool = :score_bool,
+										z_display = :z_display,
 										luu = :luu 
 									where id = :id 
 									";
@@ -189,8 +193,11 @@ class NatureForm extends CFormModel
                     $row['rpt_u'] =$row['rpt_u']===""?null:$row['rpt_u'];
                     $command->bindParam(':rpt_u',$row['rpt_u'],PDO::PARAM_INT);
                 }
-                if (strpos($sql,':score_bool')!==false)
+                if (strpos($sql,':score_bool')!==false){
                     $command->bindParam(':score_bool',$row['score_bool'],PDO::PARAM_INT);
+                }
+                if (strpos($sql,':z_display')!==false)
+                    $command->bindParam(':z_display',$row['z_display'],PDO::PARAM_INT);
                 if (strpos($sql,':luu')!==false)
                     $command->bindParam(':luu',$uid,PDO::PARAM_STR);
                 if (strpos($sql,':lcu')!==false)

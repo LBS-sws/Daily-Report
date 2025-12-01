@@ -39,7 +39,7 @@ class ReportKaRetentionForm extends CReportForm
         $rpt_array = array($this->id=>$this->name,);
         $maxMonth = date("n",strtotime(" - 1 months"));
         for ($i=1;$i<=$maxMonth;$i++){
-            $rpt_array["RptKaRetentionMonth{$i}"]="{$i}月终止金额";
+            $rpt_array["RptKaRetentionMonth{$i}"]="{$i}月金额";
         }
         $this->ccuser = (!empty($this->ccuser) && is_array($this->ccuser)) ? array_merge($this->ccuser, $bosses) : $bosses;
         $data = array(

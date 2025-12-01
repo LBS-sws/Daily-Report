@@ -2,10 +2,14 @@
 class RptCustnew extends ReportData2 {
 	public function fields() {
 		return array(
+            'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'L'),
 			'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
 			'office_name'=>array('label'=>"归属",'width'=>12,'align'=>'C'),
 			'status_dt'=>array('label'=>Yii::t('service','New Date'),'width'=>18,'align'=>'C'),
+            'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
+            'group_code'=>array('label'=>"KA/集团编号",'width'=>18,'align'=>'L'),
+            'group_name'=>array('label'=>"KA/集团名称",'width'=>18,'align'=>'L'),
 			'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
 			'cust_type_name_two'=>array('label'=>Yii::t('service','Layer 2'),'width'=>20,'align'=>'L'),
 			'service'=>array('label'=>Yii::t('service','Service'),'width'=>40,'align'=>'L'),
@@ -47,7 +51,7 @@ class RptCustnew extends ReportData2 {
             $city_allow = "'".implode("','",$city_allow)."'";
         }
 		
-		$sql = "select a.*, b.description as nature,f.code as com_code,f.name as com_name, c.description as customer_type, d.cust_type_name as cust_type_name_two 
+		$sql = "select a.*, b.description as nature,f.code as com_code,f.name as com_name,f.group_id as group_code,f.group_name, c.description as customer_type, d.cust_type_name as cust_type_name_two 
 					from swo_service a
 					left outer join swo_nature b on a.nature_type=b.id 
         			left outer join swo_company f on a.company_id=f.id 
@@ -73,11 +77,15 @@ class RptCustnew extends ReportData2 {
                     $officeList[$row["office_id"]] = GetNameToId::getOfficeNameForID($row['office_id']);
 				}
 				$temp = array();
+                $temp['id'] = $row['id'];
 				$temp['city_name'] = General::getCityName($row["city"]);
 				$temp['office_name'] = $officeList[$row["office_id"]];
 				$temp['type'] = $row['customer_type'];
 				$temp['status_dt'] = General::toDate($row['status_dt']);
-				$temp['company_name'] = empty($row['com_name'])?$row['company_name']:$row['com_code'].$row['com_name'];
+                $temp['company_code'] = $row['com_code'];
+                $temp['company_name'] = empty($row['com_name'])?$row['company_name']:$row['com_name'];
+                $temp['group_code'] = $row['group_code'];
+                $temp['group_name'] = $row['group_name'];
 				$temp['nature'] = $row['nature'];
 				$temp['cust_type_name_two'] = $row['cust_type_name_two'];
 				$temp['service'] = $row['service'];

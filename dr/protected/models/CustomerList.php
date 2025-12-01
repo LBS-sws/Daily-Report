@@ -18,6 +18,8 @@ class CustomerList extends CListPageModel
 			'cont_phone'=>Yii::t('customer','Contact Phone'),
 			'city_name'=>Yii::t('misc','City'),
             'status'=>Yii::t('customer','Status'),
+            'group_id'=>Yii::t('customer','Group ID'),
+            'group_name'=>Yii::t('customer','Group Name'),
 		);
 	}
 	
@@ -55,6 +57,12 @@ class CustomerList extends CListPageModel
 				case 'cont_phone':
 					$clause .= General::getSqlConditionClause('a.cont_phone',$svalue);
 					break;
+				case 'group_id':
+					$clause .= General::getSqlConditionClause('a.group_id',$svalue);
+					break;
+				case 'group_name':
+					$clause .= General::getSqlConditionClause('a.group_name',$svalue);
+					break;
 				case 'status':
 					$clause .= self::getStatusSQL($svalue);
 					break;
@@ -87,6 +95,8 @@ class CustomerList extends CListPageModel
 					'cont_name'=>$record['cont_name'],
 					'cont_phone'=>$record['cont_phone'],
 					'city_name'=>$record['city_name'],
+					'group_id'=>$record['group_id'],
+					'group_name'=>$record['group_name'],
 					'status'=>self::getStatusStr($record['status']),
 				);
 			}

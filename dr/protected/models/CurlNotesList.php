@@ -387,6 +387,20 @@ class CurlNotesList extends CListPageModel
             "getInvDataOfficeCityAmount"=>array("args"=>array("start"=>"2024-08-01","end"=>"2024-08-31","city"=>"'{$city}'")),
             //获取办事处INV类型发票城市金额
             "getUServiceOfficeMoney"=>array("args"=>array("start"=>"2024-08-01","end"=>"2024-08-31","city"=>"'{$city}'")),
+            //获取办事处INV类型发票城市金额
+            "getSalaryMoney"=>array("args"=>array("start"=>"2025-04-01","end"=>"2025-04-30","staffList"=>"")),
+            //获取U系统的服务单数据(发包方、承接方、资质方)
+            "getUServiceMoneyV3"=>array("args"=>array("start"=>"2025-05-01","end"=>"2025-05-31","city"=>"'{$city}'")),
+            //获取U系统的办事处服务数据(发包方、承接方、资质方)
+            "getUServiceMoneyForOfficeV3"=>array("args"=>array("start"=>"2025-05-01","end"=>"2025-05-31","city"=>"'{$city}'")),
+            //获取服务单月数据(销售)
+            "getUServiceMoneyBySales"=>array("args"=>array("start"=>"2025-05-01","end"=>"2025-05-31","salesCode"=>"'{$city}'")),
+            //获取INV类型的汇总(销售)
+            "getInvDataSalesAmount"=>array("args"=>array("start"=>"2025-05-01","end"=>"2025-05-31","salesCode"=>"'{$city}'")),
+            //获取INV类型的详情(销售)
+            "getInvDataSalesDetail"=>array("args"=>array("start"=>"2025-05-01","end"=>"2025-05-31","salesCode"=>"'{$city}'")),
+            //获取销售的工单金额（月为主键）
+            "getUServiceToMonthBySales"=>array("args"=>array("start"=>"2025-05-01","end"=>"2025-05-31","salesCode"=>"'{$city}'")),
         );
         if(key_exists($type,$list)){
             $params=array();

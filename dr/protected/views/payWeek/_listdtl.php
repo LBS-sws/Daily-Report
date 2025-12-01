@@ -2,4 +2,6 @@
 	<td><?php echo $this->drawEditButton('C09', 'payWeek/edit', 'payWeek/view', array('index'=>$this->record['id'])); ?></td>
 	<td><?php echo $this->record['code']; ?></td>
 	<td><?php echo $this->record['description']; ?></td>
+	<td><?php echo $this->record['u_id']; ?></td>
+	<td><?php echo $this->record['z_display']; ?></td>
 </tr>

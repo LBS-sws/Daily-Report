@@ -2,7 +2,7 @@
 
 class CrossAuditController extends Controller
 {
-	public $function_id='CD02';
+	public $function_id='CW02';
 	
 	public function filters()
 	{
@@ -133,10 +133,10 @@ class CrossAuditController extends Controller
 	}
 	
 	public static function allowReadWrite() {
-		return Yii::app()->user->validRWFunction('CD02');
+		return Yii::app()->user->validRWFunction('CW02');
 	}
 	
 	public static function allowReadOnly() {
-		return Yii::app()->user->validFunction('CD02');
+		return Yii::app()->user->validFunction('CW02');
 	}
 }

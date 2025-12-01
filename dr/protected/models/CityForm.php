@@ -15,9 +15,12 @@ class CityForm extends CFormModel
 	public $OPERA;//营业报告（营运系统）
 	public $JD_city;//金蝶组织编号
 	public $JD_cost_code;//成本中心编号
+	public $SALES_OUT;//销售出库额外城市
     //public $BS_city;//北森组织编号
 
     protected $dynamic_fields = array(
+        //销售出库额外城市
+        'SALES_OUT'=>array("type"=>"list","func"=>array("CityForm","getAllCityList"),"param"=>array(),"text"=>"上级城市允许选择下级城市的客户资料"),
         //货币
         'currency'=>array("type"=>"list","func"=>array("Currency","getDropDownList"),"param"=>array()),
         //销售系统排行榜
@@ -57,6 +60,7 @@ class CityForm extends CFormModel
 			'JD_city'=>Yii::t('code','JD City'),
 			'BS_city'=>Yii::t('code','BS City'),
 			'JD_cost_code'=>Yii::t('code','JD cost code'),
+			'SALES_OUT'=>"销售出库上级城市",
 		);
 	}
 
@@ -246,6 +250,20 @@ class CityForm extends CFormModel
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		foreach ($rows as $row) {
 			$rtn[$row['username']] = $row['disp_name'];
+		}
+		return $rtn;
+	}
+
+	public function getAllCityList() {
+		$rtn = array(""=>"");
+		$suffix = Yii::app()->params['envSuffix'];
+		$sql = "select code, name 
+				from security$suffix.sec_city
+				order by code ASC 
+			";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		foreach ($rows as $row) {
+			$rtn[$row['code']] = $row['name'];
 		}
 		return $rtn;
 	}

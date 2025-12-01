@@ -28,6 +28,7 @@ class QcBoxForm extends CFormModel
     public $luu;
     public $lcd;
     public $lud;
+    public $errorID;
 
     public $docType = 'QC';
     public $files;
@@ -73,34 +74,34 @@ class QcBoxForm extends CFormModel
         "security"=>array(//安全措施
             "name"=>'Security',//项目名称
             "type"=>1,//项目类型 1：必填 2：允许设置
-            "totalSum"=>8,//项目总分
+            "totalSum"=>5,//项目总分
             "list"=>array(
                 array("title"=>"security_01","name"=>"security_01","max_num"=>3),
-                array("title"=>"security_02","name"=>"security_02","max_num"=>5),
+                array("title"=>"security_02","name"=>"security_02","max_num"=>2),
             )
         ),
         "flow"=>array(//服务流程
             "name"=>'Service Flow',//项目名称
             "type"=>1,//项目类型 1：必填 2：允许设置
-            "totalSum"=>8,//项目总分
+            "totalSum"=>7,//项目总分
             "list"=>array(
-                array("title"=>"flow_01","name"=>"flow_01","max_num"=>5),
+                array("title"=>"flow_01","name"=>"flow_01","max_num"=>4),
                 array("title"=>"flow_02","name"=>"flow_02","max_num"=>3),
             )
         ),
         "report"=>array(//沟通报告
             "name"=>'Communication Report',//项目名称
             "type"=>1,//项目类型 1：必填 2：允许设置
-            "totalSum"=>12,//项目总分
+            "totalSum"=>10,//项目总分
             "list"=>array(
-                array("title"=>"report_01","name"=>"report_01","max_num"=>5),
+                array("title"=>"report_01","name"=>"report_01","max_num"=>4),
                 array("title"=>"report_02","name"=>"report_02","max_num"=>2),
-                array("title"=>"report_03","name"=>"report_03","max_num"=>5),
+                array("title"=>"report_03","name"=>"report_03","max_num"=>4),
             )
         ),
         "machine"=>array(//检查机器
             "name"=>'Check Machine',//项目名称
-            "type"=>1,//项目类型 1：必填 2：允许设置
+            "type"=>2,//项目类型 1：必填 2：允许设置
             "totalSum"=>7,//项目总分
             "list"=>array(
                 array("title"=>"machine_01","name"=>"machine_01","max_num"=>2),
@@ -113,37 +114,37 @@ class QcBoxForm extends CFormModel
             "type"=>2,//项目类型 1：必填 2：允许设置
             "totalSum"=>10,//项目总分
             "list"=>array(
-                array("title"=>"wash_01","name"=>"wash_01","max_num"=>3),
+                array("title"=>"wash_01","name"=>"wash_01","max_num"=>5),
                 array("title"=>"wash_02","name"=>"wash_02","max_num"=>2),
                 array("title"=>"wash_03","name"=>"wash_03","max_num"=>3),
-                array("title"=>"wash_04","name"=>"wash_04","max_num"=>2),
+                //array("title"=>"wash_04","name"=>"wash_04","max_num"=>2),
             )
         ),
         "latrine"=>array(//蹲厕清洁
             "name"=>'latrine',//项目名称
             "type"=>2,//项目类型 1：必填 2：允许设置
-            "totalSum"=>16,//项目总分
+            "totalSum"=>17,//项目总分
             "list"=>array(
                 array("title"=>"latrine_01","name"=>"latrine_01","max_num"=>3),
-                array("title"=>"latrine_02","name"=>"latrine_02","max_num"=>3),
+                array("title"=>"latrine_02","name"=>"latrine_02","max_num"=>5),
                 array("title"=>"latrine_03","name"=>"latrine_03","max_num"=>3),
-                array("title"=>"latrine_04","name"=>"latrine_04","max_num"=>2),
-                array("title"=>"latrine_05","name"=>"latrine_05","max_num"=>2),
-                array("title"=>"latrine_06","name"=>"latrine_06","max_num"=>3),
+                array("title"=>"latrine_04","name"=>"latrine_04","max_num"=>6),
+                //array("title"=>"latrine_05","name"=>"latrine_05","max_num"=>2),
+                //array("title"=>"latrine_06","name"=>"latrine_06","max_num"=>3),
             )
         ),
         "lavatory"=>array(//坐厕清洁
             "name"=>'lavatory',//项目名称
             "type"=>2,//项目类型 1：必填 2：允许设置
-            "totalSum"=>17,//项目总分
+            "totalSum"=>18,//项目总分
             "list"=>array(
                 array("title"=>"lavatory_01","name"=>"lavatory_01","max_num"=>3),
-                array("title"=>"lavatory_02","name"=>"lavatory_02","max_num"=>3),
+                array("title"=>"lavatory_02","name"=>"lavatory_02","max_num"=>5),
                 array("title"=>"lavatory_03","name"=>"lavatory_03","max_num"=>2),
-                array("title"=>"lavatory_04","name"=>"lavatory_04","max_num"=>2),
+                array("title"=>"lavatory_04","name"=>"lavatory_04","max_num"=>6),
                 array("title"=>"lavatory_05","name"=>"lavatory_05","max_num"=>2),
-                array("title"=>"lavatory_06","name"=>"lavatory_06","max_num"=>2),
-                array("title"=>"lavatory_07","name"=>"lavatory_07","max_num"=>3),
+                //array("title"=>"lavatory_06","name"=>"lavatory_06","max_num"=>2),
+                //array("title"=>"lavatory_07","name"=>"lavatory_07","max_num"=>3),
             )
         ),
         "urine"=>array(//尿缸清洁
@@ -152,11 +153,20 @@ class QcBoxForm extends CFormModel
             "totalSum"=>16,//项目总分
             "list"=>array(
                 array("title"=>"urine_01","name"=>"urine_01","max_num"=>3),
-                array("title"=>"urine_02","name"=>"urine_02","max_num"=>3),
-                array("title"=>"urine_03","name"=>"urine_03","max_num"=>3),
+                array("title"=>"urine_02","name"=>"urine_02","max_num"=>5),
+                array("title"=>"urine_03","name"=>"urine_03","max_num"=>6),
                 array("title"=>"urine_04","name"=>"urine_04","max_num"=>2),
-                array("title"=>"urine_05","name"=>"urine_05","max_num"=>2),
-                array("title"=>"urine_06","name"=>"urine_06","max_num"=>3),
+                //array("title"=>"urine_05","name"=>"urine_05","max_num"=>2),
+                //array("title"=>"urine_06","name"=>"urine_06","max_num"=>3),
+            )
+        ),
+        "label"=>array(//检查标签/喷除菌及酵素
+            "name"=>'Label',//项目名称
+            "type"=>2,//项目类型 1：必填 2：允许设置
+            "totalSum"=>4,//项目总分
+            "list"=>array(
+                array("title"=>"label_01","name"=>"label_01","max_num"=>2),
+                array("title"=>"label_02","name"=>"label_02","max_num"=>2),
             )
         ),
     );
@@ -165,45 +175,45 @@ class QcBoxForm extends CFormModel
         "image"=>array(//形象资质
             "name"=>'Image Qualification',//项目名称
             "type"=>1,//项目类型 1：必填 2：允许设置
-            "totalSum"=>9,//项目总分
+            "totalSum"=>8,//项目总分
             "list"=>array(
                 array("title"=>"image_ib_01","name"=>"image_ib_01","max_num"=>3),
                 array("title"=>"image_ib_02","name"=>"image_ib_02","max_num"=>3),
-                array("title"=>"image_ib_03","name"=>"image_ib_03","max_num"=>3),
+                array("title"=>"image_ib_03","name"=>"image_ib_03","max_num"=>2),
             )
         ),
         "security"=>array(//安全管理
             "name"=>'Security IB',//项目名称
             "type"=>1,//项目类型 1：必填 2：允许设置
-            "totalSum"=>12,//项目总分
+            "totalSum"=>13,//项目总分
             "list"=>array(
                 array("title"=>"security_ib_01","name"=>"security_ib_01","max_num"=>3),
                 array("title"=>"security_ib_02","name"=>"security_ib_02","max_num"=>3),
-                array("title"=>"security_ib_03","name"=>"security_ib_03","max_num"=>3),
+                array("title"=>"security_ib_03","name"=>"security_ib_03","max_num"=>4),
                 array("title"=>"security_ib_04","name"=>"security_ib_04","max_num"=>3),
             )
         ),
         "report"=>array(//沟通管理
             "name"=>'Communication IB',//项目名称
             "type"=>1,//项目类型 1：必填 2：允许设置
-            "totalSum"=>10,//项目总分
+            "totalSum"=>9,//项目总分
             "list"=>array(
                 array("title"=>"report_ib_01","name"=>"report_ib_01","max_num"=>2),
                 array("title"=>"report_ib_02","name"=>"report_ib_02","max_num"=>3),
                 array("title"=>"report_ib_03","name"=>"report_ib_03","max_num"=>2),
-                array("title"=>"report_ib_04","name"=>"report_ib_04","max_num"=>3),
+                array("title"=>"report_ib_04","name"=>"report_ib_04","max_num"=>2),
             )
         ),
         "rat"=>array(//鼠防治管理
             "name"=>'Rat IB',//项目名称
             "type"=>2,//项目类型 1：必填 2：允许设置
-            "totalSum"=>27,//项目总分
+            "totalSum"=>26,//项目总分
             "list"=>array(
-                array("title"=>"rat_ib_01","name"=>"rat_ib_01","max_num"=>5),
+                array("title"=>"rat_ib_01","name"=>"rat_ib_01","max_num"=>6),
                 array("title"=>"rat_ib_02","name"=>"rat_ib_02","max_num"=>3),
-                array("title"=>"rat_ib_03","name"=>"rat_ib_03","max_num"=>3),
+                array("title"=>"rat_ib_03","name"=>"rat_ib_03","max_num"=>2),
                 array("title"=>"rat_ib_04","name"=>"rat_ib_04","max_num"=>3),
-                array("title"=>"rat_ib_05","name"=>"rat_ib_05","max_num"=>3),
+                array("title"=>"rat_ib_05","name"=>"rat_ib_05","max_num"=>2),
                 array("title"=>"rat_ib_06","name"=>"rat_ib_06","max_num"=>3),
                 array("title"=>"rat_ib_07","name"=>"rat_ib_07","max_num"=>2),
                 array("title"=>"rat_ib_08","name"=>"rat_ib_08","max_num"=>5),
@@ -212,10 +222,10 @@ class QcBoxForm extends CFormModel
         "cockroach"=>array(//蟑螂防治管理
             "name"=>'Cockroach IB',//项目名称
             "type"=>2,//项目类型 1：必填 2：允许设置
-            "totalSum"=>22,//项目总分
+            "totalSum"=>24,//项目总分
             "list"=>array(
-                array("title"=>"cockroach_ib_01","name"=>"cockroach_ib_01","max_num"=>5),
-                array("title"=>"cockroach_ib_02","name"=>"cockroach_ib_02","max_num"=>2),
+                array("title"=>"cockroach_ib_01","name"=>"cockroach_ib_01","max_num"=>6),
+                array("title"=>"cockroach_ib_02","name"=>"cockroach_ib_02","max_num"=>3),
                 array("title"=>"cockroach_ib_03","name"=>"cockroach_ib_03","max_num"=>2),
                 array("title"=>"cockroach_ib_04","name"=>"cockroach_ib_04","max_num"=>3),
                 array("title"=>"cockroach_ib_05","name"=>"cockroach_ib_05","max_num"=>3),
@@ -239,7 +249,8 @@ class QcBoxForm extends CFormModel
         ),
     );
 
-    public static $effectDate='2025-05-06';//该功能生效时间
+    public static $effectDate='2025-08-01';//该功能生效时间
+    public $ltNowDate=false;//小于当前日期：true
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -291,8 +302,46 @@ class QcBoxForm extends CFormModel
                 'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
             ),
             array('qc_result','numerical','allowEmpty'=>true,'integerOnly'=>false),
+            array('id','validateID'),
             array('info','validateDetailRecords'),
         );
+    }
+
+    public function validateID($attribute, $params) {
+        $thisDate = date("Y/m/01");
+        $status_dt = date("Y/m/d",strtotime($this->qc_dt));
+        $scenario = $this->getScenario();
+        if(in_array($scenario,array("new"))){
+            $this->ltNowDate = $status_dt<$thisDate;
+            //验证新增
+            if($status_dt<$thisDate){
+                $this->addError($attribute, "无法新增({$status_dt})时间段的数据");
+            }
+        }else{
+            $id= empty($this->id)?0:$this->id;
+            $row = Yii::app()->db->createCommand()->select("a.*")->from("swo_qc a")
+                ->where("a.id=:id",array(":id"=>$id))->queryRow();
+            if($row){
+                $row["qc_dt"] = date("Y/m/d",strtotime($row["qc_dt"]));
+                $this->ltNowDate = $row["qc_dt"]<$thisDate;
+                if($scenario=="delete"){
+                    if($row["qc_dt"]<$thisDate){
+                        $this->addError($attribute, "无法删除({$row["qc_dt"]})时间段的数据");
+                    }
+                }else{
+                    $updateBool = $status_dt<$thisDate;//验证修改后的时间
+                    $updateBool = $updateBool||$row["qc_dt"]<$thisDate;//验证修改前的时间
+                    if($updateBool){
+                        $notUpdate=QcForm::getNotUpdateList();
+                        foreach ($notUpdate as $item){
+                            $this->$item = $row[$item];
+                        }
+                    }
+                }
+            }else{
+                $this->addError($attribute, "数据异常，请刷新重试");
+            }
+        }
     }
 
     public function validateDetailRecords($attribute, $params) {
@@ -329,14 +378,31 @@ class QcBoxForm extends CFormModel
                         $saveArr[$name]='';
                         $qc_result+= $row["max_num"];
                     }else{
+                        if(!empty($infoRows[$name])&&!is_numeric($infoRows[$name])){
+                            $this->errorID="QcBoxForm_info_{$name}";
+                            $this->addError($attribute, Yii::t('qc',$row["title"])."只能为数字");
+                            return false;
+                        }
                         if($infoRows[$name]>$row["max_num"]){
+                            $this->errorID="QcBoxForm_info_{$name}";
                             $this->addError($attribute, Yii::t('qc',$row["title"])."不能大于".$row["max_num"]);
                             return false;
                         }
-                        $saveArr[$name]=empty($infoRows[$name])?0:floatval($infoRows[$name]);
-                        $qc_result+= $saveArr[$name];
+                        if($infoRows[$name]===''||$infoRows[$name]===null){
+                            $keyValue = 0;
+                            $saveArr[$name]='';
+                        }else{
+                            $keyValue=floatval($infoRows[$name]);
+                            $saveArr[$name]=floatval($infoRows[$name]);
+                        }
+                        $qc_result+= $keyValue;
                     }
                 }
+            }
+        }
+        if(isset($saveArr['cust_sfn'])&&!empty($saveArr['cust_sfn'])){
+            if(!is_numeric($saveArr['cust_sfn'])||$saveArr['cust_sfn']<0||$saveArr['cust_sfn']>10){
+                $this->addError($attribute, Yii::t('qc',"Customer satisfaction")."只能是0到10之间的数字");
             }
         }
         $this->qc_result = $qc_result;
@@ -374,14 +440,14 @@ class QcBoxForm extends CFormModel
     }
 
     public function printInfoHtml(){
-        $html="<table style='min-width: 955px' class=\"table table-fixed table-condensed table-bordered table-hover\">";
+        $html="<table class=\"table table-fixed table-condensed table-bordered table-hover\">";
         $html.="<thead>";
         $html.="</tr>";
-        $html.="<th width='30px'>&nbsp;</th>";
-        $html.="<th width='600px'>".Yii::t("qc","Assessment items")."</th>";
-        $html.="<th width='105px'>".Yii::t("qc","score value")."</th>";
-        $html.="<th width='110px'>".Yii::t("qc","execution environment")."</th>";
-        $html.="<th width='110px'>".Yii::t("qc","text note")."</th>";
+        $html.="<th class='hidden-xs' style='width:30px;'>&nbsp;</th>";
+        $html.="<th>".Yii::t("qc","Assessment items")."</th>";
+        $html.="<th style='width:105px;'>".Yii::t("qc","score value")."</th>";
+        $html.="<th class='hidden-xs' style='width:110px;'>".Yii::t("qc","execution environment")."</th>";
+        $html.="<th class='hidden-xs' style='width:110px;'>".Yii::t("qc","text note")."</th>";
         $html.="</tr>";
         $html.="</thead><tbody>";
         $arr=array();
@@ -398,10 +464,11 @@ class QcBoxForm extends CFormModel
             foreach ($arr as $code=>$rows){
                 $strNum++;
                 $rowspan = count($rows["list"])+1;
+                $rowTitle = Yii::t("qc",$rows["name"]);
                 $html.="<tr>";
-                $html.="<td rowspan='{$rowspan}' class='text-center' style='vertical-align: middle'><b>".chr($strNum)."</b></td>";
-                $html.="<td class='text-center' style='background-color: #FDE9D9'><b>".Yii::t("qc",$rows["name"])."</b></td>";
-                $ready = $this->readonly();
+                $html.="<td rowspan='{$rowspan}' class='hidden-xs text-center' style='vertical-align: middle'><b>".chr($strNum)."</b></td>";
+                $html.="<td class='text-center' style='background-color: #FDE9D9'><b>".$rowTitle."</b></td>";
+                $ready = $this->readonly()||$this->ltNowDate;
                 if($rows["type"]==2){
                     if($this->info[$code."_all"]==1){
                         $totalSum = "";
@@ -413,12 +480,12 @@ class QcBoxForm extends CFormModel
                     $html.="<td style='background-color: #FDE9D9'>";
                     $html.=TbHtml::dropDownList("{$className}[info][{$code}_all]",$this->info[$code."_all"],array(1=>"包含",2=>"不包含"),array("class"=>"changeAll","data-name"=>$code,"data-sum"=>$rows["totalSum"]));
                     $html.="</td>";
-                    $html.="<td class='text-center' style='background-color: #FDE9D9'>{$totalSum}</td>";
+                    $html.="<td class='text-center hidden-xs' style='background-color: #FDE9D9'>{$totalSum}</td>";
                 }else{
                     $html.="<td style='background-color: #FDE9D9'>&nbsp;</td>";
-                    $html.="<td style='background-color: #FDE9D9'>&nbsp;</td>";
+                    $html.="<td  class='hidden-xs'style='background-color: #FDE9D9'>&nbsp;</td>";
                 }
-                $html.="<td style='background-color: #FDE9D9'>&nbsp;</td>";
+                $html.="<td class='hidden-xs' style='background-color: #FDE9D9'>&nbsp;</td>";
                 $html.="</tr>";
                 foreach ($rows["list"] as $row){
                     $name = $row["name"];
@@ -426,24 +493,33 @@ class QcBoxForm extends CFormModel
                     if($rows["type"]!=2||$this->info[$code."_all"]==1){
                         $total_amt+=empty($this->info[$name])?0:$this->info[$name];
                     }
-                    $html.="<tr>";
+                    $html.="<tr class='click-xs' data-title='{$rowTitle}' data-id='{$name}'>";
                     $html.="<td>".Yii::t("qc",$row["title"])."</td>";
-                    $html.="<td class='text-center'>".$row["max_num"]."</td>";
-                    $html.="<td>";
+                    $html.="<td class='hidden-xs text-center'>".$row["max_num"]."</td>";
+                    $html.="<td class='hidden-xs'>";
                     $html.=TbHtml::numberField("{$className}[info][{$name}]",$this->info[$name],array("min"=>0,"max"=>$row["max_num"],"class"=>"{$code}_val changeAmt","readonly"=>$ready,"data-off"=>$ready?1:0));
                     $html.="</td>";
-                    $html.="<td>";
+                    $html.="<td class='hidden-xs'>";
                     $html.=TbHtml::textArea("{$className}[info][{$name}_remark]",$this->info[$name."_remark"],array("class"=>"{$code}_rmk","readonly"=>$ready));
+                    $html.="</td>";
+                    $html.="<td class='visible-xs mark-text'>";
+                    if($this->info[$name]!==''&&$this->info[$name]!==null){
+                        $html.="<b>评分：".$this->info[$name]."</b>";
+                    }
+                    if($this->info[$name."_remark"]!==''&&$this->info[$name."_remark"]!==null){
+                        $html.="<br/><b>备注：</b>".$this->info[$name."_remark"];
+                    }
                     $html.="</td>";
                     $html.="</tr>";
                 }
             }
             $html.="<tfoot>";
             $html.="<tr>";
-            $html.="<th class='text-right' colspan='2'>合计</th>";
-            $html.="<th class='text-center'><b>{$qc_amt}</b></th>";
+            $html.="<th class='hidden-xs text-right'>&nbsp;</th>";
+            $html.="<th class='text-right'>合计</th>";
+            $html.="<th class='hidden-xs text-center'><b>{$qc_amt}</b></th>";
             $html.="<th class='text-center'><b class='totalAmtText'>{$total_amt}</b></th>";
-            $html.="<th>&nbsp;</th>";
+            $html.="<th class='hidden-xs'>&nbsp;</th>";
             $html.="</tr>";
             $html.="</tfoot>";
         }
@@ -461,6 +537,7 @@ class QcBoxForm extends CFormModel
         $sql = "select *,docman$suffix.countdoc('QC',id) as no_of_attm, docman$suffix.countdoc('QCPHOTO',id) as no_of_photo from swo_qc where id=$index and city in ($city) $allcond ";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if ($row!==false) {
+            $thisDate = date("Y/m/01");
             $this->id = $row['id'];
             $qid = $this->id;
             $this->entry_dt = General::toDate($row['entry_dt']);
@@ -475,6 +552,7 @@ class QcBoxForm extends CFormModel
             $this->qc_result = $row['qc_result'];
             $this->env_grade = $row['env_grade'];
             $this->qc_dt = General::toDate($row['qc_dt']);
+            $this->ltNowDate = $this->qc_dt<$thisDate;
             $this->cust_sign = $row['cust_sign'];
             $this->qc_staff = $row['qc_staff'];
             $this->remarks = $row['remarks'];
@@ -650,6 +728,9 @@ class QcBoxForm extends CFormModel
         $uid = Yii::app()->user->id;
 
         foreach ($this->info as $key=>$value) {
+            if($this->ltNowDate&&!in_array($key, $this->blob_fields)){
+                continue;
+            }
             $sql = '';
             switch ($this->scenario) {
                 case 'delete':
@@ -796,6 +877,130 @@ class QcBoxForm extends CFormModel
         }
     }
 
+    protected function getExcelData(){
+	    $ourHeight=20;
+        $excelData=array(
+            array(
+                array("text"=>"客户名称","bold"=>true,"width"=>20,"height"=>$ourHeight),
+                array("text"=>$this->company_name." ","colLength"=>3,"float"=>"left"),
+            ),
+            array(
+                array("text"=>"客户地址","bold"=>true,"height"=>$ourHeight),
+                array("text"=>$this->company_addr." ","colLength"=>3,"float"=>"left"),
+            ),
+            array(
+                array("text"=>"评估人","bold"=>true,"height"=>$ourHeight),
+                array("text"=>$this->qc_staff." ","colLength"=>3,"float"=>"left"),
+            ),
+            array(
+                array("text"=>"评估日期","bold"=>true,"height"=>$ourHeight),
+                array("text"=>$this->qc_dt." ","colLength"=>3,"float"=>"left"),
+            ),
+            array(
+                array("text"=>"最近一次服务日期","bold"=>true,"height"=>$ourHeight),
+                array("text"=>$this->info["service_dt"]." ","colLength"=>3,"float"=>"left"),
+            ),
+            array(
+                array("text"=>"被评估人","bold"=>true,"height"=>$ourHeight),
+                array("text"=>$this->job_staff." ","colLength"=>3,"float"=>"left"),
+            ),
+            array(
+                array("text"=>"","height"=>$ourHeight),
+                array("text"=>"考核項目","bold"=>true,"width"=>80,"float"=>"center"),
+                array("text"=>"分值","bold"=>true,"width"=>11,"float"=>"center"),
+                array("text"=>"执行情况","bold"=>true,"width"=>11,"float"=>"center"),
+                array("text"=>"备注","bold"=>true,"width"=>11,"float"=>"center"),
+            ),
+        );
+        $arr=array();
+        if($this->service_type=="IA"){
+            $arr = $this->ia_fields;
+        }elseif ($this->service_type=="IB"){
+            $arr = $this->ib_fields;
+        }
+        if(!empty($arr)){
+            $qc_amt = 0;//质检总分
+            $total_amt = 0;//技术员打分总分
+            $className = get_class($this);
+            $strNum = 64;
+            foreach ($arr as $code=>$rows){
+                $strNum++;
+                $rowspan = count($rows["list"])+1;
+                $rowTitle = Yii::t("qc",$rows["name"]);
+                $rowAll = " ";
+                $totalSum = " ";
+                if($rows["type"]==2){
+                    if($this->info[$code."_all"]==1){
+                        $rowAll="包含";
+                    }else{
+                        $rowAll="不包含";
+                        $totalSum =$rows["totalSum"];
+                        $total_amt+=$totalSum;
+                    }
+                }
+                $excelData[]=array(
+                    array("text"=>chr($strNum),"bold"=>true,"topLength"=>count($rows["list"]),"float"=>"center","height"=>$ourHeight),
+                    array("text"=>$rowTitle,"bold"=>true,"background"=>"FDE9D9","float"=>"center"),
+                    array("text"=>$rowAll,"bold"=>true,"background"=>"FDE9D9","float"=>"center"),
+                    array("text"=>$totalSum,"bold"=>true,"background"=>"FDE9D9","float"=>"center"),
+                    array("text"=>" ","bold"=>true,"background"=>"FDE9D9"),
+                );
+                foreach ($rows["list"] as $row){
+                    $name = $row["name"];
+                    $qc_amt+=$row["max_num"];
+                    if($rows["type"]!=2||$this->info[$code."_all"]==1){
+                        $total_amt+=empty($this->info[$name])?0:$this->info[$name];
+                    }
+                    $infoName = Yii::t("qc",$row["title"]);
+                    $infoName = str_replace("<br/>","\n",$infoName);
+                    $excelData[]=array(
+                        array("text"=>""),
+                        array("text"=>$infoName,"float"=>"left"),
+                        array("text"=>$row["max_num"],"float"=>"center"),
+                        array("text"=>$this->info[$name],"float"=>"center"),
+                        array("text"=>$this->info[$name."_remark"],"float"=>"left"),
+                    );
+                }
+            }
+            $excelData[]=array(
+                array("text"=>"合计","colLength"=>1,"height"=>20),
+                array("text"=>""),
+                array("text"=>$qc_amt,"float"=>"center"),
+                array("text"=>$total_amt,"float"=>"center"),
+            );
+            $infoName = Yii::t("qc","cust_sfn_note");
+            $infoName = str_replace("<br/>","\n",$infoName);
+            $excelData[]=array(
+                array("text"=>"客户满意度","bold"=>true),
+                array("text"=>$infoName,"colLength"=>1,"float"=>"left"),
+                array("text"=>""),
+                array("text"=>"分值","bold"=>true,"float"=>"center"),
+                array("text"=>$this->info["cust_sfn"],"float"=>"center"),
+            );
+            $excelData[]=array(
+                array("text"=>"客户意见","bold"=>true),
+                array("text"=>$this->cust_comment." ","colLength"=>3,"float"=>"left"),
+            );
+            $excelData[]=array(
+                array("text"=>"备注","bold"=>true),
+                array("text"=>$this->remarks." ","colLength"=>3,"float"=>"left"),
+            );
+        }
+        return $excelData;
+    }
+
+	public function printExcel(){ //调试：I
+        $titleName = $this->service_type."质检表";
+        $excelData = $this->getExcelData();
+        $excel = new DownSummary();
+        $excel->SetHeaderTitle($titleName);
+        $excel->SetHeaderString("质检成绩：".$this->qc_result);
+        $excel->init();
+        $excel->colTwo=4;
+        $excel->setQcData($excelData);
+        $excel->outExcel($titleName);
+    }
+
 	public function printPDF($type="D"){ //调试：I
         $pdf = new MyPDF2('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf->SetTitle($this->company_name);
@@ -845,7 +1050,7 @@ class QcBoxForm extends CFormModel
         $html.="<td width=\"288px\">".$this->company_name."</td>";
         $html.="<td width=\"60px\" rowspan=\"3\"><b>质检员签名</b></td>";
         $html.="<td width=\"150px\" rowspan=\"3\" colspan=\"2\">";
-        $html.=TbHtml::image($this->info['sign_cust'],'QcBoxForm_info_sign_cust_img',array('id'=>'QcForm_info_sign_cust_img','width'=>100,'height'=>50,));;
+        $html.=TbHtml::image($this->info['sign_qc'],'QcBoxForm_info_sign_cust_img',array('id'=>'QcForm_info_sign_cust_img','width'=>100,'height'=>50,));;
         $html.="</td>";
         $html.="</tr>";
         $html.="<tr>";
@@ -865,7 +1070,7 @@ class QcBoxForm extends CFormModel
         $html.="<td>".$this->info["service_dt"]."</td>";
         $html.="<td rowspan=\"2\"><b>客户签名</b></td>";
         $html.="<td width=\"150px\" rowspan=\"2\" colspan=\"2\">";
-        $html.=TbHtml::image($this->info['sign_qc'],'QcBoxForm_info_sign_qc_img',array('id'=>'QcForm_info_sign_qc_img','width'=>100,'height'=>50,));;
+        $html.=TbHtml::image($this->info['sign_cust'],'QcBoxForm_info_sign_qc_img',array('id'=>'QcForm_info_sign_qc_img','width'=>100,'height'=>50,));;
         $html.="</td>";
         $html.="</tr>";
         $html.="<tr>";
@@ -935,7 +1140,9 @@ class QcBoxForm extends CFormModel
         }
         $html.="<tr>";
         $html.="<td><b>客户满意度</b></td>";
-        $html.="<td colspan=\"4\">".self::getCustSfnStrForKey($this->info["cust_sfn"])."</td>";
+        $html.="<td colspan=\"2\">".Yii::t("qc","cust_sfn_note")."</td>";
+        $html.="<td style=\"text-align: center;\">分值</td>";
+        $html.="<td style=\"text-align: center;\">".$this->info["cust_sfn"]."</td>";
         $html.="</tr>";
         $html.="<tr>";
         $html.="<td><b>客户意见</b></td>";

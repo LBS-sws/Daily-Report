@@ -30,7 +30,7 @@ class QcBoxController extends Controller
 			),
 */
 			array('allow', 
-				'actions'=>array('new','edit','delete','save','downs','remove',"templates",'fileupload','fileremove','filedownload'),
+				'actions'=>array('new','edit','delete','save','downs','downExcel','remove',"templates",'fileupload','fileremove','filedownload'),
 				'expression'=>array('QcBoxController','allowReadWrite'),
 			),
 			array('allow', 
@@ -133,10 +133,24 @@ class QcBoxController extends Controller
 		$model = new QcBoxForm('delete');
 		if (isset($_POST['QcBoxForm'])) {
 			$model->attributes = $_POST['QcBoxForm'];
-			$model->saveData();
-			Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+            if ($model->validate()) {
+                $model->saveData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+                $this->redirect(Yii::app()->createUrl('qc/index'));
+            } else {
+                $model->setScenario("edit");
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                switch ($model->service_type) {
+                    case 'IA': $formfile = 'boxia'; break;
+                    case 'IB' :$formfile = 'boxia'; break;
+                    default :
+                        $this->redirect(Yii::app()->createUrl('qc/view',array("index"=>$model->id)));
+                        return false;
+                }
+                $this->render($formfile,array('model'=>$model,));
+            }
 		}
-		$this->redirect(Yii::app()->createUrl('qc/index'));
 	}
 
 	public function actionDowns($index)
@@ -150,6 +164,17 @@ class QcBoxController extends Controller
         }
 	}
 
+	public function actionDownExcel($index)
+	{
+        $model = new QcBoxForm('view');
+        if($model->retrieveData($index)){
+            $model->getCompanyAddr();
+            $model->printExcel();
+        }else{
+            throw new CHttpException(404,'The requested page does not exist.');
+        }
+	}
+
     public function actionRemove()
     {
         $model = new QcBoxForm('remove');
@@ -158,8 +183,7 @@ class QcBoxController extends Controller
 
         }
         $model->remove($model);
-        echo "<script>location.href='".$_SERVER["HTTP_REFERER"]."';</script>";
-//        $this->redirect(Yii::app()->createUrl('qc/index'));
+        $this->redirect(Yii::app()->createUrl('qc/edit',array("index"=>$model->id)));
    }
 	
 	public function actionFileupload($doctype) {

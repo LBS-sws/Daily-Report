@@ -63,7 +63,7 @@ $this->pageTitle=Yii::app()->name . ' - Product Delivery Form';
 							<i class="fa fa-calendar"></i>
 						</div>
 						<?php echo $form->textField($model, 'log_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),)); 
+							array('class'=>'form-control pull-right','readonly'=>($model->getReadonly()),));
 						?>
 					</div>
 				</div>
@@ -81,8 +81,8 @@ $this->pageTitle=Yii::app()->name . ' - Product Delivery Form';
 				<div class="col-sm-7">
 					<?php echo $form->hiddenField($model, 'company_id'); ?>
 					<?php echo $form->textField($model, 'company_name', 
-						array('size'=>50,'maxlength'=>100,'readonly'=>($model->scenario=='view'),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('logistic','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->scenario=='view')))
+						array('size'=>50,'maxlength'=>100,'readonly'=>(true),
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('logistic','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->getReadonly())))
 					)); ?>
 				</div>
 			</div>
@@ -93,7 +93,7 @@ $this->pageTitle=Yii::app()->name . ' - Product Delivery Form';
                     <?php
                     echo $form->textField($model, 'salesman',
                         array('size'=>60,'maxlength'=>1000,'readonly'=>true,
-                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnSalesman','id'=>'btnSalesman','disabled'=>($model->scenario=='view'))),
+                            'append'=>TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('service','Resp. Sales'),array('name'=>'btnSalesman','id'=>'btnSalesman','disabled'=>($model->getReadonly()))),
                         ));
                     ?>
                 </div>
@@ -262,7 +262,7 @@ switch(Yii::app()->language) {
 	case 'zh_tw': $lang = 'zh-TW'; break;
 	default: $lang = Yii::app()->language;
 }
-$disabled = ($model->scenario!='view') ? 'false' : 'true';
+$disabled = (!$model->getReadonly()) ? 'false' : 'true';
 
 $js = "
 $(document).ready(function(){

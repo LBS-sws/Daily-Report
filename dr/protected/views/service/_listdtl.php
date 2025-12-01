@@ -1,5 +1,5 @@
 <tr class='clickable-row' data-href='<?php echo $this->getLink('A02', 'service/edit', 'service/view', array('index'=>$this->record['id']));?>'>
-    <?php if (Yii::app()->user->validRWFunction('CD01')): ?>
+    <?php if (Yii::app()->user->validRWFunction('CW01')): ?>
         <!--交叉派单-->
         <td class="che">
             <?php if ($this->record['cross_bool']): ?>

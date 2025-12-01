@@ -48,8 +48,24 @@ class ResetPasswordForm extends CFormModel
 	 */
 	public function authenticate($attribute,$params) {
         if($this->new_password != $this->again_new_password) $this->addError('password',Yii::t('dialog','The password entered twice is inconsistent'));
+
+        $length = mb_strlen($this->new_password, 'utf8');
+        $vaildRes = $this->isValidString($this->new_password);
+        if($length < 8 || !$vaildRes) $this->addError('password',Yii::t('dialog','The password requires 8-20 characters, consisting of numbers, letters, and symbols'));
         return true;
 	}
 
+    /**
+     * 密码验证
+     * @param $str
+     * @return bool
+     */
+    public function isValidString($str) {
+        $hasDigit = preg_match('/\d/', $str);
+        $hasLetter = preg_match('/[a-zA-Z]/', $str);
+        $hasSymbol = preg_match('/[^a-zA-Z\d]/', $str);
+        $typesCount = array_sum([$hasDigit, $hasLetter, $hasSymbol]);
+        return $typesCount >= 2;
+    }
 
 }

@@ -54,5 +54,6 @@ return array(
 
     'u customer id'=>'派单系统ID',
     'jd customer id'=>'金蝶系统ID',
+    'u customer code'=>'派单系统编号',
 );
 ?>

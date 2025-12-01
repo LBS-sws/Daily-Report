@@ -84,8 +84,8 @@ class CurlForCustomer extends CurlForJD{
     public function getDataForCustomerModel($model){
         $curlData=array(
             "lbs_apikey"=>$model->id,
-            "number"=>$model->code."-".$model->city,//编码
-            "name"=>$model->name,//名称
+            "number"=>$model->u_customer_code,//编码
+            "name"=>trim($model->name),//名称
             "status"=>"C",//数据状态 [A:暂存, B:已提交, C:已审核]
             "enable"=>$model->status==2?0:1,//使用状态 [0:禁用, 1:可用]
             "simplename"=>$model->full_name,//简称

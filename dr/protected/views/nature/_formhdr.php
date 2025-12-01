@@ -8,6 +8,9 @@
     <th>
         <?php echo TbHtml::label($this->getLabelName('score_bool'), false); ?>
     </th>
+    <th>
+        <?php echo TbHtml::label($this->getLabelName('z_display'), false); ?>
+    </th>
 
 	<th>
 <!--		--><?php echo // Yii::app()->user->validRWFunction('XS03') ?

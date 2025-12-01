@@ -207,5 +207,15 @@ return array(
     'KA Retention report'=>'KA保留率明細報表',
     'Refresh Month Bonus'=>'強製刷新月度獎金',
     'Only Month Bonus'=>'本城市所有月度獎金',
+    'City Track Set'=>'業績追蹤城市配置',
+    'KA Tracking'=>'KA業績追蹤',
+    'All Area Track'=>'查詢區域KA業績追蹤',
+    'Update Service Count'=>'客戶服務修改統計',
+    'Check Week Staff'=>'周人效',
+    'Check In Month'=>'簽到簽離月統計',
+    'Check In Week'=>'簽到簽離周統計',
+    'Check In Staff'=>'簽到簽離員工統計',
+    'All customer report'=>'客戶記錄匯總表',
+    'Out Business'=>'業務承攬數據分析',
 );
 ?>

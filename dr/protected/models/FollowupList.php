@@ -20,6 +20,7 @@ class FollowupList extends CListPageModel
 			'pest_type_name'=>Yii::t('followup','Pest Type'),
 			'city_name'=>Yii::t('misc','City'),
 			'fp_comment'=>Yii::t('followup','Comment'),
+            'fp_fin_dt'=>Yii::t('followup','Finish Date').' '.Yii::t('misc','(Y/M/D)'),
 		);
 	}
 	
@@ -72,6 +73,9 @@ class FollowupList extends CListPageModel
 				case 'fp_comment':
 					$clause .= General::getSqlConditionClause('a.fp_comment',$svalue);
 					break;
+				case 'fp_fin_dt':
+					$clause .= General::getSqlConditionClause('a.fp_fin_dt',$svalue);
+					break;
 			}
 		}
 		$clause .= $this->getDateRangeCondition('a.entry_dt');
@@ -106,6 +110,7 @@ class FollowupList extends CListPageModel
 					'pest_type_name'=>$record['pest_type_name'],
 					'cont_info'=>$record['cont_info'],
 					'city_name'=>$record['city_name'],
+					'fp_fin_dt'=>$record['fp_fin_dt'],
 				);
 			}
 		}
@@ -114,4 +119,17 @@ class FollowupList extends CListPageModel
 		return true;
 	}
 
+	public static function getCustSfnList(){
+        return array("3"=>"满意","2"=>"一般","1"=>"不满意");
+    }
+
+	public static function getCustSfnStrByKey($key){
+        $key = "".$key;
+        $list = self::getCustSfnList();
+        if(key_exists($key,$list)){
+            return $list[$key];
+        }else{
+            return $key;
+        }
+    }
 }

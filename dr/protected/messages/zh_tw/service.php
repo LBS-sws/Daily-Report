@@ -232,5 +232,7 @@ return array(
     'KA'=>'KA合約',
     'send cross city'=>'通知城市',
     'Cross treaty'=>'交叉合約',
+    'external source'=>'外部數據來源',
+    'Surplus Amt'=>'剩余金额',
 );
 ?>

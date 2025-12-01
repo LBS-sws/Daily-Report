@@ -13,29 +13,29 @@ class FeedbackForm extends CFormModel
 	public $cc;
 	public $rpt_id;
 
-	public $cat_1="N";
+	public $cat_1;
 	public $feedback_1;
-	public $cat_2="N";
+	public $cat_2;
 	public $feedback_2;
-	public $cat_3="N";
+	public $cat_3;
 	public $feedback_3;
-	public $cat_4="N";
+	public $cat_4;
 	public $feedback_4;
-	public $cat_5="N";
+	public $cat_5;
 	public $feedback_5;
-	public $cat_6="N";
+	public $cat_6;
 	public $feedback_6;
-	public $cat_7="N";
+	public $cat_7;
 	public $feedback_7;
-	public $cat_8="N";
+	public $cat_8;
 	public $feedback_8;
-	public $cat_9="N";
+	public $cat_9;
 	public $feedback_9;
-	public $cat_10="N";
+	public $cat_10;
 	public $feedback_10;
-	public $cat_11="N";
+	public $cat_11;
 	public $feedback_11;
-	public $cat_12="N";
+	public $cat_12;
 	public $feedback_12;
 
 	public $cats = array(
@@ -46,11 +46,13 @@ class FeedbackForm extends CFormModel
 		'A5~'=>'QC Record',
 		'A6~'=>'Staff Info',
 		'A7~'=>'Others',
+		/*
 		'A8~'=>'Service New',//当月累计新增
 		'A9~'=>'Service Stop',//当月累计终止
 		'A10~'=>'Service Pause',//当月累计暂停
 		'A11~'=>'Service Net',//当月累计净增长
 		'A12~'=>'Sales Effect',//当月累计销售人效
+		*/
 	);
 
 	public function attributeLabels()
@@ -88,25 +90,17 @@ class FeedbackForm extends CFormModel
 		}
 		
 		return array(
-			array('id, city, request_dt, feedback_dt, status, status_desc, to, cc, rpt_id,'.$cat_list,'safe'),
-			array("cat_1",'validateType'),
+			array('id, city, request_dt, feedback_dt, status, status_desc, to, cc, rpt_id','safe'),
+			array($cat_list,'validateType'),
 			array($feedback_list,'validateRemarks'),
 			array("id",'validateCity'),
+			/*
 			array("cat_9",'validateMustSNN'),
 			array("cat_10",'validateMustP'),
 			array("cat_12",'validateMustSales'),
+			*/
 		);
 	}
-
-	//进入表单自动验证
-    public function validateLoad(){
-	    if(!$this->hasErrors()){
-            $this->validateCity("id","");
-            $this->validateMustSNN("cat_9","");
-            $this->validateMustP("cat_10","");
-            $this->validateMustSales("cat_12","");
-        }
-    }
 
 	//验证哪些内容必须填写(累计销售人效)
 	public function validateMustSales($attribute, $params){
@@ -218,18 +212,17 @@ class FeedbackForm extends CFormModel
         $cityData["stop_sum"] = round($cityData["stop_sum"],2);
         $cityData["net_sum"]=($cityData["net_sum"]/$week_day)*$month_day;
         $cityData["net_sum"] = round($cityData["net_sum"],2);
-
         if($this->cat_8=="N"&&HistoryAddForm::comYes($cityData["add_sum"],$two_gross)!==Yii::t("summary","Yes")){
             $message = "当月累计新增未达标，请填写原因";
-            $this->addError("cat_8",$message);
+            $this->addError($attribute,$message);
         }
         if($this->cat_9=="N"&&HistoryAddForm::comYes($cityData["stop_sum"],-1*$two_gross,true)!==Yii::t("summary","Yes")){
             $message = "当月累计终止未达标，请填写原因";
-            $this->addError("cat_9",$message);
+            $this->addError($attribute,$message);
         }
         if($this->cat_11=="N"&&HistoryAddForm::comYes($cityData["net_sum"],$two_net)!==Yii::t("summary","Yes")){
             $message = "当月累计净增长未达标，请填写原因";
-            $this->addError("cat_11",$message);
+            $this->addError($attribute,$message);
         }
     }
 
@@ -264,7 +257,7 @@ class FeedbackForm extends CFormModel
 		}
 		if (!$flag) {
 			$message = Yii::t('feedback','No feedback type is selected');
-			$this->addError("id",$message);
+			$this->addError($attribute,$message);
 		}
 	}
 
@@ -273,7 +266,7 @@ class FeedbackForm extends CFormModel
 		if ($this->$field=='Y' && empty($this->$attribute)) {
 			$label = $this->attributeLabels();
 			$message = $label[$field].' '.Yii::t('feedback','cannot be empty');
-			$this->addError($field,$message);
+			$this->addError($attribute,$message);
 		}
 	}
 

@@ -95,6 +95,7 @@ class ServiceIDController extends Controller
             $model->status = $type;
         }
         $model->resetAttrLabel();
+        $model->ltNowDate=false;
         if($model->city!=$city){
             $model->company_id=null;
             $model->company_name=null;

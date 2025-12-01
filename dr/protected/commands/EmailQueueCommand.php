@@ -95,7 +95,17 @@ class EmailQueueCommand extends CConsoleCommand {
 				} else {
 					$err = $mail->getError();
 					echo "\t-FAIL ($err)\n";
-					$this->markStatus($id, $ts, 'F');
+                    $num = empty($uid)?0:intval($uid);
+                    $num = is_numeric($num)?intval($num):0;
+                    $num++;
+                    if($num<5){//小于5次，重新执行
+                        Yii::app()->db->createCommand()->update("swo_email_queue",array(
+                            "status"=>"P",
+                            "lcu"=>"{$num}{$uid}",
+                        ),"id=:id and ts=:ts",array(":id"=>$id,":ts"=>$ts));
+					}else{
+                        $this->markStatus($id, $ts, 'F');
+					}
 				}
 			} else {
 				if (empty($to_addr) && $id!=0) {

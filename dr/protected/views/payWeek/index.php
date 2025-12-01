@@ -43,6 +43,7 @@ $this->pageTitle=Yii::app()->name . ' - Pay Week';
 				'search'=>array(
 							'code',
 							'description',
+							'u_id',
 						),
 		));
 	?>

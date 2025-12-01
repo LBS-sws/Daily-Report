@@ -64,7 +64,7 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 							<i class="fa fa-calendar"></i>
 						</div>
 						<?php echo $form->textField($model, 'entry_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),)); 
+							array('class'=>'form-control pull-right','readonly'=>($model->getReadonly()),));
 						?>
 					</div>
 				</div>
@@ -95,7 +95,7 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 					<?php echo $form->hiddenField($model, 'company_id'); ?>
 					<?php echo $form->textField($model, 'company_name', 
 						array('size'=>50,'maxlength'=>1000,'readonly'=>true,
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->scenario=='view')))
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->getReadonly())))
 					)); ?>
 				</div>
 			</div>
@@ -141,8 +141,8 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 				<?php echo $form->labelEx($model,'resp_tech',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
 					<?php echo $form->textField($model, 'resp_tech', 
-						array('size'=>30,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Technician'),array('name'=>'btnStaffTech','id'=>'btnStaffTech','disabled'=>($model->scenario=='view')))
+						array('size'=>30,'maxlength'=>500,'disabled'=>($model->getReadonly()),
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Technician'),array('name'=>'btnStaffTech','id'=>'btnStaffTech','disabled'=>($model->getReadonly())))
 					)); ?>
 				</div>
 			</div>
@@ -174,8 +174,8 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 				<?php echo $form->labelEx($model,'follow_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-8">
                     <?php echo $form->textField($model, 'follow_staff',
-                        array('size'=>30,'rows'=>3,'readonly'=>($model->scenario=='view'),
-                            'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Technician'),array('name'=>'btnStaffFollow','id'=>'btnStaffFollow','disabled'=>($model->scenario=='view'))
+                        array('size'=>30,'rows'=>3,'readonly'=>($model->getReadonly()),
+                            'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('followup','Technician'),array('name'=>'btnStaffFollow','id'=>'btnStaffFollow','disabled'=>($model->getReadonly()))
                             )
                         )
                     );
@@ -353,13 +353,27 @@ $this->pageTitle=Yii::app()->name . ' - Complaint Case Form';
 					); ?>
 				</div>
 			</div>
+
+			<div class="form-group">
+                <?php echo $form->labelEx($model,'cust_sfn',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-1">
+                    <?php echo $form->numberField($model, 'cust_vfn',
+                        array('min'=>0,'max'=>10,'readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+                <div class="col-sm-3">
+                    <?php
+                    echo $form->inlineRadioButtonList($model, 'cust_sfn',FollowupList::getCustSfnList(),
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+			</div>
 		</div>
 	</div>
 </section>
 
 <?php $this->renderPartial('//site/removedialog'); ?>
 <?php $this->renderPartial('//site/lookup'); ?>
-<input disabled>
 
 <?php
 $js = Script::genLookupSearchEx();

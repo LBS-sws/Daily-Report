@@ -85,7 +85,7 @@ $this->pageTitle=Yii::app()->name . ' - Bonus Month Form';
                                 ?>
                             </div>
                             <div class="col-lg-8">
-                                <p class="form-control-static">每月五号晚上10点系统自动固定上月的月度奖金，如果数据异常请与管理员联系</p>
+                                <p class="form-control-static">从2025年6月开始每月最后一日24点（次月凌晨00:00）系统自动固定上月的月度奖金，如对数据有疑问请与管理员联系</p>
                             </div>
                         </div>
                     </div>

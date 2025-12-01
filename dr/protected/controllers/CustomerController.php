@@ -47,7 +47,7 @@ class CustomerController extends Controller
 	public function actionCompanyZZ()
 	{
 		$model = new CustomerForm();
-        $model->companyZZ();
+        $model->sendAllTrimCustomer();
         Yii::app()->end();
 	}
 

@@ -48,6 +48,9 @@ $this->pageTitle=Yii::app()->name . ' - SalesAnalysis Form';
 
 <?php
 $js="
+    $('button').click(function(){
+        Loading.show();
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDatePicker(array(

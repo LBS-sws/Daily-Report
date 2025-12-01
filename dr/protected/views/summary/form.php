@@ -193,14 +193,22 @@ $this->pageTitle=Yii::app()->name . ' - Summary Form';
 <?php
 $js="
     $('.click-th').click(function(){
-        var contNum = 2;
-        var startNum=contNum;
+        var startNum=0;
+        var thStartNum=0;
         var endNum = $(this).attr('colspan');
-        $(this).prevAll('.click-th').each(function(){
+        var thEndNum=endNum;
+        $(this).prevAll('th').each(function(){
             var colspan = $(this).attr('colspan');
-            startNum += parseInt(colspan,10);
+            var rowspan = $(this).attr('rowspan');
+            colspan = parseInt(colspan,10);
+            startNum += colspan;
+            thStartNum += colspan;
+            if(rowspan!=undefined&&rowspan>1){
+                thStartNum--;
+            }
         });
         endNum = parseInt(endNum,10)+startNum;
+        thEndNum = parseInt(thEndNum,10)+thStartNum;
         if($(this).hasClass('active')){
             $(this).children('span').text($(this).data('text'));
             $(this).removeClass('active');
@@ -208,7 +216,7 @@ $js="
                 var width = $(this).data('width')+'px';
                 $(this).width(width);
             });
-            $('#summary>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#summary>thead>tr').eq(2).children().slice(thStartNum,thEndNum).each(function(){
                 $(this).children('span').text($(this).data('text'));
             });
             $('#summary>tbody>tr').each(function(){
@@ -224,7 +232,7 @@ $js="
                 var width = '15px';
                 $(this).width(width);
             });
-            $('#summary>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#summary>thead>tr').eq(2).children().slice(thStartNum,thEndNum).each(function(){
                 $(this).data('text',$(this).text());
                 $(this).children('span').text('');
             });

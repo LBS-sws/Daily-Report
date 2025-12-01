@@ -191,14 +191,22 @@ $this->pageTitle=Yii::app()->name . ' - ComparisonKA Form';
 <?php
 $js="
     $('.click-th').click(function(){
-        var contNum = 2;
-        var startNum=contNum;
+        var startNum=0;
+        var thStartNum=0;
         var endNum = $(this).attr('colspan');
-        $(this).prevAll('.click-th').each(function(){
+        var thEndNum=endNum;
+        $(this).prevAll('th').each(function(){
             var colspan = $(this).attr('colspan');
-            startNum += parseInt(colspan,10);
+            var rowspan = $(this).attr('rowspan');
+            colspan = parseInt(colspan,10);
+            startNum += colspan;
+            thStartNum += colspan;
+            if(rowspan!=undefined&&rowspan>1){
+                thStartNum--;
+            }
         });
         endNum = parseInt(endNum,10)+startNum;
+        thEndNum = parseInt(thEndNum,10)+thStartNum;
         if($(this).hasClass('active')){
             $(this).children('span').text($(this).data('text'));
             $(this).removeClass('active');
@@ -206,7 +214,7 @@ $js="
                 var width = $(this).data('width')+'px';
                 $(this).width(width);
             });
-            $('#comparison>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#comparison>thead>tr').eq(2).children().slice(thStartNum,thEndNum).each(function(){
                 $(this).children('span').text($(this).data('text'));
             });
             $('#comparison>tbody>tr').each(function(){
@@ -222,7 +230,7 @@ $js="
                 var width = '15px';
                 $(this).width(width);
             });
-            $('#comparison>thead>tr').eq(2).children().slice(startNum-contNum,endNum-contNum).each(function(){
+            $('#comparison>thead>tr').eq(2).children().slice(thStartNum,thEndNum).each(function(){
                 $(this).data('text',$(this).text());
                 $(this).children('span').text('');
             });
@@ -282,6 +290,54 @@ $('.td_detail').on('click',function(){
 });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
+
+$ajaxUrl = Yii::app()->createUrl('comparison/ajaxOffice');
+$js="
+$(function(){
+    var cityList=[];
+    $('td.changeOffice').each(function(){
+        cityList.push($(this).data('city'));
+    });
+    $.ajax({
+        type: 'GET',
+        url: '{$ajaxUrl}',
+        data: {
+            'cityList':cityList,
+            'searchType':'{$model->search_type}',
+            'startDate':'{$model->start_date}',
+            'endDate':'{$model->end_date}'
+        },
+        dataType: 'json',
+        success: function(data) {
+            var dataList = data.list.cityHtml;
+            $('form:first').prepend(data.list.hideHtml);
+            $('td.changeOffice').each(function(){
+                var city = $(this).data('city');
+                if(typeof dataList[city] !== undefined){
+                    $(this).parent('tr').after(dataList[city]);
+                }
+                //fa-minus
+                $(this).find('i:first').removeClass('fa-spinner fa-pulse').addClass('fa-plus');
+            });
+        },
+        error: function(data) { // if error occured
+            alert('Error occured.please try again');
+        }
+    });
+    
+    $('td.changeOffice').on('click',function(){
+        var city = $(this).data('city');
+        if($(this).find('i:first').hasClass('fa-plus')){ //展开
+            $(this).find('i:first').removeClass('fa-plus').addClass('fa-minus');
+            $('tr.office-city-tr[data-city=\"'+city+'\"]').slideDown(100);
+        }else if($(this).find('i:first').hasClass('fa-minus')){ //收缩
+            $(this).find('i:first').removeClass('fa-minus').addClass('fa-plus');
+            $('tr.office-city-tr[data-city=\"'+city+'\"]').slideUp(100);
+        }
+    });
+});
+";
+Yii::app()->clientScript->registerScript('changeOffice',$js,CClientScript::POS_READY);
 
 $language = Yii::app()->language;
 $js = Script::genReadonlyField();

@@ -56,6 +56,9 @@ $this->pageTitle=Yii::app()->name . ' - InsetClean Form';
 
 <?php
 $js="
+    $('button').click(function(){
+        Loading.show();
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDatePicker(array(

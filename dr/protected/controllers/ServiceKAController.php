@@ -34,11 +34,11 @@ class ServiceKAController extends Controller
 				'expression'=>array('ServiceKAController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('copy'),
+				'actions'=>array('copy','resetService'),
 				'expression'=>array('ServiceKAController','allowCopy'),
 			),
 			array('allow',
-				'actions'=>array('index','view','filedownload'),
+				'actions'=>array('index','view','filedownload','download'),
 				'expression'=>array('ServiceKAController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -46,6 +46,30 @@ class ServiceKAController extends Controller
 			),
 		);
 	}
+
+    public function actionResetService()
+    {
+        echo "start:<br>";
+        $model = new ServiceKAForm();
+        $model->resetService();
+        echo "<br>end!!";
+    }
+
+    public function actionDownload()
+    {
+        $model = new ServiceKAList;
+        if (isset($_POST['ServiceKAList'])) {
+            $model->attributes = $_POST['ServiceKAList'];
+        } else {
+            $session = Yii::app()->session;
+            if (isset($session['serviceKA_01']) && !empty($session['serviceKA_01'])) {
+                $criteria = $session['serviceKA_01'];
+                $model->setCriteria($criteria);
+            }
+        }
+        $model->downloadExcel();
+        $this->render('index',array('model'=>$model));
+    }
 
 	public function actionIndex($pageNum=0) 
 	{
@@ -103,9 +127,10 @@ class ServiceKAController extends Controller
 			$model->b4_paid_type = '';
 			$model->b4_amt_paid = 0;
 			$model->reason = '';
+            $model->ltNowDate = false;
             $model->remarks = '';
             $model->surplus = 0;
-            $model->all_number = 0;
+            //$model->all_number = 0;
 			$model->org_equip_qty = 0;
 			$model->rtn_equip_qty = 0;
             $model->other_commission = null;
@@ -152,17 +177,18 @@ class ServiceKAController extends Controller
 			$model->b4_paid_type = '';
 			$model->b4_amt_paid = 0;
 			$model->reason = '';
+            $model->ltNowDate = false;
 			$model->remarks = '';
 			$model->org_equip_qty = 0;
             $model->surplus = 0;
-            $model->all_number = 0;
+            //$model->all_number = 0;
 			$model->rtn_equip_qty = 0;
             $model->other_commission = null;
             $model->commission = null;
 			$model->sign_dt = null;
 			$model->equip_install_dt = null;
-			$model->ctrt_end_dt = null;
-			$model->first_dt = null;
+			//$model->ctrt_end_dt = null;
+			//$model->first_dt = null;
 			$model->first_tech = '';
 			$model->id = 0;
 			$model->files = '';
@@ -203,13 +229,14 @@ class ServiceKAController extends Controller
 			$model->b4_service = $model->service;
 			$model->b4_paid_type = $model->paid_type;
 			$model->b4_amt_paid = $model->amt_paid;
-			$model->ctrt_period = 0;
-			$model->ctrt_end_dt = null;
+			//$model->ctrt_period = 0;
+			//$model->ctrt_end_dt = null;
 			$model->cont_info = '';
 			$model->first_tech = '';
             $model->surplus = 0;
-            $model->all_number = 0;
+            //$model->all_number = 0;
 			$model->reason = '';
+            $model->ltNowDate = false;
 			$model->remarks = '';
 			$model->equip_install_dt = null;
 			$model->org_equip_qty = 0;
@@ -245,11 +272,12 @@ class ServiceKAController extends Controller
 			$model->b4_amt_paid = 0;
 			$model->amt_install = 0;
             $model->surplus = 0;
-            $model->all_number = 0;
+            //$model->all_number = 0;
 			$model->cont_info = '';
-			$model->first_dt = null;
+			//$model->first_dt = null;
 			$model->first_tech = '';
 			$model->reason = '';
+            $model->ltNowDate = false;
 			$model->remarks = '';
 			$model->equip_install_dt = null;
 			$model->org_equip_qty = 0;
@@ -284,9 +312,10 @@ class ServiceKAController extends Controller
 			$model->b4_paid_type = '';
 			$model->b4_amt_paid = 0;
 			$model->amt_install = 0;
-			$model->ctrt_period = 0;
+			//$model->ctrt_period = 0;
             $model->surplus = 0;
-            $model->all_number = 0;
+            $model->ltNowDate = false;
+            //$model->all_number = 0;
 			$model->ctrt_end_dt = null;
 			$model->cont_info = '';
 			$model->first_dt = null;
@@ -322,11 +351,12 @@ class ServiceKAController extends Controller
 			$model->b4_service = '';
 			$model->b4_paid_type = '';
 			$model->b4_amt_paid = 0;
+            $model->ltNowDate = false;
             $model->surplus = 0;
-            $model->all_number = 0;
+            //$model->all_number = 0;
 			$model->amt_install = 0;
-			$model->ctrt_period = 0;
-			$model->ctrt_end_dt = null;
+			//$model->ctrt_period = 0;
+			//$model->ctrt_end_dt = null;
 			$model->cont_info = '';
 			$model->first_dt = null;
 			$model->first_tech = '';

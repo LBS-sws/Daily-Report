@@ -1,0 +1,57 @@
+<?php
+class ExtsysAdhocCommand extends CConsoleCommand {
+	public function run($args) {
+		$sys_id = 'onlib';
+		$action = 'edit';
+		$connection = Yii::app()->db;
+		$transaction=$connection->beginTransaction();
+		try {
+			$sql = "select a.username, c.field_value, b.disp_name,ifnull(b.email,'') as emailaddr
+					from security.sec_user_access a, security.sec_user b, security.sec_user_info c
+					where a.system_id='acct' and a.username=b.username and a.username=c.username and c.field_id='onlibuser' and b.status='A'
+					and ((a.a_read_only is not null and a.a_read_only <>'') or (a.a_read_write is not null and a.a_read_write<>''))
+					and a.username not in (
+						select username from security.sec_user_access 
+						where system_id='onlib' 
+						and ((a_read_only is not null and a_read_only <>'') or (a_read_write is not null and a_read_write<>'')
+						or (a_control is not null and a_control<>'')));
+				";
+			$rows = Yii::app()->db->createCommand($sql)->queryAll();
+			foreach ($rows as $row) {
+				echo $row['username'].' / '.$row['disp_name'].' / '.$row['field_value']."\n";
+				$oparam = json_encode(array(
+						'role'=>array(), 'user'=>'', 'right'=>'NA', 'disp_name'=>'', 'email'=>''
+					));
+
+				$nparam = json_encode(array(
+						'role'=>array('Finance_Team'), 'user'=>$row['field_value'], 'right'=>'CN', 
+						'disp_name'=>$row['disp_name'], 
+						'email'=>$row['emailaddr']
+					));
+
+				$sql = "insert into security.sec_extsys_queue(sys_id, action, req_dt, username, old_param, new_param, status)
+						value(:sys_id, :action, now(), :username, :old_param, :new_param, 'X')
+					";
+				$command=$connection->createCommand($sql);
+				if (strpos($sql,':sys_id')!==false)
+					$command->bindParam(':sys_id',$sys_id,PDO::PARAM_STR);
+				if (strpos($sql,':action')!==false)
+					$command->bindParam(':action',$action,PDO::PARAM_STR);
+				if (strpos($sql,':username')!==false)
+					$command->bindParam(':username',$row['field_value'],PDO::PARAM_STR);
+				if (strpos($sql,':old_param')!==false) 
+					$command->bindParam(':old_param',$oparam,PDO::PARAM_STR);
+				if (strpos($sql,':new_param')!==false) 
+					$command->bindParam(':new_param',$nparam,PDO::PARAM_STR);
+				$command->execute();
+			}	
+
+			$transaction->commit();
+		}
+		catch(Exception $e) {
+			$transaction->rollback();
+			echo "Rollback\n";
+		}
+	}
+}
+?>

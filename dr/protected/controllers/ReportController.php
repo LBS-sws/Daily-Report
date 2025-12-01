@@ -57,6 +57,7 @@ class ReportController extends Controller
 			array('allow','actions'=>array('uService'),'expression'=>array('ReportController','allowUService')),
 			array('allow','actions'=>array('uServiceDetail'),'expression'=>array('ReportController','allowUServiceDetail')),
 			array('allow','actions'=>array('customerKA'),'expression'=>array('ReportController','allowCustomerKA')),
+			array('allow','actions'=>array('customerAll'),'expression'=>array('ReportController','allowCustomerAll')),
 			array('allow','actions'=>array('chain'),'expression'=>array('ReportController','allowChain')),
 			array('allow','actions'=>array('activeService'),'expression'=>array('ReportController','allowActiveService')),
 			array('allow','actions'=>array('contractCom'),'expression'=>array('ReportController','allowContractCom')),
@@ -198,12 +199,12 @@ class ReportController extends Controller
 				'RptCustsuspend'=>'Customer Report - Suspended',
 				'RptCustresume'=>'Customer Report - Resume',
 				'RptCustterminate'=>'Customer Report - Terminate',
-				'RptCustterall'=>'Customer Report - All',
+				//'RptCustterall'=>'Customer Report - All',
 				'RptComplaint'=>'Complaint Cases Report',
 				'RptEnquiry'=>'Customer Report - Enquiry',
 				'RptLogistic'=>'Product Delivery Report',
 				'RptQc'=>'Quality Control Report',
-				'RptStaff'=>'Staff Report',
+				//'RptStaff'=>'Staff Report',
 				'RptCustnewID'=>'ID-Customer-New',
 				'RptCustrenewID'=>'ID-Customer-Renewal',
 				'RptCustamendID'=>'ID-Customer-Amendment',
@@ -744,6 +745,32 @@ class ReportController extends Controller
         Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
     }
 
+// Report: CustomerAll
+	protected static function allowCustomerAll() {
+		return Yii::app()->user->validFunction('B42');
+	}
+
+	public function actionCustomerAll() {
+		$this->function_id = 'B42';
+		Yii::app()->session['active_func'] = $this->function_id;
+        $this->showUI('customerAll','All customer report', 'start_dt,end_dt,city');
+	}
+
+    protected function genCustomerAll($criteria) {
+        $this->function_id = 'B42';
+        Yii::app()->session['active_func'] = $this->function_id;
+        $rptname = array(
+            'RptCustomerAll'=>'ALL customer report',//新增
+            'RptCustomerAllC'=>'ALL customer report',//续约
+            'RptCustomerAllS'=>'ALL customer report',//暂停
+            'RptCustomerAllR'=>'ALL customer report',//恢复
+            'RptCustomerAllA'=>'ALL customer report',//更改
+            'RptCustomerAllT'=>'ALL customer report',//终止
+        );
+        $this->addQueueItem('RptCustomerAll', $criteria, 'A4',$rptname);
+        Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+    }
+
 // Report: chain
 	protected static function allowChain() {
 		return Yii::app()->user->validFunction('B33');
@@ -935,6 +962,7 @@ class ReportController extends Controller
 				//if ($model->id=='cross') $this->genCross($model);
 				if ($model->id=='serviceLoss') $this->genServiceLoss($model);
 				if ($model->id=='customerKA') $this->genCustomerKA($model);
+				if ($model->id=='customerAll') $this->genCustomerAll($model);
 				//if ($model->id=='chain') $this->genChain($model);
 				if ($model->id=='activeService') $this->genActiveService($model);
 //				Yii::app()->end();

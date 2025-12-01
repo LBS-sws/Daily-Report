@@ -126,7 +126,7 @@ class SysBlock {
 
         $sql = "select workflow$suffix.RequestStatus('OPRPT',a.id,a.lcd) as wfstatus
 				from operation$suffix.opr_monthly_hdr a 
-				where a.city='$city' and a.year_no=$year and a.month_no=$month and a.status='Y'
+				where a.city='$city' and a.year_no=$year and a.month_no=$month AND a.group_id=1 and a.status='Y'
 			";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         return ($row===false || ($row['wfstatus']!='' && $row['wfstatus']!='PS'));
@@ -160,7 +160,7 @@ class SysBlock {
 
         $sql = "select a.id
 				from operation$suffix.opr_monthly_hdr a 
-				where a.id in ($list) and a.year_no=$year and a.month_no=$month and a.status='Y' 
+				where a.id in ($list) and a.year_no=$year and a.month_no=$month AND a.group_id=1 and a.status='Y' 
 				limit 1
 			";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
@@ -203,6 +203,28 @@ class SysBlock {
         return ($row===false);
     }
 
+
+    /**
+     * 每月20日及25日弹窗提醒
+     **/
+    public function isCreditAudit() {
+        if($this->systemIsCN==1){//台灣不需要此驗證
+            return true;
+        }
+        $uid = Yii::app()->user->id;
+        $suffix = Yii::app()->params['envSuffix'];
+        //$day = 20;//当天
+        $day = date("d");//当天
+        if($day>=20&&$day<=25){
+            $sql = "select a_control from security$suffix.sec_user_access 
+				where username='$uid' and system_id='sp' and (a_read_write like '%GA01%' or a_read_write like '%GA04%')
+			";
+            $row = Yii::app()->db->createCommand($sql)->queryRow();
+            if ($row) return false;
+        }
+        return true;
+    }
+	
     /**
     每年12月30日, 驗證 用户有学分审核权限的未及时处理完, false: 未处理
      * 2022/09/07 限制修改成：每个月倒数第二天限制专员和审核人必须审核完当前地区所有的申请记录
@@ -637,8 +659,13 @@ class SysBlock {
      **/
     private function validateMonthlyEntry(){
         $city = Yii::app()->user->city();
-        $year = date('Y',strtotime("-1 months"));
-        $month = date('n',strtotime("-1 months"));
+        $year = date('Y');
+        $month = date('n');
+		$month--;
+		if($month<=0){
+			$month=12;
+			$year--;
+		}
         $suffix = Yii::app()->params['envSuffix'];
         $value_null=" (
         (a.data_value is null)
@@ -655,6 +682,118 @@ class SysBlock {
             return false;
         }
         return true;
+    }
+	
+    /**
+    人事系統，限制彈窗提示
+     **/
+    private function isSystemStop($key,&$value){
+        $uid = Yii::app()->user->id;
+        $date = date("Y-m-d");
+        $suffix = Yii::app()->params['envSuffix'];
+        $row = Yii::app()->db->createCommand()->select("*")
+            ->from("hr{$suffix}.hr_system_stop")
+            ->where("username_str like \"%'{$uid}'%\" and start_date<='{$date}' and end_date>='{$date}' and status_type=1")
+            ->queryRow();
+        if($row){//
+            $message = $row["window_note"];
+            $this->checkItems[$key]["message"]=$message;
+            $value["message"]=$message;
+            return false;
+        }
+        return true;
+    }
+
+    /**
+    销售顾问绩效考核表评分提醒
+     **/
+    public function isAppraisalAudit($key,&$value) {
+        $uid = Yii::app()->user->id;
+        $suffix = Yii::app()->params['envSuffix'];
+        $day = date('j');
+        if($day>=26){
+            $sql = "select a_control from security$suffix.sec_user_access 
+				where username='$uid' and system_id='acct' and a_read_write like '%XS14%'
+			";
+            $row = Yii::app()->db->createCommand($sql)->queryRow();
+            if($row){
+                $employeeList = $this->getSalesAccessForMe();
+                $employeeStr=empty($employeeList)?0:implode(",",$employeeList);
+                $year_no = date("Y");
+                $month_no = date("n");
+                $thisDate = date("Y-m-d",strtotime("{$year_no}-{$month_no}-01"));
+                $minEntry = date("Y-m-d",strtotime("{$thisDate} - 5 months"));
+                $maxEntry = date("Y-m-d",strtotime("{$thisDate} + 1 months - 1 days"));
+                $sql1 = "select b.name 
+				from account$suffix.acc_service_comm_hdr a
+				LEFT JOIN hr$suffix.hr_employee b on b.code=a.employee_code
+                LEFT JOIN account$suffix.acc_appraisal f on f.employee_id=b.id AND f.year_no={$year_no} AND f.month_no={$month_no}		
+				where (f.status_type!=1 or f.status_type is NULL) and b.id in ({$employeeStr}) and a.year_no={$year_no} and a.month_no={$month_no}
+				AND (
+				  (f.id is NOT NULL)
+				 OR 
+				 (DATE_FORMAT(b.entry_time, '%Y-%m-%d') BETWEEN '{$minEntry}' and '{$maxEntry}')
+				)
+			";
+                $rows = Yii::app()->db->createCommand($sql1)->queryAll();
+                $nameList =array();
+                if($rows){
+                    foreach ($rows as $key=>$list){
+                        if($key<3){
+                            $nameList[]=$list["name"];
+                        }else{
+                            break;
+                        }
+                    }
+                    $message = "请在当月最后一天23点50分前对以下新人当月的绩效进行评分(";
+                    if(count($rows)>3){
+                        $nameList[]="...";
+                    }
+                    $message.=implode("、",$nameList);
+                    $message.=")<br/>";
+                    $message.= "进入途径“会计系统 - 薪资计算 - 销售顾问绩效考核表- 点击进入员工表单，进行第四项评分” 填写完点击“固定”按键";
+                    $this->checkItems[$key]["message"]=$message;
+                    $value["message"]=$message;
+                    $lastDay = date("t");
+                    if($lastDay==$day){//每月最后一天限制使用
+                        $this->checkItems[$key]["function"]="XS14";
+                        $value["function"]="XS14";
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private function getSalesAccessForMe(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $lcu = Yii::app()->user->id;
+        $bindingRow = Yii::app()->db->createCommand()->select("employee_id")
+            ->from("hr{$suffix}.hr_binding")
+            ->where("user_id='{$lcu}'")
+            ->queryRow();
+        $userList = array();
+        if($bindingRow){
+            $employee_id = $bindingRow["employee_id"];
+            $groupRow = Yii::app()->db->createCommand()->select("a.id")
+                ->from("hr{$suffix}.hr_group_staff a")
+                ->leftJoin("hr{$suffix}.hr_group b","a.group_id=b.id")
+                ->where("b.group_code='SALESNEW' and a.employee_id=".$employee_id)
+                ->queryRow();
+            if($groupRow){
+                $rows = Yii::app()->db->createCommand()->select("employee_id")
+                    ->from("hr{$suffix}.hr_group_branch")
+                    ->where("group_staff_id=".$groupRow["id"])
+                    ->queryAll();
+                if($rows){
+                    foreach ($rows as $row){
+                        $userList[$row["employee_id"]] = $row["employee_id"];
+                    }
+                }
+            }
+        }
+        return $userList;
     }
 }
 ?>

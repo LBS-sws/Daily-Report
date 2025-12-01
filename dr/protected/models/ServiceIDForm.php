@@ -75,6 +75,7 @@ class ServiceIDForm extends CFormModel
     );//回款数组
 
     public $files;
+    public $ltNowDate=false;//小于当前日期：true
 
     public $docMasterId = array(
         'serviceid'=>0,
@@ -196,12 +197,69 @@ class ServiceIDForm extends CFormModel
             array('sign_dt, ctrt_end_dt, first_dt','date','allowEmpty'=>true,
                 'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
             ),
-            array('status_dt','validateVisitDt','on'=>array('new')),
+            array('id','validateID'),
             array('cust_type','validateCustType'),
             array('cust_type','validateServiceInfo'),
             array('city','validateCity'),
         );
     }
+
+    //驗證该服务是否已经参加销售提成计算
+    public function validateID($attribute, $params) {
+        $isVivienne = ServiceForm::isVivienne();
+        $thisDate = $isVivienne?"0000/00/00":date("Y/m/01");
+        $maxDate = $isVivienne?"9999/12/31":date("Y/12/31");
+        $status_dt = date("Y/m/d",strtotime($this->status_dt));
+        $scenario = $this->getScenario();
+        if(in_array($scenario,array("renew","new","amend","suspend","terminate","resume"))){
+            $this->ltNowDate = $status_dt<$thisDate;
+            //验证新增
+            if($this->ltNowDate){
+                $this->addError($attribute, "无法新增({$status_dt})时间段的数据");
+            }
+        }else{
+            $id= empty($this->id)?0:$this->id;
+            $row = Yii::app()->db->createCommand()->select("a.*")->from("swo_serviceid a")
+                ->where("a.id=:id",array(":id"=>$id))->queryRow();
+            if($row){
+                $row["status_dt"] = date("Y/m/d",strtotime($row["status_dt"]));
+                $this->status_dt = $isVivienne?$this->status_dt:$row["status_dt"];
+                $this->ltNowDate =$row["status_dt"]<$thisDate;
+                if($scenario=="delete"){
+                    if($this->ltNowDate){
+                        $this->addError($attribute, "无法删除({$row["status_dt"]})时间段的数据");
+                    }
+                }else{
+                    if($row["status_dt"]<$maxDate&&$status_dt>$maxDate){
+                        $this->addError($attribute, "无法跨年修改，{$row["status_dt"]}无法修改成{$status_dt}");
+                    }else{
+                        $updateBool = false;
+                        $updateBool = $updateBool||$status_dt<$thisDate;//验证修改后的时间
+                        $updateBool = $updateBool||$row["status_dt"]<$thisDate;//验证修改前的时间
+                        if($updateBool){
+                            $notUpdate=self::getNotUpdateList();
+                            foreach ($notUpdate as $item){
+                                $this->$item = $row[$item];
+                            }
+                        }
+                    }
+                }
+            }else{
+                $this->addError($attribute, "数据异常，请刷新重试");
+            }
+        }
+    }
+
+    public static function getNotUpdateList(){
+        return array("status","status_dt","cust_type","cust_type_name","cust_type_three","cust_type_four",
+            "service_no","prepay_month","prepay_start","pieces","nature_type",
+            "need_install","amt_install","amt_paid","ctrt_period","amt_money",
+            "salesman","salesman_id","freq","surplus","all_number",
+            "othersalesman","othersalesman_id",
+            "b4_amt_paid","b4_amt_money","company_name","company_id"
+        );
+    }
+
     //验证城市
     public function validateCity($attribute, $params) {
         $city = empty($this->city)?Yii::app()->user->city():$this->city;
@@ -214,22 +272,52 @@ class ServiceIDForm extends CFormModel
 
     public function validateServiceInfo($attribute, $params) {
         if(!empty($this->service_info)){
+            $thisDate = date("Y/m/01");
             foreach ($this->service_info as $key=>&$row){
-                if(!empty($row["back_date"])){
-                    if($row["back_money"]===""||$row["put_month"]===""){
-                        unset($this->service_info[$key]);
-                        continue;
-                    }
-                    $row["back_money"] = is_numeric($row["back_money"])?floatval($row["back_money"]):0;
-                    $row["put_month"] = is_numeric($row["put_month"])?floatval($row["put_month"]):0;
-                    $row["out_month"] = is_numeric($row["out_month"])?floatval($row["out_month"]):0;
-                }
+                $infoID = empty($row["id"])?0:$row["id"];
+                $infoRow = Yii::app()->db->createCommand()
+                    ->select("id,commission,back_date,back_money,back_ratio,put_month,out_month")
+                    ->from("swo_serviceid_info")
+                    ->where("id=:id",array(":id"=>$infoID))->queryRow();
                 if($row["uflag"]=="D"){
-                    $bool = Yii::app()->db->createCommand()->select("id")->from("swo_serviceid_info")
-                        ->where("commission=1 and id=:id",array(":id"=>$row["id"]))->queryRow();
-                    if($bool){
-                        $this->addError($attribute, "该回款记录已参与提成计算，无法删除");
+                    if($infoRow){
+                        $back_date = date("Y/m/d",strtotime($infoRow["back_date"]));
+                        if($infoRow["commission"]==1){
+                            $this->addError($attribute, "该回款记录已参与提成计算，无法删除");
+                            return false;
+                        }
+                        if($back_date<$thisDate){
+                            $this->addError($attribute, "无法删除({$back_date})时间段的数据");
+                            return false;
+                        }
+                    }else{
+                        $this->addError($attribute, "数据异常，请刷新重试");
                         return false;
+                    }
+                }else{
+                    if(!empty($row["back_date"])){
+                        $back_date = date("Y/m/d",strtotime($row["back_date"]));
+                        if(empty($infoID)&&$back_date<$thisDate){
+                            $this->addError($attribute, "无法新增({$back_date})时间段的应计数据");
+                            return false;
+                        }
+                        if($row["back_money"]===""||$row["put_month"]===""){
+                            unset($this->service_info[$key]);
+                            continue;
+                        }
+                        $row["back_money"] = is_numeric($row["back_money"])?floatval($row["back_money"]):0;
+                        $row["put_month"] = is_numeric($row["put_month"])?floatval($row["put_month"]):0;
+                        $row["out_month"] = is_numeric($row["out_month"])?floatval($row["out_month"]):0;
+                        if($infoRow){
+                            $info_date = date("Y/m/d",strtotime($infoRow["back_date"]));
+                            if($info_date<$thisDate||$back_date<$thisDate){
+                                $row["back_date"] = $infoRow["back_date"];
+                                $row["back_money"] = $infoRow["back_money"];
+                                $row["back_ratio"] = $infoRow["back_ratio"];
+                                $row["put_month"] = $infoRow["put_month"];
+                                $row["out_month"] = $infoRow["out_month"];
+                            }
+                        }
                     }
                 }
             }
@@ -271,16 +359,6 @@ class ServiceIDForm extends CFormModel
             }
         }else{
             $this->addError($attribute, "没有找到新增的ID服务");
-        }
-    }
-
-    public function validateVisitDt($attribute, $params) {
-        $visit_dt = date("Y-m-d",strtotime($this->status_dt));
-        $nowDate = date("Y-m-d");
-        $firstDate = date("Y-m-01",strtotime($nowDate));
-        $firstDate = date("Y-m-01",strtotime("$firstDate - 2 month"));
-        if($visit_dt<$firstDate){
-            $this->addError($attribute, "新增日期必须大于".$firstDate);
         }
     }
 
@@ -339,6 +417,7 @@ class ServiceIDForm extends CFormModel
 //		print_r('<pre>');
 //        print_r($rows);
         if ($row) {
+            $thisDate = date("Y/m/01");
             if($this->getScenario()!="new"){
                 $this->id = $row['id'];
                 $this->service_new_id = $row['service_new_id'];
@@ -377,6 +456,7 @@ class ServiceIDForm extends CFormModel
             $this->freq = $row['freq'];
             $this->first_dt = General::toDate($row['first_dt']);
             $this->status_dt = General::toDate($row['status_dt']);
+            $this->ltNowDate = ServiceForm::isVivienne()?false:$this->status_dt<$thisDate;
             $this->status = $row['status'];
             $this->remarks = $row['remarks'];
             $this->remarks2 = $row['remarks2'];
@@ -577,7 +657,7 @@ class ServiceIDForm extends CFormModel
     public function readonlyForSAndR($str="view",$arr=array("S","R","T")){
         //N:新增 C:續約 A:更改 S:暫停 R:恢復 T:終止
         $bool = $str=="new"?$this->scenario!='new':$this->scenario=='view';
-        return $bool||in_array($this->status,$arr);
+        return $bool||in_array($this->status,$arr)||$this->getReadonly();
     }
 
     protected function saveServiceID(&$connection)
@@ -688,5 +768,9 @@ class ServiceIDForm extends CFormModel
         }else{
             return false;
         }
+    }
+
+    public function getReadonly(){
+        return $this->scenario=='view'||$this->ltNowDate;
     }
 }

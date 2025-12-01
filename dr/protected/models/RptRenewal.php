@@ -2,9 +2,13 @@
 class RptRenewal extends ReportData2 {
 	public function fields() {
 		return array(
+            'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'L'),
             'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
 			'expiry_dt'=>array('label'=>Yii::t('service','Expiry Date'),'width'=>18,'align'=>'C'),
+            'company_code'=>array('label'=>"客户编号",'width'=>20,'align'=>'L'),
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
+            'group_code'=>array('label'=>"KA/集团编号",'width'=>18,'align'=>'L'),
+            'group_name'=>array('label'=>"KA/集团名称",'width'=>18,'align'=>'L'),
 			'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
 			'service'=>array('label'=>Yii::t('service','Service'),'width'=>40,'align'=>'L'),
 			'amt_month'=>array('label'=>Yii::t('service','Monthly'),'width'=>15,'align'=>'C'),
@@ -39,7 +43,8 @@ class RptRenewal extends ReportData2 {
         }
 		
 		$sql = "select
-					a.*, d.description as nature, c.description as customer_type
+					a.*,h.code as com_code,h.name as com_name,h.group_id as group_code,h.group_name,
+					 d.description as nature, c.description as customer_type
 				from 
 					swo_service a
 					left outer join swo_service b 
@@ -52,6 +57,8 @@ class RptRenewal extends ReportData2 {
 						on a.cust_type=c.id
 					left outer join swo_nature d 
 						on a.nature_type=d.id 
+					left outer join swo_company h 
+					    on a.company_id=h.id
 				where 
 					b.id is null and 
 					a.paid_type <> '1' and
@@ -72,10 +79,14 @@ class RptRenewal extends ReportData2 {
 			foreach ($rows as $row) {
 				if ($row['status']!='S' && $row['status']!='T') {
 					$temp = array();
+                    $temp['id'] = $row['id'];
                     $temp['city_name'] = General::getCityName($row["city"]);
 					$temp['type'] = $row['customer_type'];
 					$temp['status_dt'] = General::toDate($row['status_dt']);
-					$temp['company_name'] = $row['company_name'];
+                    $temp['company_code'] = $row['com_code'];
+                    $temp['company_name'] = empty($row['com_name'])?$row['company_name']:$row['com_name'];
+                    $temp['group_code'] = $row['group_code'];
+                    $temp['group_name'] = $row['group_name'];
 					$temp['nature'] = $row['nature'];
 					$temp['service'] = $row['service'];
 					$temp['amt_month'] = number_format(($row['paid_type']=='1'?$row['amt_paid']:($row['paid_type']=='M'?$row['amt_paid']:round($row['amt_paid']/12,2))),2,'.','');

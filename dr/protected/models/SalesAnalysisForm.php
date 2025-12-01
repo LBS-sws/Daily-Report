@@ -78,7 +78,18 @@ class SalesAnalysisForm extends CFormModel
 
     //获取销售拜访的金额字段
     public static function getVisitAmtToSQL() {
-        return array("svc_A7","svc_B6","svc_C7","svc_D6","svc_H6","svc_E7","svc_F4","svc_G3");
+        $suffix = Yii::app()->params['envSuffix'];
+        $svcList=array();
+        $infoRows = Yii::app()->db->createCommand()->select("a.id_char,b.class_id")
+            ->from("sales{$suffix}.sal_service_type_info a")
+            ->leftJoin("sales{$suffix}.sal_service_type b","a.type_id=b.id")
+            ->where("a.input_type='yearAmount' and b.class_id is not null")->queryAll();//不需要蔚诺空气业务
+        if($infoRows){
+            foreach ($infoRows as $infoRow){
+                $svcList[]="svc_".$infoRow["id_char"];
+            }
+        }
+        return $svcList;
     }
 
     //获取什么是签单的查询字符串

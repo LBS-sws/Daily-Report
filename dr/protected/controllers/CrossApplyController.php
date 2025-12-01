@@ -2,7 +2,7 @@
 
 class CrossApplyController extends Controller
 {
-	public $function_id='CD01';
+	public $function_id='CW01';
 	
 	public function filters()
 	{
@@ -97,7 +97,7 @@ class CrossApplyController extends Controller
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('crossApply/edit',array('index'=>$model->id)));
             } else {
-                $url = $model->table_type==0?'service/edit':'serviceka/edit';
+                $url = $model->table_type==0?'service/edit':'serviceKA/edit';
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->redirect(Yii::app()->createUrl($url,array('index'=>$model->service_id)));
@@ -159,11 +159,11 @@ class CrossApplyController extends Controller
 	}
 	
 	public static function allowReadWrite() {
-		return Yii::app()->user->validRWFunction('CD01');
+		return Yii::app()->user->validRWFunction('CW01');
 	}
 	
 	public static function allowReadOnly() {
-		return Yii::app()->user->validFunction('CD01');
+		return Yii::app()->user->validFunction('CW01');
 	}
 
 	public static function allowAll() {

@@ -35,6 +35,9 @@ class FollowupForm extends CFormModel
 	public $mcard_staff;
 	public $pest_type_id;
 	public $pest_type_name;
+	public $cust_sfn;
+	public $cust_vfn;
+    public $ltNowDate=false;//小于当前日期：true
 
 	/**
 	 * Declares customized attribute labels.
@@ -76,6 +79,8 @@ class FollowupForm extends CFormModel
 			'mcard_remarks'=>Yii::t('followup','Contend of Update to Job Card'),
 			'mcard_staff'=>Yii::t('followup','Staff of Update Job Card'),
 			'pest_type_id'=>Yii::t('followup','Pest Type'),
+			'cust_sfn'=>Yii::t('followup','cust sfn'),
+			'cust_vfn'=>Yii::t('followup','cust vfn'),
 		);
 	}
 
@@ -86,19 +91,64 @@ class FollowupForm extends CFormModel
 	{
 		return array(
 			array('id, resp_staff, pest_type_id, pest_type_name, resp_tech,job_report, mgr_notify, follow_staff, follow_tech, follow_action,
-				mgr_talk, change, tech_notify, cont_info, type, mcard_remarks, mcard_staff,
-				fp_cust_name, fp_comment, svc_comment, svc_cust_name, company_id, leader
+				mgr_talk, change, tech_notify, cont_info, type, mcard_remarks, mcard_staff,company_name,
+				fp_cust_name, fp_comment, svc_comment, svc_cust_name, company_id, leader, cust_sfn, cust_vfn
 				','safe'),
-			array('company_name, company_id, content, entry_dt','required'),
+			//array('cust_vfn','number','min'=>0,'max'=>10),
+			array('company_id, content, entry_dt','required'),
 			array('entry_dt','date','allowEmpty'=>false,
 				'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
 			),
 			array('sch_dt, fin_dt, fp_fin_dt, fp_call_dt, svc_next_dt, svc_call_dt','date','allowEmpty'=>true,
 				'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d','yyyy-M-d',),
 			),
+            array('id','validateID'),
             array('pest_type_id','validatePestType'),
 		);
 	}
+
+    public function validateID($attribute, $params) {
+        $thisDate = ServiceForm::isVivienne()?"0000/00/00":date("Y/m/01");
+        $status_dt = date("Y/m/d",strtotime($this->entry_dt));
+        $scenario = $this->getScenario();
+        if(in_array($scenario,array("new"))){
+            $this->ltNowDate = $status_dt<$thisDate;
+            //验证新增
+            if($status_dt<$thisDate){
+                $this->addError($attribute, "无法新增({$status_dt})时间段的数据");
+            }
+        }else{
+            $id= empty($this->id)?0:$this->id;
+            $row = Yii::app()->db->createCommand()->select("a.*")->from("swo_followup a")
+                ->where("a.id=:id",array(":id"=>$id))->queryRow();
+            if($row){
+                $row["entry_dt"] = date("Y/m/d",strtotime($row["entry_dt"]));
+                $this->ltNowDate = $row["entry_dt"]<$thisDate;
+                if($scenario=="delete"){
+                    if($row["entry_dt"]<$thisDate){
+                        $this->addError($attribute, "无法删除({$row["entry_dt"]})时间段的数据");
+                    }
+                }else{
+                    $updateBool = $status_dt<$thisDate;//验证修改后的时间
+                    $updateBool = $updateBool||$row["entry_dt"]<$thisDate;//验证修改前的时间
+                    if($updateBool){
+                        $notUpdate=self::getNotUpdateList();
+                        foreach ($notUpdate as $item){
+                            $this->$item = $row[$item];
+                        }
+                    }
+                }
+            }else{
+                $this->addError($attribute, "数据异常，请刷新重试");
+            }
+        }
+    }
+
+    public static function getNotUpdateList(){
+        return array("entry_dt","company_id","company_name",
+            "resp_tech","follow_staff"
+        );
+    }
 
     public function validatePestType($attribute, $params) {
         $type = $this->type;
@@ -134,10 +184,12 @@ class FollowupForm extends CFormModel
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0)
 		{
+            $thisDate = ServiceForm::isVivienne()?"0000/00/00":date("Y/m/01");
 			foreach ($rows as $row)
 			{
 				$this->id = $row['id'];
 				$this->entry_dt = General::toDate($row['entry_dt']);
+                $this->ltNowDate = $this->entry_dt<$thisDate;
 				$this->company_id = empty($row['company_id'])?"":$row['company_id'];
 				$this->company_name = empty($row['company_name_str'])?$row['company_name']:$row['company_name_str'];
 				$this->type = $row['type'];
@@ -169,6 +221,8 @@ class FollowupForm extends CFormModel
 				$this->mcard_staff = $row['mcard_staff'];
 				$this->pest_type_id = empty($row['pest_type_id'])?null:explode(",",$row['pest_type_id']);
 				$this->pest_type_name = $row['pest_type_name'];
+				$this->cust_sfn = $row['cust_sfn'];
+				$this->cust_vfn = $row['cust_vfn'];
 				break;
 			}
 		}
@@ -201,6 +255,7 @@ class FollowupForm extends CFormModel
 			$transaction->commit();
 		}
 		catch(Exception $e) {
+		    var_dump($e);die();
 			$transaction->rollback();
 			throw new CHttpException(404,'Cannot update.');
 		}
@@ -227,7 +282,7 @@ class FollowupForm extends CFormModel
 							follow_staff, leader, follow_tech, fin_dt, follow_action, mgr_talk, 
 							changex, tech_notify, fp_fin_dt, fp_call_dt, fp_cust_name, fp_comment,
 							svc_next_dt, svc_call_dt, svc_cust_name, svc_comment, 
-							mcard_remarks, mcard_staff,pest_type_id,pest_type_name,
+							mcard_remarks, mcard_staff,pest_type_id,pest_type_name,cust_sfn,cust_vfn,
 							city, luu, lcu
 						) values (
 							:entry_dt, :type, :company_id, :company_name, :content,:job_report, :cont_info, 
@@ -235,7 +290,7 @@ class FollowupForm extends CFormModel
 							:follow_staff, :leader, :follow_tech, :fin_dt, :follow_action, :mgr_talk, 
 							:change, :tech_notify, :fp_fin_dt, :fp_call_dt, :fp_cust_name, :fp_comment,
 							:svc_next_dt, :svc_call_dt, :svc_cust_name, :svc_comment, 
-							:mcard_remarks, :mcard_staff,:pest_type_id,:pest_type_name,
+							:mcard_remarks, :mcard_staff,:pest_type_id,:pest_type_name,:cust_sfn,:cust_vfn,
 							:city, :luu, :lcu
 						)";
 				break;
@@ -272,6 +327,8 @@ class FollowupForm extends CFormModel
 							mcard_staff = :mcard_staff,
 							pest_type_id = :pest_type_id,
 							pest_type_name = :pest_type_name,
+							cust_sfn = :cust_sfn,
+							cust_vfn = :cust_vfn,
 							luu = :luu 
 						where id = :id
 						";
@@ -364,6 +421,14 @@ class FollowupForm extends CFormModel
 			$command->bindParam(':mcard_remarks',$this->mcard_remarks,PDO::PARAM_STR);
 		if (strpos($sql,':mcard_staff')!==false)
 			$command->bindParam(':mcard_staff',$this->mcard_staff,PDO::PARAM_STR);
+		if (strpos($sql,':cust_vfn')!==false){
+            $this->cust_vfn = $this->cust_vfn===""?null:intval($this->cust_vfn);
+            $command->bindParam(':cust_vfn',$this->cust_vfn,PDO::PARAM_STR);
+        }
+		if (strpos($sql,':cust_sfn')!==false){
+            $this->cust_sfn = $this->cust_sfn===""?null:intval($this->cust_sfn);
+            $command->bindParam(':cust_sfn',$this->cust_sfn,PDO::PARAM_STR);
+        }
 		if (strpos($sql,':city')!==false)
 			$command->bindParam(':city',$city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
@@ -424,5 +489,9 @@ class FollowupForm extends CFormModel
             }
         }
         return $code;
+    }
+
+    public function getReadonly(){
+        return $this->scenario=='view'||$this->ltNowDate;
     }
 }

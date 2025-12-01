@@ -92,7 +92,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
                 <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php
-                    echo $form->dropDownList($model,'city',QcForm::getCityList(),array('readonly'=>$model->readonly()));
+                    echo $form->dropDownList($model,'city',QcForm::getCityList(),array('readonly'=>$model->readonly()||$model->ltNowDate));
 
                     ?>
                 </div>
@@ -102,10 +102,10 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-7">
 					<?php 
 						echo $form->textField($model, 'qc_staff', 
-							array('size'=>50,'maxlength'=>500,'readonly'=>'',
+							array('size'=>50,'maxlength'=>500,'readonly'=>true,
 							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','QC Staff'),
 											array('name'=>'btnStaffQc','id'=>'btnStaffQc',
-												'disabled'=>($model->readonlySP())
+												'disabled'=>($model->readonlySP()||$model->ltNowDate)
 											))
 						)); 
 					?>
@@ -118,7 +118,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 					<?php echo $form->hiddenField($model, 'company_id'); ?>
 					<?php echo $form->textField($model, 'company_name', 
 						array('maxlength'=>500,'readonly'=>'readonly',
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->readonly())))
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->readonly()||$model->ltNowDate)))
 					)); ?>
 				</div>
 			</div>
@@ -127,8 +127,8 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'job_staff',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">
 					<?php echo $form->textField($model, 'job_staff',
-						array('maxlength'=>500,'readonly'=>($model->readonly()),
-						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->readonly())))
+						array('maxlength'=>500,'readonly'=>true,
+						'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->readonly()||$model->ltNowDate)))
 					)); ?>
 				</div>
 			</div>
@@ -142,7 +142,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 						</div>
 						<?php 
 							echo TbHtml::textField('QcForm[info][service_dt]',$model->info['service_dt'], 
-								array('class'=>'form-control pull-right','readonly'=>($model->readonly()),));
+								array('class'=>'form-control pull-right','readonly'=>($model->readonly()||$model->ltNowDate),));
 						?>
 					</div>
 				</div>
@@ -154,7 +154,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 							<i class="fa fa-calendar"></i>
 						</div>
 						<?php echo $form->textField($model, 'qc_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->readonly()),)); 
+							array('class'=>'form-control pull-right','readonly'=>($model->readonly()||$model->ltNowDate),));
 						?>
 					</div>
 				</div>
@@ -206,7 +206,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-2">
 					<?php 
 						$listtype = array('H'=>Yii::t('qc','High'), 'M'=>Yii::t('qc','Medium'), 'L'=>Yii::t('qc','Low'));
-						echo TbHtml::dropDownList('QcForm[info][freq_rat]',$model->info['freq_rat'], $listtype,array('disabled'=>($model->readonly()))); 
+						echo TbHtml::dropDownList('QcForm[info][freq_rat]',$model->info['freq_rat'], $listtype,array('disabled'=>($model->readonly()||$model->ltNowDate)));
 					?>
 				</div>
 			</div>
@@ -218,7 +218,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_ratcheck]', $model->info['score_ratcheck'], 
-							array('min'=>0,'max'=>$model->maxscore('score_ratcheck'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_ratcheck'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -229,7 +229,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_ratdispose]', $model->info['score_ratdispose'], 
-							array('min'=>0,'max'=>$model->maxscore('score_ratdispose'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_ratdispose'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -240,7 +240,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_ratboard]', $model->info['score_ratboard'], 
-							array('min'=>0,'max'=>$model->maxscore('score_ratboard'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_ratboard'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -253,7 +253,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_rathole]', $model->info['score_rathole'], 
-							array('min'=>0,'max'=>$model->maxscore('score_rathole'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_rathole'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -264,7 +264,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_ratwarn]', $model->info['score_ratwarn'], 
-							array('min'=>0,'max'=>$model->maxscore('score_ratwarn'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_ratwarn'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -275,7 +275,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_ratdrug]', $model->info['score_ratdrug'], 
-							array('min'=>0,'max'=>$model->maxscore('score_ratdrug'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_ratdrug'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -290,7 +290,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-2">
 					<?php 
 						$listtype = array('H'=>Yii::t('qc','High'), 'M'=>Yii::t('qc','Medium'), 'L'=>Yii::t('qc','Low'));
-						echo TbHtml::dropDownList('QcForm[info][freq_roach]',$model->info['freq_roach'], $listtype,array('disabled'=>($model->readonly()))); 
+						echo TbHtml::dropDownList('QcForm[info][freq_roach]',$model->info['freq_roach'], $listtype,array('disabled'=>($model->readonly()||$model->ltNowDate)));
 					?>
 				</div>
 			</div>
@@ -302,7 +302,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_roachcheck]', $model->info['score_roachcheck'], 
-							array('min'=>0,'max'=>$model->maxscore('score_roachcheck'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_roachcheck'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -313,7 +313,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_roachdrug]', $model->info['score_roachdrug'], 
-							array('min'=>0,'max'=>$model->maxscore('score_roachdrug'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_roachdrug'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -324,7 +324,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_roachexdrug]', $model->info['score_roachexdrug'], 
-							array('min'=>0,'max'=>$model->maxscore('score_roachexdrug'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_roachexdrug'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -337,7 +337,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_roachtoxin]', $model->info['score_roachtoxin'], 
-							array('min'=>0,'max'=>$model->maxscore('score_roachtoxin'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_roachtoxin'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -352,7 +352,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-2">
 					<?php 
 						$listtype = array('H'=>Yii::t('qc','High'), 'M'=>Yii::t('qc','Medium'), 'L'=>Yii::t('qc','Low'));
-						echo TbHtml::dropDownList('QcForm[info][freq_fly]',$model->info['freq_fly'], $listtype,array('disabled'=>($model->readonly()))); 
+						echo TbHtml::dropDownList('QcForm[info][freq_fly]',$model->info['freq_fly'], $listtype,array('disabled'=>($model->readonly()||$model->ltNowDate)));
 					?>
 				</div>
 			</div>
@@ -364,7 +364,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_flycup]', $model->info['score_flycup'], 
-							array('min'=>0,'max'=>$model->maxscore('score_flycup'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_flycup'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -375,7 +375,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_flylamp]', $model->info['score_flylamp'], 
-							array('min'=>0,'max'=>$model->maxscore('score_flylamp'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_flylamp'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -386,7 +386,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_flycntl]', $model->info['score_flycntl'], 
-							array('min'=>0,'max'=>$model->maxscore('score_flycntl'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_flycntl'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -399,7 +399,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_flyspray]', $model->info['score_flyspray'], 
-							array('min'=>0,'max'=>$model->maxscore('score_flyspray'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_flyspray'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -432,7 +432,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_uniform]', $model->info['score_uniform'], 
-							array('min'=>0,'max'=>$model->maxscore('score_uniform'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_uniform'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -443,7 +443,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_tools]', $model->info['score_tools'], 
-							array('min'=>0,'max'=>$model->maxscore('score_tools'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_tools'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -460,7 +460,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_greet]', $model->info['score_greet'], 
-							array('min'=>0,'max'=>$model->maxscore('score_greet'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_greet'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -471,7 +471,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_comm]', $model->info['score_comm'], 
-							array('min'=>0,'max'=>$model->maxscore('score_comm'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_comm'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -488,7 +488,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_safety]', $model->info['score_safety'], 
-							array('min'=>0,'max'=>$model->maxscore('score_safety'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_safety'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>
@@ -498,7 +498,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<div class="col-sm-1">
 					<?php 
 						echo TbHtml::numberField('QcForm[info][score_afterwork]', $model->info['score_afterwork'], 
-							array('min'=>0,'max'=>$model->maxscore('score_afterwork'),'readonly'=>($model->readonly()),)
+							array('min'=>0,'max'=>$model->maxscore('score_afterwork'),'readonly'=>($model->readonly()||$model->ltNowDate),)
 						); 
 					?>
 				</div>

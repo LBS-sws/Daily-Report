@@ -68,7 +68,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
                 <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php
-                    echo $form->dropDownList($model,'city',QcForm::getCityList(),array('readonly'=>$model->scenario=='view'));
+                    echo $form->dropDownList($model,'city',QcForm::getCityList(),array('readonly'=>$model->scenario=='view'||$model->ltNowDate));
 
                     ?>
                 </div>
@@ -81,7 +81,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 							<i class="fa fa-calendar"></i>
 						</div>
 						<?php echo $form->textField($model, 'entry_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),)); 
+							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->ltNowDate),));
 						?>
 					</div>
 				</div>
@@ -94,8 +94,8 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 //						echo $form->dropDownList($model, 'job_staff', array(), 
 //							array('class'=>'form-control select2', 'disabled'=>($model->scenario=='view')));
 						echo $form->textField($model, 'job_staff', 
-							array('size'=>50,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
-							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->scenario=='view')))
+							array('size'=>50,'maxlength'=>500,'readonly'=>true,
+							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Resp. Staff'),array('name'=>'btnStaffResp','id'=>'btnStaffResp','disabled'=>($model->scenario=='view'||$model->ltNowDate)))
 						)); 
 					?>
 				</div>
@@ -127,8 +127,8 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 //						echo $form->dropDownList($model, 'company_name', array(), 
 //							array('class'=>'form-control select2', 'disabled'=>($model->scenario=='view')));
 						echo $form->textField($model, 'company_name', 
-							array('size'=>50,'maxlength'=>500,'readonly'=>($model->scenario=='view'),
-							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->scenario=='view')))
+							array('size'=>50,'maxlength'=>500,'readonly'=>true,
+							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','Customer'),array('name'=>'btnCompany','id'=>'btnCompany','disabled'=>($model->scenario=='view'||$model->ltNowDate)))
 						)); 
 					?>
 				</div>
@@ -145,7 +145,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'service_score',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'service_score', 
-						array('size'=>10,'maxlength'=>100,'readonly'=>($model->scenario=='view'))
+						array('size'=>10,'maxlength'=>100,'readonly'=>($model->scenario=='view'||$model->ltNowDate))
 					); ?>
 				</div>
 			</div>
@@ -154,7 +154,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'cust_score',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'cust_score', 
-						array('size'=>10,'maxlength'=>100,'readonly'=>($model->scenario=='view'))
+						array('size'=>10,'maxlength'=>100,'readonly'=>($model->scenario=='view'||$model->ltNowDate))
 					); ?>
 				</div>
 			</div>
@@ -172,7 +172,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 				<?php echo $form->labelEx($model,'qc_result',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'qc_result', 
-						array('size'=>10,'maxlength'=>100,'readonly'=>($model->scenario=='view'))
+						array('size'=>10,'maxlength'=>100,'readonly'=>($model->scenario=='view'||$model->ltNowDate))
 					); ?>
 				</div>
 			</div>
@@ -194,7 +194,7 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 							<i class="fa fa-calendar"></i>
 						</div>
 						<?php echo $form->textField($model, 'qc_dt', 
-							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),)); 
+							array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->ltNowDate),));
 						?>
 					</div>
 				</div>
@@ -207,8 +207,8 @@ $this->pageTitle=Yii::app()->name . ' - QC Form';
 //						echo $form->dropDownList($model, 'qc_staff', array(), 
 //							array('class'=>'form-control select2', 'disabled'=>($model->scenario=='view')));
 						echo $form->textField($model, 'qc_staff', 
-							array('size'=>50,'maxlength'=>500,'readonly'=>'',
-							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','QC Staff'),array('name'=>'btnStaffQc','id'=>'btnStaffQc','disabled'=>($model->scenario=='view')))
+							array('size'=>50,'maxlength'=>500,'readonly'=>true,
+							'append'=>TbHtml::Button('<span class="fa fa-search"></span> '.Yii::t('qc','QC Staff'),array('name'=>'btnStaffQc','id'=>'btnStaffQc','disabled'=>($model->scenario=='view'||$model->ltNowDate)))
 						)); 
 					?>
 				</div>

@@ -9,6 +9,7 @@ $this->pageTitle=Yii::app()->name . ' - RetentionKARate Form';
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 )); ?>
 <style>
+    .margin-p-0>p{margin-bottom: 2px;}
     .click-th,.click-tr,.td_detail{ cursor: pointer;}
     .click-tr>.fa:before{ content: "\f062";}
     .click-tr.show-tr>.fa:before{ content: "\f063";}
@@ -63,27 +64,54 @@ $this->pageTitle=Yii::app()->name . ' - RetentionKARate Form';
                         </div>
                     </div>
 
-                    <div class="col-lg-12">
-                        <p>&nbsp;</p>
+                    <div class="col-lg-7 margin-p-0 visible-lg">
+                        <p>1、长约：服务表单金额为非一次性金额的客户</p>
+                        <p>2、长约每月显示金额即销售当月“更改+恢复+暂停+终止”总和</p>
+                        <p>3、长约保留率 =  1- ((长约YTD综合停单金额 / YTD 月份数）*12)/生效中合同总金额</p>
+
+                        <p>生效中合同金额不包括一次性服务金额</p>
+
+                        <p>4、一次性：- 派单系统服务类型为“灭虫（一次性）、清洁（一次性）、白蚁、甲醛、雾化消毒、灭虫喷焗即为一次性</p>
+                        <p>5、一次性每个月显示的金额即派单系统已完工的服务工单金额</p>
+                        <p>6、一次性保留率 = 1-（上月一次性金额 -本月一次性金额） / 本月一次性服务生意额</p>
+                        <p>7、每年1月份将去年12月一次性服务金额显示出来</p>
                     </div>
 
 
-                    <div class="col-lg-12" style="padding-top: 15px;">
+                    <?php
+                    $model->downJsonText = array();
+                    $contentHead='<div class="col-lg-12" style="padding-top: 15px;">
                         <div class="row panel panel-default" style="border-color: #333">
                             <!-- Default panel contents -->
                             <div class="panel-heading">
-                                <h3 style="margin-top:10px;">
-                                    <?php echo Yii::t('app','Retention KA rate'); ?>
-                                    <small>(<?php echo $model->start_date." ~ ".$model->end_date?>)</small>
+                                <h3 style="margin-top:10px;">{:head:}<small>('.$model->start_date ." ~ ".$model->end_date.')</small>
                                 </h3>
                             </div>
-
                             <!-- Table -->
-                            <div class="table-responsive">
-                                <?php echo $model->retentionKARateHtml();?>
-                            </div>
-                        </div>
-                    </div>
+                            <div class="table-responsive">';
+
+                    $contentEnd='</div></div></div>';
+                    $tabs =array();
+                    $contentTable = str_replace("{:head:}",Yii::t('summary','Long Service Rate'),$contentHead);
+                    $contentTable.=$model->retentionKARateHtml(0);
+                    $contentTable.=$contentEnd;
+                    $tabs[] = array(
+                        'label'=>Yii::t("summary","Long Service Rate"),
+                        'content'=>$contentTable,
+                        'active'=>true,
+                    );
+                    //长约保留率
+                    $contentTable = str_replace("{:head:}",Yii::t("summary","One Service Rate"),$contentHead);
+                    $contentTable.=$model->retentionKARateHtml(1);
+                    $contentTable.=$contentEnd;
+                    $tabs[] = array(
+                        'label'=>Yii::t("summary","One Service Rate"),
+                        'content'=>$contentTable,
+                        'active'=>false,
+                    );
+                    //一次性保留率
+                    echo TbHtml::tabbableTabs($tabs);
+                    ?>
                 </div>
             </div>
 

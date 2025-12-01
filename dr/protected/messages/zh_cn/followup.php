@@ -55,5 +55,7 @@ return array(
 	'display'=>'是否显示',
 	'show'=>'显示',
 	'none'=>'隐藏',
+	'cust sfn'=>'客户满意度',
+	'cust vfn'=>'客户评分',
 );
 ?>

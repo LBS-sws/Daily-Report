@@ -8,6 +8,12 @@ $this->pageTitle=Yii::app()->name . ' - City Form';
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
 )); ?>
+<style>
+    .select2.select2-container{ width: 100%!important;}
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 24px;
+    }
+</style>
 
 <section class="content-header">
 	<h1>
@@ -131,6 +137,9 @@ $this->pageTitle=Yii::app()->name . ' - City Form';
                             break;
                     }
                     echo '</div>';
+                    if(isset($fileList["text"])){
+                        echo "<div class='col-sm-6'><p class='form-control-static text-danger'>".$fileList["text"]."</p></div>";
+                    }
                     echo '</div>';
                 }
             ?>
@@ -141,6 +150,14 @@ $this->pageTitle=Yii::app()->name . ' - City Form';
 <?php $this->renderPartial('//site/removedialog'); ?>
 
 <?php
+$js="
+$('#CityForm_SALES_OUT').select2({
+    multiple: false,
+    maximumInputLength: 10,
+    language: 'zh-CN'
+});
+";
+Yii::app()->clientScript->registerScript('searchCityInput',$js,CClientScript::POS_READY);
 $js = Script::genDeleteData(Yii::app()->createUrl('city/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 

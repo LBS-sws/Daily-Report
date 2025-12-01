@@ -15,7 +15,7 @@
 		<?php echo TbHtml::label($this->getLabelName('finish'), false); ?>
 	</th>
 	<th>
-		<?php echo Yii::app()->user->validRWFunction('A05') ?
+		<?php echo Yii::app()->user->validRWFunction('A05')&&!$this->model->getReadonly() ?
 				TbHtml::Button('+',array('id'=>'btnAddRow','title'=>Yii::t('misc','Add'),'size'=>TbHtml::BUTTON_SIZE_SMALL))
 				: '&nbsp;';
 		?>

@@ -2,10 +2,13 @@
 class RptCustsuspend extends ReportData2 {
 	public function fields() {
 		return array(
+            'id'=>array('label'=>"LBS系统ID",'width'=>12,'align'=>'L'),
             'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
             'office_name'=>array('label'=>"归属",'width'=>12,'align'=>'C'),
 			'lud'=>array('label'=>Yii::t('service','Entry Date'),'width'=>18,'align'=>'C'),
 			'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
+            'group_code'=>array('label'=>"KA/集团编号",'width'=>18,'align'=>'L'),
+            'group_name'=>array('label'=>"KA/集团名称",'width'=>18,'align'=>'L'),
 			'contact_name'=>array('label'=>Yii::t('customer','Contact Name'),'width'=>30,'align'=>'L'),
 			'contact_phone'=>array('label'=>Yii::t('customer','Contact Phone'),'width'=>20,'align'=>'L'),
 			'address'=>array('label'=>Yii::t('customer','Address'),'width'=>40,'align'=>'L'),
@@ -46,7 +49,7 @@ class RptCustsuspend extends ReportData2 {
             $city_allow = json_decode($city,true);
             $city_allow = "'".implode("','",$city_allow)."'";
         }
-		$sql = "select a.*, b.description as nature, c.description as customer_type, d.cont_name, d.cont_phone, d.address
+		$sql = "select a.*, b.description as nature, c.description as customer_type, d.cont_name, d.cont_phone, d.address,d.group_id as group_code,d.group_name 
 					from swo_service a
 					left outer join swo_nature b on a.nature_type=b.id 
 					left outer join swo_customer_type c on a.cust_type=c.id
@@ -91,11 +94,14 @@ class RptCustsuspend extends ReportData2 {
 				}
 				
 				$temp = array();
+                $temp['id'] = $row['id'];
                 $temp['city_name'] = General::getCityName($row["city"]);
                 $temp['office_name'] = $officeList[$row["office_id"]];
 				$temp['type'] = $row['customer_type'];
 				$temp['status_dt'] = General::toDate($row['status_dt']);
 				$temp['company_name'] = $row['company_name'];
+				$temp['group_code'] = $row['group_code'];
+				$temp['group_name'] = $row['group_name'];
 				$temp['contact_name'] = $contact_name;
 				$temp['contact_phone'] = $contact_phone;
 				$temp['address'] = $address;

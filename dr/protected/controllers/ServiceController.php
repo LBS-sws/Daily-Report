@@ -38,7 +38,7 @@ class ServiceController extends Controller
 				'expression'=>array('ServiceController','allowCopy'),
 			),
 			array('allow',
-				'actions'=>array('index','view','filedownload'),
+				'actions'=>array('index','view','filedownload','download'),
 				'expression'=>array('ServiceController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -47,7 +47,23 @@ class ServiceController extends Controller
 		);
 	}
 
-	public function actionIndex($pageNum=0) 
+	public function actionDownload()
+	{
+		$model = new ServiceList;
+		if (isset($_POST['ServiceList'])) {
+			$model->attributes = $_POST['ServiceList'];
+		} else {
+			$session = Yii::app()->session;
+			if (isset($session['criteria_a02']) && !empty($session['criteria_a02'])) {
+				$criteria = $session['criteria_a02'];
+				$model->setCriteria($criteria);
+			}
+		}
+		$model->downloadExcel();
+		$this->render('index',array('model'=>$model));
+	}
+
+	public function actionIndex($pageNum=0)
 	{
 		$model = new ServiceList;
 		if (isset($_POST['ServiceList'])) {
@@ -119,9 +135,10 @@ class ServiceController extends Controller
 			$model->b4_paid_type = '';
 			$model->b4_amt_paid = 0;
 			$model->reason = '';
+			$model->ltNowDate = false;
             $model->remarks = '';
             $model->surplus = 0;
-            $model->all_number = 0;
+            //$model->all_number = 0;
 			$model->org_equip_qty = 0;
 			$model->rtn_equip_qty = 0;
             $model->other_commission = null;
@@ -168,17 +185,18 @@ class ServiceController extends Controller
 			$model->b4_paid_type = '';
 			$model->b4_amt_paid = 0;
 			$model->reason = '';
+            $model->ltNowDate = false;
 			$model->remarks = '';
 			$model->org_equip_qty = 0;
             $model->surplus = 0;
-            $model->all_number = 0;
+            //$model->all_number = 0;
 			$model->rtn_equip_qty = 0;
             $model->other_commission = null;
             $model->commission = null;
 			$model->sign_dt = null;
 			$model->equip_install_dt = null;
-			$model->ctrt_end_dt = null;
-			$model->first_dt = null;
+			//$model->ctrt_end_dt = null;
+			//$model->first_dt = null;
 			$model->first_tech = '';
 			$model->id = 0;
 			$model->files = '';
@@ -219,13 +237,14 @@ class ServiceController extends Controller
 			$model->b4_service = $model->service;
 			$model->b4_paid_type = $model->paid_type;
 			$model->b4_amt_paid = $model->amt_paid;
-			$model->ctrt_period = 0;
-			$model->ctrt_end_dt = null;
+			//$model->ctrt_period = 0;
+			//$model->ctrt_end_dt = null;
 			$model->cont_info = '';
 			$model->first_tech = '';
             $model->surplus = 0;
-            $model->all_number = 0;
+            //$model->all_number = 0;
 			$model->reason = '';
+            $model->ltNowDate = false;
 			$model->remarks = '';
 			$model->equip_install_dt = null;
 			$model->org_equip_qty = 0;
@@ -261,11 +280,12 @@ class ServiceController extends Controller
 			$model->b4_amt_paid = 0;
 			$model->amt_install = 0;
             $model->surplus = 0;
-            $model->all_number = 0;
+            //$model->all_number = 0;
 			$model->cont_info = '';
-			$model->first_dt = null;
+			//$model->first_dt = null;
 			$model->first_tech = '';
 			$model->reason = '';
+            $model->ltNowDate = false;
 			$model->remarks = '';
 			$model->equip_install_dt = null;
 			$model->org_equip_qty = 0;
@@ -300,12 +320,13 @@ class ServiceController extends Controller
 			$model->b4_paid_type = '';
 			$model->b4_amt_paid = 0;
 			$model->amt_install = 0;
-			$model->ctrt_period = 0;
+            $model->ltNowDate = false;
+			//$model->ctrt_period = 0;
             $model->surplus = 0;
-            $model->all_number = 0;
-			$model->ctrt_end_dt = null;
+            //$model->all_number = 0;
+			//$model->ctrt_end_dt = null;
 			$model->cont_info = '';
-			$model->first_dt = null;
+			//$model->first_dt = null;
 			$model->first_tech = '';
 			$model->remarks = '';
 			$model->equip_install_dt = null;
@@ -339,12 +360,13 @@ class ServiceController extends Controller
 			$model->b4_paid_type = '';
 			$model->b4_amt_paid = 0;
             $model->surplus = 0;
-            $model->all_number = 0;
+            $model->ltNowDate = false;
+            //$model->all_number = 0;
 			$model->amt_install = 0;
-			$model->ctrt_period = 0;
-			$model->ctrt_end_dt = null;
+			//$model->ctrt_period = 0;
+			//$model->ctrt_end_dt = null;
 			$model->cont_info = '';
-			$model->first_dt = null;
+			//$model->first_dt = null;
 			$model->first_tech = '';
 			$model->remarks = '';
 			$model->equip_install_dt = null;

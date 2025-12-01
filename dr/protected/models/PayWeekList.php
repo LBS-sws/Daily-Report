@@ -12,6 +12,8 @@ class PayWeekList extends CListPageModel
 		return array(	
 			'code'=>Yii::t('code','Code'),
 			'description'=>Yii::t('code','Description'),
+			'u_id'=>"派单系统id",
+			'z_display'=>"是否显示",
 		);
 	}
 	
@@ -34,6 +36,12 @@ class PayWeekList extends CListPageModel
 					break;
 				case 'description':
 					$clause .= General::getSqlConditionClause('description', $svalue);
+					break;
+				case 'u_id':
+					$clause .= General::getSqlConditionClause('u_id', $svalue);
+					break;
+				case 'z_display':
+					$clause .= General::getSqlConditionClause('z_display', $svalue);
 					break;
 			}
 		}
@@ -62,6 +70,8 @@ class PayWeekList extends CListPageModel
 						'id'=>$record['id'],
 						'code'=>$record['code'],
 						'description'=>$record['description'],
+						'z_display'=>$record['z_display']==1?"显示":"隐藏",
+						'u_id'=>$record['u_id'],
 					);
 //					$itemcnt++;
 //				}

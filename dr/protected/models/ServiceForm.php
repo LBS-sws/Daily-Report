@@ -47,6 +47,7 @@ class ServiceForm extends CFormModel
 	public $rtn_equip_qty = 0;
 	public $city;
 	public $surplus=0;
+	public $surplus_amt=0;
     public $all_number=0;
     public $surplus_edit0=0;
     public $all_number_edit0=0;
@@ -75,9 +76,11 @@ class ServiceForm extends CFormModel
     public $other_commission;
     public $tracking;
     public $u_system_id;
+    public $external_source;//外部数据来源
     public $is_intersect=0;//是否允许交叉派单
 
 	public $files;
+	public $ltNowDate=false;//小于当前日期：true
 
 	public $docMasterId = array(
 							'service'=>0,
@@ -156,6 +159,7 @@ class ServiceForm extends CFormModel
 			'terminate_dt'=>Yii::t('service','Terminate Date'),
             'all_number'=>Yii::t('service','Number'),
             'surplus'=>Yii::t('service','Surplus'),
+            'surplus_amt'=>Yii::t('service','Surplus Amt'),
             'all_number_edit0'=>Yii::t('service','Number edit0'),
             'surplus_edit0'=>Yii::t('service','Surplus edit0'),
             'all_number_edit1'=>Yii::t('service','Number edit1'),
@@ -177,6 +181,7 @@ class ServiceForm extends CFormModel
             'contract_type'=>Yii::t('service','contract type'),
             'u_system_id'=>Yii::t('service','u system id'),
             'is_intersect'=>Yii::t('service','is intersect'),
+            'external_source'=>Yii::t('service','external source'),
 		);
 	}
 
@@ -188,7 +193,7 @@ class ServiceForm extends CFormModel
 		return $this->getScenario()=="delete"
 		? array(
 			array('id, office_id,is_intersect,contract_type,tracking,technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, nature_type_two, cust_type, prepay_month,prepay_start,contract_no
-				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
+				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,surplus_amt,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
 				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm','safe'),
 			array('company_id,salesman_id,company_name,salesman, service,all_number,surplus, status_dt','safe'),
@@ -209,10 +214,10 @@ class ServiceForm extends CFormModel
 				b4_product_id, b4_service, b4_paid_type, docType, files, removeFileId, downloadFileId, need_install, no_of_attm','safe'),
 */
 			array('id, u_system_id,office_id,contract_type, tracking,technician_id, salesman_id, othersalesman_id, first_tech_id, technician, cont_info, first_tech, reason, remarks,othersalesman, remarks2, paid_type, nature_type, nature_type_two, cust_type, prepay_month,prepay_start,contract_no
-				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
+				status, status_desc, company_id, product_id, backlink, fresh, paid_type, city, all_number,surplus,surplus_amt,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,
 				all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,b4_product_id, b4_service, b4_paid_type,cust_type_name,pieces, need_install','safe'),
 			array('files, removeFileId, docMasterId, no_of_attm, company_id','safe'),
-			array('salesman_id,company_name,salesman,nature_type, service,all_number,surplus, status_dt','required'),
+			array('salesman_id,company_name,salesman,nature_type, service,all_number,surplus, cust_type, status_dt','required'),
 			array('ctrt_period','numerical','allowEmpty'=>true,'integerOnly'=>true),
 			array('amt_paid, amt_install','numerical','allowEmpty'=>true),
 			array('org_equip_qty, rtn_equip_qty','numerical','allowEmpty'=>true),
@@ -226,7 +231,6 @@ class ServiceForm extends CFormModel
             array('id','validateID'),
             array('id','validateAutoFinish'),
             array('city','validateCity'),
-            array('status_dt','validateVisitDt','on'=>array('new')),
             //array('u_system_id','validateUSystem','on'=>array('new')),
 		);
 	}
@@ -264,24 +268,64 @@ class ServiceForm extends CFormModel
 
     //驗證该服务是否已经参加销售提成计算
     public function validateID($attribute, $params) {
-        $id=$this->getScenario()=="new"?0:$this->id;
-        $notUpdate=array("status","status_dt","cust_type","cust_type_name",
-            "paid_type","amt_install","all_number","salesman","salesman_id",
-            "othersalesman","othersalesman_id","ctrt_period","first_dt",
-            "b4_paid_type","b4_amt_paid","surplus","company_name","company_id");
-        $row = Yii::app()->db->createCommand()
-            ->select("id,".implode(",",$notUpdate))
-            ->from("swo_service")
-            ->where("(commission is not null or other_commission is not null) and id=:id",array(":id"=>$id))->queryRow();
-        if($row){
-            if($this->getScenario()=="delete"){
-                $this->addError($attribute, "该服务已参加销售提成计算，无法删除");
-            }else{
-                foreach ($notUpdate as $item){
-                    $this->$item = $row[$item];
+        $isVivienne = self::isVivienne();
+	    $thisDate = $isVivienne?"0000/00/00":date("Y/m/01");
+        $maxDate = $isVivienne?"9999/12/31":date("Y/12/31");
+	    $status_dt = date("Y/m/d",strtotime($this->status_dt));
+	    $scenario = $this->getScenario();
+
+	    if(in_array($scenario,array("renew","new","amend","suspend","terminate","resume"))){
+	        $this->ltNowDate = $status_dt<$thisDate;
+	        //验证新增
+	        if($this->ltNowDate){
+                $this->addError($attribute, "无法新增({$status_dt})时间段的数据");
+            }
+        }else{
+            $id= empty($this->id)?0:$this->id;
+            $row = Yii::app()->db->createCommand()->select("a.*,b.contract_no")->from("swo_service a")
+                ->leftJoin("swo_service_contract_no b","b.service_id=a.id")
+                ->where("a.id=:id",array(":id"=>$id))->queryRow();
+            if($row){
+                $row["status_dt"] = date("Y/m/d",strtotime($row["status_dt"]));
+                $row["first_dt"] = date("Y/m/d",strtotime($row["first_dt"]));
+                $this->ltNowDate = $row["status_dt"]<$thisDate;
+                if($scenario=="delete"){
+                    if(!empty($row["commission"])||!empty($row["other_commission"])){
+                        $this->addError($attribute, "该服务已参加销售提成计算，无法删除");
+                    }
+                    if($this->ltNowDate){
+                        $this->addError($attribute, "无法删除({$row["status_dt"]})时间段的数据");
+                    }
+                }else{
+                    if($row["status_dt"]<$maxDate&&$status_dt>$maxDate){
+                        $this->addError($attribute, "无法跨年修改，{$row["status_dt"]}无法修改成{$status_dt}");
+                    }else{
+                        $updateBool = !empty($row["commission"])||!empty($row["other_commission"]);
+                        $updateBool = $updateBool||$status_dt<$thisDate;//验证修改后的时间
+                        $updateBool = $updateBool||$row["status_dt"]<$thisDate;//验证修改前的时间
+                        $updateBool = $updateBool||($row["status_dt"]<$maxDate&&$status_dt>$maxDate);
+                        if($updateBool){//不是特定账号，不允许修改
+                            $notUpdate=self::getNotUpdateList();
+                            foreach ($notUpdate as $item){
+                                $this->$item = $row[$item];
+                            }
+                        }
+                    }
                 }
+            }else{
+                $this->addError($attribute, "数据异常，请刷新重试");
             }
         }
+    }
+
+    public static function getNotUpdateList(){
+	    return array("status","status_dt","cust_type","cust_type_name",
+            "contract_no","prepay_month","prepay_start","pieces","nature_type",
+            "nature_type_two","need_install","surplus_amt",
+            "paid_type","amt_install","all_number","salesman","salesman_id",
+            "othersalesman","othersalesman_id","ctrt_period","first_dt",
+            "b4_paid_type","b4_amt_paid","surplus","company_name","company_id"
+        );
     }
 
     //驗證新增時是否有該服務
@@ -324,8 +368,13 @@ class ServiceForm extends CFormModel
             ->where("a.id=:id",array(":id"=>$index))
             ->queryRow();
         if($row){
+            $thisDate = self::isVivienne()?"0000/00/00":date("Y/m/01");
+            $status_dt = date("Y/m/d",strtotime($row["status_dt"]));
             if(empty($row["contract_no"])){
                 Dialog::message(Yii::t('dialog','Validation Message'), "合同编号为空，无法复制");
+                return false;
+            }elseif($status_dt<$thisDate){
+                Dialog::message(Yii::t('dialog','Validation Message'), "无法复制({$status_dt})时间段的数据");
                 return false;
             }else{
                 $bool = Yii::app()->db->createCommand()->select("a.id,b.contract_no")
@@ -357,12 +406,42 @@ class ServiceForm extends CFormModel
                     "update_type"=>2,
                     "service_type"=>3,
                     "service_id"=>$this->id,
+                    "change_amt"=>$this->getHistoryChangeAmt($data),
                     "lcu"=>Yii::app()->user->id
                 ));
                 return true;
             }
         }else{
             return false;
+        }
+    }
+
+    protected function getHistoryChangeAmt($data=array(),$beforeData=array()){
+        $nowYearAmt = $this->getYearAmtByData($data);
+        $oldYearAmt = $this->getYearAmtByData($beforeData);
+        $outAmt = $nowYearAmt-$oldYearAmt;
+        $outAmt = round($outAmt,2);
+        $outAmt = $outAmt>99999999?99999999:$outAmt;
+        $outAmt = $outAmt<-99999999?-99999999:$outAmt;
+        return $outAmt;
+    }
+
+    protected function getYearAmtByData($data){
+        if(empty($data)){
+            return 0;
+        }
+        $status = isset($data["status"])?$data["status"]:"N";
+        $b4_paid_type = isset($data["b4_paid_type"])?$data["b4_paid_type"]:0;
+        $b4_amt_paid = isset($data["b4_amt_paid"])&&!empty($data["b4_amt_paid"])?floatval($data["b4_amt_paid"]):0;
+        $ctrt_period = isset($data["ctrt_period"])&&!empty($data["ctrt_period"])?floatval($data["ctrt_period"]):0;
+        $paid_type = isset($data["paid_type"])?$data["paid_type"]:0;
+        $amt_paid = isset($data["amt_paid"])&&!empty($data["amt_paid"])?floatval($data["amt_paid"]):0;
+        $nowAmt = $paid_type=="M"?$ctrt_period*$amt_paid:$amt_paid;
+        if($status=="A"){
+            $oldAmt = $b4_paid_type=="M"?$ctrt_period*$b4_amt_paid:$b4_amt_paid;
+            return $nowAmt - $oldAmt;
+        }else{
+            return $nowAmt;
         }
     }
 
@@ -381,6 +460,7 @@ class ServiceForm extends CFormModel
 //		print_r('<pre>');
 //        print_r($rows);
 		if (count($rows) > 0) {
+		    $thisDate = date("Y/m/01");
 			foreach ($rows as $row) {
 				$this->id = $row['id'];
 				$this->service_new_id = $row['service_new_id'];
@@ -421,6 +501,7 @@ class ServiceForm extends CFormModel
 				$this->first_tech_id = $row['first_tech_id'];
 				$this->reason = $row['reason'];
 				$this->status_dt = General::toDate($row['status_dt']);
+                $this->ltNowDate = self::isVivienne()?false:$this->status_dt<$thisDate;
 				$this->status = $row['status'];
 				$this->remarks = $row['remarks'];
 				$this->remarks2 = $row['remarks2'];
@@ -431,6 +512,7 @@ class ServiceForm extends CFormModel
 				$this->no_of_attm['service'] = $row['no_of_attm'];
                 $this->city = $row['city'];
                 $this->surplus = $row['surplus'];
+                $this->surplus_amt = $row['surplus_amt']===null?"":floatval($row['surplus_amt']);
                 $this->all_number = $row['all_number'];
                 $this->surplus_edit0 = $row['surplus_edit0'];
                 $this->all_number_edit0 = $row['all_number_edit0'];
@@ -455,6 +537,7 @@ class ServiceForm extends CFormModel
                 $this->contract_type = $row['contract_type'];
                 $this->u_system_id = $row['u_system_id'];
                 $this->is_intersect = $row['is_intersect'];
+                $this->external_source = self::getExternalSourceList($row['external_source'],true);
 //                print_r('<pre>');
 //                print_r($this);exit();
 				break;
@@ -462,6 +545,28 @@ class ServiceForm extends CFormModel
 		}
 		return true;
 	}
+
+	public static function getExternalSourceList($num='',$bool=false){
+        $num = "".$num;
+        //1=史伟莎,2=中央KA,3=马氏,4=敏捷,5=利比斯
+        $list = array(
+            0=>"",
+            1=>"史伟莎",
+            2=>"中央KA",
+            3=>"马氏",
+            4=>"敏捷",
+            5=>"利比斯",
+        );
+        if($bool){
+            if(key_exists($num,$list)){
+                return $list[$num];
+            }else{
+                return $num;
+            }
+        }else{
+            return $list;
+        }
+    }
 	
 	public function saveData()
 	{
@@ -496,15 +601,15 @@ class ServiceForm extends CFormModel
         );
         switch ($status){
             case "N"://新增
-                $expr = array('equip_install_dt','first_tech_id','first_dt','surplus','cont_info');
+                $expr = array('equip_install_dt','need_install','amt_install','first_tech_id','first_dt','surplus','cont_info');
                 $list=array_merge($list,$expr);
                 break;
             case "C"://续约
-                $expr = array('equip_install_dt','first_tech_id','first_dt','cont_info');
+                $expr = array('equip_install_dt','need_install','amt_install','first_tech_id','first_dt','cont_info');
                 $list=array_merge($list,$expr);
                 break;
             case "A"://更改
-                $expr = array('first_dt','b4_service','b4_product_id','b4_paid_type','b4_amt_paid','surplus');
+                $expr = array('first_dt','b4_service','b4_product_id','b4_paid_type','b4_amt_paid','surplus','need_install','amt_install');
                 $list=array_merge($list,$expr);
                 break;
             case "S"://暂停
@@ -512,16 +617,18 @@ class ServiceForm extends CFormModel
                 $list=array_merge($list,$expr);
                 break;
             case "R"://恢复
+                $expr = array('need_install','amt_install');
+                $list=array_merge($list,$expr);
                 break;
             case "T"://终止
-                $expr = array('surplus','org_equip_qty','rtn_equip_qty','surplus_edit0','all_number_edit0','surplus_edit1','all_number_edit1','surplus_edit2',
+                $expr = array('surplus','surplus_amt','org_equip_qty','rtn_equip_qty','surplus_edit0','all_number_edit0','surplus_edit1','all_number_edit1','surplus_edit2',
                     'all_number_edit2','surplus_edit3','all_number_edit3');
                 $list=array_merge($list,$expr);
                 break;
         }
         $expr = array(
             'salesman_id','othersalesman_id','technician_id',
-            'sign_dt','ctrt_period','ctrt_end_dt','need_install','amt_install',
+            'sign_dt','ctrt_period','ctrt_end_dt',
             'all_number','pieces','prepay_month','prepay_start'
         );
         $list=array_merge($list,$expr);
@@ -593,6 +700,9 @@ class ServiceForm extends CFormModel
         $systemLogModel->log_type_name="客户服务";
         $systemLogModel->option_str="删除";
         $systemLogModel->option_text=$delText;
+        $systemLogModel->city=$this->city;
+        $systemLogModel->change_amt=$this->getHistoryChangeAmt($this->getAttributes());
+        $systemLogModel->change_amt*=-1;
         $systemLogModel->insertSystemLog("D");
     }
 
@@ -616,6 +726,7 @@ class ServiceForm extends CFormModel
                 }
                 if(!empty($list["update_html"])){
                     $list["update_html"] = implode("<br/>",$list["update_html"]);
+                    $list["change_amt"] = $this->getHistoryChangeAmt($this->getAttributes(),$model->getAttributes());
                     $connection->createCommand()->insert("swo_service_history", $list);
                 }
                 break;
@@ -661,6 +772,7 @@ class ServiceForm extends CFormModel
 		switch ($this->scenario) {
 			case 'delete':
 				$sql = "delete from swo_service where id = :id";
+                Yii::app()->db->createCommand()->delete("swo_service_contract_no","service_id=".$this->id);
 				$this->execSql($connection,$sql);
 				break;
 			case 'renew':
@@ -676,7 +788,7 @@ class ServiceForm extends CFormModel
 							ctrt_period, cont_info, first_dt, first_tech_id, first_tech, reason,tracking,
 							status, status_dt, remarks, remarks2, ctrt_end_dt,
 							equip_install_dt, org_equip_qty, rtn_equip_qty, cust_type_name,pieces,contract_type,office_id,u_system_id,
-							city, luu, lcu,all_number,surplus,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,prepay_month,prepay_start
+							city, luu, lcu,all_number,surplus,surplus_amt,all_number_edit0,surplus_edit0,all_number_edit1,surplus_edit1,all_number_edit2,surplus_edit2,all_number_edit3,surplus_edit3,prepay_month,prepay_start
 						) values (
 							:service_new_id,:company_id, :company_name, :product_id, :service, :nature_type, :two_nature_type, :cust_type, 
 							:paid_type, :amt_paid, :amt_install, :need_install, :salesman_id, :salesman,:othersalesman_id,:othersalesman,:technician_id,:technician, :sign_dt, :b4_product_id,
@@ -684,13 +796,22 @@ class ServiceForm extends CFormModel
 							:ctrt_period, :cont_info, :first_dt, :first_tech_id, :first_tech, :reason,:tracking,
 							:status, :status_dt, :remarks, :remarks2, :ctrt_end_dt,
 							:equip_install_dt, :org_equip_qty, :rtn_equip_qty, :cust_type_name,:pieces,:contract_type,:office_id,:u_system_id,
-							:city, :luu, :lcu,:all_number,:surplus,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3,:prepay_month,:prepay_start
+							:city, :luu, :lcu,:all_number,:surplus,:surplus_amt,:all_number_edit0,:surplus_edit0,:all_number_edit1,:surplus_edit1,:all_number_edit2,:surplus_edit2,:all_number_edit3,:surplus_edit3,:prepay_month,:prepay_start
 						)";
 				$this->execSql($connection,$sql);
 				$this->id = Yii::app()->db->getLastInsertID();
                 Yii::app()->db->createCommand()->update("swo_service",array(
                     "service_no"=>$this->status.(100000+$this->id)
                 ),"id=".$this->id);
+                //增加新增记录
+                Yii::app()->db->createCommand()->insert("swo_service_history", array(
+                    "service_id"=>$this->id,
+                    "lcu"=>Yii::app()->user->id,
+                    "service_type"=>1,
+                    "update_type"=>2,
+                    "update_html"=>"新增",
+                    "change_amt"=>$this->getHistoryChangeAmt($this->getAttributes())
+                ));
 				break;
 			case 'edit':
 				$sql = "update swo_service set                      
@@ -735,6 +856,7 @@ class ServiceForm extends CFormModel
 							rtn_equip_qty = :rtn_equip_qty,
 							all_number = :all_number, 
                             surplus = :surplus, 
+                            surplus_amt = :surplus_amt, 
                             all_number_edit0 = :all_number_edit0, 
                             surplus_edit0 = :surplus_edit0, 
                             all_number_edit1 = :all_number_edit1, 
@@ -912,6 +1034,10 @@ class ServiceForm extends CFormModel
         if (strpos($sql,':surplus')!==false) {
             $command->bindParam(':surplus',$this->surplus,PDO::PARAM_INT);
         }
+        if (strpos($sql,':surplus_amt')!==false) {
+            $surplus_amt = empty($this->surplus_amt)?0:floatval($this->surplus_amt);
+            $command->bindParam(':surplus_amt',$surplus_amt,PDO::PARAM_INT);
+        }
         if (strpos($sql,':all_number_edit0')!==false) {
             $command->bindParam(':all_number_edit0',$this->all_number_edit0,PDO::PARAM_INT);
         }
@@ -970,6 +1096,24 @@ class ServiceForm extends CFormModel
 			}
 		}
 	}
+
+    public static function getCustTypeOneList($cust_type=0,$allBool=true)
+    {
+        $cust_type = empty($cust_type)||!is_numeric($cust_type)?0:$cust_type;
+        $list = array();
+        if($allBool){
+            $sql = "select id, description from swo_customer_type order by description";
+        }else{
+            $sql = "select id, description from swo_customer_type WHERE description='产品买卖' or id='{$cust_type}' order by description";
+        }
+        $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        if (count($rows) > 0) {
+            foreach ($rows as $row) {
+                $list[$row['id']] = $row['description'];
+            }
+        }
+        return $list;
+    }
 
     public static function getCustTypeList($a=1) {
         $city = Yii::app()->user->city();
@@ -1045,6 +1189,13 @@ EOF;
     }
 
     public function getReadonly(){
-        return $this->scenario=='view'||$this->commission!==null||$this->other_commission!==null;
+        return $this->scenario=='view'||$this->commission!==null||$this->other_commission!==null||$this->ltNowDate;
+    }
+
+    public static function isVivienne(){
+        $vivienneList = isset(Yii::app()->params['vivienneList'])?Yii::app()->params['vivienneList']:array("VivienneChen88888");
+        $uid = Yii::app()->getComponent('user')===null?"admin":Yii::app()->user->id;
+        $thisData = date("Y-m-d H:i:s");
+        return $thisData<="2025-07-03 18:00:00"||in_array($uid,$vivienneList);
     }
 }

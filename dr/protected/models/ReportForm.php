@@ -73,7 +73,10 @@ class ReportForm extends CFormModel
             }
             $diffTimer = $endTimer-$startTimer;
             $diffTimer = $diffTimer/(24*60*60);
-            if($diffTimer>=31*6){//6个月
+            if($this->id=="all"&&$diffTimer>=31*3){
+                $this->addError("end_dt","查询时间段不能大于3个月，请分段查询");
+                return false;
+            }elseif ($diffTimer>=31*6){
                 $this->addError("end_dt","查询时间段不能大于6个月，请分段查询");
                 return false;
             }

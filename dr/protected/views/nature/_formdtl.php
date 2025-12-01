@@ -20,6 +20,11 @@
             array('disabled'=>$this->model->isReadOnly())
         ); ?>
     </td>
+    <td>
+        <?php echo TbHtml::dropDownList($this->getFieldName('z_display'),  $this->record['z_display'], array('0'=>'否','1'=>'是'),
+            array('disabled'=>$this->model->isReadOnly())
+        ); ?>
+    </td>
 	<td>
 		<?php
 			echo !$this->model->isReadOnly() 

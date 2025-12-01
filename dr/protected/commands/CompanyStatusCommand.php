@@ -17,18 +17,29 @@ class CompanyStatusCommand extends CConsoleCommand {
 		}
 		
 		if (!empty($ids)) {
+            /*
 			$records = $this->getCompanyRecord($ids);
 			foreach ($records as $record) {
 				echo "ID:".$record['id']."/CODE:".$record['code']."/NAME:".$record['name']."/CITY:".$record['city']."/STS:".$record['cust_sts']."/TYPE:".$record['cust_type']."\n";
 				if (!$this->update($record['id'], $record['cust_sts'], $record['cust_type'])) echo "--NO UPDATE!!\n";
 			}
+            */
+            //由于ids数组太长，分开查询
+            foreach ($ids as $companyID){
+                $records = $this->getCompanyRecord(array($companyID));
+                if($records){
+                    $record = $records[0];
+                    echo "ID:".$record['id']."/CODE:".$record['code']."/NAME:".$record['name']."/CITY:".$record['city']."/STS:".$record['cust_sts']."/TYPE:".$record['cust_type']."\n";
+                    if (!$this->update($record['id'], $record['cust_sts'], $record['cust_type'])) echo "--NO UPDATE!!\n";
+                }
+            }
 		}
 	}
 	
 	protected function findCompanyId($name, $city) {
 		$rtn = array();
 		$name = str_replace("'","\'",$name);
-		$sql = "select id from swo_company where city='$city' and substring('$name', 1, char_length(code))=code";
+		$sql = "select id from swo_company where city='$city' and substring('$name', 1, char_length(trim(code)))=trim(code)";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		foreach ($rows as $row) {
 			$rtn[] = $row['id'];

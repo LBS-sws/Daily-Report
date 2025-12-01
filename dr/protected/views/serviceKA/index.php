@@ -33,7 +33,7 @@ $this->pageTitle=Yii::app()->name . ' - Service';
 		?>
 	</div>
 
-            <?php if (Yii::app()->user->validRWFunction('CD01')): ?>
+            <?php if (Yii::app()->user->validRWFunction('CW01')): ?>
                 <div class="btn-group pull-right" role="group">
                     <?php
                     //交叉派单
@@ -59,6 +59,14 @@ $this->pageTitle=Yii::app()->name . ' - Service';
                     }
                     ?>
                 </div>
+            </div>
+            <div class="btn-group pull-right" role="group">
+                <?php
+                //下载
+                echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('dialog','Download'), array(
+                    'submit'=>Yii::app()->createUrl('serviceKA/download')
+                ));
+                ?>
             </div>
         </div>
     </div>
@@ -120,7 +128,7 @@ Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY
 echo TbHtml::button("",array("submit"=>"","class"=>"hide"));
 echo TbHtml::hiddenField("copy_index",0,array("id"=>"copy_index"));
 $this->renderPartial('//site/cityServiceBtn',array("actionStr"=>"serviceKA"));
-if (Yii::app()->user->validRWFunction('CD01')){ //交叉派单
+if (Yii::app()->user->validRWFunction('CW01')){ //交叉派单
     $this->renderPartial('//crossApply/crossFull',array("model"=>$model));
 }
 ?>

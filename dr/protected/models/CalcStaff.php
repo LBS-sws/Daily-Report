@@ -151,6 +151,9 @@ class CalcStaff extends Calculation {
 		$rtn = array();
 		$d1 = $year.'-'.$month.'-1';
 		$d2 = date("Y-m-t",strtotime($d1));
+		if($d2>'2025-07-01'){
+		    return 0;
+        }
 /*		
 		$sql = "select a.city, count(a.id) as counter from swo_staff_v a
 				where a.ctrt_start_dt is null and a.join_dt < date_add('$d', interval -1 month)

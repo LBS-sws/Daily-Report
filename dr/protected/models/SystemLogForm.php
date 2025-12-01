@@ -12,6 +12,7 @@ class SystemLogForm extends CFormModel
 	public $log_type_name;
 	public $option_str;
 	public $option_text="";
+	public $change_amt;
 	public $city;
 	public $show_bool=1;
 	public $leave_log=1;
@@ -27,7 +28,8 @@ class SystemLogForm extends CFormModel
                 "option_text"=>$this->option_text,
                 "show_bool"=>$this->show_bool,
                 "leave_log"=>$this->leave_log,
-                "city"=>Yii::app()->user->city(),
+                "change_amt"=>$this->change_amt,
+                "city"=>empty($this->city)?Yii::app()->user->city():$this->city,
                 "lcu"=>Yii::app()->user->id,
             );
             Yii::app()->db->createCommand()->insert("swo_system_log",$arr);
