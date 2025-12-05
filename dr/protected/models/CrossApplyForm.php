@@ -111,6 +111,10 @@ class CrossApplyForm extends CFormModel
             $this->addError($attribute, "通知城市不允许选择城市({$this->send_city})");
             return false;
         }
+        if($this->old_city==$this->cross_city){
+            $this->addError($attribute, "承接城市不能等于提交交叉城市");
+            return false;
+        }
         return true;
     }
 
