@@ -621,8 +621,9 @@ class OutBusinessForm extends CFormModel
     protected function getOutBusinessStaffData(){
         $suffix = Yii::app()->params['envSuffix'];
         $data=array();
-        $rows = Yii::app()->db->createCommand()->select("code,name,city")
-            ->from("hr{$suffix}.hr_employee")->where("table_type=4 and staff_status=1")
+        $rows = Yii::app()->db->createCommand()->select("code,name,city,staff_status")
+            ->from("hr{$suffix}.hr_employee")
+            ->where("table_type=4 and (staff_status=1 or (staff_status=-1 and DATE_FORMAT(leave_time,'%Y/%m/%d') BETWEEN '{$this->start_date}' and '{$this->end_date}'))")
             ->order("city")->queryAll();
         $cityList=array();
         if($rows){
@@ -638,11 +639,13 @@ class OutBusinessForm extends CFormModel
                     $setRow=$setRow?$setRow:array("city_name"=>General::getCityName($row["city"]),"region_name"=>"未知");
                     $cityList[$row["city"]]=$setRow;
                 }
+                $username = $row["name"];
+                $username.= $row["staff_status"]==-1?"(离职)":"";
                 $data[]=array(
                     "region_name"=>$cityList[$row["city"]]["region_name"],
                     "city_name"=>$cityList[$row["city"]]["city_name"],
                     "staff_code"=>$row["code"],
-                    "staff_name"=>$row["name"],
+                    "staff_name"=>$username,
                 );
             }
         }
