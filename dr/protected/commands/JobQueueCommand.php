@@ -421,6 +421,7 @@ EOF;
 			case 'RptCustterall': $model = new RptCustterall(); break;
 			case 'RptComplaint': $model = new RptComplaint(); break;
 			case 'RptQc': $model = new RptQc(); break;
+			//case 'RptQcByIB': $model = new RptQcByIB(); break;
 			case 'RptLogistic': $model = new RptLogistic(); break;
 			case 'RptStaff': $model = new RptStaff(); break;
 			case 'RptEnquiry': $model = new RptEnquiry(); break;
@@ -473,6 +474,8 @@ EOF;
 			case 'RptServiceLoss': $model = new RptServiceLoss(); break;
             case 'RptCross': $model = new RptCross(); break;
             case 'RptKaSigned': $model = new RptKaSigned(); break;
+			default:
+				$model = new $rptid();
 		}
 		return $model;
 	}

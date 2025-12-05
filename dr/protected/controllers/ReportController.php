@@ -495,7 +495,11 @@ class ReportController extends Controller
 	protected function genQc($criteria) {
         $this->function_id = 'B08';
         Yii::app()->session['active_func'] = $this->function_id;
-		$this->addQueueItem('RptQc', $criteria, 'A3');
+        $rptname = array(
+            'RptQc'=>'IA QC Report',//IA品检记录
+            'RptQcByIB'=>'IB QC Report',//IB品检记录
+        );
+		$this->addQueueItem('RptQc', $criteria, 'A3',$rptname);
 		Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
 	}
 

@@ -83,5 +83,7 @@ return array(
     'KA signed report'=>'KA新签报表',
     'KA Retention report'=>'KA保留率明细报表',
     'All customer report'=>'客户记录汇总表',
+    'IA QC Report'=>'IA品检记录',
+    'IB QC Report'=>'IB品检记录',
 );
 ?>
