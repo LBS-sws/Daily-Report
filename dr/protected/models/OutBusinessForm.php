@@ -622,25 +622,25 @@ class OutBusinessForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
         $data=array();
         $rows = Yii::app()->db->createCommand()->select("code,name,city")
-            ->from("hr{$suffix}.hr_employee")->where("table_type=4 and staff_status=0")
+            ->from("hr{$suffix}.hr_employee")->where("table_type=4 and staff_status=1")
             ->order("city")->queryAll();
         $cityList=array();
         if($rows){
             foreach ($rows as $row){
                 if(!key_exists($row["city"],$cityList)){
                     $setRow = Yii::app()->db->createCommand()
-                        ->select("a.name as city_name,f.name as region_name")
+                        ->select("a.name as city_name,ifnull(f.name,'未知') as region_name")
                         ->from("swo_city_set b")
                         ->leftJoin("security$suffix.sec_city a","a.code=b.code")
                         ->leftJoin("security$suffix.sec_city f","b.region_code=f.code")
                         ->where("b.code=:code",array(":code"=>$row["city"]))
                         ->queryRow();
-                    $setRow=$setRow?$setRow:array("city_name"=>$row["city"],"region_name"=>"未知");
+                    $setRow=$setRow?$setRow:array("city_name"=>General::getCityName($row["city"]),"region_name"=>"未知");
                     $cityList[$row["city"]]=$setRow;
                 }
                 $data[]=array(
-                    "city_name"=>$cityList[$row["city"]]["city_name"],
                     "region_name"=>$cityList[$row["city"]]["region_name"],
+                    "city_name"=>$cityList[$row["city"]]["city_name"],
                     "staff_code"=>$row["code"],
                     "staff_name"=>$row["name"],
                 );
@@ -691,7 +691,7 @@ class OutBusinessForm extends CFormModel
         $excel->SetHeaderString("");
         $excel->outHeader(2);
         $excel->setSummaryHeader($headListThree);
-        $excel->setOutBusinessData($threeData);
+        $excel->setUServiceData($threeData);
         $excel->outExcel($titleName);
     }
 
