@@ -2,10 +2,10 @@
 class RptKaSigned extends ReportData2{
     public $staff_list;//
 
-	public function fields() {
+    public function fields() {
         return array(
             'city_name'=>array('label'=>Yii::t('app','City'),'width'=>12,'align'=>'C'),
-            'status_dt'=>array('label'=>Yii::t('service','Renew Date'),'width'=>18,'align'=>'C'),
+            'status_dt'=>array('label'=>Yii::t('service','New Date'),'width'=>18,'align'=>'C'),
             'company_name'=>array('label'=>Yii::t('service','Customer'),'width'=>40,'align'=>'L'),
             'cust_type'=>array('label'=>Yii::t('customer','Customer Type'),'width'=>12,'align'=>'L'),
             'nature'=>array('label'=>Yii::t('customer','Nature'),'width'=>12,'align'=>'L'),
@@ -43,8 +43,8 @@ class RptKaSigned extends ReportData2{
         }
         return $rtn;
     }
-	
-	public function retrieveData() {
+
+    public function retrieveData() {
         $suffix = Yii::app()->params['envSuffix'];
         $whereSql =" and a.status='N'";
         if (isset($this->criteria)) {
@@ -131,12 +131,12 @@ class RptKaSigned extends ReportData2{
             }
         }
         $this->data = $data;
-		return true;
-	}
+        return true;
+    }
 
-	protected function getStaffNameForList($staffJson){
+    protected function getStaffNameForList($staffJson){
         $suffix = Yii::app()->params['envSuffix'];
-	    $idSql = "'".implode("','",$staffJson)."'";
+        $idSql = "'".implode("','",$staffJson)."'";
         $rows = Yii::app()->db->createCommand()->select("code,name")
             ->from("hr$suffix.hr_employee")
             ->where("id in ({$idSql})")
@@ -152,9 +152,9 @@ class RptKaSigned extends ReportData2{
         }
     }
 
-	public function getReportName() {
-		//$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';
-		return parent::getReportName();
-	}
+    public function getReportName() {
+        //$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria->city) : '';
+        return parent::getReportName();
+    }
 }
 ?>
