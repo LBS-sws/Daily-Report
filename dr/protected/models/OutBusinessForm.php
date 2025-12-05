@@ -345,6 +345,17 @@ class OutBusinessForm extends CFormModel
         return $topList;
     }
 
+    private function getTopArrThree(){
+        $topList=array(
+            array("name"=>Yii::t("summary","Area"),"rowspan"=>2),//区域
+            array("name"=>Yii::t("summary","City"),"rowspan"=>2),//城市
+            array("name"=>Yii::t("summary","Employ Code"),"rowspan"=>2),//员工
+            array("name"=>Yii::t("summary","Employ Name"),"rowspan"=>2),//职位
+        );
+
+        return $topList;
+    }
+
     //顯示提成表的表格內容（表頭）
     protected function tableTopHtml($type=1){
         $this->th_sum = 0;
@@ -607,6 +618,37 @@ class OutBusinessForm extends CFormModel
         return $html;
     }
 
+    protected function getOutBusinessStaffData(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $data=array();
+        $rows = Yii::app()->db->createCommand()->select("code,name,city")
+            ->from("hr{$suffix}.hr_employee")->where("table_type=4 and staff_status=0")
+            ->order("city")->queryAll();
+        $cityList=array();
+        if($rows){
+            foreach ($rows as $row){
+                if(!key_exists($row["city"],$cityList)){
+                    $setRow = Yii::app()->db->createCommand()
+                        ->select("a.name as city_name,f.name as region_name")
+                        ->from("swo_city_set b")
+                        ->leftJoin("security$suffix.sec_city a","a.code=b.code")
+                        ->leftJoin("security$suffix.sec_city f","b.region_code=f.code")
+                        ->where("b.code=:code",array(":code"=>$row["city"]))
+                        ->queryRow();
+                    $setRow=$setRow?$setRow:array("city_name"=>$row["city"],"region_name"=>"未知");
+                    $cityList[$row["city"]]=$setRow;
+                }
+                $data[]=array(
+                    "city_name"=>$cityList[$row["city"]]["city_name"],
+                    "region_name"=>$cityList[$row["city"]]["region_name"],
+                    "staff_code"=>$row["code"],
+                    "staff_name"=>$row["name"],
+                );
+            }
+        }
+        return $data;
+    }
+
     //下載
     public function downExcel($excelData){
         $oneData = key_exists("oneData",$excelData)?$excelData["oneData"]:array();
@@ -625,6 +667,8 @@ class OutBusinessForm extends CFormModel
         $this->month_end_date = date("m/d",strtotime($this->end_date));
         $headList = $this->getTopArr();
         $headListTwo = $this->getTopArrTwo();
+        $headListThree = $this->getTopArrThree();
+        $threeData = $this->getOutBusinessStaffData();
         $excel = new DownSummary();
         $titleName = Yii::t("app",'Out Business');
         $excel->SetHeaderTitle($titleName);
@@ -641,6 +685,13 @@ class OutBusinessForm extends CFormModel
         $excel->outHeader(1);
         $excel->setSummaryHeader($headListTwo);
         $excel->setOutBusinessData($twoData);
+        $titleName = "所有在职业务承揽员工";
+        $excel->addSheet($titleName);
+        $excel->SetHeaderTitle($titleName);
+        $excel->SetHeaderString("");
+        $excel->outHeader(2);
+        $excel->setSummaryHeader($headListThree);
+        $excel->setOutBusinessData($threeData);
         $excel->outExcel($titleName);
     }
 
