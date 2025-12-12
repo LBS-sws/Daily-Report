@@ -297,7 +297,7 @@ class ReportController extends Controller
 	public function actionCustnew() {
 		$this->function_id = 'B02';
 		Yii::app()->session['active_func'] = $this->function_id;
-		$this->showUI('custnew', 'Customer Report - New');
+		$this->showUI('custnew', 'Customer Report - New', 'start_dt,end_dt,format,city');
 	}
 
 	protected function genCustomerID($criteria) {
@@ -917,7 +917,7 @@ class ReportController extends Controller
 		$model->id = $id;
 		$model->name = $name;
 		$model->type = $type;
-		if (Yii::app()->user->isSingleCity())
+		if (Yii::app()->user->isSingleCity()) {
 			$model->city = Yii::app()->user->city();
 			$sql="select * from swo_fixed_queue_value where city = '".$model->city ."'";
 			$records = Yii::app()->db->createCommand($sql)->queryRow();
@@ -925,10 +925,16 @@ class ReportController extends Controller
                 $model->touser=$records['touser'];
                 $model->ccuser=json_decode($records['ccuser']);
 			}
-//		else {
-//			$items = explode(",",str_replace("'","",Yii::app()->user->city_allow()));
-//			$model->city = $items[0];
-//		}
+		} else {
+			// 多城市时，初始化城市为数组
+			if (empty($model->city)) {
+				$item = General::getCityListWithCityAllow(Yii::app()->user->city_allow());
+				$model->city = array();
+				foreach ($item as $key=>$value) {
+					$model->city[] = $key;
+				}
+			}
+		}
 		$model->fields = $fields;
 		$model->form = $form;
 		$this->render($form,array('model'=>$model));

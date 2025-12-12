@@ -67,9 +67,35 @@ class RptCustnew extends ReportData2 {
 				$where .= " and "."a.status_dt<='".General::toDate($this->criteria->end_dt)." 23:59:59'";
 			if ($where!='') $sql .= $where;	
 		}
-		$sql .= " order by a.city,c.description, a.status_dt";
-		$rows = Yii::app()->db->createCommand($sql)->queryAll();
-		$officeList =array();
+		$orderSql = " order by a.city,c.description, a.status_dt";
+		$sql .= $orderSql;
+		$rowsIA = Yii::app()->db->createCommand($sql)->queryAll();
+		$rowsIA = $rowsIA?$rowsIA:array();
+		
+		// 查询KA客户
+		$sql = "select a.*, b.description as nature,f.code as com_code,f.name as com_name,f.group_id as group_code,f.group_name, c.description as customer_type, d.cust_type_name as cust_type_name_two 
+					from swo_service_ka a
+					left outer join swo_nature b on a.nature_type=b.id 
+        				left outer join swo_company f on a.company_id=f.id 
+					left outer join swo_customer_type c on a.cust_type=c.id
+					left outer join swo_customer_type_twoname d on d.id=a.cust_type_name
+				where a.status='N' and a.city in ({$city_allow}) 
+		";
+		if (isset($this->criteria)) {
+			$where = '';
+			if (isset($this->criteria->start_dt))
+				$where .= " and "."a.status_dt>='".General::toDate($this->criteria->start_dt)." 00:00:00'";
+			if (isset($this->criteria->end_dt))
+				$where .= " and "."a.status_dt<='" .General::toDate($this->criteria->end_dt)." 23:59:59'";
+			if ($where!='') $sql .= $where;	
+		}
+		$sql .= $orderSql;
+		$rowsKA = Yii::app()->db->createCommand($sql)->queryAll();
+		$rowsKA = $rowsKA?$rowsKA:array();
+		
+		// 合并普通客户和KA客户数据
+		$rows = array_merge($rowsIA, $rowsKA);
+		$officeList = array();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
                 $row["office_id"] = empty($row["office_id"])?0:$row["office_id"];
