@@ -57,7 +57,7 @@ class ServiceKAList extends CListPageModel
             'nature_desc'=>"CONCAT(b.description,g.name)",
             'service'=>'a.service',
             'cont_info'=>'a.cont_info',
-            'contract_no'=>"(select no.contract_no from swo_service_contract_no no where no.service_id=a.id)",
+            'contract_no'=>"(select no.contract_no from swo_service_ka_no no where no.service_id=a.id)",
             'status'=>"(select case a.status when 'N' then '".General::getStatusDesc('N')."' 
 							when 'S' then '".General::getStatusDesc('S')."' 
 							when 'R' then '".General::getStatusDesc('R')."' 
