@@ -87,6 +87,7 @@ $this->pageTitle=Yii::app()->name . ' - Service';
 			'viewhdr'=>'//service/_listhdr',
 			'viewdtl'=>'//service/_listdtl',
 			'search'=>$search,
+            'advancedSearch'=>true,
 			'hasDateButton'=>true,
 		));
 	?>
@@ -97,6 +98,7 @@ $this->pageTitle=Yii::app()->name . ' - Service';
 	echo $form->hiddenField($model,'orderField');
 	echo $form->hiddenField($model,'orderType');
 	echo $form->hiddenField($model,'office_type');
+    echo $form->hiddenField($model,'filter');
 ?>
 
 <?php

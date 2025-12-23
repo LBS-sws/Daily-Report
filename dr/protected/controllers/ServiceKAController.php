@@ -62,8 +62,8 @@ class ServiceKAController extends Controller
             $model->attributes = $_POST['ServiceKAList'];
         } else {
             $session = Yii::app()->session;
-            if (isset($session['serviceKA_01']) && !empty($session['serviceKA_01'])) {
-                $criteria = $session['serviceKA_01'];
+            if (isset($session['criteria_ServiceKAList']) && !empty($session['criteria_ServiceKAList'])) {
+                $criteria = $session['criteria_ServiceKAList'];
                 $model->setCriteria($criteria);
             }
         }
@@ -78,8 +78,8 @@ class ServiceKAController extends Controller
 			$model->attributes = $_POST['ServiceKAList'];
 		} else {
 			$session = Yii::app()->session;
-			if (isset($session['serviceKA_01']) && !empty($session['serviceKA_01'])) {
-				$criteria = $session['serviceKA_01'];
+			if (isset($session['criteria_ServiceKAList']) && !empty($session['criteria_ServiceKAList'])) {
+				$criteria = $session['criteria_ServiceKAList'];
 				$model->setCriteria($criteria);
 			}
 		}

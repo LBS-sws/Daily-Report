@@ -54,8 +54,8 @@ class ServiceController extends Controller
 			$model->attributes = $_POST['ServiceList'];
 		} else {
 			$session = Yii::app()->session;
-			if (isset($session['criteria_a02']) && !empty($session['criteria_a02'])) {
-				$criteria = $session['criteria_a02'];
+			if (isset($session['criteria_ServiceList']) && !empty($session['criteria_ServiceList'])) {
+				$criteria = $session['criteria_ServiceList'];
 				$model->setCriteria($criteria);
 			}
 		}
@@ -70,8 +70,8 @@ class ServiceController extends Controller
 			$model->attributes = $_POST['ServiceList'];
 		} else {
 			$session = Yii::app()->session;
-			if (isset($session['criteria_a02']) && !empty($session['criteria_a02'])) {
-				$criteria = $session['criteria_a02'];
+			if (isset($session['criteria_ServiceList']) && !empty($session['criteria_ServiceList'])) {
+				$criteria = $session['criteria_ServiceList'];
 				$model->setCriteria($criteria);
 			}
 		}

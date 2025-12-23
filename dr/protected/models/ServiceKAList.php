@@ -46,6 +46,28 @@ class ServiceKAList extends CListPageModel
 			'dateRangeValue'=>$this->dateRangeValue,
 		);
 	}
+    public function getFilterFieldList() {
+
+    }
+    public function searchColumns() {
+        $search = array(
+            'city_name'=>"d.name",
+            'company_name'=>"CONCAT(f.code,f.name)",
+            'type_desc'=>"c.description",
+            'nature_desc'=>"CONCAT(b.description,g.name)",
+            'service'=>'a.service',
+            'cont_info'=>'a.cont_info',
+            'contract_no'=>"(select no.contract_no from swo_service_contract_no no where no.service_id=a.id)",
+            'status'=>"(select case a.status when 'N' then '".General::getStatusDesc('N')."' 
+							when 'S' then '".General::getStatusDesc('S')."' 
+							when 'R' then '".General::getStatusDesc('R')."' 
+							when 'A' then '".General::getStatusDesc('A')."' 
+							when 'T' then '".General::getStatusDesc('T')."' 
+							when 'C' then '".General::getStatusDesc('C')."' 
+						end) ",
+        );
+        return $search;
+    }
 
     public function retrieveDataByPage($pageNum=1)
     {
@@ -77,43 +99,16 @@ class ServiceKAList extends CListPageModel
                 $clause .= " and a.office_id is not null ";
                 break;
         }
-        if (!empty($this->searchField) && !empty($this->searchValue)) {
-            $svalue = str_replace("'","\'",$this->searchValue);
-            switch ($this->searchField) {
-                case 'service_no':
-                    $clause .= General::getSqlConditionClause('a.service_no',$svalue);
-                    break;
-                case 'city_name':
-                    $clause .= General::getSqlConditionClause('d.name',$svalue);
-                    break;
-                case 'company_name':
-                    $clause .= " and (f.code like '%$svalue%' or f.name like '%$svalue%' or a.company_name like '%$svalue%')";
-                    break;
-                case 'type_desc':
-                    $clause .= General::getSqlConditionClause('c.description',$svalue);
-                    break;
-                case 'nature_desc':
-                    $clause .= " and (b.description like '%{$svalue}%' or g.name like '%{$svalue}%')";
-                    break;
-                case 'service':
-                    $clause .= General::getSqlConditionClause('a.service',$svalue);
-                    break;
-                case 'cont_info':
-                    $clause .= General::getSqlConditionClause('a.cont_info',$svalue);
-                    break;
-                case 'contract_no':
-                    $clause .= "and a.id in (select no.service_id from swo_service_ka_no no where no.contract_no like '%{$svalue}%' )";;
-                    break;
-                case 'status':
-                    $field = "(select case a.status when 'N' then '".General::getStatusDesc('N')."' 
-							when 'S' then '".General::getStatusDesc('S')."' 
-							when 'R' then '".General::getStatusDesc('R')."' 
-							when 'A' then '".General::getStatusDesc('A')."' 
-							when 'T' then '".General::getStatusDesc('T')."' 
-							when 'C' then '".General::getStatusDesc('C')."' 
-						end) ";
-                    $clause .= General::getSqlConditionClause($field, $svalue);
-                    break;
+        $static = $this->staticSearchColumns();
+        $columns = $this->searchColumns();
+        if (!empty($this->searchField) && (!empty($this->searchValue) || in_array($this->searchField, $static) || $this->isAdvancedSearch())) {
+            if ($this->isAdvancedSearch()) {
+                $clause = $this->buildSQLCriteria();
+            } elseif (in_array($this->searchField, $static)) {
+                $clause .= 'and '.$columns[$this->searchField];
+            } else {
+                $svalue = str_replace("'","\'",$this->searchValue);
+                $clause .= General::getSqlConditionClause($columns[$this->searchField],$svalue);
             }
         }
         $clause .= $this->getDateRangeCondition('a.status_dt');
@@ -157,7 +152,7 @@ class ServiceKAList extends CListPageModel
             }
         }
         $session = Yii::app()->session;
-        $session['serviceKA_01'] = $this->getCriteria();
+        $session[$this->criteriaName()] = $this->getCriteria();
         return true;
     }
 
@@ -191,43 +186,16 @@ class ServiceKAList extends CListPageModel
                 $clause .= " and a.office_id is not null ";
                 break;
         }
-        if (!empty($this->searchField) && !empty($this->searchValue)) {
-            $svalue = str_replace("'","\'",$this->searchValue);
-            switch ($this->searchField) {
-                case 'service_no':
-                    $clause .= General::getSqlConditionClause('a.service_no',$svalue);
-                    break;
-                case 'city_name':
-                    $clause .= General::getSqlConditionClause('d.name',$svalue);
-                    break;
-                case 'company_name':
-                    $clause .= " and (f.code like '%$svalue%' or f.name like '%$svalue%' or a.company_name like '%$svalue%')";
-                    break;
-                case 'type_desc':
-                    $clause .= General::getSqlConditionClause('c.description',$svalue);
-                    break;
-                case 'nature_desc':
-                    $clause .= " and (b.description like '%{$svalue}%' or g.name like '%{$svalue}%')";
-                    break;
-                case 'service':
-                    $clause .= General::getSqlConditionClause('a.service',$svalue);
-                    break;
-                case 'cont_info':
-                    $clause .= General::getSqlConditionClause('a.cont_info',$svalue);
-                    break;
-                case 'contract_no':
-                    $clause .= "and a.id in (select no.service_id from swo_service_ka_no no where no.contract_no like '%{$svalue}%' )";;
-                    break;
-                case 'status':
-                    $field = "(select case a.status when 'N' then '".General::getStatusDesc('N')."' 
-							when 'S' then '".General::getStatusDesc('S')."' 
-							when 'R' then '".General::getStatusDesc('R')."' 
-							when 'A' then '".General::getStatusDesc('A')."' 
-							when 'T' then '".General::getStatusDesc('T')."' 
-							when 'C' then '".General::getStatusDesc('C')."' 
-						end) ";
-                    $clause .= General::getSqlConditionClause($field, $svalue);
-                    break;
+        $static = $this->staticSearchColumns();
+        $columns = $this->searchColumns();
+        if (!empty($this->searchField) && (!empty($this->searchValue) || in_array($this->searchField, $static) || $this->isAdvancedSearch())) {
+            if ($this->isAdvancedSearch()) {
+                $clause = $this->buildSQLCriteria();
+            } elseif (in_array($this->searchField, $static)) {
+                $clause .= 'and '.$columns[$this->searchField];
+            } else {
+                $svalue = str_replace("'","\'",$this->searchValue);
+                $clause .= General::getSqlConditionClause($columns[$this->searchField],$svalue);
             }
         }
         $clause .= $this->getDateRangeCondition('a.status_dt');
