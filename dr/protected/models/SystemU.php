@@ -618,7 +618,99 @@ class SystemU {
         }
         return $rtn;
     }
+    //获取服务单月数据（GetUServiceMoneyV28）
+    public static function getUServiceMoneyV28($start, $end, $city='',$printBool=false,$type=0) {
 
+        $rtn = array('message'=>'', 'data'=>array());
+        $key = self::generate_key();
+        $root = Yii::app()->params['uCurlRootURL'];
+        $url = $root.'/api/lbs.GetUServiceMoneyV28/index';
+        $data = array(
+            "key"=>$key,
+            "begin"=>$start,
+            "end"=>$end,
+            "type"=>$type,
+            "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
+        );
+        $data_string = json_encode($data);
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type:application/json',
+            'Content-Length:'.strlen($data_string),
+        ));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $out = curl_exec($ch);
+        if($printBool){//测试专用
+            self::printCurl($url,$data,$out,$curlStartDate);
+        }
+        if ($out===false) {
+            $rtn['message'] = curl_error($ch);
+        } else {
+            $json = json_decode($out, true);
+            if(isset($json["code"])&&$json["code"]==200){
+                $rtn['data'] = $json["data"];
+                $rtn['message'] = self::getJsonError(json_last_error());
+            }else{
+                $rtn['data'] = array();
+                $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
+                throw new CHttpException("派单系统异常",$out);
+            }
+        }
+        return $rtn;
+    }
+    //获取城市下面办事处的数据
+    public static function getInvoiceOfficeAmountV28($start, $end, $city='',$printBool=false,$type=0) {
+        $rtn = array('message'=>'', 'data'=>array());
+        $key = self::generate_key();
+        $root = Yii::app()->params['uCurlRootURL'];
+        $url = $root.'/api/lbs.GetUServiceMoneyForOffice28/index';
+        $data = array(
+            "key"=>$key,
+            "begin"=>$start,
+            "end"=>$end,
+            "type"=>$type,
+            "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
+        );
+        $data_string = json_encode($data);
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type:application/json',
+            'Content-Length:'.strlen($data_string),
+        ));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $out = curl_exec($ch);
+        if($printBool){//测试专用
+            self::printCurl($url,$data,$out,$curlStartDate);
+        }
+        if ($out===false) {
+            $rtn['message'] = curl_error($ch);
+        } else {
+            $json = json_decode($out, true);
+            if(isset($json["code"])&&$json["code"]==200){
+                $rtn['data'] = $json["data"];
+                $rtn['message'] = self::getJsonError(json_last_error());
+            }else{
+                $rtn['data'] = array();
+                $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
+                throw new CHttpException("派单系统异常",$out);
+            }
+        }
+        return $rtn;
+    }
     //获取服务单月数据(销售)
     public static function getUServiceMoneyBySales($start, $end, $salesCode='',$printBool=false,$type=0) {
         $rtn = array('message'=>'', 'data'=>array());
@@ -811,6 +903,53 @@ class SystemU {
         return $rtn;
     }
 
+    //获取服务单月数据 - 办事处(发包方、承接方、资质方)
+    public static function getUServiceMoneyForOfficeV28($start, $end, $city='',$printBool=false,$type=0) {
+        $rtn = array('message'=>'', 'data'=>array());
+        $key = self::generate_key();
+        $root = Yii::app()->params['uCurlRootURL'];
+        $url = $root.'/api/lbs.GetUServiceMoneyForOffice28/index';
+        $data = array(
+            "key"=>$key,
+            "begin"=>$start,
+            "end"=>$end,
+            "type"=>$type,
+            "city"=>empty($city)||$city=="all"?"":self::resetCityForPre($city)
+        );
+        $data_string = json_encode($data);
+        $curlStartDate = date_format(date_create(),"Y/m/d H:i:s");
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type:application/json',
+            'Content-Length:'.strlen($data_string),
+        ));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $out = curl_exec($ch);
+        if($printBool){//测试专用
+            self::printCurl($url,$data,$out,$curlStartDate);
+        }
+        if ($out===false) {
+            $rtn['message'] = curl_error($ch);
+        } else {
+            $json = json_decode($out, true);
+            if(isset($json["code"])&&$json["code"]==200){
+                $rtn['data'] = $json["data"];
+                $rtn['message'] = self::getJsonError(json_last_error());
+            }else{
+                $rtn['data'] = array();
+                $rtn['message'] = isset($json["message"])?$json["message"]:$out;
+                $out="Url:".$url."\r\n".$out;
+                Yii::log("Url:{$url};\r\nDataStr:{$data_string}",CLogger::LEVEL_WARNING);
+                throw new CHttpException("派单系统异常",$out);
+            }
+        }
+        return $rtn;
+    }
     //获取U系统的服务单数据(外包人员)-汇总
     public static function getOutsourceCountMoney($start, $end, $staffList='', $city='',$printBool=false,$type=0) {
         $rtn = array('message'=>'', 'data'=>array());

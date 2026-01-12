@@ -20,7 +20,21 @@ class CountOfficeSearch extends CountSearch{
         }
         return $arr;
     }
-
+    //获取服务单月数据 - 办事处
+    public static function getInvoiceOfficeAmountV28($startDay,$endDay,$city_allow="",$printBool=false,$type=0){
+        $list = SystemU::getUServiceMoneyForOfficeV28($startDay,$endDay,$city_allow,$printBool,$type);
+        $arr = array();
+        if(isset($list["data"])&&is_array($list["data"])){
+            foreach ($list["data"] as $city=>$rows){
+                if(is_array($rows)){
+                    foreach ($rows as $office_id=>$number){
+                        $arr[$office_id]=$number;
+                    }
+                }
+            }
+        }
+        return $arr;
+    }
     //获取服务单月数据 - 办事处
     public static function getUServiceOfficeMoneyOne($startDay,$endDay,$city_allow="",$printBool=false,$type=0){
         $list = SystemU::getUServiceOfficeMoney($startDay,$endDay,$city_allow,$printBool,$type);

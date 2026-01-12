@@ -31,6 +31,8 @@ class RptSummarySC extends ReportData2 {
         }
         $citySetList = CitySetForm::getCitySetList($city_allow);
         $this->u_load_data['u_load_start'] = time();
+        //获取28生意额的数据
+        $uServiceMoney28=CountSearch::getCurlServiceForCityV28($startDate,$endDate,$city_allow,$this->uServiceType);
         //获取U系统的服务单数据(发包方、承接方、资质方)
         $uServiceMoneyV3 = CountSearch::GetUServiceMoneyV3($startDate,$endDate,$city_allow,$this->uServiceType);
         //获取U系统的服务单数据
@@ -69,6 +71,13 @@ class RptSummarySC extends ReportData2 {
                 $defMoreList["u_v3_accept"]+=$uServiceMoneyV3[$city]["accept"];//承接生意额
                 $defMoreList["u_v3_sum"]+=$uServiceMoneyV3[$city]["sum"];//接口内的sum
             }
+            if(key_exists($city,$uServiceMoney28)){
+                $defMoreList["u_v28_sum"]+=$uServiceMoney28[$city]["sum"];//生意额总额
+                $defMoreList["u_v28_normal"]+=$uServiceMoney28[$city]["normal"]+$defMoreList['u_invoice_num'];//非交叉（自己签自己做）
+                $defMoreList["u_v28_send"]+=$uServiceMoney28[$city]["send"];//发包方（自己签别人做）
+                $defMoreList["u_v28_accept"]+=$uServiceMoney28[$city]["accept"];//承接方（别人签自己做）
+            }
+
             $defMoreList["u_v3_total"]+=$defMoreList["u_v3_send"]+$defMoreList["u_v3_accept"];//服务生意额汇总
 
             $defMoreList["u_num_cate"]+=key_exists($city,$uInvMoney)?$uInvMoney[$city]["u_num_cate"]:0;
@@ -147,6 +156,10 @@ class RptSummarySC extends ReportData2 {
         return array(
             "city"=>$city,
             "city_name"=>$cityName,
+            "u_v28_sum"=>0,//生意额总额
+            "u_v28_normal"=>0,//非交叉（自己签自己做）
+            "u_v28_send"=>0,//发包方（自己签别人做）
+            "u_v28_accept"=>0,//承接方（别人签自己做）
             "u_v3_send"=>0,//100%归属发包方→自有生意额
             "u_v3_accept"=>0,//100%归属发包方→承接生意额
             "u_v3_total"=>0,//100%归属发包方→服务生意额汇总
