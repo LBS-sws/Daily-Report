@@ -465,10 +465,32 @@ class SummaryBakForm extends CFormModel
             $html.=$this->showServiceHtml($this->data);
             $html.=$this->showServiceHtmlForMO($moData);
             $html.="</tbody>";
+            //downJsonText中的所有数字进行千分位格式化并四舍五入取整
+            $this->formatNumbersInJson();
             $this->downJsonText=json_encode($this->downJsonText);
             $html.=TbHtml::hiddenField("excel",$this->downJsonText);
         }
         return $html;
+    }
+    private function formatNumbersInJson() {
+        $this->downJsonText = $this->formatNumbersRecursively($this->downJsonText);
+    }
+    /**
+     * 递归处理数组中的数字，将其格式化为千分位并四舍五入取整
+     */
+    private function formatNumbersRecursively($data) {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->formatNumbersRecursively($value);
+            }
+            return $data;
+        } elseif (is_numeric($data)) {
+            // 四舍五入取整后转换为千分位格式
+            $rounded = round(floatval($data));
+            return number_format($rounded);
+        } else {
+            return $data;
+        }
     }
     //获取td对应的键名
     private function getDataAllKeyStr(){
@@ -534,7 +556,6 @@ class SummaryBakForm extends CFormModel
         }
         return $bodyKey;
     }
-    //將城市数据寫入表格(澳门)
     private function showServiceHtmlForMO($data){
         $bodyKey = $this->getDataAllKeyStr();
         $html="";
@@ -545,6 +566,12 @@ class SummaryBakForm extends CFormModel
                 foreach ($bodyKey as $keyStr){
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                     $text = ComparisonForm::showNum($text);
+
+                    // 对数字进行千分位格式化并四舍五入取整
+                    if(is_numeric($text) && $keyStr !== 'city_name') {
+                        $text = number_format(round(floatval($text)));
+                    }
+
                     //$inputHide = TbHtml::hiddenField("excel[MO][{$keyStr}]",$text);
                     $this->downJsonText["excel"]['MO'][$keyStr]=$text;
                     $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
@@ -561,7 +588,89 @@ class SummaryBakForm extends CFormModel
         }
         return $html;
     }
+
+    //將城市数据寫入表格(澳门)
+//    private function showServiceHtmlForMO($data){
+//        $bodyKey = $this->getDataAllKeyStr();
+//        $html="";
+//        if(!empty($data)){
+//            foreach ($data["list"] as $cityList) {
+//                $this->resetTdRow($cityList);
+//                $html="<tr>";
+//                foreach ($bodyKey as $keyStr){
+//                    $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
+//                    $text = ComparisonForm::showNum($text);
+//                    //$inputHide = TbHtml::hiddenField("excel[MO][{$keyStr}]",$text);
+//                    $this->downJsonText["excel"]['MO'][$keyStr]=$text;
+//                    $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
+//                    $exprData = self::tdClick($tdClass,$keyStr,$cityList["city"]);//点击后弹窗详细内容
+//                    ComparisonForm::setTextColorForKeyStr($tdClass,$keyStr,$cityList);
+//                    if($keyStr == "city_name"){
+//                        $tdClass.=" changeOffice";
+//                        $text = "<i class='fa fa-spinner fa-pulse'></i>&nbsp;".$text;
+//                    }
+//                    $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span></td>";
+//                }
+//                $html.="</tr>";
+//            }
+//        }
+//        return $html;
+//    }
     //將城市数据寫入表格
+//    private function showServiceHtml($data){
+//        $bodyKey = $this->getDataAllKeyStr();
+//        $html="";
+//        if(!empty($data)){
+//            $allRow = [];//总计(所有地区)
+//            foreach ($data as $regionList){
+//                if(!empty($regionList["list"])) {
+//                    $regionRow = [];//地区汇总
+//                    foreach ($regionList["list"] as $cityList) {
+//                        $this->resetTdRow($cityList);
+//                        $html.="<tr data-city='{$cityList["city"]}'>";
+//                        foreach ($bodyKey as $keyStr){
+//                            if(!key_exists($keyStr,$regionRow)){
+//                                $regionRow[$keyStr]=0;
+//                            }
+//                            if(!key_exists($keyStr,$allRow)){
+//                                $allRow[$keyStr]=0;
+//                            }
+//                            $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
+//                            $regionRow[$keyStr]+=is_numeric($text)?floatval($text):0;
+//                            if($cityList["add_type"]!=1) { //疊加的城市不需要重複統計
+//                                $allRow[$keyStr]+=is_numeric($text)?floatval($text):0;
+//                            }
+//                            $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
+//                            ComparisonForm::setTextColorForKeyStr($tdClass,$keyStr,$cityList);
+//                            $exprData = self::tdClick($tdClass,$keyStr,$cityList["city"]);//点击后弹窗详细内容
+//                            $text = ComparisonForm::showNum($text);
+//                            //$inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
+//                            $this->downJsonText["excel"][$regionList['region']]['list'][$cityList['city']][$keyStr]=$text;
+//
+//                            if($keyStr == "city_name"){
+//                                $tdClass.=" changeOffice";
+//                                $text = "<i class='fa fa-spinner fa-pulse'></i>&nbsp;".$text;
+//                            }
+//                            $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span></td>";
+//                        }
+//                        $html.="</tr>";
+//                    }
+//                    //地区汇总
+//                    $regionRow["region"]=$regionList["region"];
+//                    $regionRow["city_name"]=$regionList["region_name"];
+//                    $html.=$this->printTableTr($regionRow,$bodyKey);
+//                    $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
+//                }
+//            }
+//            //地区汇总
+//            $allRow["region"]="allRow";
+//            $allRow["city_name"]=Yii::t("summary","all total");
+//            $html.=$this->printTableTr($allRow,$bodyKey);
+//            $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
+//            $html.="<tr class='tr-end'><td colspan='{$this->th_sum}'>&nbsp;</td></tr>";
+//        }
+//        return $html;
+//    }
     private function showServiceHtml($data){
         $bodyKey = $this->getDataAllKeyStr();
         $html="";
@@ -588,14 +697,21 @@ class SummaryBakForm extends CFormModel
                             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
                             ComparisonForm::setTextColorForKeyStr($tdClass,$keyStr,$cityList);
                             $exprData = self::tdClick($tdClass,$keyStr,$cityList["city"]);//点击后弹窗详细内容
-                            $text = ComparisonForm::showNum($text);
+
+                            // 对数字进行千分位格式化并四舍五入取整
+                            $displayText = ComparisonForm::showNum($text);
+                            if(is_numeric($displayText) && $keyStr !== 'city_name') {
+                                $displayText = number_format(round(floatval($displayText)));
+                            }
+
                             //$inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
                             $this->downJsonText["excel"][$regionList['region']]['list'][$cityList['city']][$keyStr]=$text;
+
                             if($keyStr == "city_name"){
                                 $tdClass.=" changeOffice";
-                                $text = "<i class='fa fa-spinner fa-pulse'></i>&nbsp;".$text;
+                                $displayText = "<i class='fa fa-spinner fa-pulse'></i>&nbsp;".$displayText;
                             }
-                            $html.="<td class='{$tdClass}' {$exprData}><span>{$text}</span></td>";
+                            $html.="<td class='{$tdClass}' {$exprData}><span>{$displayText}</span></td>";
                         }
                         $html.="</tr>";
                     }
@@ -616,16 +732,36 @@ class SummaryBakForm extends CFormModel
         return $html;
     }
 
+//    protected function printTableTr($data,$bodyKey){
+//        $this->resetTdRow($data,true);
+//        $html="<tr class='tr-end click-tr'>";
+//        foreach ($bodyKey as $keyStr){
+//            $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
+//            $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
+//            $text = ComparisonForm::showNum($text);
+//            //$inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][{$keyStr}]",$text);
+//            $this->downJsonText["excel"][$data['region']]['count'][$keyStr]=$text;
+//            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span></td>";
+//        }
+//        $html.="</tr>";
+//        return $html;
+//    }
     protected function printTableTr($data,$bodyKey){
         $this->resetTdRow($data,true);
         $html="<tr class='tr-end click-tr'>";
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
             $tdClass = ComparisonForm::getTextColorForKeyStr($text,$keyStr);
-            $text = ComparisonForm::showNum($text);
+
+            // 对数字进行千分位格式化并四舍五入取整
+            $displayText = ComparisonForm::showNum($text);
+            if(is_numeric($displayText) && $keyStr !== 'city_name') {
+                $displayText = number_format(round(floatval($displayText)));
+            }
+
             //$inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][{$keyStr}]",$text);
             $this->downJsonText["excel"][$data['region']]['count'][$keyStr]=$text;
-            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span></td>";
+            $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$displayText}</span></td>";
         }
         $html.="</tr>";
         return $html;
@@ -833,10 +969,33 @@ class SummaryBakForm extends CFormModel
             }
             $cityHtmlTr[$city] = $html;
         }
-
+        $hideList = $this->formatNumbersInOfficeList($hideList);
         return array("cityHtml"=>$cityHtmlTr,"hideHtml"=>TbHtml::hiddenField("officeList",json_encode($hideList)));
     }
-
+    /**
+     * 递归处理office列表中的数字，将其格式化为千分位并四舍五入取整
+     */
+    private function formatNumbersInOfficeList($data) {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                if (is_array($value)) {
+                    $data[$key] = $this->formatNumbersInOfficeList($value);
+                } else {
+                    // 对数字进行千分位格式化并四舍五入取整
+                    if (is_numeric($value)) {
+                        $data[$key] = number_format(round(floatval($value)));
+                    }
+                }
+            }
+            return $data;
+        } elseif (is_numeric($data)) {
+            // 四舍五入取整后转换为千分位格式
+            $rounded = round(floatval($data));
+            return number_format($rounded);
+        } else {
+            return $data;
+        }
+    }
     protected function getOfficeHtmlTr($city,$office_id,$officeRow){
         $bodyKey = $this->getDataAllKeyStr();
         $data=array();
@@ -846,6 +1005,9 @@ class SummaryBakForm extends CFormModel
             $keyStr = $item=="city_name"?"office_name":$item;
             $text = key_exists($keyStr,$officeRow)?$officeRow[$keyStr]:"";
             $text = ComparisonForm::showNum($text);
+            if(is_numeric($text) && $keyStr !== 'office_name') {
+                $text = number_format(round(floatval($text)));
+            }
             $html.= "<td><span>".$text."</span></td>";
             $data[]=$text;
         }

@@ -815,12 +815,33 @@ class ComparisonBakForm extends CFormModel
             $html.=$this->showServiceHtml($this->data);
             $html.=$this->showServiceHtmlForMO($moData);
             $html.="</tbody>";
+            //downJsonText中的所有数字进行千分位格式化并四舍五入取整
+            $this->formatNumbersInJson();
             $this->downJsonText=json_encode($this->downJsonText);
             $html.=TbHtml::hiddenField("excel",$this->downJsonText);
         }
         return $html;
     }
-
+    private function formatNumbersInJson() {
+        $this->downJsonText = $this->formatNumbersRecursively($this->downJsonText);
+    }
+    /**
+     * 递归处理数组中的数字，将其格式化为千分位并四舍五入取整
+     */
+    private function formatNumbersRecursively($data) {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->formatNumbersRecursively($value);
+            }
+            return $data;
+        } elseif (is_numeric($data)) {
+            // 四舍五入取整后转换为千分位格式
+            $rounded = round(floatval($data));
+            return number_format($rounded);
+        } else {
+            return $data;
+        }
+    }
     //获取td对应的键名
     private function getDataAllKeyStr(){
         $bodyKey = array(
@@ -896,7 +917,11 @@ class ComparisonBakForm extends CFormModel
                     $text = key_exists($keyStr,$cityList)?$cityList[$keyStr]:"0";
                     $tdClass = ComparisonBakForm::getTextColorForKeyStr($text,$keyStr);
                     $exprData = self::tdClick($tdClass,$keyStr,$cityList["city"]);//点击后弹窗详细内容
-                    $text = ComparisonBakForm::showNum($text);
+                    $text = ComparisonForm::showNum($text);
+                    // 对数字进行千分位格式化并四舍五入取整
+                    if(is_numeric($text) && $keyStr !== 'city_name') {
+                        $text = number_format(round(floatval($text)));
+                    }
                     //$inputHide = TbHtml::hiddenField("excel[MO][{$keyStr}]",$text);
                     $this->downJsonText["excel"]['MO'][$keyStr]=$text;
                     if($keyStr == "city_name"){
@@ -995,6 +1020,9 @@ class ComparisonBakForm extends CFormModel
                             ComparisonBakForm::setTextColorForKeyStr($tdClass,$keyStr,$cityList);
                             $exprData = self::tdClick($tdClass,$keyStr,$cityList["city"]);//点击后弹窗详细内容
                             $text = ComparisonBakForm::showNum($text);
+                            if(is_numeric($text) && $keyStr !== 'city_name') {
+                                $text = number_format(round(floatval($text)));
+                            }
                             //$inputHide = TbHtml::hiddenField("excel[{$regionList['region']}][list][{$cityList['city']}][{$keyStr}]",$text);
                             $this->downJsonText["excel"][$regionList['region']]['list'][$cityList['city']][$keyStr]=$text;
                             if($keyStr == "city_name"){
@@ -1034,7 +1062,10 @@ class ComparisonBakForm extends CFormModel
         foreach ($bodyKey as $keyStr){
             $text = key_exists($keyStr,$data)?$data[$keyStr]:"0";
             $tdClass = ComparisonBakForm::getTextColorForKeyStr($text,$keyStr);
-            $text = ComparisonBakForm::showNum($text);
+            $text = ComparisonForm::showNum($text);
+            if(is_numeric($text) && $keyStr !== 'city_name') {
+                $text = number_format(round(floatval($text)));
+            }
             //$inputHide = TbHtml::hiddenField("excel[{$data['region']}][count][{$keyStr}]",$text);
             $this->downJsonText["excel"][$data['region']]['count'][$keyStr]=$text;
             $html.="<td class='{$tdClass}' style='font-weight: bold'><span>{$text}</span></td>";
@@ -1254,10 +1285,30 @@ class ComparisonBakForm extends CFormModel
             }
             $cityHtmlTr[$city] = $html;
         }
-
+        $hideList = $this->formatNumbersInOfficeList($hideList);
         return array("cityHtml"=>$cityHtmlTr,"hideHtml"=>TbHtml::hiddenField("officeList",json_encode($hideList)));
     }
-
+    private function formatNumbersInOfficeList($data) {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                if (is_array($value)) {
+                    $data[$key] = $this->formatNumbersInOfficeList($value);
+                } else {
+                    // 对数字进行千分位格式化并四舍五入取整
+                    if (is_numeric($value)) {
+                        $data[$key] = number_format(round(floatval($value)));
+                    }
+                }
+            }
+            return $data;
+        } elseif (is_numeric($data)) {
+            // 四舍五入取整后转换为千分位格式
+            $rounded = round(floatval($data));
+            return number_format($rounded);
+        } else {
+            return $data;
+        }
+    }
     protected function resetOfficeTdRow(&$list,$bool=false){
         $newSum = $list["new_sum"]+$list["new_sum_n"];//所有新增总金额
         //$list["monthStopRate"] = $this->comparisonRate($list["stopSumOnly"],$list["u_actual_money"]);
@@ -1317,6 +1368,9 @@ class ComparisonBakForm extends CFormModel
             $tdClass = ComparisonBakForm::getTextColorForKeyStr($text,$keyStr);
             ComparisonBakForm::setTextColorForKeyStr($tdClass,$keyStr,$officeRow);
             $text = ComparisonBakForm::showNum($text);
+            if(is_numeric($text) && $keyStr !== 'office_name') {
+                $text = number_format(round(floatval($text)));
+            }
             $html.= "<td class='{$tdClass}'><span>".$text."</span></td>";
             $data[]=$text;
         }
